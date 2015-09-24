@@ -3,7 +3,7 @@ sudo: false
 python:
 - 2.7
 install:
-- pip install pytest pytest-cov coveralls flake8
+- pip install pytest pytest-cov coveralls flake8 six
 - pip install git+https://github.com/dittos/graphqllib.git # Last version of graphqllib
 - pip install graphql-relay
 - python setup.py develop
