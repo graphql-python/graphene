@@ -19,7 +19,7 @@ import graphene
 class Character(graphene.Interface):
     id = graphene.IDField()
     name = graphene.StringField()
-    friends = graphene.ListField(graphene.Field('self'))
+    friends = graphene.ListField('self')
     appearsIn = graphene.ListField(Episode)
 
     def resolve_friends(self, args, *_):
