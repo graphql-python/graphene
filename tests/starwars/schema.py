@@ -3,14 +3,6 @@ from graphene import resolve_only_args
 
 from .data import getHero, getHuman, getCharacter, getDroid, Human as _Human, Droid as _Droid
 
-from graphql.core.type import (
-    GraphQLObjectType,
-    GraphQLField,
-    GraphQLString,
-    GraphQLNonNull,
-    GraphQLArgument
-)
-
 Episode = graphene.Enum('Episode', dict(
     NEWHOPE = 4,
     EMPIRE = 5,
