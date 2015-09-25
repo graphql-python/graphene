@@ -48,6 +48,7 @@ setup(
 
     install_requires=[
         'six',
+        'blinker',
         'graphqllib',
         'graphql-relay'
     ],

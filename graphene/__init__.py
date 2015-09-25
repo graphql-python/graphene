@@ -26,3 +26,7 @@ from graphene.core.types import (
 from graphene.decorators import (
     resolve_only_args
 )
+
+from graphene.relay import (
+    Relay
+)

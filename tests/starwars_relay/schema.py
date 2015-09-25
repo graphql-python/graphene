@@ -18,7 +18,7 @@ def wrap_character(character):
 class Character(graphene.Interface):
     id = graphene.IDField()
     name = graphene.StringField()
-    friends = graphene.ListField('Character')
+    friends = graphene.ListField('self')
     appearsIn = graphene.ListField(Episode)
 
     def resolve_friends(self, args, *_):

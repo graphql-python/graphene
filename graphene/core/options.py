@@ -1,6 +1,8 @@
 from graphene.utils import cached_property
 
-DEFAULT_NAMES = ('description', 'name', 'interface', 'type_name', 'interfaces',  'proxy')
+DEFAULT_NAMES = ('description', 'name', 'interface',
+                 'type_name', 'interfaces',  'proxy')
+
 
 class Options(object):
     def __init__(self, meta=None):
@@ -62,7 +64,7 @@ class Options(object):
 
     @cached_property
     def fields_map(self):
-        return {f.field_name:f for f in self.fields}
+        return {f.field_name: f for f in self.fields}
 
     @cached_property
     def type(self):
