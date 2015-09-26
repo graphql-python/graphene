@@ -1,7 +1,6 @@
 from graphql.core.type import (
     GraphQLEnumType as Enum,
     GraphQLArgument as Argument,
-    # GraphQLSchema as Schema,
     GraphQLString as String,
     GraphQLInt as Int,
     GraphQLID as ID

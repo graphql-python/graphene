@@ -1,15 +1,18 @@
 from graphene.utils import cached_property
 
-DEFAULT_NAMES = ('description', 'name', 'interface', 'type_name', 'interfaces',  'proxy')
+DEFAULT_NAMES = ('app_label', 'description', 'name', 'interface',
+                 'type_name', 'interfaces',  'proxy')
+
 
 class Options(object):
-    def __init__(self, meta=None):
+    def __init__(self, meta=None, app_label=None):
         self.meta = meta
         self.local_fields = []
         self.interface = False
         self.proxy = False
         self.interfaces = []
         self.parents = []
+        self.app_label = app_label
 
     def contribute_to_class(self, cls, name):
         cls._meta = self
@@ -51,7 +54,6 @@ class Options(object):
 
     def add_field(self, field):
         self.local_fields.append(field)
-        setattr(self.parent, field.field_name, field)
 
     @cached_property
     def fields(self):
@@ -62,7 +64,7 @@ class Options(object):
 
     @cached_property
     def fields_map(self):
-        return {f.field_name:f for f in self.fields}
+        return {f.field_name: f for f in self.fields}
 
     @cached_property
     def type(self):

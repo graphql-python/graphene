@@ -1,4 +1,3 @@
-import inspect
 from graphql.core.type import (
     GraphQLField,
     GraphQLList,
@@ -9,8 +8,8 @@ from graphql.core.type import (
     GraphQLID,
     GraphQLArgument,
 )
-from graphene.core.types import ObjectType, Interface
 from graphene.utils import cached_property
+from graphene.core.utils import get_object_type
 
 class Field(object):
     def __init__(self, field_type, resolve=None, null=True, args=None, description='', **extra_args):
@@ -45,16 +44,11 @@ class Field(object):
 
     @cached_property
     def type(self):
-        field_type = self.field_type
-        _is_class = inspect.isclass(field_type)
-        if _is_class and issubclass(field_type, ObjectType):
-            field_type = field_type._meta.type
-        elif isinstance(field_type, Field):
-            field_type = field_type.type
-        elif field_type == 'self':
-            field_type = self.object_type._meta.type
+        if isinstance(self.field_type, Field):
+            field_type = self.field_type.type
+        else:
+            field_type = get_object_type(self.field_type, self.object_type)
         field_type = self.type_wrapper(field_type)
-
         return field_type
 
     def type_wrapper(self, field_type):
@@ -103,6 +97,12 @@ class Field(object):
         if name is not None:
             return '<%s: %s>' % (path, name)
         return '<%s>' % path
+
+
+class NativeField(Field):
+    def __init__(self, field=None):
+        super(NativeField, self).__init__(None)
+        self.field = field or getattr(self, 'field')
 
 
 class TypeField(Field):

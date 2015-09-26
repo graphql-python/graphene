@@ -8,7 +8,9 @@ from graphql.core.type import (
 )
 from graphql.core import graphql
 
+from graphene import signals
 from graphene.core.options import Options
+
 
 class ObjectTypeMeta(type):
     def __new__(cls, name, bases, attrs):
@@ -20,7 +22,10 @@ class ObjectTypeMeta(type):
 
         module = attrs.pop('__module__')
         doc = attrs.pop('__doc__', None)
-        new_class = super_new(cls, name, bases, {'__module__': module, '__doc__': doc})
+        new_class = super_new(cls, name, bases, {
+            '__module__': module,
+            '__doc__': doc
+        })
         attr_meta = attrs.pop('Meta', None)
         if not attr_meta:
             meta = getattr(new_class, 'Meta', None)
@@ -28,7 +33,12 @@ class ObjectTypeMeta(type):
             meta = attr_meta
         base_meta = getattr(new_class, '_meta', None)
 
-        new_class.add_to_class('_meta', Options(meta))
+        if '.' in module:
+            app_label, _ = module.rsplit('.', 1)
+        else:
+            app_label = module
+
+        new_class.add_to_class('_meta', Options(meta, app_label))
         if base_meta and base_meta.proxy:
             new_class._meta.interface = base_meta.interface
         # Add all attributes to the class.
@@ -51,7 +61,7 @@ class ObjectTypeMeta(type):
             # moment).
             for field in parent_fields:
                 if field.field_name in field_names:
-                    raise FieldError(
+                    raise Exception(
                         'Local field %r in class %r clashes '
                         'with field of similar name from '
                         'base class %r' % (field.field_name, name, base.__name__)
@@ -61,7 +71,11 @@ class ObjectTypeMeta(type):
                 new_class._meta.interfaces.append(base)
             # new_class._meta.parents.extend(base._meta.parents)
 
+        new_class._prepare()
         return new_class
+
+    def _prepare(cls):
+        signals.class_prepared.send(cls)
 
     def add_to_class(cls, name, value):
         # We should call the contribute_to_class method only if it's bound
@@ -73,15 +87,21 @@ class ObjectTypeMeta(type):
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
     def __init__(self, instance=None):
+        signals.pre_init.send(self.__class__, instance=instance)
         self.instance = instance
+        signals.post_init.send(self.__class__, instance=self)
+
+    def __getattr__(self, name):
+        if self.instance:
+            return getattr(self.instance, name)
 
     def get_field(self, field):
         return getattr(self.instance, field, None)
 
     def resolve(self, field_name, args, info):
         if field_name not in self._meta.fields_map.keys():
-            raise Exception('Field %s not found in model'%field_name)
-        custom_resolve_fn = 'resolve_%s'%field_name
+            raise Exception('Field %s not found in model' % field_name)
+        custom_resolve_fn = 'resolve_%s' % field_name
         if hasattr(self, custom_resolve_fn):
             resolve_fn = getattr(self, custom_resolve_fn)
             return resolve_fn(args, info)
@@ -104,13 +124,13 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
                 cls._meta.type_name,
                 description=cls._meta.description,
                 resolve_type=cls.resolve_type,
-                fields=lambda: {name:field.field for name, field in fields.items()}
+                fields=lambda: {name: field.field for name, field in fields.items()}
             )
         return GraphQLObjectType(
             cls._meta.type_name,
             description=cls._meta.description,
             interfaces=[i._meta.type for i in cls._meta.interfaces],
-            fields=lambda: {name:field.field for name, field in fields.items()}
+            fields=lambda: {name: field.field for name, field in fields.items()}
         )
 
 
@@ -125,7 +145,7 @@ class Schema(object):
         self.query = query
         self.query_type = query._meta.type
         self._schema = GraphQLSchema(query=self.query_type, mutation=mutation)
-    
+
     def execute(self, request='', root=None, vars=None, operation_name=None):
         return graphql(
             self._schema,
