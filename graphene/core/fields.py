@@ -1,3 +1,4 @@
+import inspect
 from graphql.core.type import (
     GraphQLField,
     GraphQLList,
@@ -9,7 +10,7 @@ from graphql.core.type import (
     GraphQLArgument,
 )
 from graphene.utils import cached_property
-from graphene.core.utils import get_object_type
+from graphene.core.types import ObjectType
 
 class Field(object):
     def __init__(self, field_type, resolve=None, null=True, args=None, description='', **extra_args):
@@ -25,6 +26,7 @@ class Field(object):
     def contribute_to_class(self, cls, name):
         self.field_name = name
         self.object_type = cls
+        self.schema = cls._meta.schema
         if isinstance(self.field_type, Field) and not self.field_type.object_type:
             self.field_type.contribute_to_class(cls, name)
         cls._meta.add_field(self)
@@ -42,12 +44,27 @@ class Field(object):
             resolve_fn = lambda root, args, info: root.resolve(self.field_name, args, info)
         return resolve_fn(instance, args, info)
 
+    def get_object_type(self):
+        field_type = self.field_type
+        _is_class = inspect.isclass(field_type)
+        if _is_class and issubclass(field_type, ObjectType):
+            return field_type
+        elif isinstance(field_type, basestring):
+            if field_type == 'self':
+                return self.object_type
+            elif self.schema:
+                return self.schema.get_type(field_type)
+
     @cached_property
     def type(self):
-        if isinstance(self.field_type, Field):
+        field_type = self.field_type
+        if isinstance(field_type, Field):
             field_type = self.field_type.type
         else:
-            field_type = get_object_type(self.field_type, self.object_type)
+            object_type = self.get_object_type()
+            if object_type:
+                field_type = object_type._meta.type
+
         field_type = self.type_wrapper(field_type)
         return field_type
 

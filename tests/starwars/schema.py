@@ -46,6 +46,9 @@ class Query(graphene.ObjectType):
         id = graphene.Argument(graphene.String)
     )
 
+    class Meta:
+        type_name = 'core.Query'
+
     @resolve_only_args
     def resolve_hero(self, episode):
         return wrap_character(getHero(episode))

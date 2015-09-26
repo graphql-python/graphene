@@ -3,10 +3,8 @@ import six
 
 from graphql.core.type import (
     GraphQLObjectType,
-    GraphQLInterfaceType,
-    GraphQLSchema
+    GraphQLInterfaceType
 )
-from graphql.core import graphql
 
 from graphene import signals
 from graphene.core.options import Options
@@ -33,12 +31,9 @@ class ObjectTypeMeta(type):
             meta = attr_meta
         base_meta = getattr(new_class, '_meta', None)
 
-        if '.' in module:
-            app_label, _ = module.rsplit('.', 1)
-        else:
-            app_label = module
+        schema = (base_meta and base_meta.schema)
 
-        new_class.add_to_class('_meta', Options(meta, app_label))
+        new_class.add_to_class('_meta', Options(meta, schema))
         if base_meta and base_meta.proxy:
             new_class._meta.interface = base_meta.interface
         # Add all attributes to the class.
@@ -54,6 +49,8 @@ class ObjectTypeMeta(type):
                 # Things without _meta aren't functional models, so they're
                 # uninteresting parents.
                 continue
+            if base._meta.schema != new_class._meta.schema:
+                raise Exception('The parent schema is not the same')
 
             parent_fields = base._meta.local_fields
             # Check for clashes between locally declared fields and those
@@ -138,19 +135,3 @@ class Interface(ObjectType):
     class Meta:
         interface = True
         proxy = True
-
-
-class Schema(object):
-    def __init__(self, query, mutation=None):
-        self.query = query
-        self.query_type = query._meta.type
-        self._schema = GraphQLSchema(query=self.query_type, mutation=mutation)
-
-    def execute(self, request='', root=None, vars=None, operation_name=None):
-        return graphql(
-            self._schema,
-            request=request,
-            root=root or self.query(),
-            vars=vars,
-            operation_name=operation_name
-        )

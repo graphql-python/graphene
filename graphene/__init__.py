@@ -6,6 +6,21 @@ from graphql.core.type import (
     GraphQLID as ID
 )
 
+from graphene import signals
+
+from graphene.core.schema import (
+    Schema
+)
+
+from graphene.env import (
+    get_global_schema
+)
+
+from graphene.core.types import (
+    ObjectType,
+    Interface
+)
+
 from graphene.core.fields import (
     Field,
     StringField,
@@ -14,12 +29,6 @@ from graphene.core.fields import (
     IDField,
     ListField,
     NonNullField,
-)
-
-from graphene.core.types import (
-    ObjectType,
-    Interface,
-    Schema
 )
 
 from graphene.decorators import (
