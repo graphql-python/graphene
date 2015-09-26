@@ -26,7 +26,7 @@ setup(
     name='graphene',
     version='0.1',
 
-    description='Graphene: GraphQL Object Mapper',
+    description='Graphene: Python DSL for GraphQL',
 
     url='https://github.com/syrusakbary/graphene',
 

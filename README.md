@@ -1,4 +1,4 @@
-# Graphene: GraphQL Object Mapper
+# Graphene: Python DSL for GraphQL
 
 This is a library to use GraphQL in Python in a easy way.
 It will map the models/fields to internal GraphQL-py objects without effort.
