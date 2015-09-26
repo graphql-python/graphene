@@ -77,6 +77,62 @@ query = '''
 result = Schema.execute(query)
 ```
 
+### Relay Schema
+
+Graphene also supports Relay, check the (Starwars Relay example)[/tests/starwars_relay]!
+
+```python
+import graphene
+from graphene import relay
+
+class Ship(relay.Node):
+    '''A ship in the Star Wars saga'''
+    name = graphene.StringField(description='The name of the ship.')
+
+    @classmethod
+    def get_node(cls, id):
+        ship = getShip(id)
+        if ship:
+            return Ship(ship)
+
+
+class Faction(relay.Node):
+    '''A faction in the Star Wars saga'''
+    name = graphene.StringField(description='The name of the faction.')
+    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
+
+    @resolve_only_args
+    def resolve_ships(self, **kwargs):
+        return [Ship(getShip(ship)) for ship in self.instance.ships]
+
+    @classmethod
+    def get_node(cls, id):
+        faction = getFaction(id)
+        if faction:
+            return Faction(faction)
+
+
+class Query(graphene.ObjectType):
+    rebels = graphene.Field(Faction)
+    empire = graphene.Field(Faction)
+    node = relay.NodeField()
+
+    @resolve_only_args
+    def resolve_rebels(self):
+        return Faction(getRebels())
+
+    @resolve_only_args
+    def resolve_empire(self):
+        return Faction(getEmpire())
+
+
+Schema = graphene.Schema(query=Query)
+
+# Later on, for querying
+Schema.execute('''rebels { name }''')
+
+```
+
 ## Contributing
 
 After cloning this repo, ensure dependencies are installed by running:
