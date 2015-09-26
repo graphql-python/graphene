@@ -54,7 +54,6 @@ class Options(object):
 
     def add_field(self, field):
         self.local_fields.append(field)
-        setattr(self.parent, field.field_name, field)
 
     @cached_property
     def fields(self):

@@ -2,60 +2,52 @@ import graphene
 from graphene import resolve_only_args, relay
 
 from .data import (
-    getHero, getHuman, getCharacter, getDroid,
-    Human as _Human, Droid as _Droid)
-
-Episode = graphene.Enum('Episode', dict(
-    NEWHOPE=4,
-    EMPIRE=5,
-    JEDI=6
-))
+    getFaction,
+    getShip,
+    getRebels,
+    getEmpire,
+)
 
 
-def wrap_character(character):
-    if isinstance(character, _Human):
-        return Human(character)
-    elif isinstance(character, _Droid):
-        return Droid(character)
+class Ship(relay.Node):
+    '''A ship in the Star Wars saga'''
+    name = graphene.StringField(description='The name of the ship.')
+
+    @classmethod
+    def get_node(cls, id):
+        ship = getShip(id)
+        if ship:
+            return Ship(ship)
 
 
-class Character(graphene.Interface):
-    name = graphene.StringField()
-    friends = relay.Connection('Character')
-    appearsIn = graphene.ListField(Episode)
+class Faction(relay.Node):
+    '''A faction in the Star Wars saga'''
+    name = graphene.StringField(description='The name of the faction.')
+    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
 
-    def resolve_friends(self, args, *_):
-        return [wrap_character(getCharacter(f)) for f in self.instance.friends]
+    @resolve_only_args
+    def resolve_ships(self, **kwargs):
+        return [Ship(getShip(ship)) for ship in self.instance.ships]
 
-
-class Human(relay.Node, Character):
-    homePlanet = graphene.StringField()
-
-
-class Droid(relay.Node, Character):
-    primaryFunction = graphene.StringField()
+    @classmethod
+    def get_node(cls, id):
+        faction = getFaction(id)
+        if faction:
+            return Faction(faction)
 
 
 class Query(graphene.ObjectType):
-    hero = graphene.Field(Character,
-                          episode=graphene.Argument(Episode))
-    human = graphene.Field(Human,
-                           id=graphene.Argument(graphene.String))
-    droid = graphene.Field(Droid,
-                           id=graphene.Argument(graphene.String))
-    node = graphene.Field(relay.Node)
+    rebels = graphene.Field(Faction)
+    empire = graphene.Field(Faction)
+    node = relay.NodeField()
 
     @resolve_only_args
-    def resolve_hero(self, episode):
-        return wrap_character(getHero(episode))
+    def resolve_rebels(self):
+        return Faction(getRebels())
 
     @resolve_only_args
-    def resolve_human(self, id):
-        return wrap_character(getHuman(id))
-
-    @resolve_only_args
-    def resolve_droid(self, id):
-        return wrap_character(getDroid(id))
+    def resolve_empire(self):
+        return Faction(getEmpire())
 
 
 Schema = graphene.Schema(query=Query)

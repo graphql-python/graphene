@@ -29,7 +29,7 @@ def test_interface():
     assert Character._meta.type_name == 'Character'
     assert isinstance(object_type, GraphQLInterfaceType)
     assert object_type.description == 'Character description'
-    assert object_type.get_fields() == {'name': Character.name.field}
+    assert object_type.get_fields() == {'name': Character._meta.fields_map['name'].field}
 
 def test_object_type():
     object_type = Human._meta.type
@@ -37,5 +37,5 @@ def test_object_type():
     assert Human._meta.type_name == 'Human'
     assert isinstance(object_type, GraphQLObjectType)
     assert object_type.description == 'Human description'
-    assert object_type.get_fields() == {'name': Character.name.field, 'friends': Human.friends.field}
+    assert object_type.get_fields() == {'name': Character._meta.fields_map['name'].field, 'friends': Human._meta.fields_map['friends'].field}
     assert object_type.get_interfaces() == [Character._meta.type]

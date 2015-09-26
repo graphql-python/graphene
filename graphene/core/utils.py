@@ -7,17 +7,23 @@ registered_object_types = []
 
 
 def get_object_type(field_type, object_type=None):
+    native_type = get_type(field_type, object_type)
+    if native_type:
+        field_type = native_type._meta.type
+    return field_type 
+
+
+def get_type(field_type, object_type=None):
     _is_class = inspect.isclass(field_type)
     if _is_class and issubclass(field_type, ObjectType):
-        field_type = field_type._meta.type
+        return field_type
     elif isinstance(field_type, basestring):
         if field_type == 'self':
-            field_type = object_type._meta.type
+            return object_type
         else:
             object_type = get_registered_object_type(field_type, object_type)
-            field_type = object_type._meta.type
-    return field_type
-
+            return object_type
+    return None
 
 def get_registered_object_type(name, object_type=None):
     app_label = None

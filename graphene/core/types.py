@@ -91,6 +91,10 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
         self.instance = instance
         signals.post_init.send(self.__class__, instance=self)
 
+    def __getattr__(self, name):
+        if self.instance:
+            return getattr(self.instance, name)
+
     def get_field(self, field):
         return getattr(self.instance, field, None)
 

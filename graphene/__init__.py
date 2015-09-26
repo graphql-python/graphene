@@ -1,7 +1,6 @@
 from graphql.core.type import (
     GraphQLEnumType as Enum,
     GraphQLArgument as Argument,
-    # GraphQLSchema as Schema,
     GraphQLString as String,
     GraphQLInt as Int,
     GraphQLID as ID
@@ -25,8 +24,4 @@ from graphene.core.types import (
 
 from graphene.decorators import (
     resolve_only_args
-)
-
-from graphene.relay import (
-    Relay
 )

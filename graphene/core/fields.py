@@ -99,6 +99,12 @@ class Field(object):
         return '<%s>' % path
 
 
+class NativeField(Field):
+    def __init__(self, field=None):
+        super(NativeField, self).__init__(None)
+        self.field = field or getattr(self, 'field')
+
+
 class TypeField(Field):
     def __init__(self, *args, **kwargs):
         super(TypeField, self).__init__(self.field_type, *args, **kwargs)
