@@ -9,20 +9,23 @@ Episode = graphene.Enum('Episode', dict(
     JEDI = 6
 ))
 
+
 def wrap_character(character):
     if isinstance(character, _Human): 
         return Human(character)
     elif isinstance(character, _Droid):
         return Droid(character)
 
+
 class Character(graphene.Interface):
     id = graphene.IDField()
     name = graphene.StringField()
-    friends = graphene.ListField('Character')
+    friends = graphene.ListField('self')
     appearsIn = graphene.ListField(Episode)
 
     def resolve_friends(self, args, *_):
         return [wrap_character(getCharacter(f)) for f in self.instance.friends]
+
 
 class Human(Character):
     homePlanet = graphene.StringField()
@@ -50,8 +53,6 @@ class Query(graphene.ObjectType):
     @resolve_only_args
     def resolve_human(self, id):
         return wrap_character(getHuman(id))
-        if human:
-            return Human(human)
 
     @resolve_only_args
     def resolve_droid(self, id):
