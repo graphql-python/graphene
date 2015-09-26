@@ -24,12 +24,12 @@ def get_registered_object_type(name, object_type=None):
     object_type_name = name
 
     if '.' in name:
-        app_label, object_type_name = name.split('.', 1)
+        app_label, object_type_name = name.rsplit('.', 1)
     elif object_type:
         app_label = object_type._meta.app_label
 
     # Filter all registered object types which have the same name
-    ots = [ot for ot in registered_object_types if ot._meta.type_name == name]
+    ots = [ot for ot in registered_object_types if ot._meta.type_name == object_type_name]
     # If the list have more than one object type with the name, filter by
     # the app_label
     if len(ots)>1 and app_label:

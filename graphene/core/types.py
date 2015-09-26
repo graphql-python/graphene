@@ -33,7 +33,12 @@ class ObjectTypeMeta(type):
             meta = attr_meta
         base_meta = getattr(new_class, '_meta', None)
 
-        new_class.add_to_class('_meta', Options(meta, module))
+        if '.' in module:
+            app_label, _ = module.rsplit('.', 1)
+        else:
+            app_label = module
+
+        new_class.add_to_class('_meta', Options(meta, app_label))
         if base_meta and base_meta.proxy:
             new_class._meta.interface = base_meta.interface
         # Add all attributes to the class.
