@@ -1,17 +1,18 @@
 from graphene.utils import cached_property
 
-DEFAULT_NAMES = ('description', 'name', 'interface',
+DEFAULT_NAMES = ('app_label', 'description', 'name', 'interface',
                  'type_name', 'interfaces',  'proxy')
 
 
 class Options(object):
-    def __init__(self, meta=None):
+    def __init__(self, meta=None, app_label=None):
         self.meta = meta
         self.local_fields = []
         self.interface = False
         self.proxy = False
         self.interfaces = []
         self.parents = []
+        self.app_label = app_label
 
     def contribute_to_class(self, cls, name):
         cls._meta = self
