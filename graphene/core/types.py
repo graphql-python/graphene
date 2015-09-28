@@ -83,6 +83,13 @@ class ObjectTypeMeta(type):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
+    def __new__(cls, instance=None, *args, **kwargs):
+        if cls._meta.interface:
+            raise Exception("An interface cannot be initialized")
+        if instance == None:
+            return None
+        return super(ObjectType, cls).__new__(cls, instance, *args, **kwargs)
+
     def __init__(self, instance=None):
         signals.pre_init.send(self.__class__, instance=instance)
         self.instance = instance
@@ -135,6 +142,7 @@ class Interface(ObjectType):
     class Meta:
         interface = True
         proxy = True
+
 
 @signals.init_schema.connect
 def add_types_to_schema(schema):

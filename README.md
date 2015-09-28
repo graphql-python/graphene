@@ -51,8 +51,6 @@ class Query(graphene.ObjectType):
     @resolve_only_args
     def resolve_human(self, id):
         return wrap_character(getHuman(id))
-        if human:
-            return Human(human)
 
     @resolve_only_args
     def resolve_droid(self, id):
@@ -91,9 +89,7 @@ class Ship(relay.Node):
 
     @classmethod
     def get_node(cls, id):
-        ship = getShip(id)
-        if ship:
-            return Ship(ship)
+        return Ship(getShip(id))
 
 
 class Faction(relay.Node):
@@ -107,9 +103,7 @@ class Faction(relay.Node):
 
     @classmethod
     def get_node(cls, id):
-        faction = getFaction(id)
-        if faction:
-            return Faction(faction)
+        return Faction(getFaction(id)
 
 
 class Query(graphene.ObjectType):

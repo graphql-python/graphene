@@ -43,10 +43,11 @@ class Schema(object):
         return self._types[type_name]
 
     def execute(self, request='', root=None, vars=None, operation_name=None):
+        root = root or object()
         return graphql(
             self._schema,
             request=request,
-            root=root or self.query(),
+            root=self.query(root),
             vars=vars,
             operation_name=operation_name
         )

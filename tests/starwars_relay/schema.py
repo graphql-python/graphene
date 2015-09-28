@@ -14,9 +14,7 @@ class Ship(relay.Node):
 
     @classmethod
     def get_node(cls, id):
-        ship = getShip(id)
-        if ship:
-            return Ship(ship)
+        return Ship(getShip(id))
 
 
 class Faction(relay.Node):
@@ -30,9 +28,7 @@ class Faction(relay.Node):
 
     @classmethod
     def get_node(cls, id):
-        faction = getFaction(id)
-        if faction:
-            return Faction(faction)
+        return Faction(getFaction(id))
 
 
 class Query(graphene.ObjectType):
