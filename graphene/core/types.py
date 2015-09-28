@@ -49,8 +49,8 @@ class ObjectTypeMeta(type):
                 # Things without _meta aren't functional models, so they're
                 # uninteresting parents.
                 continue
-            if base._meta.schema != new_class._meta.schema:
-                raise Exception('The parent schema is not the same')
+            # if base._meta.schema != new_class._meta.schema:
+            #     raise Exception('The parent schema is not the same')
 
             parent_fields = base._meta.local_fields
             # Check for clashes between locally declared fields and those
@@ -135,3 +135,19 @@ class Interface(ObjectType):
     class Meta:
         interface = True
         proxy = True
+
+@signals.init_schema.connect
+def add_types_to_schema(schema):
+    own_schema = schema
+    class _Interface(Interface):
+        class Meta:
+            schema = own_schema
+            proxy = True
+
+    class _ObjectType(ObjectType):
+        class Meta:
+            schema = own_schema
+            proxy = True
+    
+    setattr(own_schema, 'Interface', _Interface)
+    setattr(own_schema, 'ObjectType', _ObjectType)

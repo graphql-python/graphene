@@ -4,7 +4,7 @@ from graphql.core.type import (
 )
 from graphene import signals
 from graphene.utils import cached_property
-# from graphene.relay.nodes import create_node_definitions
+
 
 class Schema(object):
     _query = None
@@ -14,27 +14,15 @@ class Schema(object):
         self.query = query
         self.name = name
         self._types = {}
-        
+        signals.init_schema.send(self)
+
     def __repr__(self):
-        return '<Schema: %s>' % str(self.name)
-
-    # @cachedproperty
-    # def node_definitions(self):
-    #     return [object, object]
-    #     # from graphene.relay import create_node_definitions
-    #     # return create_node_definitions(schema=self)
-
-    # @property
-    # def Node(self):
-    #     return self.node_definitions[0]
-
-    # @property
-    # def NodeField(self):
-    #     return self.node_definitions[1]
+        return '<Schema: %s (%s)>' % (str(self.name), hash(self))
 
     @property
     def query(self):
         return self._query
+
     @query.setter
     def query(self, query):
         if not query:
@@ -69,5 +57,3 @@ def object_type_created(object_type):
     schema = object_type._meta.schema
     if schema:
         schema.register_type(object_type)
-
-from graphene.env import get_global_schema

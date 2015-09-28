@@ -20,6 +20,7 @@ class Character(Interface):
     name = StringField()
     class Meta:
         type_name = 'core.Character'
+
 class Human(Character):
     '''Human description'''
     friends = StringField()

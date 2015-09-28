@@ -1,7 +1,7 @@
 from pytest import raises
 from graphql.core import graphql
 
-from .schema import Schema
+from .schema import schema
 
 def test_correctly_fetches_id_name_rebels():
     query = '''
@@ -18,7 +18,7 @@ def test_correctly_fetches_id_name_rebels():
         'name': 'Alliance to Restore the Republic'
       }
     }
-    result = Schema.execute(query)
+    result = schema.execute(query)
     assert result.errors == None
     assert result.data == expected
 
@@ -39,7 +39,7 @@ def test_correctly_refetches_rebels():
         'name': 'Alliance to Restore the Republic'
       }
     }
-    result = Schema.execute(query)
+    result = schema.execute(query)
     assert result.errors == None
     assert result.data == expected
 
@@ -58,7 +58,7 @@ def test_correctly_fetches_id_name_empire():
         'name': 'Galactic Empire'
       }
     }
-    result = Schema.execute(query)
+    result = schema.execute(query)
     assert result.errors == None
     assert result.data == expected
 
@@ -79,7 +79,7 @@ def test_correctly_refetches_empire():
         'name': 'Galactic Empire'
       }
     }
-    result = Schema.execute(query)
+    result = schema.execute(query)
     assert result.errors == None
     assert result.data == expected
 
@@ -100,6 +100,6 @@ def test_correctly_refetches_xwing():
         'name': 'X-Wing'
       }
     }
-    result = Schema.execute(query)
+    result = schema.execute(query)
     assert result.errors == None
     assert result.data == expected

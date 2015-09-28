@@ -11,7 +11,7 @@ class Options(object):
         self.local_fields = []
         self.interface = False
         self.proxy = False
-        self.schema = schema or get_global_schema()
+        self.schema = schema
         self.interfaces = []
         self.parents = []
 

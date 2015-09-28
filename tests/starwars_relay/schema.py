@@ -8,8 +8,6 @@ from .data import (
     getEmpire,
 )
 
-schema = graphene.Schema()
-
 class Ship(relay.Node):
     '''A ship in the Star Wars saga'''
     name = graphene.StringField(description='The name of the ship.')
@@ -20,8 +18,6 @@ class Ship(relay.Node):
         if ship:
             return Ship(ship)
 
-    # class Meta:
-    #     schema = schema
 
 class Faction(relay.Node):
     '''A faction in the Star Wars saga'''
@@ -38,9 +34,6 @@ class Faction(relay.Node):
         if faction:
             return Faction(faction)
 
-    # class Meta:
-    #     schema = schema
-
 
 class Query(graphene.ObjectType):
     rebels = graphene.Field(Faction)
@@ -56,10 +49,4 @@ class Query(graphene.ObjectType):
         return Faction(getEmpire())
 
 
-    # class Meta:
-    #     schema = schema
-
-print '*CACA', schema._types
-
-schema.query = Query
-Schema = schema
+schema = graphene.Schema(query=Query, name='Starwars Relay Schema')

@@ -1,7 +1,7 @@
 from pytest import raises
 from graphql.core import graphql
 
-from .schema import Schema
+from .schema import schema
 
 def test_correct_fetch_first_ship_rebels():
     query = '''
@@ -32,6 +32,6 @@ def test_correct_fetch_first_ship_rebels():
         }
       }
     }
-    result = Schema.execute(query)
+    result = schema.execute(query)
     assert result.errors == None
     assert result.data == expected
