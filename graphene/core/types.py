@@ -11,9 +11,11 @@ from graphene.core.options import Options
 
 
 class ObjectTypeMeta(type):
+    options_cls = Options
+
     def __new__(cls, name, bases, attrs):
         super_new = super(ObjectTypeMeta, cls).__new__
-        parents = [b for b in bases if isinstance(b, ObjectTypeMeta)]
+        parents = [b for b in bases if isinstance(b, cls)]
         if not parents:
             # If this isn't a subclass of Model, don't do anything special.
             return super_new(cls, name, bases, attrs)
@@ -25,20 +27,26 @@ class ObjectTypeMeta(type):
             '__doc__': doc
         })
         attr_meta = attrs.pop('Meta', None)
+        proxy = None
         if not attr_meta:
-            meta = getattr(new_class, 'Meta', None)
+            meta = None
+            # meta = getattr(new_class, 'Meta', None)
         else:
             meta = attr_meta
+
         base_meta = getattr(new_class, '_meta', None)
 
         schema = (base_meta and base_meta.schema)
 
-        new_class.add_to_class('_meta', Options(meta, schema))
+        new_class.add_to_class('_meta', new_class.options_cls(meta, schema))
+
         if base_meta and base_meta.proxy:
             new_class._meta.interface = base_meta.interface
+
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
+        new_class.add_extra_fields()
 
         new_fields = new_class._meta.local_fields
         field_names = {f.field_name for f in new_fields}
@@ -70,6 +78,9 @@ class ObjectTypeMeta(type):
 
         new_class._prepare()
         return new_class
+
+    def add_extra_fields(cls):
+        pass
 
     def _prepare(cls):
         signals.class_prepared.send(cls)

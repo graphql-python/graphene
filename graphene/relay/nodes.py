@@ -25,7 +25,7 @@ def create_node_definitions(getNode=None, getNodeType=getNodeType, schema=None):
     getNode = getNode or getSchemaNode(schema)
     _nodeDefinitions = nodeDefinitions(getNode, getNodeType)
 
-    _Interface = getattr(schema,'Interface', Interface)
+    _Interface = getattr(schema, 'Interface', Interface)
 
     class Node(_Interface):
         @classmethod

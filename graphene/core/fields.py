@@ -8,8 +8,10 @@ from graphql.core.type import (
     GraphQLBoolean,
     GraphQLID,
     GraphQLArgument,
+    GraphQLFloat,
 )
 from graphene.utils import cached_property
+from graphene.core.types import ObjectType
 
 class Field(object):
     def __init__(self, field_type, resolve=None, null=True, args=None, description='', **extra_args):
@@ -44,7 +46,6 @@ class Field(object):
         return resolve_fn(instance, args, info)
 
     def get_object_type(self):
-        from graphene.core.types import ObjectType
         field_type = self.field_type
         _is_class = inspect.isclass(field_type)
         if _is_class and issubclass(field_type, ObjectType):
@@ -141,6 +142,10 @@ class BooleanField(TypeField):
 
 class IDField(TypeField):
     field_type = GraphQLID
+
+
+class FloatField(TypeField):
+    field_type = GraphQLFloat
 
 
 class ListField(Field):
