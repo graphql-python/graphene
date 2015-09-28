@@ -42,6 +42,10 @@ class Schema(object):
             raise Exception('Type %s not found in %r' % (type_name, self))
         return self._types[type_name]
 
+    @property
+    def types(self):
+        return self._types
+
     def execute(self, request='', root=None, vars=None, operation_name=None):
         root = root or object()
         return graphql(

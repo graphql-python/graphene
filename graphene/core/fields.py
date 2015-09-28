@@ -76,8 +76,8 @@ class Field(object):
 
     @cached_property
     def field(self):
-        if not self.field_type:
-            raise Exception('Must specify a field GraphQL type for the field %s'%self.field_name)
+        # if not self.field_type:
+        #     raise Exception('Must specify a field GraphQL type for the field %s'%self.field_name)
 
         if not self.object_type:
             raise Exception('Field could not be constructed in a non graphene.Type or graphene.Interface')

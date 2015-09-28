@@ -74,6 +74,14 @@ def test_should_node():
         def get_node(cls, id):
             return ReporterNodeType(Reporter(id=2, first_name='Cookie Monster'))
 
+    class ArticleNodeType(DjangoNode):
+        class Meta:
+            model = Article
+
+        @classmethod
+        def get_node(cls, id):
+            return ArticleNodeType(None)
+
     class Query(graphene.ObjectType):
         node = relay.NodeField()
         reporter = graphene.Field(ReporterNodeType)
