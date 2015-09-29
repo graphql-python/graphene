@@ -153,20 +153,3 @@ class Interface(ObjectType):
     class Meta:
         interface = True
         proxy = True
-
-
-@signals.init_schema.connect
-def add_types_to_schema(schema):
-    own_schema = schema
-    class _Interface(Interface):
-        class Meta:
-            schema = own_schema
-            proxy = True
-
-    class _ObjectType(ObjectType):
-        class Meta:
-            schema = own_schema
-            proxy = True
-    
-    setattr(own_schema, 'Interface', _Interface)
-    setattr(own_schema, 'ObjectType', _ObjectType)

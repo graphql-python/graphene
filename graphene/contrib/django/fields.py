@@ -1,6 +1,7 @@
 from graphene.core.fields import (
     ListField
 )
+from graphene import relay
 
 from graphene.core.fields import Field, LazyField
 from graphene.utils import cached_property
@@ -21,8 +22,8 @@ class ConnectionOrListField(LazyField):
         schema = self.schema
         model_field = self.field_type
         field_object_type = model_field.get_object_type()
-        if field_object_type and issubclass(field_object_type, schema.relay.Node):
-            field = schema.relay.ConnectionField(model_field)
+        if field_object_type and issubclass(field_object_type, schema.Node):
+            field = relay.ConnectionField(model_field)
         else:
             field = ListField(model_field)
         field.contribute_to_class(self.object_type, self.field_name)

@@ -7,14 +7,12 @@ from graphql_relay.connection.connection import (
 
 from graphene import signals
 from graphene.core.fields import NativeField
-from graphene.relay.utils import get_relay, setup
-from graphene.relay.relay import Relay
 
 
 @signals.class_prepared.connect
 def object_type_created(object_type):
-    relay = get_relay(object_type._meta.schema)
-    if relay and issubclass(object_type, relay.Node):
+    schema = object_type._meta.schema
+    if issubclass(object_type, schema.Node) and object_type != schema.Node:
         if object_type._meta.proxy:
             return
         type_name = object_type._meta.type_name
@@ -24,8 +22,3 @@ def object_type_created(object_type):
 
         connection = connectionDefinitions(type_name, object_type._meta.type).connectionType
         object_type.add_to_class('connection', connection)
-
-
-@signals.init_schema.connect
-def schema_created(schema):
-    setup(schema)

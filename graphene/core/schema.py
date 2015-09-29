@@ -42,6 +42,9 @@ class Schema(object):
             raise Exception('Type %s not found in %r' % (type_name, self))
         return self._types[type_name]
 
+    def __getattr__(self, name):
+        return self.get_type(name)
+
     @property
     def types(self):
         return self._types

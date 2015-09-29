@@ -4,40 +4,34 @@ from graphql_relay.node.node import (
 )
 from graphene.env import get_global_schema
 from graphene.core.types import Interface
-from graphene.core.fields import Field, LazyNativeField
+from graphene.core.fields import LazyNativeField
 
 
-def getSchemaNode(schema=None):
-    def getNode(globalId, *args):
-        _schema = schema or get_global_schema()
-        resolvedGlobalId = fromGlobalId(globalId)
-        _type, _id = resolvedGlobalId.type, resolvedGlobalId.id
-        object_type = schema.get_type(_type) 
-        return object_type.get_node(_id)
-    return getNode
-
-
-def getNodeType(obj):
+def get_node_type(obj):
     return obj._meta.type
 
 
-def create_node_definitions(getNode=None, getNodeType=getNodeType, schema=None):
-    getNode = getNode or getSchemaNode(schema)
-    _nodeDefinitions = nodeDefinitions(getNode, getNodeType)
+def get_node(schema, globalId, *args):
+    resolvedGlobalId = fromGlobalId(globalId)
+    _type, _id = resolvedGlobalId.type, resolvedGlobalId.id
+    object_type = schema.get_type(_type)
+    return object_type.get_node(_id)
 
-    _Interface = getattr(schema, 'Interface', Interface)
+class Node(Interface):
+    _definitions = None
 
-    class Node(_Interface):
-        @classmethod
-        def get_graphql_type(cls):
-            if cls is Node:
-                # Return only nodeInterface when is the Node Inerface
-                return _nodeDefinitions.nodeInterface
-            return super(Node, cls).get_graphql_type()
+    @classmethod
+    def contribute_to_schema(cls, schema):
+        if cls._definitions:
+            return
+        schema = cls._meta.schema
+        cls._definitions = nodeDefinitions(lambda *args: get_node(schema, *args), get_node_type)
 
+    @classmethod
+    def get_graphql_type(cls):
+        if cls is cls._meta.schema.Node:
+            # Return only nodeInterface when is the Node Inerface
+            cls.contribute_to_schema(cls._meta.schema)
+            return cls._definitions.nodeInterface
+        return super(Node, cls).get_graphql_type()
 
-    class NodeField(LazyNativeField):
-        def get_field(self):
-            return _nodeDefinitions.nodeField
-
-    return Node, NodeField

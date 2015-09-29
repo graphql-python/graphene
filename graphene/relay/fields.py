@@ -6,9 +6,8 @@ from graphql_relay.connection.arrayconnection import (
 from graphql_relay.connection.connection import (
     connectionArgs
 )
-from graphene.core.fields import Field
+from graphene.core.fields import Field, LazyNativeField
 from graphene.utils import cached_property
-from graphene.relay.utils import get_relay
 
 
 class ConnectionField(Field):
@@ -25,6 +24,10 @@ class ConnectionField(Field):
     @cached_property
     def type(self):
         object_type = self.get_object_type()
-        relay = get_relay(object_type._meta.schema)
-        assert issubclass(object_type, relay.Node), 'Only nodes have connections.'
+        assert issubclass(object_type, self.schema.Node), 'Only nodes have connections.'
         return object_type.connection
+
+
+class NodeField(LazyNativeField):
+    def get_field(self):
+        return self.schema.Node._definitions.nodeField

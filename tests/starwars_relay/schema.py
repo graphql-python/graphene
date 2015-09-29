@@ -1,5 +1,5 @@
 import graphene
-from graphene import resolve_only_args
+from graphene import resolve_only_args, relay
 
 from .data import (
     getFaction,
@@ -9,7 +9,6 @@ from .data import (
 )
 
 schema = graphene.Schema(name='Starwars Relay Schema')
-relay = schema.relay
 
 class Ship(relay.Node):
     '''A ship in the Star Wars saga'''
@@ -34,7 +33,7 @@ class Faction(relay.Node):
         return Faction(getFaction(id))
 
 
-class Query(schema.ObjectType):
+class Query(graphene.ObjectType):
     rebels = graphene.Field(Faction)
     empire = graphene.Field(Faction)
     node = relay.NodeField()
