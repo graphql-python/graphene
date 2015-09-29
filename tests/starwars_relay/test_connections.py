@@ -33,5 +33,5 @@ def test_correct_fetch_first_ship_rebels():
       }
     }
     result = schema.execute(query)
-    assert result.errors == None
+    assert not result.errors
     assert result.data == expected
