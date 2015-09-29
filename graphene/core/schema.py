@@ -59,6 +59,9 @@ class Schema(object):
             operation_name=operation_name
         )
 
+    def introspect(self):
+        return self._schema.get_type_map()
+
 
 @signals.class_prepared.connect
 def object_type_created(object_type):
