@@ -138,6 +138,16 @@ class LazyField(Field):
     def field(self):
         return self.inner_field.field
 
+
+class LazyNativeField(LazyField):
+    def __init__(self, *args, **kwargs):
+        super(LazyNativeField, self).__init__(None, *args, **kwargs)
+
+    @cached_property
+    def field(self):
+        return self.inner_field
+
+
 class TypeField(Field):
     def __init__(self, *args, **kwargs):
         super(TypeField, self).__init__(self.field_type, *args, **kwargs)

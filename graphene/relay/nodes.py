@@ -4,7 +4,7 @@ from graphql_relay.node.node import (
 )
 from graphene.env import get_global_schema
 from graphene.core.types import Interface
-from graphene.core.fields import Field, NativeField
+from graphene.core.fields import Field, LazyNativeField
 
 
 def getSchemaNode(schema=None):
@@ -36,7 +36,8 @@ def create_node_definitions(getNode=None, getNodeType=getNodeType, schema=None):
             return super(Node, cls).get_graphql_type()
 
 
-    class NodeField(NativeField):
-        field = _nodeDefinitions.nodeField
+    class NodeField(LazyNativeField):
+        def get_field(self):
+            return _nodeDefinitions.nodeField
 
     return Node, NodeField
