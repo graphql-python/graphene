@@ -46,7 +46,11 @@ def _(field, cls):
 
 @convert_django_field.register(models.ManyToOneRel)
 def _(field, cls):
-    return ListField(DjangoModelField(field.related_model))
+    schema = cls._meta.schema
+    model_field = DjangoModelField(field.related_model)
+    if issubclass(cls, schema.relay.Node):
+        return schema.relay.ConnectionField(model_field)
+    return ListField(model_field)
 
 
 @convert_django_field.register(models.ForeignKey)

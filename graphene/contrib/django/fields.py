@@ -10,7 +10,7 @@ def get_type_for_model(schema, model):
     for _type in types:
         type_model = getattr(_type._meta, 'model', None)
         if model == type_model:
-            return _type._meta.type
+            return _type
 
 
 class DjangoModelField(Field):
@@ -20,4 +20,13 @@ class DjangoModelField(Field):
 
     @cached_property
     def type(self):
-        return get_type_for_model(self.schema, self.model)
+        _type = self.get_object_type()
+        return _type and _type._meta.type
+
+    def get_object_type(self):
+        _type = get_type_for_model(self.schema, self.model)
+        if not _type and self.object_type._meta.only_fields:
+            # We will only raise the exception if the related field is specified in only_fields
+            raise Exception("Field %s (%s) model not mapped in current schema" % (self, self.model._meta.object_name))
+        
+        return _type

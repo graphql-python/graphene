@@ -5,6 +5,7 @@ from graphene.core.options import Options
 
 VALID_ATTRS = ('model', 'only_fields')
 
+
 class DjangoOptions(Options):
     def __init__(self, *args, **kwargs):
         self.model = None

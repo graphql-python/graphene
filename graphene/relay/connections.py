@@ -7,7 +7,7 @@ from graphql_relay.connection.connection import (
 
 from graphene import signals
 from graphene.core.fields import NativeField
-from graphene.relay.utils import get_relay
+from graphene.relay.utils import get_relay, setup
 from graphene.relay.relay import Relay
 
 
@@ -28,4 +28,4 @@ def object_type_created(object_type):
 
 @signals.init_schema.connect
 def schema_created(schema):
-    setattr(schema, 'relay', Relay(schema))
+    setup(schema)

@@ -13,8 +13,10 @@ from graphene.relay.relay import (
 )
 
 from graphene.env import get_global_schema
+from graphene.relay.utils import setup
 
 schema = get_global_schema()
+setup(schema)
 relay = schema.relay
 
 Node, NodeField = relay.Node, relay.NodeField

@@ -11,18 +11,10 @@ class Options(object):
         self.local_fields = []
         self.interface = False
         self.proxy = False
-        self.schema = schema
+        self.schema = schema or get_global_schema()
         self.interfaces = []
         self.parents = []
         self.valid_attrs = DEFAULT_NAMES
-
-    # @property
-    # def schema(self):
-    #     return self._schema or get_global_schema()
-
-    # @schema.setter
-    # def schema(self, schema):
-    #     self._schema = schema
     
     def contribute_to_class(self, cls, name):
         cls._meta = self

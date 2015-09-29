@@ -48,6 +48,8 @@ class Field(object):
     def get_object_type(self):
         field_type = self.field_type
         _is_class = inspect.isclass(field_type)
+        if isinstance(field_type, Field):
+            return field_type.get_object_type()
         if _is_class and issubclass(field_type, ObjectType):
             return field_type
         elif isinstance(field_type, basestring):

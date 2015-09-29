@@ -25,12 +25,31 @@ def test_should_raise_if_model_is_invalid():
     assert 'not a Django model' in str(excinfo.value)
 
 
+def test_should_raise_if_model_is_invalid():
+    with raises(Exception) as excinfo:
+        class ReporterTypeError(DjangoObjectType):
+            class Meta:
+                model = Reporter
+                only_fields = ('articles', )
+
+        schema = graphene.Schema(query=ReporterTypeError)
+        query = '''
+            query ReporterQuery {
+              articles
+            }
+        '''
+        result = schema.execute(query)
+        assert not result.errors
+
+    assert 'articles (Article) model not mapped in current schema' in str(excinfo.value)
+
+
 def test_should_map_fields():
     class ReporterType(DjangoObjectType):
         class Meta:
             model = Reporter
 
-    class Query(graphene.ObjectType):
+    class Query2(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
 
         def resolve_reporter(self, *args, **kwargs):
@@ -52,7 +71,7 @@ def test_should_map_fields():
             'email': ''
         }
     }
-    Schema = graphene.Schema(query=Query)
+    Schema = graphene.Schema(query=Query2)
     result = Schema.execute(query)
     assert not result.errors
     assert result.data == expected
@@ -74,15 +93,18 @@ def test_should_node():
         def get_node(cls, id):
             return ReporterNodeType(Reporter(id=2, first_name='Cookie Monster'))
 
+        def resolve_articles(self, *args, **kwargs):
+            return [ArticleNodeType(Article(headline='Hi!'))]
+
     class ArticleNodeType(DjangoNode):
         class Meta:
             model = Article
 
         @classmethod
         def get_node(cls, id):
-            return ArticleNodeType(None)
+            return ArticleNodeType(Article(id=1, headline='Article node'))
 
-    class Query(graphene.ObjectType):
+    class Query1(graphene.ObjectType):
         node = relay.NodeField()
         reporter = graphene.Field(ReporterNodeType)
 
@@ -94,13 +116,23 @@ def test_should_node():
           reporter {
             id,
             first_name,
+            articles {
+              edges {
+                node {
+                  headline
+                }
+              }
+            }
             last_name,
             email
           }
-          aCustomNode: node(id:"UmVwb3J0ZXJOb2RlVHlwZToy") {
+          my_article: node(id:"QXJ0aWNsZU5vZGVUeXBlOjE=") {
             id
             ... on ReporterNodeType {
                 first_name
+            }
+            ... on ArticleNodeType {
+                headline
             }
           }
         }
@@ -110,14 +142,21 @@ def test_should_node():
             'id': 'UmVwb3J0ZXJOb2RlVHlwZTox',
             'first_name': 'ABA',
             'last_name': 'X',
-            'email': ''
+            'email': '',
+            'articles': {
+              'edges': [{
+                'node': {
+                  'headline': 'Hi!'
+                }
+              }]
+            },
         },
-        'aCustomNode': {
-            'id': 'UmVwb3J0ZXJOb2RlVHlwZToy',
-            'first_name': 'Cookie Monster'
+        'my_article': {
+            'id': 'QXJ0aWNsZU5vZGVUeXBlOjE=',
+            'headline': 'Article node'
         }
     }
-    Schema = graphene.Schema(query=Query)
+    Schema = graphene.Schema(query=Query1)
     result = Schema.execute(query)
     assert not result.errors
     assert result.data == expected
