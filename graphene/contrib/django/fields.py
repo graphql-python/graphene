@@ -1,6 +1,9 @@
-from graphene.core.fields import Field
-from graphene.utils import cached_property
+from graphene.core.fields import (
+    ListField
+)
 
+from graphene.core.fields import Field, LazyField
+from graphene.utils import cached_property
 from graphene.env import get_global_schema
 
 
@@ -11,6 +14,19 @@ def get_type_for_model(schema, model):
         type_model = getattr(_type._meta, 'model', None)
         if model == type_model:
             return _type
+
+
+class ConnectionOrListField(LazyField):
+    def get_field(self):
+        schema = self.schema
+        model_field = self.field_type
+        field_object_type = model_field.get_object_type()
+        if field_object_type and issubclass(field_object_type, schema.relay.Node):
+            field = schema.relay.ConnectionField(model_field)
+        else:
+            field = ListField(model_field)
+        field.contribute_to_class(self.object_type, self.field_name)
+        return field
 
 
 class DjangoModelField(Field):

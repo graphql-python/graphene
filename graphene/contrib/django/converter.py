@@ -9,7 +9,7 @@ from graphene.core.fields import (
     FloatField,
     ListField
 )
-from graphene.contrib.django.fields import DjangoModelField
+from graphene.contrib.django.fields import ConnectionOrListField, DjangoModelField
 
 @singledispatch
 def convert_django_field(field, cls):
@@ -48,9 +48,7 @@ def _(field, cls):
 def _(field, cls):
     schema = cls._meta.schema
     model_field = DjangoModelField(field.related_model)
-    if issubclass(cls, schema.relay.Node):
-        return schema.relay.ConnectionField(model_field)
-    return ListField(model_field)
+    return ConnectionOrListField(model_field)
 
 
 @convert_django_field.register(models.ForeignKey)

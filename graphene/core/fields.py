@@ -125,6 +125,19 @@ class NativeField(Field):
         self.field = field or getattr(self, 'field')
 
 
+class LazyField(Field):
+    @cached_property
+    def inner_field(self):
+        return self.get_field()
+
+    @cached_property
+    def type(self):
+        return self.inner_field.type
+
+    @cached_property
+    def field(self):
+        return self.inner_field.field
+
 class TypeField(Field):
     def __init__(self, *args, **kwargs):
         super(TypeField, self).__init__(self.field_type, *args, **kwargs)
