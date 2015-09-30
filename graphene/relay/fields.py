@@ -21,8 +21,9 @@ class ConnectionField(Field):
     def resolve(self, instance, args, info):
         resolved = super(ConnectionField, self).resolve(instance, args, info)
         if resolved:
-            assert isinstance(resolved, collections.Iterable), 'Resolved value from the connection field have to be iterable'
             resolved = self.wrap_resolved(resolved, instance, args, info)
+            print resolved
+            assert isinstance(resolved, collections.Iterable), 'Resolved value from the connection field have to be iterable'
             return connectionFromArray(resolved, args)
 
     @cached_property

@@ -8,6 +8,8 @@ from graphene.utils import cached_property
 from graphene.env import get_global_schema
 
 from django.db.models.query import QuerySet
+from django.db.models.manager import Manager
+
 
 def get_type_for_model(schema, model):
     schema = schema or get_global_schema()
@@ -20,9 +22,9 @@ def get_type_for_model(schema, model):
 
 class DjangoConnectionField(relay.ConnectionField):
     def wrap_resolved(self, value, instance, args, info):
-        if isinstance(value, QuerySet):
+        if isinstance(value, (QuerySet, Manager)):
             cls = instance.__class__
-            value = [cls(s) for s in value]
+            value = [cls(s) for s in value.all()]
         return value
 
 
