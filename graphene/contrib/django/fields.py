@@ -31,8 +31,8 @@ class ConnectionOrListField(LazyField):
 
 
 class DjangoModelField(Field):
-    def __init__(self, model):
-        super(DjangoModelField, self).__init__(None)
+    def __init__(self, model, *args, **kwargs):
+        super(DjangoModelField, self).__init__(None, *args, **kwargs)
         self.model = model
 
     @cached_property
