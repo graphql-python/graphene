@@ -44,6 +44,13 @@ def test_should_raise_if_model_is_invalid():
     assert 'articles (Article) model not mapped in current schema' in str(excinfo.value)
 
 
+
+def test_should_map_fields_correctly():
+    class ReporterType2(DjangoObjectType):
+        class Meta:
+            model = Reporter
+    assert ReporterType2._meta.fields_map.keys() == ['articles', 'first_name', 'last_name', 'id', 'email']
+
 def test_should_map_fields():
     class ReporterType(DjangoObjectType):
         class Meta:
