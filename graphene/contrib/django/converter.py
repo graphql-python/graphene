@@ -59,7 +59,6 @@ def _(field, cls):
 @convert_django_field.register(models.ManyToManyField)
 @convert_django_field.register(models.ManyToOneRel)
 def _(field, cls):
-    schema = cls._meta.schema
     model_field = DjangoModelField(field.related_model)
     return ConnectionOrListField(model_field)
 
