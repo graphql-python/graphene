@@ -12,7 +12,7 @@ from graphene.core.fields import NativeField
 @signals.class_prepared.connect
 def object_type_created(object_type):
     schema = object_type._meta.schema
-    if issubclass(object_type, schema.Node) and object_type != schema.Node:
+    if hasattr(schema, 'Node') and issubclass(object_type, schema.Node) and object_type != schema.Node:
         if object_type._meta.proxy:
             return
         type_name = object_type._meta.type_name

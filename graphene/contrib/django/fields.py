@@ -7,14 +7,23 @@ from graphene.core.fields import Field, LazyField
 from graphene.utils import cached_property
 from graphene.env import get_global_schema
 
+from django.db.models.query import QuerySet
 
 def get_type_for_model(schema, model):
     schema = schema or get_global_schema()
     types = schema.types.values()
     for _type in types:
-        type_model = getattr(_type._meta, 'model', None)
+        type_model = hasattr(_type,'_meta') and getattr(_type._meta, 'model', None)
         if model == type_model:
             return _type
+
+
+class DjangoConnectionField(relay.ConnectionField):
+    def wrap_resolved(self, value, instance, args, info):
+        if isinstance(value, QuerySet):
+            cls = instance.__class__
+            value = [cls(s) for s in value]
+        return value
 
 
 class ConnectionOrListField(LazyField):
@@ -23,7 +32,7 @@ class ConnectionOrListField(LazyField):
         model_field = self.field_type
         field_object_type = model_field.get_object_type()
         if field_object_type and issubclass(field_object_type, schema.Node):
-            field = relay.ConnectionField(model_field)
+            field = DjangoConnectionField(model_field)
         else:
             field = ListField(model_field)
         field.contribute_to_class(self.object_type, self.field_name)
