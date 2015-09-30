@@ -22,7 +22,6 @@ class ConnectionField(Field):
         resolved = super(ConnectionField, self).resolve(instance, args, info)
         if resolved:
             resolved = self.wrap_resolved(resolved, instance, args, info)
-            print resolved
             assert isinstance(resolved, collections.Iterable), 'Resolved value from the connection field have to be iterable'
             return connectionFromArray(resolved, args)
 
