@@ -1,8 +1,9 @@
 SECRET_KEY = 1
 
 INSTALLED_APPS = [
-    'graphql.contrib.django',
+    'graphene.contrib.django',
     'tests.starwars_django',
+    'tests.contrib_django',
 ]
 
 DATABASES={
