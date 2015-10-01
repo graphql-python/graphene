@@ -21,6 +21,8 @@ def convert_django_field(field, cls):
 @convert_django_field.register(models.TextField)
 @convert_django_field.register(models.EmailField)
 @convert_django_field.register(models.SlugField)
+@convert_django_field.register(models.URLField)
+@convert_django_field.register(models.UUIDField)
 def _(field, cls):
     return StringField(description=field.description)
 
@@ -34,8 +36,6 @@ def _(field, cls):
 @convert_django_field.register(models.PositiveSmallIntegerField)
 @convert_django_field.register(models.SmallIntegerField)
 @convert_django_field.register(models.BigIntegerField)
-@convert_django_field.register(models.URLField)
-@convert_django_field.register(models.UUIDField)
 @convert_django_field.register(models.IntegerField)
 def _(field, cls):
     return IntField(description=field.description)
