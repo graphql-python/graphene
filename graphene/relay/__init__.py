@@ -5,6 +5,6 @@ from graphene.relay.fields import (
 
 import graphene.relay.connections
 
-from graphene.relay.nodes import (
+from graphene.relay.types import (
 	Node
 )

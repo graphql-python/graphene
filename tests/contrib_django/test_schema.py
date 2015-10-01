@@ -114,6 +114,7 @@ def test_should_node():
     class Query1(graphene.ObjectType):
         node = relay.NodeField()
         reporter = graphene.Field(ReporterNodeType)
+        article = graphene.Field(ArticleNodeType)
 
         def resolve_reporter(self, *args, **kwargs):
             return ReporterNodeType(Reporter(id=1, first_name='ABA', last_name='X'))

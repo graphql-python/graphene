@@ -1,11 +1,11 @@
 import six
 from django.db import models
 
-from graphene.core.types import ObjectTypeMeta, ObjectType
+from graphene.core.types import ObjectTypeMeta, BaseObjectType
 from graphene.contrib.django.options import DjangoOptions
 from graphene.contrib.django.converter import convert_django_field
 
-from graphene.relay import Node
+from graphene.relay.types import Node, BaseNode
 
 
 def get_reverse_fields(model):
@@ -17,6 +17,9 @@ def get_reverse_fields(model):
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
     options_cls = DjangoOptions
+
+    def is_interface(cls, parents):
+        return DjangoInterface in parents
 
     def add_extra_fields(cls):
         if not cls._meta.model:
@@ -30,11 +33,13 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             cls.add_to_class(field.name, converted_field)
 
 
-class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, ObjectType)):
-    class Meta:
-        proxy = True
+class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, BaseObjectType)):
+    pass
 
 
-class DjangoNode(six.with_metaclass(DjangoObjectTypeMeta, Node)):
-    class Meta:
-        proxy = True
+class DjangoInterface(six.with_metaclass(DjangoObjectTypeMeta, BaseObjectType)):
+    pass
+
+
+class DjangoNode(BaseNode, DjangoInterface):
+    pass

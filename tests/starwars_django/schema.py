@@ -8,6 +8,7 @@ from .models import Ship as ShipModel, Faction as FactionModel
 from .data import (
     getFaction,
     getShip,
+    getShips,
     getRebels,
     getEmpire,
 )
@@ -35,6 +36,11 @@ class Query(graphene.ObjectType):
     rebels = graphene.Field(Faction)
     empire = graphene.Field(Faction)
     node = relay.NodeField()
+    ships = relay.ConnectionField(Ship, description='All the ships.')
+
+    @resolve_only_args
+    def resolve_ships(self):
+        return [Ship(s) for s in getShips()]
 
     @resolve_only_args
     def resolve_rebels(self):

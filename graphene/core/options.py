@@ -1,17 +1,15 @@
-from graphene.env import get_global_schema
 from graphene.utils import cached_property
 
-DEFAULT_NAMES = ('description', 'name', 'interface', 'schema',
+DEFAULT_NAMES = ('description', 'name', 'interface',
                  'type_name', 'interfaces', 'proxy')
 
 
 class Options(object):
-    def __init__(self, meta=None, schema=None):
+    def __init__(self, meta=None):
         self.meta = meta
         self.local_fields = []
         self.interface = False
         self.proxy = False
-        self.schema = schema or get_global_schema()
         self.interfaces = []
         self.parents = []
         self.valid_attrs = DEFAULT_NAMES
@@ -71,7 +69,3 @@ class Options(object):
     @cached_property
     def fields_map(self):
         return {f.field_name: f for f in self.fields}
-
-    @cached_property
-    def type(self):
-        return self.parent.get_graphql_type()

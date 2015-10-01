@@ -88,6 +88,9 @@ def createShip(shipName, factionId):
 def getShip(_id):
     return Ship.objects.get(id=_id)
 
+def getShips():
+    return Ship.objects.all()
+
 def getFaction(_id):
     return Faction.objects.get(id=_id)
 
