@@ -50,7 +50,7 @@ result = schema.execute(query)
 
 ### Relay Schema
 
-Graphene also supports Relay, check the (Starwars Relay example)[tests/starwars_relay]!
+Graphene also supports Relay, check the [Starwars Relay example](tests/starwars_relay)!
 
 ```python
 class Ship(relay.Node):
@@ -74,7 +74,7 @@ class Query(graphene.ObjectType):
 
 ### Django+Relay Schema
 
-Graphene also supports Relay, check the (Starwars Django example)[tests/starwars_django]!
+If you want to use graphene with your Django Models check the [Starwars Django example](tests/starwars_django)!
 
 ```python
 class Ship(DjangoNode):

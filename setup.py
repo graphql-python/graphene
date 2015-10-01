@@ -56,6 +56,7 @@ setup(
     extras_require={
         'django': [
             'Django>=1.8.0,<1.9',
+            'pytest-django',
             'singledispatch>=3.4.0.3',
         ],
     },
