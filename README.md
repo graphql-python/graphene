@@ -20,44 +20,17 @@ class Character(graphene.Interface):
     id = graphene.IDField()
     name = graphene.StringField()
     friends = graphene.ListField('self')
-    appearsIn = graphene.ListField(Episode)
 
     def resolve_friends(self, args, *_):
-        return [wrap_character(getCharacter(f)) for f in self.instance.friends]
+        return [Human(f) for f in self.instance.friends]
 
 class Human(Character):
     homePlanet = graphene.StringField()
 
-
-class Droid(Character):
-    primaryFunction = graphene.StringField()
-
-
 class Query(graphene.ObjectType):
-    hero = graphene.Field(Character,
-        episode = graphene.Argument(Episode)
-    )
-    human = graphene.Field(Human,
-        id = graphene.Argument(graphene.String)
-    )
-    droid = graphene.Field(Droid,
-        id = graphene.Argument(graphene.String)
-    )
+    human = graphene.Field(Human)
 
-    @resolve_only_args
-    def resolve_hero(self, episode):
-        return wrap_character(getHero(episode))
-
-    @resolve_only_args
-    def resolve_human(self, id):
-        return wrap_character(getHuman(id))
-
-    @resolve_only_args
-    def resolve_droid(self, id):
-        return wrap_character(getDroid(id))
-
-
-Schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query)
 ```
 
 ### Querying
@@ -72,17 +45,14 @@ query = '''
       }
     }
 '''
-result = Schema.execute(query)
+result = schema.execute(query)
 ```
 
 ### Relay Schema
 
-Graphene also supports Relay, check the (Starwars Relay example)[/tests/starwars_relay]!
+Graphene also supports Relay, check the (Starwars Relay example)[tests/starwars_relay]!
 
 ```python
-import graphene
-from graphene import relay
-
 class Ship(relay.Node):
     '''A ship in the Star Wars saga'''
     name = graphene.StringField(description='The name of the ship.')
@@ -92,39 +62,28 @@ class Ship(relay.Node):
         return Ship(getShip(id))
 
 
-class Faction(relay.Node):
-    '''A faction in the Star Wars saga'''
-    name = graphene.StringField(description='The name of the faction.')
-    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
-
-    @resolve_only_args
-    def resolve_ships(self, **kwargs):
-        return [Ship(getShip(ship)) for ship in self.instance.ships]
-
-    @classmethod
-    def get_node(cls, id):
-        return Faction(getFaction(id)
-
-
 class Query(graphene.ObjectType):
-    rebels = graphene.Field(Faction)
-    empire = graphene.Field(Faction)
+    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
     node = relay.NodeField()
 
     @resolve_only_args
-    def resolve_rebels(self):
-        return Faction(getRebels())
+    def resolve_ships(self):
+        return [Ship(s) for s in getShips()]
 
-    @resolve_only_args
-    def resolve_empire(self):
-        return Faction(getEmpire())
+```
 
+### Django+Relay Schema
 
-Schema = graphene.Schema(query=Query)
+Graphene also supports Relay, check the (Starwars Django example)[tests/starwars_django]!
 
-# Later on, for querying
-Schema.execute('''rebels { name }''')
+```python
+class Ship(DjangoNode):
+    class Meta:
+        model = YourDjangoModelHere
+        # only_fields = ('id', 'name') # Only map this fields from the model
 
+class Query(graphene.ObjectType):
+    node = relay.NodeField()
 ```
 
 ## Contributing
