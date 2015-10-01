@@ -6,7 +6,6 @@ from graphql_relay.connection.connection import (
     connectionDefinitions
 )
 
-from graphene.env import get_global_schema
 from graphene.core.types import Interface
 from graphene.core.fields import LazyNativeField
 from graphene.utils import memoize

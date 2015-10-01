@@ -5,7 +5,6 @@ from graphene import relay
 
 from graphene.core.fields import Field, LazyField
 from graphene.utils import cached_property, memoize
-from graphene.env import get_global_schema
 
 from graphene.relay.types import BaseNode
 
@@ -14,7 +13,7 @@ from django.db.models.manager import Manager
 
 
 def get_type_for_model(schema, model):
-    schema = schema or get_global_schema()
+    schema = schema
     types = schema.types.values()
     for _type in types:
         type_model = hasattr(_type,'_meta') and getattr(_type._meta, 'model', None)
