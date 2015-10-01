@@ -1,20 +1,19 @@
-from graphene.env import get_global_schema
 from graphene.utils import cached_property
 
-DEFAULT_NAMES = ('description', 'name', 'interface', 'schema',
-                 'type_name', 'interfaces',  'proxy')
+DEFAULT_NAMES = ('description', 'name', 'interface',
+                 'type_name', 'interfaces', 'proxy')
 
 
 class Options(object):
-    def __init__(self, meta=None, schema=None):
+    def __init__(self, meta=None):
         self.meta = meta
         self.local_fields = []
         self.interface = False
         self.proxy = False
-        self.schema = schema
         self.interfaces = []
         self.parents = []
-
+        self.valid_attrs = DEFAULT_NAMES
+    
     def contribute_to_class(self, cls, name):
         cls._meta = self
         self.parent = cls
@@ -36,7 +35,7 @@ class Options(object):
                 # over it, so we loop over the *original* dictionary instead.
                 if name.startswith('_'):
                     del meta_attrs[name]
-            for attr_name in DEFAULT_NAMES:
+            for attr_name in self.valid_attrs:
                 if attr_name in meta_attrs:
                     setattr(self, attr_name, meta_attrs.pop(attr_name))
                     self.original_attrs[attr_name] = getattr(self, attr_name)
@@ -44,9 +43,13 @@ class Options(object):
                     setattr(self, attr_name, getattr(self.meta, attr_name))
                     self.original_attrs[attr_name] = getattr(self, attr_name)
 
+            del self.valid_attrs
+
             # Any leftover attributes must be invalid.
             if meta_attrs != {}:
                 raise TypeError("'class Meta' got invalid attribute(s): %s" % ','.join(meta_attrs.keys()))
+        else:
+            self.proxy = False
 
         if self.interfaces != [] and self.interface:
             raise Exception("A interface cannot inherit from interfaces")
@@ -66,7 +69,3 @@ class Options(object):
     @cached_property
     def fields_map(self):
         return {f.field_name: f for f in self.fields}
-
-    @cached_property
-    def type(self):
-        return self.parent.get_graphql_type()

@@ -1,32 +1,31 @@
 import graphene
 from graphene import resolve_only_args, relay
-
+from graphene.contrib.django import (
+    DjangoObjectType,
+    DjangoNode
+)
+from .models import Ship as ShipModel, Faction as FactionModel
 from .data import (
     getFaction,
     getShip,
+    getShips,
     getRebels,
     getEmpire,
 )
 
-schema = graphene.Schema(name='Starwars Relay Schema')
+schema = graphene.Schema(name='Starwars Django Relay Schema')
 
-class Ship(relay.Node):
-    '''A ship in the Star Wars saga'''
-    name = graphene.StringField(description='The name of the ship.')
+class Ship(DjangoNode):
+    class Meta:
+        model = ShipModel    
 
     @classmethod
     def get_node(cls, id):
         return Ship(getShip(id))
 
-
-class Faction(relay.Node):
-    '''A faction in the Star Wars saga'''
-    name = graphene.StringField(description='The name of the faction.')
-    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
-
-    @resolve_only_args
-    def resolve_ships(self, **kwargs):
-        return [Ship(getShip(ship)) for ship in self.instance.ships]
+class Faction(DjangoNode):
+    class Meta:
+        model = FactionModel    
 
     @classmethod
     def get_node(cls, id):
@@ -37,6 +36,11 @@ class Query(graphene.ObjectType):
     rebels = graphene.Field(Faction)
     empire = graphene.Field(Faction)
     node = relay.NodeField()
+    ships = relay.ConnectionField(Ship, description='All the ships.')
+
+    @resolve_only_args
+    def resolve_ships(self):
+        return [Ship(s) for s in getShips()]
 
     @resolve_only_args
     def resolve_rebels(self):

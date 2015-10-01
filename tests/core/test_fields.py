@@ -28,34 +28,65 @@ ot = ObjectType()
 
 ObjectType._meta.contribute_to_class(ObjectType, '_meta')
 
+class Schema(object):
+    pass
+
+schema = Schema()
+
 def test_field_no_contributed_raises_error():
     f = Field(GraphQLString)
     with raises(Exception) as excinfo:
-        f.field
+        f.internal_field(schema)
 
 
 def test_field_type():
     f = Field(GraphQLString)
     f.contribute_to_class(ot, 'field_name')
-    assert isinstance(f.field, GraphQLField)
-    assert f.type == GraphQLString
+    assert isinstance(f.internal_field(schema), GraphQLField)
+    assert f.internal_type(schema) == GraphQLString
 
 
 def test_stringfield_type():
     f = StringField()
     f.contribute_to_class(ot, 'field_name')
-    assert f.type == GraphQLString
+    assert f.internal_type(schema) == GraphQLString
 
 
 def test_stringfield_type_null():
     f = StringField(null=False)
     f.contribute_to_class(ot, 'field_name')
-    assert isinstance(f.field, GraphQLField)
-    assert isinstance(f.type, GraphQLNonNull)
+    assert isinstance(f.internal_field(schema), GraphQLField)
+    assert isinstance(f.internal_type(schema), GraphQLNonNull)
 
 
 def test_field_resolve():
-    f = StringField(null=False)
+    f = StringField(null=False, resolve=lambda *args:'RESOLVED')
     f.contribute_to_class(ot, 'field_name')
-    field_type = f.field
-    field_type.resolver(ot,2,3)
+    field_type = f.internal_field(schema)
+    assert 'RESOLVED' == field_type.resolver(ot,2,3)
+
+
+def test_field_resolve_type_custom():
+    class MyCustomType(object):
+        pass
+
+    class Schema(object):
+        def get_type(self, name):
+            if name == 'MyCustomType':
+                return MyCustomType
+
+    s = Schema()
+
+    f = Field('MyCustomType')
+    f.contribute_to_class(ot, 'field_name')
+    field_type = f.get_object_type(s)
+    assert field_type == MyCustomType
+
+
+def test_field_resolve_type_custom():
+    s = Schema()
+
+    f = Field('self')
+    f.contribute_to_class(ot, 'field_name')
+    field_type = f.get_object_type(s)
+    assert field_type == ot

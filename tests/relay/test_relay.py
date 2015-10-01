@@ -4,7 +4,6 @@ import graphene
 from graphene import relay
 
 schema = graphene.Schema()
-relay = schema.relay
 
 class OtherNode(relay.Node):
     name = graphene.StringField()
@@ -22,8 +21,12 @@ def test_field_no_contributed_raises_error():
     assert 'get_node' in str(excinfo.value)
 
 
-def test_node_should_have_connection():
-    assert OtherNode.connection
+def test_node_should_have_same_connection_always():
+    s = object()
+    connection1 = OtherNode.get_connection(s)
+    connection2 = OtherNode.get_connection(s)
+
+    assert connection1 == connection2
 
 
 def test_node_should_have_id_field():

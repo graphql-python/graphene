@@ -8,12 +8,18 @@ from graphql.core.type import (
 
 from graphene import signals
 from graphene.core.options import Options
-
+from graphene.utils import memoize
+from graphene.core.schema import register_internal_type
 
 class ObjectTypeMeta(type):
+    options_cls = Options
+
+    def is_interface(cls, parents):
+        return Interface in parents
+
     def __new__(cls, name, bases, attrs):
         super_new = super(ObjectTypeMeta, cls).__new__
-        parents = [b for b in bases if isinstance(b, ObjectTypeMeta)]
+        parents = [b for b in bases if isinstance(b, cls)]
         if not parents:
             # If this isn't a subclass of Model, don't do anything special.
             return super_new(cls, name, bases, attrs)
@@ -26,19 +32,20 @@ class ObjectTypeMeta(type):
         })
         attr_meta = attrs.pop('Meta', None)
         if not attr_meta:
-            meta = getattr(new_class, 'Meta', None)
+            meta = None
+            # meta = getattr(new_class, 'Meta', None)
         else:
             meta = attr_meta
+
         base_meta = getattr(new_class, '_meta', None)
 
-        schema = (base_meta and base_meta.schema)
-
-        new_class.add_to_class('_meta', Options(meta, schema))
-        if base_meta and base_meta.proxy:
-            new_class._meta.interface = base_meta.interface
+        new_class.add_to_class('_meta', new_class.options_cls(meta))
+        
+        new_class._meta.interface = new_class.is_interface(parents)
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
+        new_class.add_extra_fields()
 
         new_fields = new_class._meta.local_fields
         field_names = {f.field_name for f in new_fields}
@@ -71,6 +78,9 @@ class ObjectTypeMeta(type):
         new_class._prepare()
         return new_class
 
+    def add_extra_fields(cls):
+        pass
+
     def _prepare(cls):
         signals.class_prepared.send(cls)
 
@@ -82,13 +92,13 @@ class ObjectTypeMeta(type):
             setattr(cls, name, value)
 
 
-class ObjectType(six.with_metaclass(ObjectTypeMeta)):
+class BaseObjectType(object):
     def __new__(cls, instance=None, *args, **kwargs):
         if cls._meta.interface:
             raise Exception("An interface cannot be initialized")
         if instance == None:
             return None
-        return super(ObjectType, cls).__new__(cls, instance, *args, **kwargs)
+        return super(BaseObjectType, cls).__new__(cls, instance, *args, **kwargs)
 
     def __init__(self, instance=None):
         signals.pre_init.send(self.__class__, instance=instance)
@@ -117,45 +127,35 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
         return True
 
     @classmethod
-    def resolve_type(cls, instance, *_):
-        return instance._meta.type
+    def resolve_type(cls, schema, instance, *_):
+        return instance.internal_type(schema)
 
     @classmethod
-    def get_graphql_type(cls):
-        fields = cls._meta.fields_map
+    @memoize
+    @register_internal_type
+    def internal_type(cls, schema):
+        fields_map = cls._meta.fields_map
+        fields = lambda: {
+            name: field.internal_field(schema)
+            for name, field in fields_map.items()
+        }
         if cls._meta.interface:
             return GraphQLInterfaceType(
                 cls._meta.type_name,
                 description=cls._meta.description,
-                resolve_type=cls.resolve_type,
-                fields=lambda: {name: field.field for name, field in fields.items()}
+                resolve_type=lambda *args, **kwargs: cls.resolve_type(schema, *args, **kwargs),
+                fields=fields
             )
         return GraphQLObjectType(
             cls._meta.type_name,
             description=cls._meta.description,
-            interfaces=[i._meta.type for i in cls._meta.interfaces],
-            fields=lambda: {name: field.field for name, field in fields.items()}
+            interfaces=[i.internal_type(schema) for i in cls._meta.interfaces],
+            fields=fields
         )
 
 
-class Interface(ObjectType):
-    class Meta:
-        interface = True
-        proxy = True
+class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
+    pass
 
-
-@signals.init_schema.connect
-def add_types_to_schema(schema):
-    own_schema = schema
-    class _Interface(Interface):
-        class Meta:
-            schema = own_schema
-            proxy = True
-
-    class _ObjectType(ObjectType):
-        class Meta:
-            schema = own_schema
-            proxy = True
-    
-    setattr(own_schema, 'Interface', _Interface)
-    setattr(own_schema, 'ObjectType', _ObjectType)
+class Interface(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
+    pass

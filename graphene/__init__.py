@@ -35,4 +35,4 @@ from graphene.decorators import (
     resolve_only_args
 )
 
-import graphene.relay
+# import graphene.relay
