@@ -39,7 +39,8 @@ class BaseNode(object):
 
     @classmethod
     def internal_type(cls, schema):
-        if cls is Node or BaseNode in cls.__bases__:
+        from graphene.relay.utils import is_node_type
+        if is_node_type(cls):
             # Return only nodeInterface when is the Node Inerface
             return BaseNode.get_definitions(schema).nodeInterface
         return super(BaseNode, cls).internal_type(schema)

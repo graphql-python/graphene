@@ -2,10 +2,16 @@ import inspect
 from django.db import models
 
 from graphene.core.options import Options
+from graphene.core.types import BaseObjectType
+from graphene.relay.utils import is_node
 
 VALID_ATTRS = ('model', 'only_fields')
 
-from graphene.relay.types import Node, BaseNode
+
+def is_base(cls):
+    from graphene.contrib.django.types import DjangoObjectType
+    return DjangoObjectType in cls.__bases__
+
 
 class DjangoOptions(Options):
     def __init__(self, *args, **kwargs):
@@ -16,7 +22,7 @@ class DjangoOptions(Options):
 
     def contribute_to_class(self, cls, name):
         super(DjangoOptions, self).contribute_to_class(cls, name)
-        if cls.__name__ == 'DjangoNode':
+        if not is_node(cls) and not is_base(cls):
             return
         if not self.model:
             raise Exception('Django ObjectType %s must have a model in the Meta class attr' % cls)

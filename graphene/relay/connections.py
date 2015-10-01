@@ -4,11 +4,12 @@ from graphql_relay.node.node import (
 
 from graphene import signals
 from graphene.relay.fields import NodeIDField
-from graphene.relay.types import BaseNode, Node
+from graphene.relay.utils import is_node
+
 
 @signals.class_prepared.connect
 def object_type_created(object_type):
-    if issubclass(object_type, BaseNode) and BaseNode not in object_type.__bases__:
+    if is_node(object_type):
         type_name = object_type._meta.type_name
         field = NodeIDField()
         object_type.add_to_class('id', field)
