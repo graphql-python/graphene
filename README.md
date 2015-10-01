@@ -1,10 +1,12 @@
 # Graphene: Python DSL for GraphQL
 
 This is a library to use GraphQL in Python in a easy way.
-It will map the models/fields to internal GraphQL-py objects without effort.
+It will map the models/fields to internal GraphQL-py objects without effort. Including automatic [Django models](#djangorelay-schema) conversion.
 
 [![Build Status](https://travis-ci.org/syrusakbary/graphene.svg?branch=master)](https://travis-ci.org/syrusakbary/graphene)
 [![Coverage Status](https://coveralls.io/repos/syrusakbary/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/syrusakbary/graphene?branch=master)
+
+*Note: This library requires installing [graphqllib](https://github.com/dittos/graphqllib) and [graphql-relay](https://github.com/syrusakbary/graphql-relay-py) external libraries.*
 
 ## Usage
 
