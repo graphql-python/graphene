@@ -12,6 +12,7 @@ from django.db.models.query import QuerySet
 from django.db.models.manager import Manager
 
 
+@memoize
 def get_type_for_model(schema, model):
     schema = schema
     types = schema.types.values()
@@ -32,13 +33,15 @@ def lazy_map(value, func):
 
 class DjangoConnectionField(relay.ConnectionField):
     def wrap_resolved(self, value, instance, args, info):
-        return lazy_map(value, self.field_type)
+        schema = info.schema.graphene_schema
+        return lazy_map(value, self.get_object_type(schema))
 
 
 class LazyListField(ListField):
-    def resolve(self, value, instance, args, info):
-        resolved = super(LazyListField, self).resolve(value, instance, args, info)
-        return lazy_map(resolved, self.field_type)
+    def resolve(self, instance, args, info):
+        schema = info.schema.graphene_schema
+        resolved = super(LazyListField, self).resolve(instance, args, info)
+        return lazy_map(resolved, self.get_object_type(schema))
 
 
 class ConnectionOrListField(LazyField):

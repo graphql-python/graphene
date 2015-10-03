@@ -2,10 +2,16 @@ from functools import wraps
 
 from graphql.core import graphql
 from graphql.core.type import (
-    GraphQLSchema
+    GraphQLSchema as _GraphQLSchema
 )
 from graphene import signals
 from graphene.utils import cached_property
+
+
+class GraphQLSchema(_GraphQLSchema):
+    def __init__(self, schema, *args, **kwargs):
+        self.graphene_schema = schema
+        super(GraphQLSchema, self).__init__(*args, **kwargs)
 
 
 class Schema(object):
@@ -34,7 +40,7 @@ class Schema(object):
     def schema(self):
         if not self._query_type:
             raise Exception('You have to define a base query type')
-        return GraphQLSchema(query=self._query_type, mutation=self.mutation)
+        return GraphQLSchema(self, query=self._query_type, mutation=self.mutation)
 
     def associate_internal_type(self, internal_type, object_type):
         self._internal_types[internal_type.name] = object_type
