@@ -2,6 +2,7 @@ import json
 
 from django.http import JsonResponse
 from django.views.generic import View
+from django.conf import settings
 
 from graphql.core.error import GraphQLError, format_error
 
@@ -14,6 +15,7 @@ def form_error(error):
 
 class GraphQLView(View):
     schema = None
+
     @staticmethod
     def format_result(result):
         data = {'data': result.data}
@@ -34,6 +36,8 @@ class GraphQLView(View):
                 result = self.schema.execute(query, root=object())
                 data = self.format_result(result)
             except Exception, e:
+                if settings.DEBUG:
+                    raise e
                 data = {
                     "errors": [{"message": str(e)}]
                 }
@@ -41,13 +45,14 @@ class GraphQLView(View):
         return JsonResponse(data)
 
     def get(self, request, *args, **kwargs):
-        query = request.GET.get('query') or request.GET.get('q') or ''
-        return self.execute_query(request, query)
+        query = request.GET.get('query')
+        return self.execute_query(request, query or '')
 
     def post(self, request, *args, **kwargs):
         if request.body:
             received_json_data = json.loads(request.body)
-            query = received_json_data.get('query') or ''
+            query = received_json_data.get('query')
         else:
-            query = request.POST.get('query') or request.POST.get('q')
-        return self.execute_query(request, query)
+            query = request.POST.get('query') or request.GET.get('query')
+        raise Exception(query)
+        return self.execute_query(request, query or '')
