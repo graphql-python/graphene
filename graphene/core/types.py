@@ -101,6 +101,8 @@ class BaseObjectType(object):
             raise Exception("An interface cannot be initialized")
         if instance is None:
             return None
+        elif type(instance) is cls:
+            instance = instance.instance
         return super(BaseObjectType, cls).__new__(cls, instance, *args, **kwargs)
 
     def __init__(self, instance=None):
@@ -115,9 +117,12 @@ class BaseObjectType(object):
     def get_field(self, field):
         return getattr(self.instance, field, None)
 
+    def __eq__(self, other):
+        return self.instance.__eq__(other)
+
     def resolve(self, field_name, args, info):
         if field_name not in self._meta.fields_map.keys():
-            raise Exception('Field %s not found in model' % field_name)
+            raise Exception('Field %s not found in model %s' % (field_name, self._meta.type_name))
         custom_resolve_fn = 'resolve_%s' % field_name
         if hasattr(self, custom_resolve_fn):
             resolve_fn = getattr(self, custom_resolve_fn)

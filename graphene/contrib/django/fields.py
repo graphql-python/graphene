@@ -4,7 +4,7 @@ from graphene.core.fields import (
 from graphene import relay
 
 from graphene.core.fields import Field, LazyField
-from graphene.utils import cached_property, memoize
+from graphene.utils import cached_property, memoize, LazyMap
 
 from graphene.relay.types import BaseNode
 
@@ -22,17 +22,26 @@ def get_type_for_model(schema, model):
             return _type
 
 
-class DjangoConnectionField(relay.ConnectionField):
+def lazy_map(value, func):
+    if isinstance(value, Manager):
+        value = value.get_queryset()
+    if isinstance(value, QuerySet):
+        return LazyMap(value, func)
+    return value
 
+
+class DjangoConnectionField(relay.ConnectionField):
     def wrap_resolved(self, value, instance, args, info):
-        if isinstance(value, (QuerySet, Manager)):
-            cls = instance.__class__
-            value = [cls(s) for s in value.all()]
-        return value
+        return lazy_map(value, instance.__class__)
+
+
+class LazyListField(ListField):
+    def resolve(self, value, instance, args, info):
+        resolved = super(LazyListField, self).resolve(value, instance, args, info)
+        return lazy_map(resolved, instance.__class__)
 
 
 class ConnectionOrListField(LazyField):
-
     @memoize
     def get_field(self, schema):
         model_field = self.field_type
@@ -40,13 +49,12 @@ class ConnectionOrListField(LazyField):
         if field_object_type and issubclass(field_object_type, BaseNode):
             field = DjangoConnectionField(model_field)
         else:
-            field = ListField(model_field)
+            field = LazyListField(model_field)
         field.contribute_to_class(self.object_type, self.name)
         return field
 
 
 class DjangoModelField(Field):
-
     def __init__(self, model, *args, **kwargs):
         super(DjangoModelField, self).__init__(None, *args, **kwargs)
         self.model = model
