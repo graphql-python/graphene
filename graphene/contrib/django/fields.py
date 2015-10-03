@@ -32,13 +32,13 @@ def lazy_map(value, func):
 
 class DjangoConnectionField(relay.ConnectionField):
     def wrap_resolved(self, value, instance, args, info):
-        return lazy_map(value, instance.__class__)
+        return lazy_map(value, self.field_type)
 
 
 class LazyListField(ListField):
     def resolve(self, value, instance, args, info):
         resolved = super(LazyListField, self).resolve(value, instance, args, info)
-        return lazy_map(resolved, instance.__class__)
+        return lazy_map(resolved, self.field_type)
 
 
 class ConnectionOrListField(LazyField):

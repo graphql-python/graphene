@@ -27,7 +27,11 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         only_fields = cls._meta.only_fields
         reverse_fields = tuple(get_reverse_fields(cls._meta.model))
         for field in cls._meta.model._meta.fields + reverse_fields:
-            if only_fields and field.name not in only_fields:
+            is_not_in_only = only_fields and field.name not in only_fields
+            is_excluded = field.name in cls._meta.exclude_fields
+            if is_not_in_only or is_excluded:
+                # We skip this field if we specify only_fields and is not
+                # in there. Or when we excldue this field in exclude_fields
                 continue
             converted_field = convert_django_field(field, cls)
             cls.add_to_class(field.name, converted_field)

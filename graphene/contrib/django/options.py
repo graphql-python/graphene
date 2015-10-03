@@ -5,7 +5,7 @@ from graphene.core.options import Options
 from graphene.core.types import BaseObjectType
 from graphene.relay.utils import is_node
 
-VALID_ATTRS = ('model', 'only_fields')
+VALID_ATTRS = ('model', 'only_fields', 'exclude_fields')
 
 
 def is_base(cls):
@@ -20,6 +20,7 @@ class DjangoOptions(Options):
         super(DjangoOptions, self).__init__(*args, **kwargs)
         self.valid_attrs += VALID_ATTRS
         self.only_fields = None
+        self.exclude_fields = []
 
     def contribute_to_class(self, cls, name):
         super(DjangoOptions, self).contribute_to_class(cls, name)
