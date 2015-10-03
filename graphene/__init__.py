@@ -12,10 +12,6 @@ from graphene.core.schema import (
     Schema
 )
 
-from graphene.env import (
-    get_global_schema
-)
-
 from graphene.core.types import (
     ObjectType,
     Interface
