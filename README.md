@@ -1,10 +1,8 @@
-# Graphene: Python DSL for GraphQL
+# Graphene: Pythonic GraphQL [![Build Status](https://travis-ci.org/syrusakbary/graphene.svg?branch=master)](https://travis-ci.org/syrusakbary/graphene) [![Coverage Status](https://coveralls.io/repos/syrusakbary/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/syrusakbary/graphene?branch=master)
 
-This is a library to use GraphQL in Python in a easy way.
-It will map the models/fields to internal GraphQL-py objects without effort. Including automatic [Django models](#djangorelay-schema) conversion.
+This is a library to use GraphQL in a Pythonic and easy way.
+It maps the models/fields to internal GraphQLlib objects without effort. Including automatic [Django models](#djangorelay-schema) conversion.
 
-[![Build Status](https://travis-ci.org/syrusakbary/graphene.svg?branch=master)](https://travis-ci.org/syrusakbary/graphene)
-[![Coverage Status](https://coveralls.io/repos/syrusakbary/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/syrusakbary/graphene?branch=master)
 
 *Note: This library requires installing [graphqllib](https://github.com/dittos/graphqllib) and [graphql-relay](https://github.com/syrusakbary/graphql-relay-py) external libraries.*
 
@@ -83,6 +81,7 @@ class Ship(DjangoNode):
     class Meta:
         model = YourDjangoModelHere
         # only_fields = ('id', 'name') # Only map this fields from the model
+        # excluxe_fields ('field_to_excluxe', ) # Exclude mapping this fields from the model
 
 class Query(graphene.ObjectType):
     node = relay.NodeField()
