@@ -25,6 +25,7 @@ from graphene.core.fields import (
     IDField,
     ListField,
     NonNullField,
+    FloatField,
 )
 
 from graphene.decorators import (

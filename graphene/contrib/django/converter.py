@@ -13,7 +13,7 @@ from graphene.contrib.django.fields import ConnectionOrListField, DjangoModelFie
 
 
 @singledispatch
-def convert_django_field(field, cls):
+def convert_django_field(field):
     raise Exception(
         "Don't know how to convert the Django field %s (%s)" % (field, field.__class__))
 
@@ -25,12 +25,12 @@ def convert_django_field(field, cls):
 @convert_django_field.register(models.SlugField)
 @convert_django_field.register(models.URLField)
 @convert_django_field.register(models.UUIDField)
-def _(field, cls):
+def _(field):
     return StringField(description=field.description)
 
 
 @convert_django_field.register(models.AutoField)
-def _(field, cls):
+def _(field):
     return IDField(description=field.description)
 
 
@@ -39,33 +39,33 @@ def _(field, cls):
 @convert_django_field.register(models.SmallIntegerField)
 @convert_django_field.register(models.BigIntegerField)
 @convert_django_field.register(models.IntegerField)
-def _(field, cls):
+def _(field):
     return IntField(description=field.description)
 
 
 @convert_django_field.register(models.BooleanField)
-def _(field, cls):
+def _(field):
     return BooleanField(description=field.description, null=False)
 
 
 @convert_django_field.register(models.NullBooleanField)
-def _(field, cls):
-    return BooleanField(description=field.description)
+def _(field):
+    return BooleanField(description=field.description, null=True)
 
 
 @convert_django_field.register(models.FloatField)
-def _(field, cls):
+def _(field):
     return FloatField(description=field.description)
 
 
 @convert_django_field.register(models.ManyToManyField)
 @convert_django_field.register(models.ManyToOneRel)
-def _(field, cls):
+def _(field):
     model_field = DjangoModelField(field.related_model)
     return ConnectionOrListField(model_field)
 
 
 @convert_django_field.register(models.OneToOneField)
 @convert_django_field.register(models.ForeignKey)
-def _(field, cls):
+def _(field):
     return DjangoModelField(field.related_model, description=field.description)

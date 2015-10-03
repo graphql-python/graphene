@@ -33,7 +33,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we excldue this field in exclude_fields
                 continue
-            converted_field = convert_django_field(field, cls)
+            converted_field = convert_django_field(field)
             cls.add_to_class(field.name, converted_field)
 
 
