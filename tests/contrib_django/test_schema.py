@@ -71,16 +71,16 @@ def test_should_map_fields():
     query = '''
         query ReporterQuery {
           reporter {
-            first_name,
-            last_name,
+            firstName,
+            lastName,
             email
           }
         }
     '''
     expected = {
         'reporter': {
-            'first_name': 'ABA',
-            'last_name': 'X',
+            'firstName': 'ABA',
+            'lastName': 'X',
             'email': ''
         }
     }
@@ -133,7 +133,7 @@ def test_should_node():
         query ReporterQuery {
           reporter {
             id,
-            first_name,
+            firstName,
             articles {
               edges {
                 node {
@@ -141,13 +141,13 @@ def test_should_node():
                 }
               }
             }
-            last_name,
+            lastName,
             email
           }
-          my_article: node(id:"QXJ0aWNsZU5vZGVUeXBlOjE=") {
+          myArticle: node(id:"QXJ0aWNsZU5vZGVUeXBlOjE=") {
             id
             ... on ReporterNodeType {
-                first_name
+                firstName
             }
             ... on ArticleNodeType {
                 headline
@@ -158,8 +158,8 @@ def test_should_node():
     expected = {
         'reporter': {
             'id': 'UmVwb3J0ZXJOb2RlVHlwZTox',
-            'first_name': 'ABA',
-            'last_name': 'X',
+            'firstName': 'ABA',
+            'lastName': 'X',
             'email': '',
             'articles': {
                 'edges': [{
@@ -169,7 +169,7 @@ def test_should_node():
                 }]
             },
         },
-        'my_article': {
+        'myArticle': {
             'id': 'QXJ0aWNsZU5vZGVUeXBlOjE=',
             'headline': 'Article node'
         }

@@ -41,7 +41,7 @@ class ConnectionOrListField(LazyField):
             field = DjangoConnectionField(model_field)
         else:
             field = ListField(model_field)
-        field.contribute_to_class(self.object_type, self.field_name)
+        field.contribute_to_class(self.object_type, self.name)
         return field
 
 

@@ -49,7 +49,7 @@ class ObjectTypeMeta(type):
         new_class.add_extra_fields()
 
         new_fields = new_class._meta.local_fields
-        field_names = {f.field_name for f in new_fields}
+        field_names = {f.name for f in new_fields}
 
         for base in parents:
             original_base = base
@@ -65,12 +65,12 @@ class ObjectTypeMeta(type):
             # on the base classes (we cannot handle shadowed fields at the
             # moment).
             for field in parent_fields:
-                if field.field_name in field_names:
+                if field.name in field_names:
                     raise Exception(
                         'Local field %r in class %r clashes '
                         'with field of similar name from '
                         'base class %r' % (
-                            field.field_name, name, base.__name__)
+                            field.name, name, base.__name__)
                     )
             new_class._meta.parents.append(base)
             if base._meta.interface:
@@ -99,7 +99,7 @@ class BaseObjectType(object):
     def __new__(cls, instance=None, *args, **kwargs):
         if cls._meta.interface:
             raise Exception("An interface cannot be initialized")
-        if instance == None:
+        if instance is None:
             return None
         return super(BaseObjectType, cls).__new__(cls, instance, *args, **kwargs)
 
@@ -137,7 +137,7 @@ class BaseObjectType(object):
     @memoize
     @register_internal_type
     def internal_type(cls, schema):
-        fields_map = cls._meta.fields_map
+        fields_map = cls._meta.internal_fields_map
         fields = lambda: {
             name: field.internal_field(schema)
             for name, field in fields_map.items()

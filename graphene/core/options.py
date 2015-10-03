@@ -71,3 +71,7 @@ class Options(object):
     @cached_property
     def fields_map(self):
         return {f.field_name: f for f in self.fields}
+
+    @cached_property
+    def internal_fields_map(self):
+        return {f.name: f for f in self.fields}

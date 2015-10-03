@@ -10,23 +10,26 @@ from graphql.core.type import (
     GraphQLArgument,
     GraphQLFloat,
 )
-from graphene.utils import cached_property, memoize
+from graphene.utils import memoize, to_camel_case
 from graphene.core.types import BaseObjectType
 
 
 class Field(object):
 
-    def __init__(self, field_type, resolve=None, null=True, args=None, description='', **extra_args):
+    def __init__(self, field_type, name=None, resolve=None, null=True, args=None, description='', **extra_args):
         self.field_type = field_type
         self.resolve_fn = resolve
         self.null = null
         self.args = args or {}
         self.extra_args = extra_args
         self._type = None
+        self.name = name
         self.description = description or self.__doc__
         self.object_type = None
 
     def contribute_to_class(self, cls, name):
+        if not self.name:
+            self.name = to_camel_case(name)
         self.field_name = name
         self.object_type = cls
         if isinstance(self.field_type, Field) and not self.field_type.object_type:
@@ -94,7 +97,7 @@ class Field(object):
             raise TypeError("Field %s.%s initiated with invalid args: %s" % (
                 self.object_type,
                 self.field_name,
-                ','.join(meta_attrs.keys())
+                ','.join(extra_args.keys())
             ))
 
         internal_type = self.internal_type(schema)
@@ -107,7 +110,7 @@ class Field(object):
         )
 
     def __str__(self):
-        """ Return "object_type.field_name". """
+        """ Return "object_type.name". """
         return '%s.%s' % (self.object_type, self.field_name)
 
     def __repr__(self):
