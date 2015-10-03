@@ -12,9 +12,11 @@ from graphql.core.type import (
 )
 from graphene.utils import memoize, to_camel_case
 from graphene.core.types import BaseObjectType
+from graphene.core.scalars import GraphQLSkipField
 
 
 class Field(object):
+    SKIP = GraphQLSkipField
 
     def __init__(self, field_type, name=None, resolve=None, null=True, args=None, description='', **extra_args):
         self.field_type = field_type
@@ -95,7 +97,8 @@ class Field(object):
             ))
 
         internal_type = self.internal_type(schema)
-
+        if not internal_type:
+            raise Exception("Internal type for field %s is None" % self)
         return GraphQLField(
             internal_type,
             description=self.description,
@@ -111,7 +114,7 @@ class Field(object):
         """
         Displays the module, class and name of the field.
         """
-        path = '%s.%s' % (self.__class__.__module__, self.__class__.__name__)
+        path = '%r.%s' % (self.object_type, self.__class__.__name__)
         name = getattr(self, 'field_name', None)
         if name is not None:
             return '<%s: %s>' % (path, name)

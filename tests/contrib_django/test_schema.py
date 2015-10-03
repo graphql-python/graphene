@@ -43,9 +43,6 @@ def test_should_raise_if_model_is_invalid():
         result = schema.execute(query)
         assert not result.errors
 
-    assert 'articles (Article) model not mapped in current schema' in str(
-        excinfo.value)
-
 
 def test_should_map_fields_correctly():
     class ReporterType2(DjangoObjectType):

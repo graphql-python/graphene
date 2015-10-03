@@ -49,7 +49,7 @@ class ObjectTypeMeta(type):
         new_class.add_extra_fields()
 
         new_fields = new_class._meta.local_fields
-        field_names = {f.name for f in new_fields}
+        field_names = {f.name:f for f in new_fields}
 
         for base in parents:
             original_base = base
@@ -65,7 +65,7 @@ class ObjectTypeMeta(type):
             # on the base classes (we cannot handle shadowed fields at the
             # moment).
             for field in parent_fields:
-                if field.name in field_names:
+                if field.name in field_names and field.__class__ != field_names[field].__class__:
                     raise Exception(
                         'Local field %r in class %r clashes '
                         'with field of similar name from '

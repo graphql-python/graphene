@@ -45,6 +45,10 @@ class Schema(object):
     def associate_internal_type(self, internal_type, object_type):
         self._internal_types[internal_type.name] = object_type
 
+    def register(self, object_type):
+        self._internal_types[object_type._meta.type_name] = object_type
+        return object_type
+
     def get_type(self, type_name):
         # print 'get_type'
         # _type = self.schema.get_type(type_name)

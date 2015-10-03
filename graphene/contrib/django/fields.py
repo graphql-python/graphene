@@ -65,14 +65,18 @@ class DjangoModelField(Field):
     @memoize
     def internal_type(self, schema):
         _type = self.get_object_type(schema)
-        return _type and _type.internal_type(schema)
+        if not _type and self.object_type._meta.only_fields:
+            raise Exception(
+                "Model %r is not accessible by the schema. "
+                "You can either register the type manually "
+                "using @schema.register. "
+                "Or disable the field %s in %s" % (
+                    self.model,
+                    self.field_name,
+                    self.object_type
+                )
+            )
+        return _type and _type.internal_type(schema) or Field.SKIP
 
     def get_object_type(self, schema):
-        _type = get_type_for_model(schema, self.model)
-        if not _type and self.object_type._meta.only_fields:
-            # We will only raise the exception if the related field is
-            # specified in only_fields
-            raise Exception("Field %s (%s) model not mapped in current schema" % (
-                self, self.model._meta.object_name))
-
-        return _type
+        return get_type_for_model(schema, self.model)

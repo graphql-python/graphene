@@ -46,4 +46,7 @@ class DjangoInterface(six.with_metaclass(DjangoObjectTypeMeta, BaseObjectType)):
 
 
 class DjangoNode(BaseNode, DjangoInterface):
-    pass
+    @classmethod
+    def get_node(cls, id):
+        instance = cls._meta.model.objects.filter(id=id).first()
+        return cls(instance)
