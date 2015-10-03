@@ -36,12 +36,6 @@ class Field(object):
             self.field_type.contribute_to_class(cls, name)
         cls._meta.add_field(self)
 
-    def resolver(self, instance, args, info):
-        if self.object_type.can_resolve(self.field_name, instance, args, info):
-            return self.resolve(instance, args, info)
-        else:
-            return None
-
     def resolve(self, instance, args, info):
         if self.resolve_fn:
             resolve_fn = self.resolve_fn
@@ -106,7 +100,7 @@ class Field(object):
             internal_type,
             description=self.description,
             args=self.args,
-            resolver=self.resolver,
+            resolver=self.resolve,
         )
 
     def __str__(self):

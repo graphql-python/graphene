@@ -121,18 +121,11 @@ class BaseObjectType(object):
         return self.instance.__eq__(other)
 
     def resolve(self, field_name, args, info):
-        if field_name not in self._meta.fields_map.keys():
-            raise Exception('Field %s not found in model %s' % (field_name, self._meta.type_name))
         custom_resolve_fn = 'resolve_%s' % field_name
         if hasattr(self, custom_resolve_fn):
             resolve_fn = getattr(self, custom_resolve_fn)
             return resolve_fn(args, info)
         return self.get_field(field_name)
-
-    @classmethod
-    def can_resolve(cls, field_name, instance, args, info):
-        # Useful for manage permissions in fields
-        return True
 
     @classmethod
     def resolve_type(cls, schema, instance, *_):
