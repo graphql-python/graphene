@@ -81,7 +81,7 @@ def test_should_boolean_convert_boolean():
 
 def test_should_nullboolean_convert_boolean():
     field = assert_conversion(models.NullBooleanField, graphene.BooleanField)
-    assert field.null == True
+    assert field.null is True
 
 
 def test_should_float_convert_float():
@@ -90,16 +90,22 @@ def test_should_float_convert_float():
 
 def test_should_manytomany_convert_connectionorlist():
     field = assert_conversion(models.ManyToManyField, ConnectionOrListField, Article)
+    assert isinstance(field.field_type, DjangoModelField)
+    assert field.field_type.model == Article
 
 
 def test_should_manytoone_convert_connectionorlist():
     graphene_type = convert_django_field(Reporter.articles.related)
     assert isinstance(graphene_type, ConnectionOrListField)
+    assert isinstance(graphene_type.field_type, DjangoModelField)
+    assert graphene_type.field_type.model == Article
 
 
 def test_should_onetoone_convert_model():
-    assert_conversion(models.OneToOneField, DjangoModelField, Article)
+    field = assert_conversion(models.OneToOneField, DjangoModelField, Article)
+    assert field.model == Article
 
 
-def test_should_onetoone_convert_model():
-    assert_conversion(models.ForeignKey, DjangoModelField, Article)
+def test_should_foreignkey_convert_model():
+    field = assert_conversion(models.ForeignKey, DjangoModelField, Article)
+    assert field.model == Article
