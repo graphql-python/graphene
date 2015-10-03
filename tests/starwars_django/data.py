@@ -2,6 +2,7 @@ from collections import namedtuple
 
 from .models import Ship, Faction
 
+
 def initialize():
     rebels = Faction(
         id='1',
@@ -14,7 +15,6 @@ def initialize():
         name='Galactic Empire',
     )
     empire.save()
-
 
     xwing = Ship(
         id='1',
@@ -88,14 +88,18 @@ def createShip(shipName, factionId):
 def getShip(_id):
     return Ship.objects.get(id=_id)
 
+
 def getShips():
     return Ship.objects.all()
+
 
 def getFaction(_id):
     return Faction.objects.get(id=_id)
 
+
 def getRebels():
     return getFaction(1)
+
 
 def getEmpire():
     return getFaction(2)

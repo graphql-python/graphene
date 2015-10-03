@@ -11,6 +11,7 @@ Episode = graphene.Enum('Episode', dict(
     JEDI=6
 ))
 
+
 def wrap_character(character):
     if isinstance(character, _Human):
         return Human(character)

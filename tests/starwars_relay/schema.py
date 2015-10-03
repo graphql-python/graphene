@@ -10,7 +10,9 @@ from .data import (
 
 schema = graphene.Schema(name='Starwars Relay Schema')
 
+
 class Ship(relay.Node):
+
     '''A ship in the Star Wars saga'''
     name = graphene.StringField(description='The name of the ship.')
 
@@ -20,9 +22,11 @@ class Ship(relay.Node):
 
 
 class Faction(relay.Node):
+
     '''A faction in the Star Wars saga'''
     name = graphene.StringField(description='The name of the faction.')
-    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
+    ships = relay.ConnectionField(
+        Ship, description='The ships used by the faction.')
 
     @resolve_only_args
     def resolve_ships(self, **kwargs):

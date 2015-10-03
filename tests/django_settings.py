@@ -6,7 +6,7 @@ INSTALLED_APPS = [
     'tests.contrib_django',
 ]
 
-DATABASES={
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'tests/django.sqlite',

@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from django.db import models
 
+
 class Reporter(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -11,6 +12,7 @@ class Reporter(models.Model):
 
     class Meta:
         app_label = 'contrib_django'
+
 
 class Article(models.Model):
     headline = models.CharField(max_length=100)

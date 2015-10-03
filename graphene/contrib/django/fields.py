@@ -16,12 +16,14 @@ def get_type_for_model(schema, model):
     schema = schema
     types = schema.types.values()
     for _type in types:
-        type_model = hasattr(_type,'_meta') and getattr(_type._meta, 'model', None)
+        type_model = hasattr(_type, '_meta') and getattr(
+            _type._meta, 'model', None)
         if model == type_model:
             return _type
 
 
 class DjangoConnectionField(relay.ConnectionField):
+
     def wrap_resolved(self, value, instance, args, info):
         if isinstance(value, (QuerySet, Manager)):
             cls = instance.__class__
@@ -30,6 +32,7 @@ class DjangoConnectionField(relay.ConnectionField):
 
 
 class ConnectionOrListField(LazyField):
+
     @memoize
     def get_field(self, schema):
         model_field = self.field_type
@@ -43,6 +46,7 @@ class ConnectionOrListField(LazyField):
 
 
 class DjangoModelField(Field):
+
     def __init__(self, model, *args, **kwargs):
         super(DjangoModelField, self).__init__(None, *args, **kwargs)
         self.model = model
@@ -55,7 +59,9 @@ class DjangoModelField(Field):
     def get_object_type(self, schema):
         _type = get_type_for_model(schema, self.model)
         if not _type and self.object_type._meta.only_fields:
-            # We will only raise the exception if the related field is specified in only_fields
-            raise Exception("Field %s (%s) model not mapped in current schema" % (self, self.model._meta.object_name))
-        
+            # We will only raise the exception if the related field is
+            # specified in only_fields
+            raise Exception("Field %s (%s) model not mapped in current schema" % (
+                self, self.model._meta.object_name))
+
         return _type

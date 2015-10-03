@@ -49,7 +49,7 @@ class Schema(object):
     @property
     def types(self):
         return self._internal_types
-    
+
     def execute(self, request='', root=None, vars=None, operation_name=None):
         root = root or object()
         return graphql(
@@ -62,6 +62,7 @@ class Schema(object):
 
     def introspect(self):
         return self._schema.get_type_map()
+
 
 def register_internal_type(fun):
     @wraps(fun)

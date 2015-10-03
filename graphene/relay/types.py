@@ -23,6 +23,7 @@ def get_node(schema, globalId, *args):
 
 
 class BaseNode(object):
+
     @classmethod
     @memoize
     def get_definitions(cls, schema):

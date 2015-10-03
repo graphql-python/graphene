@@ -11,6 +11,7 @@ from graphene.core.options import Options
 from graphene.utils import memoize
 from graphene.core.schema import register_internal_type
 
+
 class ObjectTypeMeta(type):
     options_cls = Options
 
@@ -40,7 +41,7 @@ class ObjectTypeMeta(type):
         base_meta = getattr(new_class, '_meta', None)
 
         new_class.add_to_class('_meta', new_class.options_cls(meta))
-        
+
         new_class._meta.interface = new_class.is_interface(parents)
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
@@ -68,7 +69,8 @@ class ObjectTypeMeta(type):
                     raise Exception(
                         'Local field %r in class %r clashes '
                         'with field of similar name from '
-                        'base class %r' % (field.field_name, name, base.__name__)
+                        'base class %r' % (
+                            field.field_name, name, base.__name__)
                     )
             new_class._meta.parents.append(base)
             if base._meta.interface:
@@ -93,6 +95,7 @@ class ObjectTypeMeta(type):
 
 
 class BaseObjectType(object):
+
     def __new__(cls, instance=None, *args, **kwargs):
         if cls._meta.interface:
             raise Exception("An interface cannot be initialized")
@@ -143,7 +146,8 @@ class BaseObjectType(object):
             return GraphQLInterfaceType(
                 cls._meta.type_name,
                 description=cls._meta.description,
-                resolve_type=lambda *args, **kwargs: cls.resolve_type(schema, *args, **kwargs),
+                resolve_type=lambda *
+                args, **kwargs: cls.resolve_type(schema, *args, **kwargs),
                 fields=fields
             )
         return GraphQLObjectType(
@@ -156,6 +160,7 @@ class BaseObjectType(object):
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
     pass
+
 
 class Interface(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
     pass

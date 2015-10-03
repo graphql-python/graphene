@@ -3,6 +3,7 @@ from graphql.core import graphql
 
 from .schema import schema
 
+
 def test_correct_fetch_first_ship_rebels():
     query = '''
     query RebelsShipsQuery {
@@ -19,18 +20,18 @@ def test_correct_fetch_first_ship_rebels():
     }
     '''
     expected = {
-      'rebels': {
-        'name': 'Alliance to Restore the Republic',
-        'ships': {
-          'edges': [
-            {
-              'node': {
-                'name': 'X-Wing'
-              }
+        'rebels': {
+            'name': 'Alliance to Restore the Republic',
+            'ships': {
+                'edges': [
+                    {
+                        'node': {
+                            'name': 'X-Wing'
+                        }
+                    }
+                ]
             }
-          ]
         }
-      }
     }
     result = schema.execute(query)
     assert not result.errors

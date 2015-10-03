@@ -1,6 +1,8 @@
 from functools import wraps
 
+
 class cached_property(object):
+
     """
     A property that is only computed once per instance and then replaces itself
     with an ordinary attribute. Deleting the attribute resets the property.

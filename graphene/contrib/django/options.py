@@ -14,6 +14,7 @@ def is_base(cls):
 
 
 class DjangoOptions(Options):
+
     def __init__(self, *args, **kwargs):
         self.model = None
         super(DjangoOptions, self).__init__(*args, **kwargs)
@@ -25,6 +26,7 @@ class DjangoOptions(Options):
         if not is_node(cls) and not is_base(cls):
             return
         if not self.model:
-            raise Exception('Django ObjectType %s must have a model in the Meta class attr' % cls)
+            raise Exception(
+                'Django ObjectType %s must have a model in the Meta class attr' % cls)
         elif not inspect.isclass(self.model) or not issubclass(self.model, models.Model):
             raise Exception('Provided model in %s is not a Django model' % cls)

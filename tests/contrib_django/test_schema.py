@@ -20,6 +20,7 @@ def test_should_raise_if_no_model():
 def test_should_raise_if_model_is_invalid():
     with raises(Exception) as excinfo:
         class Character2(DjangoObjectType):
+
             class Meta:
                 model = 1
     assert 'not a Django model' in str(excinfo.value)
@@ -28,6 +29,7 @@ def test_should_raise_if_model_is_invalid():
 def test_should_raise_if_model_is_invalid():
     with raises(Exception) as excinfo:
         class ReporterTypeError(DjangoObjectType):
+
             class Meta:
                 model = Reporter
                 only_fields = ('articles', )
@@ -41,18 +43,22 @@ def test_should_raise_if_model_is_invalid():
         result = schema.execute(query)
         assert not result.errors
 
-    assert 'articles (Article) model not mapped in current schema' in str(excinfo.value)
-
+    assert 'articles (Article) model not mapped in current schema' in str(
+        excinfo.value)
 
 
 def test_should_map_fields_correctly():
     class ReporterType2(DjangoObjectType):
+
         class Meta:
             model = Reporter
-    assert ReporterType2._meta.fields_map.keys() == ['articles', 'first_name', 'last_name', 'id', 'email']
+    assert ReporterType2._meta.fields_map.keys(
+    ) == ['articles', 'first_name', 'last_name', 'id', 'email']
+
 
 def test_should_map_fields():
     class ReporterType(DjangoObjectType):
+
         class Meta:
             model = Reporter
 
@@ -86,13 +92,16 @@ def test_should_map_fields():
 
 def test_should_map_only_few_fields():
     class Reporter2(DjangoObjectType):
+
         class Meta:
             model = Reporter
             only_fields = ('id', 'email')
     assert Reporter2._meta.fields_map.keys() == ['id', 'email']
 
+
 def test_should_node():
     class ReporterNodeType(DjangoNode):
+
         class Meta:
             model = Reporter
 
@@ -104,6 +113,7 @@ def test_should_node():
             return [ArticleNodeType(Article(headline='Hi!'))]
 
     class ArticleNodeType(DjangoNode):
+
         class Meta:
             model = Article
 
@@ -152,11 +162,11 @@ def test_should_node():
             'last_name': 'X',
             'email': '',
             'articles': {
-              'edges': [{
-                'node': {
-                  'headline': 'Hi!'
-                }
-              }]
+                'edges': [{
+                  'node': {
+                      'headline': 'Hi!'
+                  }
+                }]
             },
         },
         'my_article': {

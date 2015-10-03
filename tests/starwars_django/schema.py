@@ -15,17 +15,21 @@ from .data import (
 
 schema = graphene.Schema(name='Starwars Django Relay Schema')
 
+
 class Ship(DjangoNode):
+
     class Meta:
-        model = ShipModel    
+        model = ShipModel
 
     @classmethod
     def get_node(cls, id):
         return Ship(getShip(id))
 
+
 class Faction(DjangoNode):
+
     class Meta:
-        model = FactionModel    
+        model = FactionModel
 
     @classmethod
     def get_node(cls, id):

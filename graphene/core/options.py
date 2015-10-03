@@ -5,6 +5,7 @@ DEFAULT_NAMES = ('description', 'name', 'interface',
 
 
 class Options(object):
+
     def __init__(self, meta=None):
         self.meta = meta
         self.local_fields = []
@@ -13,7 +14,7 @@ class Options(object):
         self.interfaces = []
         self.parents = []
         self.valid_attrs = DEFAULT_NAMES
-    
+
     def contribute_to_class(self, cls, name):
         cls._meta = self
         self.parent = cls
@@ -47,7 +48,8 @@ class Options(object):
 
             # Any leftover attributes must be invalid.
             if meta_attrs != {}:
-                raise TypeError("'class Meta' got invalid attribute(s): %s" % ','.join(meta_attrs.keys()))
+                raise TypeError(
+                    "'class Meta' got invalid attribute(s): %s" % ','.join(meta_attrs.keys()))
         else:
             self.proxy = False
 

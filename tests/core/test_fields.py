@@ -17,10 +17,13 @@ from graphql.core.type import (
     GraphQLID,
 )
 
+
 class ObjectType(object):
     _meta = Options()
+
     def resolve(self, *args, **kwargs):
         return None
+
     def can_resolve(self, *args):
         return True
 
@@ -28,10 +31,12 @@ ot = ObjectType()
 
 ObjectType._meta.contribute_to_class(ObjectType, '_meta')
 
+
 class Schema(object):
     pass
 
 schema = Schema()
+
 
 def test_field_no_contributed_raises_error():
     f = Field(GraphQLString)
@@ -60,10 +65,10 @@ def test_stringfield_type_null():
 
 
 def test_field_resolve():
-    f = StringField(null=False, resolve=lambda *args:'RESOLVED')
+    f = StringField(null=False, resolve=lambda *args: 'RESOLVED')
     f.contribute_to_class(ot, 'field_name')
     field_type = f.internal_field(schema)
-    assert 'RESOLVED' == field_type.resolver(ot,2,3)
+    assert 'RESOLVED' == field_type.resolver(ot, 2, 3)
 
 
 def test_field_resolve_type_custom():
@@ -71,6 +76,7 @@ def test_field_resolve_type_custom():
         pass
 
     class Schema(object):
+
         def get_type(self, name):
             if name == 'MyCustomType':
                 return MyCustomType

@@ -28,7 +28,7 @@ class Character(Interface):
 
 
 class Pet(ObjectType):
-    type = StringField(resolve=lambda *_:'Dog')
+    type = StringField(resolve=lambda *_: 'Dog')
 
 
 class Human(Character):
@@ -37,7 +37,7 @@ class Human(Character):
 
     def resolve_name(self, *args):
         return 'Peter'
-    
+
     def resolve_friend(self, *args):
         return Human(object())
 
@@ -46,16 +46,20 @@ class Human(Character):
 
 schema.query = Human
 
+
 def test_get_registered_type():
     assert schema.get_type('Character') == Character
+
 
 def test_get_unregistered_type():
     with raises(Exception) as excinfo:
         schema.get_type('NON_EXISTENT_MODEL')
     assert 'not found' in str(excinfo.value)
 
+
 def test_schema_query():
     assert schema.query == Human
+
 
 def test_query_schema_graphql():
     a = object()
@@ -70,7 +74,7 @@ def test_query_schema_graphql():
     expected = {
         'name': 'Peter',
         'pet': {
-            'type':'Dog'
+            'type': 'Dog'
         }
     }
     result = graphql(schema.schema, query, root=Human(object()))
@@ -91,7 +95,7 @@ def test_query_schema_execute():
     expected = {
         'name': 'Peter',
         'pet': {
-            'type':'Dog'
+            'type': 'Dog'
         }
     }
     result = schema.execute(query, root=object())
@@ -100,4 +104,5 @@ def test_query_schema_execute():
 
 
 def test_schema_get_type_map():
-    assert schema.schema.get_type_map().keys() == ['__Field', 'String', 'Pet', 'Character', '__InputValue', '__Directive', '__TypeKind', '__Schema', '__Type', 'Human', '__EnumValue', 'Boolean']
+    assert schema.schema.get_type_map().keys() == [
+        '__Field', 'String', 'Pet', 'Character', '__InputValue', '__Directive', '__TypeKind', '__Schema', '__Type', 'Human', '__EnumValue', 'Boolean']

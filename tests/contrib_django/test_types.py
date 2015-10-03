@@ -20,13 +20,16 @@ from .models import Reporter, Article
 
 
 class Character(DjangoInterface):
+
     '''Character description'''
     class Meta:
         model = Reporter
 
 
 class Human(DjangoNode):
+
     '''Human description'''
+
     def get_node(self, id):
         pass
 
@@ -39,12 +42,14 @@ schema = Schema()
 def test_django_interface():
     assert DjangoNode._meta.interface == True
 
+
 def test_pseudo_interface():
     object_type = Character.internal_type(schema)
     assert Character._meta.interface == True
     assert isinstance(object_type, GraphQLInterfaceType)
     assert Character._meta.model == Reporter
-    assert object_type.get_fields().keys() == ['articles', 'first_name', 'last_name', 'id', 'email']
+    assert object_type.get_fields().keys() == [
+        'articles', 'first_name', 'last_name', 'id', 'email']
 
 
 def test_interface_resolve_type():

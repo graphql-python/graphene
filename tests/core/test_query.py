@@ -24,7 +24,7 @@ class Character(Interface):
 
 
 class Pet(ObjectType):
-    type = StringField(resolve=lambda *_:'Dog')
+    type = StringField(resolve=lambda *_: 'Dog')
 
 
 class Human(Character):
@@ -33,7 +33,7 @@ class Human(Character):
 
     def resolve_name(self, *args):
         return 'Peter'
-    
+
     def resolve_friend(self, *args):
         return Human(object())
 
@@ -60,7 +60,7 @@ def test_query():
     expected = {
         'name': 'Peter',
         'pet': {
-            'type':'Dog'
+            'type': 'Dog'
         }
     }
     result = graphql(schema, query, root=Human(object()))

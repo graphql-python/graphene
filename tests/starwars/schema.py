@@ -4,14 +4,14 @@ from graphene import resolve_only_args
 from .data import getHero, getHuman, getCharacter, getDroid, Human as _Human, Droid as _Droid
 
 Episode = graphene.Enum('Episode', dict(
-    NEWHOPE = 4,
-    EMPIRE = 5,
-    JEDI = 6
+    NEWHOPE=4,
+    EMPIRE=5,
+    JEDI=6
 ))
 
 
 def wrap_character(character):
-    if isinstance(character, _Human): 
+    if isinstance(character, _Human):
         return Human(character)
     elif isinstance(character, _Droid):
         return Droid(character)
@@ -37,14 +37,14 @@ class Droid(Character):
 
 class Query(graphene.ObjectType):
     hero = graphene.Field(Character,
-        episode = graphene.Argument(Episode)
-    )
+                          episode=graphene.Argument(Episode)
+                          )
     human = graphene.Field(Human,
-        id = graphene.Argument(graphene.String)
-    )
+                           id=graphene.Argument(graphene.String)
+                           )
     droid = graphene.Field(Droid,
-        id = graphene.Argument(graphene.String)
-    )
+                           id=graphene.Argument(graphene.String)
+                           )
 
     class Meta:
         type_name = 'core.Query'

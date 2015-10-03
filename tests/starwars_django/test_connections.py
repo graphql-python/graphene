@@ -7,6 +7,7 @@ from .data import initialize
 
 pytestmark = pytest.mark.django_db
 
+
 def test_correct_fetch_first_ship_rebels():
     initialize()
     query = '''
@@ -24,18 +25,18 @@ def test_correct_fetch_first_ship_rebels():
     }
     '''
     expected = {
-      'rebels': {
-        'name': 'Alliance to Restore the Republic',
-        'ships': {
-          'edges': [
-            {
-              'node': {
-                'name': 'X-Wing'
-              }
+        'rebels': {
+            'name': 'Alliance to Restore the Republic',
+            'ships': {
+                'edges': [
+                    {
+                        'node': {
+                            'name': 'X-Wing'
+                        }
+                    }
+                ]
             }
-          ]
         }
-      }
     }
     result = schema.execute(query)
     assert not result.errors

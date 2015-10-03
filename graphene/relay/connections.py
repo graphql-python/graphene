@@ -13,4 +13,5 @@ def object_type_created(object_type):
         type_name = object_type._meta.type_name
         field = NodeIDField()
         object_type.add_to_class('id', field)
-        assert hasattr(object_type, 'get_node'), 'get_node classmethod not found in %s Node' % type_name
+        assert hasattr(
+            object_type, 'get_node'), 'get_node classmethod not found in %s Node' % type_name

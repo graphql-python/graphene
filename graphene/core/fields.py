@@ -13,7 +13,9 @@ from graphql.core.type import (
 from graphene.utils import cached_property, memoize
 from graphene.core.types import BaseObjectType
 
+
 class Field(object):
+
     def __init__(self, field_type, resolve=None, null=True, args=None, description='', **extra_args):
         self.field_type = field_type
         self.resolve_fn = resolve
@@ -41,7 +43,8 @@ class Field(object):
         if self.resolve_fn:
             resolve_fn = self.resolve_fn
         else:
-            resolve_fn = lambda root, args, info: root.resolve(self.field_name, args, info)
+            resolve_fn = lambda root, args, info: root.resolve(
+                self.field_name, args, info)
         return resolve_fn(instance, args, info)
 
     def get_object_type(self, schema):
@@ -78,7 +81,8 @@ class Field(object):
     @memoize
     def internal_field(self, schema):
         if not self.object_type:
-            raise Exception('Field could not be constructed in a non graphene.Type or graphene.Interface')
+            raise Exception(
+                'Field could not be constructed in a non graphene.Type or graphene.Interface')
 
         extra_args = self.extra_args.copy()
         for arg_name, arg_value in extra_args.items():
@@ -118,6 +122,7 @@ class Field(object):
 
 
 class NativeField(Field):
+
     def __init__(self, field=None):
         super(NativeField, self).__init__(None)
         self.field = field
@@ -135,6 +140,7 @@ class NativeField(Field):
 
 
 class LazyField(Field):
+
     @memoize
     def inner_field(self, schema):
         return self.get_field(schema)
@@ -147,11 +153,13 @@ class LazyField(Field):
 
 
 class LazyNativeField(NativeField):
+
     def __init__(self, *args, **kwargs):
         super(LazyNativeField, self).__init__(None, *args, **kwargs)
 
     def get_field(self, schema):
-        raise NotImplementedError("get_field function not implemented for %s LazyField" % self.__class__)
+        raise NotImplementedError(
+            "get_field function not implemented for %s LazyField" % self.__class__)
 
     @memoize
     def internal_field(self, schema):
@@ -163,6 +171,7 @@ class LazyNativeField(NativeField):
 
 
 class TypeField(Field):
+
     def __init__(self, *args, **kwargs):
         super(TypeField, self).__init__(self.field_type, *args, **kwargs)
 
@@ -188,10 +197,12 @@ class FloatField(TypeField):
 
 
 class ListField(Field):
+
     def type_wrapper(self, field_type):
         return GraphQLList(field_type)
 
 
 class NonNullField(Field):
+
     def type_wrapper(self, field_type):
         return GraphQLNonNull(field_type)

@@ -5,6 +5,7 @@ from graphene import relay
 
 schema = graphene.Schema()
 
+
 class OtherNode(relay.Node):
     name = graphene.StringField()
 

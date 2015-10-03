@@ -11,9 +11,11 @@ from graphene.core.fields import (
 )
 from graphene.contrib.django.fields import ConnectionOrListField, DjangoModelField
 
+
 @singledispatch
 def convert_django_field(field, cls):
-    raise Exception("Don't know how to convert the Django field %s (%s)" % (field, field.__class__))
+    raise Exception(
+        "Don't know how to convert the Django field %s (%s)" % (field, field.__class__))
 
 
 @convert_django_field.register(models.DateField)

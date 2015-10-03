@@ -7,6 +7,7 @@ from .schema import schema
 
 pytestmark = pytest.mark.django_db
 
+
 def test_correctly_fetches_id_name_rebels():
     initialize()
     query = '''
@@ -18,14 +19,15 @@ def test_correctly_fetches_id_name_rebels():
       }
     '''
     expected = {
-      'rebels': {
-        'id': 'RmFjdGlvbjox',
-        'name': 'Alliance to Restore the Republic'
-      }
+        'rebels': {
+            'id': 'RmFjdGlvbjox',
+            'name': 'Alliance to Restore the Republic'
+        }
     }
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected
+
 
 def test_correctly_refetches_rebels():
     initialize()
@@ -40,14 +42,15 @@ def test_correctly_refetches_rebels():
       }
     '''
     expected = {
-      'node': {
-        'id': 'RmFjdGlvbjox',
-        'name': 'Alliance to Restore the Republic'
-      }
+        'node': {
+            'id': 'RmFjdGlvbjox',
+            'name': 'Alliance to Restore the Republic'
+        }
     }
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected
+
 
 def test_correctly_fetches_id_name_empire():
     initialize()
@@ -60,14 +63,15 @@ def test_correctly_fetches_id_name_empire():
       }
     '''
     expected = {
-      'empire': {
-        'id': 'RmFjdGlvbjoy',
-        'name': 'Galactic Empire'
-      }
+        'empire': {
+            'id': 'RmFjdGlvbjoy',
+            'name': 'Galactic Empire'
+        }
     }
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected
+
 
 def test_correctly_refetches_empire():
     initialize()
@@ -82,14 +86,15 @@ def test_correctly_refetches_empire():
       }
     '''
     expected = {
-      'node': {
-        'id': 'RmFjdGlvbjoy',
-        'name': 'Galactic Empire'
-      }
+        'node': {
+            'id': 'RmFjdGlvbjoy',
+            'name': 'Galactic Empire'
+        }
     }
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected
+
 
 def test_correctly_refetches_xwing():
     initialize()
@@ -104,10 +109,10 @@ def test_correctly_refetches_xwing():
       }
     '''
     expected = {
-      'node': {
-        'id': 'U2hpcDox',
-        'name': 'X-Wing'
-      }
+        'node': {
+            'id': 'U2hpcDox',
+            'name': 'X-Wing'
+        }
     }
     result = schema.execute(query)
     assert not result.errors
