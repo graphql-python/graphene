@@ -51,6 +51,18 @@ def test_field_type():
     assert f.internal_type(schema) == GraphQLString
 
 
+def test_field_name_automatic_camelcase():
+    f = Field(GraphQLString)
+    f.contribute_to_class(ot, 'field_name')
+    assert f.name == 'fieldName'
+
+
+def test_field_name_use_name_if_exists():
+    f = Field(GraphQLString, name='my_custom_name')
+    f.contribute_to_class(ot, 'field_name')
+    assert f.name == 'my_custom_name'
+
+
 def test_stringfield_type():
     f = StringField()
     f.contribute_to_class(ot, 'field_name')
