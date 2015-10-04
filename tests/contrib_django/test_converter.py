@@ -89,9 +89,10 @@ def test_should_float_convert_float():
 
 
 def test_should_manytomany_convert_connectionorlist():
-    field = assert_conversion(models.ManyToManyField, ConnectionOrListField, Article)
-    assert isinstance(field.field_type, DjangoModelField)
-    assert field.field_type.model == Article
+    graphene_type = convert_django_field(Reporter._meta.local_many_to_many[0])
+    assert isinstance(graphene_type, ConnectionOrListField)
+    assert isinstance(graphene_type.field_type, DjangoModelField)
+    assert graphene_type.field_type.model == Reporter
 
 
 def test_should_manytoone_convert_connectionorlist():

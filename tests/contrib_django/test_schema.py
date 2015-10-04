@@ -50,7 +50,7 @@ def test_should_map_fields_correctly():
         class Meta:
             model = Reporter
     assert ReporterType2._meta.fields_map.keys(
-    ) == ['articles', 'first_name', 'last_name', 'id', 'email']
+    ) == ['articles', 'first_name', 'last_name', 'email', 'pets', 'id']
 
 
 def test_should_map_fields():

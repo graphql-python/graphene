@@ -49,7 +49,7 @@ def test_pseudo_interface():
     assert isinstance(object_type, GraphQLInterfaceType)
     assert Character._meta.model == Reporter
     assert object_type.get_fields().keys() == [
-        'lastName', 'email', 'id', 'firstName', 'articles']
+        'articles', 'firstName', 'lastName', 'email', 'pets', 'id']
 
 
 def test_interface_resolve_type():

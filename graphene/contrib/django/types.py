@@ -26,7 +26,11 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             return
         only_fields = cls._meta.only_fields
         reverse_fields = tuple(get_reverse_fields(cls._meta.model))
-        for field in cls._meta.model._meta.fields + reverse_fields:
+        all_fields = (list(cls._meta.model._meta.local_fields) +
+                      list(reverse_fields) +
+                      list(cls._meta.model._meta.local_many_to_many))
+
+        for field in all_fields:
             is_not_in_only = only_fields and field.name not in only_fields
             is_excluded = field.name in cls._meta.exclude_fields
             if is_not_in_only or is_excluded:
