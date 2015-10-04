@@ -197,12 +197,10 @@ class FloatField(TypeField):
 
 
 class ListField(Field):
-
     def type_wrapper(self, field_type):
         return GraphQLList(field_type)
 
 
 class NonNullField(Field):
-
     def type_wrapper(self, field_type):
         return GraphQLNonNull(field_type)
