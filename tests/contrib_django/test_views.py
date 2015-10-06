@@ -33,7 +33,6 @@ def test_client_get_no_query(settings, client):
 def test_client_post_no_query(settings, client):
     settings.ROOT_URLCONF = 'tests.contrib_django.test_urls'
     response = client.post('/graphql', {})
-    print response.content
     json_response = format_response(response)
     assert json_response == {'errors': [{'message': 'Must provide query string.'}]}
 

@@ -1,4 +1,5 @@
 import inspect
+import six
 from graphql.core.type import (
     GraphQLField,
     GraphQLList,
@@ -53,7 +54,7 @@ class Field(object):
             return field_type.get_object_type(schema)
         if _is_class and issubclass(field_type, BaseObjectType):
             return field_type
-        elif isinstance(field_type, basestring):
+        elif isinstance(field_type, six.string_types):
             if field_type == 'self':
                 return self.object_type
             else:
@@ -84,7 +85,7 @@ class Field(object):
                 'Field could not be constructed in a non graphene.Type or graphene.Interface')
 
         extra_args = self.extra_args.copy()
-        for arg_name, arg_value in extra_args.items():
+        for arg_name, arg_value in self.extra_args.items():
             if isinstance(arg_value, GraphQLArgument):
                 self.args[arg_name] = arg_value
                 del extra_args[arg_name]

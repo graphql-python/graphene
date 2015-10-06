@@ -38,7 +38,7 @@ class GraphQLView(View):
             try:
                 result = self.schema.execute(query, root=object())
                 data = self.format_result(result)
-            except Exception, e:
+            except Exception as e:
                 if settings.DEBUG:
                     raise e
                 return self.response_errors(e)

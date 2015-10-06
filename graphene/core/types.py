@@ -103,9 +103,9 @@ class BaseObjectType(object):
             return None
         elif type(instance) is cls:
             instance = instance.instance
-        return super(BaseObjectType, cls).__new__(cls, instance, *args, **kwargs)
+        return super(BaseObjectType, cls).__new__(cls, *args, **kwargs)
 
-    def __init__(self, instance=None):
+    def __init__(self, instance):
         signals.pre_init.send(self.__class__, instance=instance)
         self.instance = instance
         signals.post_init.send(self.__class__, instance=self)
