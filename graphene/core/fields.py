@@ -18,10 +18,10 @@ from graphene.core.scalars import GraphQLSkipField
 class Field(object):
     SKIP = GraphQLSkipField
 
-    def __init__(self, field_type, name=None, resolve=None, null=True, args=None, description='', **extra_args):
+    def __init__(self, field_type, name=None, resolve=None, required=False, args=None, description='', **extra_args):
         self.field_type = field_type
         self.resolve_fn = resolve
-        self.null = null
+        self.required = required
         self.args = args or {}
         self.extra_args = extra_args
         self._type = None
@@ -60,7 +60,7 @@ class Field(object):
                 return schema.get_type(field_type)
 
     def type_wrapper(self, field_type):
-        if not self.null:
+        if self.required:
             field_type = GraphQLNonNull(field_type)
         return field_type
 

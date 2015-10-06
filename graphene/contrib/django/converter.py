@@ -45,12 +45,12 @@ def _(field):
 
 @convert_django_field.register(models.BooleanField)
 def _(field):
-    return BooleanField(description=field.description, null=False)
+    return BooleanField(description=field.description, required=True)
 
 
 @convert_django_field.register(models.NullBooleanField)
 def _(field):
-    return BooleanField(description=field.description, null=True)
+    return BooleanField(description=field.description)
 
 
 @convert_django_field.register(models.FloatField)

@@ -76,12 +76,13 @@ def test_should_integer_convert_int():
 
 
 def test_should_boolean_convert_boolean():
-    assert_conversion(models.BooleanField, graphene.BooleanField)
+    field = assert_conversion(models.BooleanField, graphene.BooleanField)
+    assert field.required is True
 
 
 def test_should_nullboolean_convert_boolean():
     field = assert_conversion(models.NullBooleanField, graphene.BooleanField)
-    assert field.null is True
+    assert field.required is False
 
 
 def test_should_float_convert_float():

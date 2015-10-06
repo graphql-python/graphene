@@ -69,15 +69,15 @@ def test_stringfield_type():
     assert f.internal_type(schema) == GraphQLString
 
 
-def test_stringfield_type_null():
-    f = StringField(null=False)
+def test_stringfield_type_required():
+    f = StringField(required=True)
     f.contribute_to_class(ot, 'field_name')
     assert isinstance(f.internal_field(schema), GraphQLField)
     assert isinstance(f.internal_type(schema), GraphQLNonNull)
 
 
 def test_field_resolve():
-    f = StringField(null=False, resolve=lambda *args: 'RESOLVED')
+    f = StringField(required=True, resolve=lambda *args: 'RESOLVED')
     f.contribute_to_class(ot, 'field_name')
     field_type = f.internal_field(schema)
     assert 'RESOLVED' == field_type.resolver(ot, 2, 3)
