@@ -15,9 +15,10 @@ from .models import Article, Reporter
 
 
 def assert_conversion(django_field, graphene_field, *args):
-    field = django_field(*args)
+    field = django_field(*args, help_text='Custom Help Text')
     graphene_type = convert_django_field(field)
     assert isinstance(graphene_type, graphene_field)
+    assert graphene_type.description == 'Custom Help Text'
     return graphene_type
 
 

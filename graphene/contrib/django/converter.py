@@ -26,12 +26,12 @@ def convert_django_field(field):
 @convert_django_field.register(models.URLField)
 @convert_django_field.register(models.UUIDField)
 def _(field):
-    return StringField(description=field.description)
+    return StringField(description=field.help_text)
 
 
 @convert_django_field.register(models.AutoField)
 def _(field):
-    return IDField(description=field.description)
+    return IDField(description=field.help_text)
 
 
 @convert_django_field.register(models.PositiveIntegerField)
@@ -40,22 +40,22 @@ def _(field):
 @convert_django_field.register(models.BigIntegerField)
 @convert_django_field.register(models.IntegerField)
 def _(field):
-    return IntField(description=field.description)
+    return IntField(description=field.help_text)
 
 
 @convert_django_field.register(models.BooleanField)
 def _(field):
-    return BooleanField(description=field.description, required=True)
+    return BooleanField(description=field.help_text, required=True)
 
 
 @convert_django_field.register(models.NullBooleanField)
 def _(field):
-    return BooleanField(description=field.description)
+    return BooleanField(description=field.help_text)
 
 
 @convert_django_field.register(models.FloatField)
 def _(field):
-    return FloatField(description=field.description)
+    return FloatField(description=field.help_text)
 
 
 @convert_django_field.register(models.ManyToManyField)
@@ -68,4 +68,4 @@ def _(field):
 @convert_django_field.register(models.OneToOneField)
 @convert_django_field.register(models.ForeignKey)
 def _(field):
-    return DjangoModelField(field.related_model, description=field.description)
+    return DjangoModelField(field.related_model, description=field.help_text)

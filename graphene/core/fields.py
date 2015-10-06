@@ -100,6 +100,7 @@ class Field(object):
         internal_type = self.internal_type(schema)
         if not internal_type:
             raise Exception("Internal type for field %s is None" % self)
+
         return GraphQLField(
             internal_type,
             description=self.description,
