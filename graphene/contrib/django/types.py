@@ -26,7 +26,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             return
         only_fields = cls._meta.only_fields
         reverse_fields = tuple(get_reverse_fields(cls._meta.model))
-        all_fields = (list(cls._meta.model._meta.local_fields) +
+        all_fields = (list(cls._meta.model._meta.fields) +
                       list(reverse_fields) +
                       list(cls._meta.model._meta.local_many_to_many))
 
