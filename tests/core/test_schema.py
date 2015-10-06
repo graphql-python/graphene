@@ -19,6 +19,7 @@ from graphene import (
     Schema
 )
 
+from tests.utils import assert_equal_lists
 
 schema = Schema(name='My own schema')
 
@@ -104,5 +105,7 @@ def test_query_schema_execute():
 
 
 def test_schema_get_type_map():
-    assert schema.schema.get_type_map().keys() == [
-        '__Field', 'String', 'Pet', 'Character', '__InputValue', '__Directive', '__TypeKind', '__Schema', '__Type', 'Human', '__EnumValue', 'Boolean']
+    assert_equal_lists(
+        schema.schema.get_type_map().keys(),
+        ['__Field', 'String', 'Pet', 'Character', '__InputValue', '__Directive', '__TypeKind', '__Schema', '__Type', 'Human', '__EnumValue', 'Boolean']
+    )

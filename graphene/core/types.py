@@ -117,9 +117,6 @@ class BaseObjectType(object):
     def get_field(self, field):
         return getattr(self.instance, field, None)
 
-    def __eq__(self, other):
-        return self.instance.__eq__(other)
-
     def resolve(self, field_name, args, info):
         custom_resolve_fn = 'resolve_%s' % field_name
         if hasattr(self, custom_resolve_fn):

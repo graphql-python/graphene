@@ -20,7 +20,7 @@ from graphene.contrib.django.types import (
 
 
 def format_response(response):
-    return json.loads(response.content)
+    return json.loads(response.content.decode())
 
 
 def test_client_get_no_query(settings, client):

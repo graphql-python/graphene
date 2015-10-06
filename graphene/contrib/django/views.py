@@ -20,7 +20,7 @@ class GraphQLView(View):
     def format_result(result):
         data = {'data': result.data}
         if result.errors:
-            data['errors'] = map(form_error, result.errors)
+            data['errors'] = list(map(form_error, result.errors))
 
         return data
 
@@ -42,7 +42,6 @@ class GraphQLView(View):
                 if settings.DEBUG:
                     raise e
                 return self.response_errors(e)
-
         return JsonResponse(data)
 
     def get(self, request, *args, **kwargs):
@@ -58,7 +57,7 @@ class GraphQLView(View):
         content_type = self.get_content_type(request)
         if content_type == 'application/json':
             try:
-                received_json_data = json.loads(request.body)
+                received_json_data = json.loads(request.body.decode())
                 query = received_json_data.get('query')
             except ValueError:
                 return self.response_errors(ValueError("Malformed json body in the post data"))

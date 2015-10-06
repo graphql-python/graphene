@@ -18,6 +18,8 @@ from graphene.contrib.django.types import (
 
 from .models import Reporter, Article
 
+from tests.utils import assert_equal_lists
+
 
 class Character(DjangoInterface):
 
@@ -48,8 +50,10 @@ def test_pseudo_interface():
     assert Character._meta.interface is True
     assert isinstance(object_type, GraphQLInterfaceType)
     assert Character._meta.model == Reporter
-    assert object_type.get_fields().keys() == [
-        'articles', 'firstName', 'lastName', 'email', 'pets', 'id']
+    assert_equal_lists(
+        object_type.get_fields().keys(),
+        ['articles', 'firstName', 'lastName', 'email', 'pets', 'id']
+    )
 
 
 def test_interface_resolve_type():
