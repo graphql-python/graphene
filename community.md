@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Community
+active_tab: community
 description: The biggest GraphQL Community in Python
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Quickstart Guide
+active_tab: quickstart
 description: A Quick guide to Graphene
 ---
 
