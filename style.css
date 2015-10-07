@@ -162,7 +162,7 @@ strong {
 	font-weight: 100;
 	font-size: 42px;
 	color: #747474;
-	line-height: 49px;
+	line-height: 1.2em;
 	text-align: center;
 	animation: fadeIn .5s ease-in-out forwards;
 	animation-fill-mode: both;
@@ -243,7 +243,7 @@ strong {
 #page-nav a {
 	display: inline-block;
 	margin: 0 0;
-	color: #C4C4C4;
+	color: #BBB;
 	line-height: 32px;
 	height: 32px;
 	padding: 52px 16px 51px;
@@ -269,11 +269,11 @@ strong {
 }
 #page-headline h3 {
 	font-family: 'Helvetica Neue';
-	font-weight: 100;
+	font-weight: 200;
 	font-size: 14px;
 	margin-top: 8px;
 	text-transform: uppercase;
-	color: #999999;
+	color: #AAA;
 	letter-spacing: 0.6px;
 	line-height: 16px;
 }
@@ -319,27 +319,74 @@ strong {
 
 
 @keyframes logo-dash {
-  to {
-    stroke-dashoffset: 0;
-  }
+	to {
+		stroke-dashoffset: 0;
+	}
 }
 
 @keyframes logo-dot {
-  from {
-    opacity: 0.5;
-    transform:scale(0);
-  }
-  to {
-    opacity: 1;
-    transform:scale(1);
-  }
+	from {
+		opacity: 0.5;
+		transform:scale(0);
+	}
+	to {
+		opacity: 1;
+		transform:scale(1);
+	}
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@media screen and (max-width:599px) {
+	#main-logo {
+		margin: 50px auto;
+	}
+	#headline h1 {
+		font-size: 32px;
+	}
+	#main-nav {
+		margin-top: 40px;
+	}
+	#main-nav a {
+		padding: 5px 0;
+		float: left;
+		display: block;
+		clear: left;
+	}
+	#top-header {
+		padding: 0 20px;
+	}
+	#page-nav {
+	    float: right;
+	    margin-right: -20px;
+	    margin-top: 6px;
+	}
+	#page-nav a {
+	    padding: 0;
+	    display: block;
+	    text-align: right;
+	    padding-right: 20px;
+	}
+	#page-nav .github-icon {
+		text-indent: 10000px;
+		width: 24px;
+		height: 24px;
+	}
+	#page-nav a.active {
+		box-shadow: inset -4px 0px 0 #D06D6D;
+	}
+	#page-headline {
+		padding: 48px 0;
+	}
+	#page-article {
+		padding-top: 24px;
+		padding-bottom: 24px;
+	}
 }
