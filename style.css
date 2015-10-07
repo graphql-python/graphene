@@ -303,6 +303,13 @@ strong {
 	padding: 0 20px;
 }
 
+#page-article > .highlight {
+	font-size: 14px;
+    border-left: 5px solid #F4DEDE;
+    /*background-color: #FBFBFB;
+    padding: 1px 0;*/
+    padding-left: 15px;
+}
 #page-article > .highlight .lineno { color: #ccc; display:inline-block; padding: 0 5px; border-right:1px solid #ccc; }
 #page-article > .highlight pre code { display: block; white-space: pre; overflow-x: auto; word-wrap: normal; }
 
