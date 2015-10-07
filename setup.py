@@ -27,6 +27,7 @@ setup(
     version='0.1.0',
 
     description='Graphene: Python DSL for GraphQL',
+    long_description=open('README.rst').read(),
 
     url='https://github.com/graphql-python/graphene',
 
