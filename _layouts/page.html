@@ -18,18 +18,18 @@ layout: default
   <nav id="page-nav">
     <a href="">Starwars Django Example</a>
     <a href="">Quickstart Guide</a>
-    <a href="" class="active">Community</a>
-    <a href=""><span class="github-icon">Github</span></a>
+    <a href="community" class="active">Community</a>
+    <a href="https://github.com/graphql-python/graphene/"><span class="github-icon">Github</span></a>
   </nav>
 </header>
 <div id="page-headline">
   <h1 class="container">
-    {page.title}
+    {{ page.title }}
   </h1>
   <h3 class="container">
-    {page.description}
+    {{ page.description }}
   </h3>
 </div>
 <article id="page-article" class="container">
-  {content}
+  {{ content }}
 </article>
