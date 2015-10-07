@@ -24,11 +24,11 @@ class PyTest(TestCommand):
 
 setup(
     name='graphene',
-    version='0.1',
+    version='0.1.0',
 
     description='Graphene: Python DSL for GraphQL',
 
-    url='https://github.com/syrusakbary/graphene',
+    url='https://github.com/graphql-python/graphene',
 
     author='Syrus Akbary',
     author_email='me@syrusakbary.com',
@@ -55,8 +55,8 @@ setup(
     install_requires=[
         'six',
         'blinker',
-        'graphqllib',
-        'graphql-relay'
+        'graphql-core==0.1a0',
+        'graphql-relay==0.1.2'
     ],
     tests_require=['pytest>=2.7.2'],
     extras_require={

@@ -1,10 +1,17 @@
-# Graphene: Pythonic GraphQL [![Build Status](https://travis-ci.org/syrusakbary/graphene.svg?branch=master)](https://travis-ci.org/syrusakbary/graphene) [![Coverage Status](https://coveralls.io/repos/syrusakbary/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/syrusakbary/graphene?branch=master)
+# Graphene: Pythonic GraphQL [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
 
 This is a library to use GraphQL in a Pythonic and easy way.
 It maps the models/fields to internal GraphQLlib objects without effort. Including automatic [Django models](#djangorelay-schema) conversion.
 
 
-*Note: This library requires installing [graphqllib](https://github.com/dittos/graphqllib) and [graphql-relay](https://github.com/syrusakbary/graphql-relay-py) external libraries.*
+## Installation
+
+For instaling graphene, just run this command in your shell
+
+```bash
+pip install graphene
+```
+
 
 ## Usage
 
@@ -13,9 +20,6 @@ Example code of a GraphQL schema using Graphene:
 ### Schema definition
 
 ```python
-import graphene
-# ...
-
 class Character(graphene.Interface):
     id = graphene.IDField()
     name = graphene.StringField()
