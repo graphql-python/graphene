@@ -3,7 +3,7 @@
 /* Main styles */
 
 html, body {
-	font-family: "Helvetica Neue";
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: 300;
 	background: white;
 	font-size: 16px;
@@ -268,7 +268,7 @@ strong {
 	line-height: 49px;
 }
 #page-headline h3 {
-	font-family: 'Helvetica Neue';
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-weight: 200;
 	font-size: 14px;
 	margin-top: 8px;
