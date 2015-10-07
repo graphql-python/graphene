@@ -1,7 +1,8 @@
-# Graphene: Pythonic GraphQL [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
+# Graphene [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
 
-This is a library to use GraphQL in a Pythonic and easy way.
-It maps the models/fields to internal GraphQLlib objects without effort. Including automatic [Django models](#djangorelay-schema) conversion.
+Graphene is a Python library for creating GraphQL schemas/types easly.
+It maps the models/fields to internal GraphQL objects without effort.
+Including automatic [Django models](#djangorelay-schema) conversion.
 
 
 ## Installation
@@ -37,9 +38,7 @@ class Query(graphene.ObjectType):
 schema = graphene.Schema(query=Query)
 ```
 
-### Querying
-
-Querying `graphene.Schema` is as simple as:
+Then Querying `graphene.Schema` is as simple as:
 
 ```python
 query = '''
@@ -58,21 +57,16 @@ Graphene also supports Relay, check the [Starwars Relay example](tests/starwars_
 
 ```python
 class Ship(relay.Node):
-    '''A ship in the Star Wars saga'''
-    name = graphene.StringField(description='The name of the ship.')
+    name = graphene.StringField()
 
     @classmethod
     def get_node(cls, id):
-        return Ship(getShip(id))
+        return Ship(your_ship_instance)
 
 
 class Query(graphene.ObjectType):
-    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
+    ships = relay.ConnectionField(Ship)
     node = relay.NodeField()
-
-    @resolve_only_args
-    def resolve_ships(self):
-        return [Ship(s) for s in getShips()]
 
 ```
 
@@ -85,7 +79,7 @@ class Ship(DjangoNode):
     class Meta:
         model = YourDjangoModelHere
         # only_fields = ('id', 'name') # Only map this fields from the model
-        # excluxe_fields ('field_to_excluxe', ) # Exclude mapping this fields from the model
+        # exclude_fields ('field_to_exclude', ) # Exclude mapping this fields from the model
 
 class Query(graphene.ObjectType):
     node = relay.NodeField()

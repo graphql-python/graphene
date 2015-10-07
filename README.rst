@@ -1,9 +1,9 @@
-Graphene: Pythonic GraphQL |Build Status| |Coverage Status|
-===========================================================
+Graphene |Build Status| |Coverage Status|
+=========================================
 
-This is a library to use GraphQL in a Pythonic and easy way. It maps the
-models/fields to internal GraphQLlib objects without effort. Including
-automatic `Django models`_ conversion.
+Graphene is a Python library for creating GraphQL schemas/types easly.
+It maps the models/fields to internal GraphQL objects without effort.
+Including automatic `Django models`_ conversion.
 
 Installation
 ------------
