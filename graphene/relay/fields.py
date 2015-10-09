@@ -1,4 +1,4 @@
-import collections
+from collections import Iterable, OrderedDict
 
 from graphql_relay.connection.arrayconnection import (
     connectionFromArray
@@ -30,7 +30,7 @@ class ConnectionField(Field):
         if resolved:
             resolved = self.wrap_resolved(resolved, instance, args, info)
             assert isinstance(
-                resolved, collections.Iterable), 'Resolved value from the connection field have to be iterable'
+                resolved, Iterable), 'Resolved value from the connection field have to be iterable'
             return connectionFromArray(resolved, args)
 
     @memoize
@@ -71,7 +71,7 @@ class NodeTypeField(LazyField):
             if resolved_global_id.type == self.field_object_type._meta.type_name:
                 return node_field.resolver(instance, args, info)
 
-        args = {a.name: a for a in node_field.args}
+        args = OrderedDict([(a.name, a) for a in node_field.args])
         field = Field(self.field_object_type, id=args['id'], resolve=resolver)
         field.contribute_to_class(self.object_type, self.field_name)
 

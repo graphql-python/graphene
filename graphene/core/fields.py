@@ -1,5 +1,6 @@
 import inspect
 import six
+from functools import total_ordering
 from graphql.core.type import (
     GraphQLField,
     GraphQLList,
@@ -16,8 +17,10 @@ from graphene.core.types import BaseObjectType
 from graphene.core.scalars import GraphQLSkipField
 
 
+@total_ordering
 class Field(object):
     SKIP = GraphQLSkipField
+    creation_counter = 0
 
     def __init__(self, field_type, name=None, resolve=None, required=False, args=None, description='', **extra_args):
         self.field_type = field_type
@@ -29,6 +32,8 @@ class Field(object):
         self.name = name
         self.description = description or self.__doc__
         self.object_type = None
+        self.creation_counter = Field.creation_counter
+        Field.creation_counter += 1
 
     def contribute_to_class(self, cls, name):
         if not self.name:
@@ -121,6 +126,21 @@ class Field(object):
         if name is not None:
             return '<%s: %s>' % (path, name)
         return '<%s>' % path
+
+    def __eq__(self, other):
+        # Needed for @total_ordering
+        if isinstance(other, Field):
+            return self.creation_counter == other.creation_counter
+        return NotImplemented
+
+    def __lt__(self, other):
+        # This is needed because bisect does not take a comparison function.
+        if isinstance(other, Field):
+            return self.creation_counter < other.creation_counter
+        return NotImplemented
+
+    def __hash__(self):
+        return hash(self.creation_counter)
 
 
 class NativeField(Field):

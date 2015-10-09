@@ -1,5 +1,6 @@
 import inspect
 import six
+from collections import OrderedDict
 
 from graphql.core.type import (
     GraphQLObjectType,
@@ -49,10 +50,9 @@ class ObjectTypeMeta(type):
         new_class.add_extra_fields()
 
         new_fields = new_class._meta.local_fields
-        field_names = {f.name:f for f in new_fields}
+        field_names = {f.name: f for f in new_fields}
 
         for base in parents:
-            original_base = base
             if not hasattr(base, '_meta'):
                 # Things without _meta aren't functional models, so they're
                 # uninteresting parents.
@@ -132,11 +132,9 @@ class BaseObjectType(object):
     @memoize
     @register_internal_type
     def internal_type(cls, schema):
-        fields_map = cls._meta.internal_fields_map
-        fields = lambda: {
-            name: field.internal_field(schema)
-            for name, field in fields_map.items()
-        }
+        fields_list = cls._meta.fields
+        fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
+                                      for f in fields_list])
         if cls._meta.interface:
             return GraphQLInterfaceType(
                 cls._meta.type_name,

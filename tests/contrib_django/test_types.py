@@ -63,13 +63,13 @@ def test_interface_resolve_type():
 
 def test_object_type():
     object_type = Human.internal_type(schema)
-    internal_fields_map = Human._meta.internal_fields_map
+    fields_map = Human._meta.fields_map
     assert Human._meta.interface is False
     assert isinstance(object_type, GraphQLObjectType)
     assert object_type.get_fields() == {
-        'headline': internal_fields_map['headline'].internal_field(schema),
-        'id': internal_fields_map['id'].internal_field(schema),
-        'reporter': internal_fields_map['reporter'].internal_field(schema),
-        'pubDate': internal_fields_map['pubDate'].internal_field(schema),
+        'headline': fields_map['headline'].internal_field(schema),
+        'id': fields_map['id'].internal_field(schema),
+        'reporter': fields_map['reporter'].internal_field(schema),
+        'pubDate': fields_map['pub_date'].internal_field(schema),
     }
     assert object_type.get_interfaces() == [DjangoNode.internal_type(schema)]

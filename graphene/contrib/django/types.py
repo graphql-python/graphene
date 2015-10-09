@@ -25,10 +25,10 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         if not cls._meta.model:
             return
         only_fields = cls._meta.only_fields
-        reverse_fields = tuple(get_reverse_fields(cls._meta.model))
-        all_fields = (list(cls._meta.model._meta.fields) +
-                      list(reverse_fields) +
-                      list(cls._meta.model._meta.local_many_to_many))
+        reverse_fields = get_reverse_fields(cls._meta.model)
+        all_fields = sorted(list(cls._meta.model._meta.fields) +
+                            list(reverse_fields) +
+                            list(cls._meta.model._meta.local_many_to_many))
 
         for field in all_fields:
             is_not_in_only = only_fields and field.name not in only_fields

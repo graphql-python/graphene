@@ -1,4 +1,5 @@
 from graphene.utils import cached_property
+from collections import OrderedDict
 
 DEFAULT_NAMES = ('description', 'name', 'interface',
                  'type_name', 'interfaces', 'proxy')
@@ -66,12 +67,8 @@ class Options(object):
         fields = []
         for parent in self.parents:
             fields.extend(parent._meta.fields)
-        return self.local_fields + fields
+        return sorted(self.local_fields + fields)
 
     @cached_property
     def fields_map(self):
-        return {f.field_name: f for f in self.fields}
-
-    @cached_property
-    def internal_fields_map(self):
-        return {f.name: f for f in self.fields}
+        return OrderedDict([(f.field_name, f) for f in self.fields])
