@@ -4,6 +4,7 @@ from graphql.core import graphql
 from graphql.core.type import (
     GraphQLSchema as _GraphQLSchema
 )
+from graphql.core.utils.introspection_query import introspection_query
 from graphene import signals
 from graphene.utils import cached_property
 
@@ -71,7 +72,7 @@ class Schema(object):
         )
 
     def introspect(self):
-        return self._schema.get_type_map()
+        return self.execute(introspection_query).data
 
 
 def register_internal_type(fun):
