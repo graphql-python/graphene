@@ -57,7 +57,7 @@ setup(
         'six',
         'blinker',
         'graphql-core==0.1a2',
-        'graphql-relay==0.1.4'
+        'graphql-relay==0.2.0'
     ],
     tests_require=[
         'pytest>=2.7.2',

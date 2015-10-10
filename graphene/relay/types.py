@@ -1,9 +1,9 @@
 from graphql_relay.node.node import (
-    nodeDefinitions,
-    fromGlobalId
+    node_definitions,
+    from_global_id
 )
 from graphql_relay.connection.connection import (
-    connectionDefinitions
+    connection_definitions
 )
 
 from graphene.core.types import Interface
@@ -16,7 +16,7 @@ def get_node_type(schema, obj):
 
 
 def get_node(schema, globalId, *args):
-    resolvedGlobalId = fromGlobalId(globalId)
+    resolvedGlobalId = from_global_id(globalId)
     _type, _id = resolvedGlobalId.type, resolvedGlobalId.id
     object_type = schema.get_type(_type)
     if not object_type or not issubclass(object_type, BaseNode):
@@ -29,22 +29,22 @@ class BaseNode(object):
     @classmethod
     @memoize
     def get_definitions(cls, schema):
-        return nodeDefinitions(lambda *args: get_node(schema, *args), lambda *args: get_node_type(schema, *args))
+        return node_definitions(lambda *args: get_node(schema, *args), lambda *args: get_node_type(schema, *args))
 
     @classmethod
     @memoize
     def get_connection(cls, schema):
         _type = cls.internal_type(schema)
         type_name = cls._meta.type_name
-        connection = connectionDefinitions(type_name, _type).connectionType
+        connection = connection_definitions(type_name, _type).connection_type
         return connection
 
     @classmethod
     def internal_type(cls, schema):
         from graphene.relay.utils import is_node_type
         if is_node_type(cls):
-            # Return only nodeInterface when is the Node Inerface
-            return BaseNode.get_definitions(schema).nodeInterface
+            # Return only node_interface when is the Node Inerface
+            return BaseNode.get_definitions(schema).node_interface
         return super(BaseNode, cls).internal_type(schema)
 
 

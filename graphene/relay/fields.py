@@ -1,14 +1,14 @@
 from collections import Iterable, OrderedDict
 
 from graphql_relay.connection.arrayconnection import (
-    connectionFromArray
+    connection_from_list
 )
 from graphql_relay.connection.connection import (
     connectionArgs
 )
 from graphql_relay.node.node import (
-    globalIdField,
-    fromGlobalId
+    global_id_field,
+    from_global_id
 )
 
 from graphene.core.fields import Field, LazyNativeField, LazyField
@@ -31,7 +31,7 @@ class ConnectionField(Field):
             resolved = self.wrap_resolved(resolved, instance, args, info)
             assert isinstance(
                 resolved, Iterable), 'Resolved value from the connection field have to be iterable'
-            return connectionFromArray(resolved, args)
+            return connection_from_list(resolved, args)
 
     @memoize
     def internal_type(self, schema):
@@ -53,7 +53,7 @@ class NodeField(LazyNativeField):
             field.contribute_to_class(self.object_type, self.field_name)
             return field.internal_field(schema)
         from graphene.relay.types import BaseNode
-        return BaseNode.get_definitions(schema).nodeField
+        return BaseNode.get_definitions(schema).node_field
 
 
 class NodeTypeField(LazyField):
@@ -63,11 +63,11 @@ class NodeTypeField(LazyField):
 
     def inner_field(self, schema):
         from graphene.relay.types import BaseNode
-        node_field = BaseNode.get_definitions(schema).nodeField
+        node_field = BaseNode.get_definitions(schema).node_field
 
         def resolver(instance, args, info):
             global_id = args.get('id')
-            resolved_global_id = fromGlobalId(global_id)
+            resolved_global_id = from_global_id(global_id)
             if resolved_global_id.type == self.field_object_type._meta.type_name:
                 return node_field.resolver(instance, args, info)
 
@@ -80,4 +80,4 @@ class NodeTypeField(LazyField):
 
 class NodeIDField(LazyNativeField):
     def get_field(self, schema):
-        return globalIdField(self.object_type._meta.type_name)
+        return global_id_field(self.object_type._meta.type_name)

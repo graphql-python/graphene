@@ -1,5 +1,5 @@
 from graphql_relay.node.node import (
-    globalIdField
+    global_id_field
 )
 
 from graphene import signals
