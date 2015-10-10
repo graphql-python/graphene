@@ -121,7 +121,7 @@ class Field(object):
         """
         Displays the module, class and name of the field.
         """
-        path = '%r.%s' % (self.object_type, self.__class__.__name__)
+        path = '%s[%s]' % (self.__class__.__name__, str(self.field_type))
         name = getattr(self, 'field_name', None)
         if name is not None:
             return '<%s: %s>' % (path, name)
