@@ -62,6 +62,12 @@ class DjangoModelField(Field):
         super(DjangoModelField, self).__init__(None, *args, **kwargs)
         self.model = model
 
+    def resolve(self, instance, args, info):
+        resolved = super(DjangoModelField, self).resolve(instance, args, info)
+        schema = info.schema.graphene_schema
+        _type = self.get_object_type(schema)
+        return _type(resolved)
+
     @memoize
     def internal_type(self, schema):
         _type = self.get_object_type(schema)
