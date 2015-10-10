@@ -1,8 +1,10 @@
-# Graphene [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
+# ![Graphene Logo](http://graphene-python.org/favicon.png) [Graphene](http://graphene-python.org) [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
 
-Graphene is a Python library for creating GraphQL schemas/types easly.
-It maps the models/fields to internal GraphQL objects without effort.
-Including automatic [Django models](#djangorelay-schema) conversion.
+
+Graphene is a Python library for building GraphQL schemas/types fast and easily.
+* **Easy to use:** It maps the models/fields to internal GraphQL objects without effort.
+* **Relay:** Graphene has builtin support for Relay
+* **Django:** Automatic [Django models](#djangorelay-schema) conversion. *See an [example Django](http://github.com/graphql-python/swapi-graphene) implementation*
 
 
 ## Installation
