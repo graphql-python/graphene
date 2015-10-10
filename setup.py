@@ -54,7 +54,7 @@ setup(
     packages=find_packages(exclude=['tests']),
 
     install_requires=[
-        'six',
+        'six>=1.10.0',
         'blinker',
         'graphql-core==0.1a2',
         'graphql-relay==0.2.0'
