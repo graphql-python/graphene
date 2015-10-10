@@ -2,6 +2,7 @@ from django.conf.urls import url
 
 from graphene.contrib.django.views import GraphQLView
 
+import graphene
 from graphene import Schema
 from graphene.contrib.django.types import (
     DjangoNode,
@@ -20,8 +21,13 @@ class Character(DjangoNode):
 
 
 class Human(DjangoNode):
+    raises = graphene.StringField()
+
     class Meta:
         model = Article
+
+    def resolve_raises(self, *args):
+        raise Exception("This field should raise exception")
 
     def get_node(self, id):
         pass

@@ -4,6 +4,7 @@ from pytest import raises
 from graphene.core.fields import (
     Field,
     StringField,
+    NonNullField
 )
 
 from graphene.core.options import Options
@@ -26,6 +27,9 @@ class ObjectType(object):
 
     def can_resolve(self, *args):
         return True
+
+    def __str__(self):
+        return "ObjectType"
 
 ot = ObjectType()
 
@@ -69,6 +73,12 @@ def test_stringfield_type():
     assert f.internal_type(schema) == GraphQLString
 
 
+def test_nonnullfield_type():
+    f = NonNullField(StringField())
+    f.contribute_to_class(ot, 'field_name')
+    assert isinstance(f.internal_type(schema), GraphQLNonNull)
+
+
 def test_stringfield_type_required():
     f = StringField(required=True)
     f.contribute_to_class(ot, 'field_name')
@@ -108,3 +118,61 @@ def test_field_resolve_type_custom():
     f.contribute_to_class(ot, 'field_name')
     field_type = f.get_object_type(s)
     assert field_type == ot
+
+
+def test_field_orders():
+    f1 = Field(None)
+    f2 = Field(None)
+    assert f1 < f2
+
+
+def test_field_orders_wrong_type():
+    field = Field(None)
+    try:
+        assert not field < 1
+    except TypeError:
+        # Fix exception raising in Python3+
+        pass
+
+
+def test_field_eq():
+    f1 = Field(None)
+    f2 = Field(None)
+    assert f1 != f2
+
+
+def test_field_eq_wrong_type():
+    field = Field(None)
+    assert field != 1
+
+
+def test_field_hash():
+    f1 = Field(None)
+    f2 = Field(None)
+    assert hash(f1) != hash(f2)
+
+
+def test_field_none_type_raises_error():
+    s = Schema()
+    f = Field(None)
+    f.contribute_to_class(ot, 'field_name')
+    with raises(Exception) as excinfo:
+        f.internal_field(s)
+    assert str(excinfo.value) == "Internal type for field ObjectType.field_name is None"
+
+
+def test_field_str():
+    f = StringField()
+    f.contribute_to_class(ot, 'field_name')
+    assert str(f) == "ObjectType.field_name"
+
+
+def test_field_repr():
+    f = StringField()
+    assert repr(f) == "<graphene.core.fields.StringField>"
+
+
+def test_field_repr_contributed():
+    f = StringField()
+    f.contribute_to_class(ot, 'field_name')
+    assert repr(f) == "<graphene.core.fields.StringField: field_name>"

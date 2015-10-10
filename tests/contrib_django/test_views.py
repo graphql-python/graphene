@@ -72,6 +72,14 @@ def test_client_get_good_query(settings, client):
     assert json_response == expected_json
 
 
+def test_client_get_good_query_with_raise(settings, client):
+    settings.ROOT_URLCONF = 'tests.contrib_django.test_urls'
+    response = client.get('/graphql', {'query': '{ raises }'})
+    json_response = format_response(response)
+    assert json_response['errors'][0]['message'] == 'This field should raise exception'
+    assert json_response['data']['raises'] is None
+
+
 def test_client_post_good_query(settings, client):
     settings.ROOT_URLCONF = 'tests.contrib_django.test_urls'
     response = client.post('/graphql', json.dumps({'query': '{ headline }'}), 'application/json')

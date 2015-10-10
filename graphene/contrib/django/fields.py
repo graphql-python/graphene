@@ -66,6 +66,10 @@ class DjangoModelField(Field):
         resolved = super(DjangoModelField, self).resolve(instance, args, info)
         schema = info.schema.graphene_schema
         _type = self.get_object_type(schema)
+        assert _type, ("Field %s cannot be retrieved as the "
+                       "ObjectType is not registered by the schema" % (
+                           self.field_name
+                       ))
         return _type(resolved)
 
     @memoize

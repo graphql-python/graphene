@@ -19,6 +19,9 @@ class ObjectTypeMeta(type):
     def is_interface(cls, parents):
         return Interface in parents
 
+    def is_mutation(cls, parents):
+        return Mutation in parents
+
     def __new__(cls, name, bases, attrs):
         super_new = super(ObjectTypeMeta, cls).__new__
         parents = [b for b in bases if isinstance(b, cls)]
@@ -44,6 +47,10 @@ class ObjectTypeMeta(type):
         new_class.add_to_class('_meta', new_class.options_cls(meta))
 
         new_class._meta.interface = new_class.is_interface(parents)
+        new_class._meta.mutation = new_class.is_mutation(parents)
+
+        assert not (new_class._meta.interface and new_class._meta.mutation)
+
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
@@ -152,6 +159,10 @@ class BaseObjectType(object):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
+    pass
+
+
+class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
     pass
 
 

@@ -109,3 +109,33 @@ def test_schema_get_type_map():
         schema.schema.get_type_map().keys(),
         ['__Field', 'String', 'Pet', 'Character', '__InputValue', '__Directive', '__TypeKind', '__Schema', '__Type', 'Human', '__EnumValue', 'Boolean']
     )
+
+
+def test_schema_no_query():
+    schema = Schema(name='My own schema')
+    with raises(Exception) as excinfo:
+        schema.schema
+    assert 'define a base query type' in str(excinfo)
+
+
+def test_schema_register():
+    schema = Schema(name='My own schema')
+
+    @schema.register
+    class MyType(ObjectType):
+        type = StringField(resolve=lambda *_: 'Dog')
+
+    assert schema.get_type('MyType') == MyType
+
+
+def test_schema_introspect():
+    schema = Schema(name='My own schema')
+
+    class MyType(ObjectType):
+        type = StringField(resolve=lambda *_: 'Dog')
+
+    schema.query = MyType
+
+    introspection = schema.introspect()
+    assert '__schema' in introspection
+

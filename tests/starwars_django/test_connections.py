@@ -14,6 +14,9 @@ def test_correct_fetch_first_ship_rebels():
     query RebelsShipsQuery {
       rebels {
         name,
+        hero {
+          name
+        }
         ships(first: 1) {
           edges {
             node {
@@ -27,6 +30,9 @@ def test_correct_fetch_first_ship_rebels():
     expected = {
         'rebels': {
             'name': 'Alliance to Restore the Republic',
+            'hero': {
+                'name': 'Human'
+            },
             'ships': {
                 'edges': [
                     {

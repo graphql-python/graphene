@@ -15,9 +15,9 @@ def get_node_type(schema, obj):
     return obj.internal_type(schema)
 
 
-def get_node(schema, globalId, *args):
-    resolvedGlobalId = from_global_id(globalId)
-    _type, _id = resolvedGlobalId.type, resolvedGlobalId.id
+def get_node(schema, global_id, *args):
+    resolved_global_id = from_global_id(global_id)
+    _type, _id = resolved_global_id.type, resolved_global_id.id
     object_type = schema.get_type(_type)
     if not object_type or not issubclass(object_type, BaseNode):
         raise Exception("The type %s is not a Node" % _type)

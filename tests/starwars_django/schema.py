@@ -4,7 +4,8 @@ from graphene.contrib.django import (
     DjangoObjectType,
     DjangoNode
 )
-from .models import Ship as ShipModel, Faction as FactionModel
+from .models import (
+    Ship as ShipModel, Faction as FactionModel, Character as CharacterModel)
 from .data import (
     getFaction,
     getShip,
@@ -17,7 +18,6 @@ schema = graphene.Schema(name='Starwars Django Relay Schema')
 
 
 class Ship(DjangoNode):
-
     class Meta:
         model = ShipModel
 
@@ -26,8 +26,13 @@ class Ship(DjangoNode):
         return Ship(getShip(id))
 
 
-class Faction(DjangoNode):
+@schema.register
+class CharacterModel(DjangoObjectType):
+    class Meta:
+        model = CharacterModel
 
+
+class Faction(DjangoNode):
     class Meta:
         model = FactionModel
 

@@ -1,18 +1,28 @@
-from collections import namedtuple
-
-from .models import Ship, Faction
+from .models import Ship, Faction, Character
 
 
 def initialize():
+    human = Character(
+        name='Human'
+    )
+    human.save()
+
+    droid = Character(
+        name='Droid'
+    )
+    droid.save()
+
     rebels = Faction(
         id='1',
         name='Alliance to Restore the Republic',
+        hero=human
     )
     rebels.save()
 
     empire = Faction(
         id='2',
         name='Galactic Empire',
+        hero=droid
     )
     empire.save()
 
