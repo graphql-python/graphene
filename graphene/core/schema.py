@@ -75,7 +75,7 @@ class Schema(object):
     def types(self):
         return self._internal_types
 
-    def execute(self, request='', root=None, vars=None, operation_name=None):
+    def execute(self, request='', root=None, vars=None, operation_name=None, **kwargs):
         root = root or object()
         return self.executor.execute(
             self.schema,
@@ -83,6 +83,7 @@ class Schema(object):
             root=self.query(root),
             args=vars,
             operation_name=operation_name,
+            **kwargs
         )
 
     def introspect(self):
