@@ -1,17 +1,12 @@
 from functools import wraps
 from collections import OrderedDict
 
-from graphql.core import graphql
 from graphql.core.type import (
     GraphQLSchema as _GraphQLSchema
 )
 
 from graphql.core.execution.executor import Executor
 from graphql.core.execution.middlewares.sync import SynchronousExecutionMiddleware
-from graphql.core.execution import ExecutionResult, execute
-from graphql.core.language.parser import parse
-from graphql.core.language.source import Source
-from graphql.core.validation import validate
 
 from graphql.core.utils.introspection_query import introspection_query
 from graphene import signals
@@ -51,9 +46,7 @@ class Schema(object):
     @property
     def executor(self):
         if not self._executor:
-            # TODO: Update to map_type=OrderedDict when graphql-core
-            # update its package in pypi
-            self.executor = Executor([SynchronousExecutionMiddleware()])
+            self.executor = Executor([SynchronousExecutionMiddleware()], map_type=OrderedDict)
         return self._executor
 
     @executor.setter
@@ -84,30 +77,13 @@ class Schema(object):
 
     def execute(self, request='', root=None, vars=None, operation_name=None):
         root = root or object()
-        return graphql(
+        return self.executor.execute(
             self.schema,
             request,
             root=self.query(root),
-            vars=vars,
-            operation_name=operation_name
+            args=vars,
+            operation_name=operation_name,
         )
-        # source = Source(request, 'GraphQL request')
-        # ast = parse(source)
-        # validation_errors = validate(self.schema, ast)
-        # if validation_errors:
-        #     return ExecutionResult(
-        #         errors=validation_errors,
-        #         invalid=True,
-        #     )
-
-        # return self.executor.execute(
-        #     self.schema,
-        #     ast,
-        #     root=self.query(root),
-        #     args=vars,
-        #     operation_name=operation_name,
-        #     validate_ast=False
-        # )
 
     def introspect(self):
         return self.execute(introspection_query).data
