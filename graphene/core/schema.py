@@ -51,9 +51,8 @@ class Schema(object):
     @property
     def executor(self):
         if not self._executor:
-            # TODO: Update to map_type=OrderedDict when graphql-core
-            # update its package in pypi
-            self.executor = Executor([SynchronousExecutionMiddleware()])
+            self.executor = Executor([SynchronousExecutionMiddleware()], map_type=OrderedDict)
+
         return self._executor
 
     @executor.setter
@@ -82,32 +81,16 @@ class Schema(object):
     def types(self):
         return self._internal_types
 
-    def execute(self, request='', root=None, vars=None, operation_name=None):
+    def execute(self, request='', root=None, variables=None, operation_name=None, **kwargs):
         root = root or object()
-        return graphql(
+        return self.executor.execute(
             self.schema,
-            request,
+            request=request,
             root=self.query(root),
-            vars=vars,
-            operation_name=operation_name
+            args=variables,
+            operation_name=operation_name,
+            **kwargs
         )
-        # source = Source(request, 'GraphQL request')
-        # ast = parse(source)
-        # validation_errors = validate(self.schema, ast)
-        # if validation_errors:
-        #     return ExecutionResult(
-        #         errors=validation_errors,
-        #         invalid=True,
-        #     )
-
-        # return self.executor.execute(
-        #     self.schema,
-        #     ast,
-        #     root=self.query(root),
-        #     args=vars,
-        #     operation_name=operation_name,
-        #     validate_ast=False
-        # )
 
     def introspect(self):
         return self.execute(introspection_query).data
