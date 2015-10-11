@@ -17,18 +17,19 @@ class PyTest(TestCommand):
         self.test_suite = True
 
     def run_tests(self):
-        #import here, cause outside the eggs aren't loaded
+        # import here, cause outside the eggs aren't loaded
         import pytest
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
 setup(
     name='graphene',
-    version='0.1',
+    version='0.1.4',
 
-    description='Graphene: GraphQL Object Mapper',
+    description='Graphene: Python DSL for GraphQL',
+    long_description=open('README.rst').read(),
 
-    url='https://github.com/syrusakbary/graphene',
+    url='https://github.com/graphql-python/graphene',
 
     author='Syrus Akbary',
     author_email='me@syrusakbary.com',
@@ -40,6 +41,12 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries',
         'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: Implementation :: PyPy',
     ],
 
     keywords='api graphql protocol rest relay graphene',
@@ -47,14 +54,18 @@ setup(
     packages=find_packages(exclude=['tests']),
 
     install_requires=[
-        'six',
-        'graphqllib',
-        'graphql-relay'
+        'six>=1.10.0',
+        'blinker',
+        'graphql-core==0.1a2',
+        'graphql-relay==0.2.0'
     ],
-    tests_require=['pytest>=2.7.2'],
+    tests_require=[
+        'pytest>=2.7.2',
+        'pytest-django',
+    ],
     extras_require={
         'django': [
-            'Django>=1.8.0,<1.9',
+            'Django>=1.6.0,<1.9',
             'singledispatch>=3.4.0.3',
         ],
     },

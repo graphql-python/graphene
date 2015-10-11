@@ -1,8 +1,12 @@
 from graphene.utils import cached_property
+from collections import OrderedDict
 
-DEFAULT_NAMES = ('description', 'name', 'interface', 'type_name', 'interfaces',  'proxy')
+DEFAULT_NAMES = ('description', 'name', 'interface',
+                 'type_name', 'interfaces', 'proxy')
+
 
 class Options(object):
+
     def __init__(self, meta=None):
         self.meta = meta
         self.local_fields = []
@@ -10,6 +14,7 @@ class Options(object):
         self.proxy = False
         self.interfaces = []
         self.parents = []
+        self.valid_attrs = DEFAULT_NAMES
 
     def contribute_to_class(self, cls, name):
         cls._meta = self
@@ -32,7 +37,7 @@ class Options(object):
                 # over it, so we loop over the *original* dictionary instead.
                 if name.startswith('_'):
                     del meta_attrs[name]
-            for attr_name in DEFAULT_NAMES:
+            for attr_name in self.valid_attrs:
                 if attr_name in meta_attrs:
                     setattr(self, attr_name, meta_attrs.pop(attr_name))
                     self.original_attrs[attr_name] = getattr(self, attr_name)
@@ -40,9 +45,14 @@ class Options(object):
                     setattr(self, attr_name, getattr(self.meta, attr_name))
                     self.original_attrs[attr_name] = getattr(self, attr_name)
 
+            del self.valid_attrs
+
             # Any leftover attributes must be invalid.
             if meta_attrs != {}:
-                raise TypeError("'class Meta' got invalid attribute(s): %s" % ','.join(meta_attrs.keys()))
+                raise TypeError(
+                    "'class Meta' got invalid attribute(s): %s" % ','.join(meta_attrs.keys()))
+        else:
+            self.proxy = False
 
         if self.interfaces != [] and self.interface:
             raise Exception("A interface cannot inherit from interfaces")
@@ -51,19 +61,14 @@ class Options(object):
 
     def add_field(self, field):
         self.local_fields.append(field)
-        setattr(self.parent, field.field_name, field)
 
     @cached_property
     def fields(self):
         fields = []
         for parent in self.parents:
             fields.extend(parent._meta.fields)
-        return self.local_fields + fields
+        return sorted(self.local_fields + fields)
 
     @cached_property
     def fields_map(self):
-        return {f.field_name:f for f in self.fields}
-
-    @cached_property
-    def type(self):
-        return self.parent.get_graphql_type()
+        return OrderedDict([(f.field_name, f) for f in self.fields])
