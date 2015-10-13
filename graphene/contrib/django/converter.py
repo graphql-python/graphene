@@ -11,6 +11,13 @@ from graphene.core.fields import (
 )
 from graphene.contrib.django.fields import ConnectionOrListField, DjangoModelField
 
+try:
+    UUIDField = models.UUIDField
+except AttributeError:
+    # Improved compatibility for Django 1.6
+    class UUIDField(object):
+        pass
+
 
 @singledispatch
 def convert_django_field(field):
@@ -24,7 +31,7 @@ def convert_django_field(field):
 @convert_django_field.register(models.EmailField)
 @convert_django_field.register(models.SlugField)
 @convert_django_field.register(models.URLField)
-@convert_django_field.register(models.UUIDField)
+@convert_django_field.register(UUIDField)
 def _(field):
     return StringField(description=field.help_text)
 
