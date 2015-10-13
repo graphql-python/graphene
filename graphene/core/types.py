@@ -1,5 +1,6 @@
 import inspect
 import six
+import copy
 from collections import OrderedDict
 
 from graphql.core.type import (
@@ -72,13 +73,20 @@ class ObjectTypeMeta(type):
             # on the base classes (we cannot handle shadowed fields at the
             # moment).
             for field in parent_fields:
-                if field.name in field_names and field.__class__ != field_names[field].__class__:
+                if field.name in field_names and field.__class__ != field_names[field.name].__class__:
                     raise Exception(
                         'Local field %r in class %r clashes '
-                        'with field of similar name from '
-                        'base class %r' % (
-                            field.name, name, base.__name__)
+                        'with field with similar name from '
+                        'Interface %s (%r != %r)' % (
+                            field.name,
+                            new_class.__name__,
+                            base.__name__,
+                            field.__class__,
+                            field_names[field.name].__class__)
                     )
+                new_field = copy.copy(field)
+                new_class.add_to_class(field.field_name, new_field)
+
             new_class._meta.parents.append(base)
             if base._meta.interface:
                 new_class._meta.interfaces.append(base)

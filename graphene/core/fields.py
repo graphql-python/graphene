@@ -17,6 +17,10 @@ from graphene.core.types import BaseObjectType
 from graphene.core.scalars import GraphQLSkipField
 
 
+class Empty(object):
+    pass
+
+
 @total_ordering
 class Field(object):
     SKIP = GraphQLSkipField
@@ -141,6 +145,14 @@ class Field(object):
 
     def __hash__(self):
         return hash(self.creation_counter)
+
+    def __copy__(self):
+        # We need to avoid hitting __reduce__, so define this
+        # slightly weird copy construct.
+        obj = Empty()
+        obj.__class__ = self.__class__
+        obj.__dict__ = self.__dict__.copy()
+        return obj
 
 
 class NativeField(Field):

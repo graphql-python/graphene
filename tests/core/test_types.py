@@ -3,6 +3,7 @@ from collections import namedtuple
 from pytest import raises
 from graphene.core.fields import (
     Field,
+    IntField,
     StringField,
 )
 from graphql.core.type import (
@@ -60,3 +61,10 @@ def test_object_type():
     assert object_type.get_fields() == {'name': Character._meta.fields_map['name'].internal_field(
         schema), 'friends': Human._meta.fields_map['friends'].internal_field(schema)}
     assert object_type.get_interfaces() == [Character.internal_type(schema)]
+
+
+def test_field_clashes():
+    with raises(Exception) as excinfo:
+        class Droid(Character):
+            name = IntField()
+    assert 'clashes' in str(excinfo.value)

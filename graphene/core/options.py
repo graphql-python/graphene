@@ -64,10 +64,7 @@ class Options(object):
 
     @cached_property
     def fields(self):
-        fields = []
-        for parent in self.parents:
-            fields.extend(parent._meta.fields)
-        return sorted(self.local_fields + fields)
+        return sorted(self.local_fields)
 
     @cached_property
     def fields_map(self):
