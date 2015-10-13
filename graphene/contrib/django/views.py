@@ -1,6 +1,6 @@
 import json
 
-from django.http import JsonResponse
+from django.http import HttpResponse
 from django.views.generic import View
 from django.conf import settings
 
@@ -25,11 +25,10 @@ class GraphQLView(View):
         return data
 
     def response_errors(self, *errors):
-        return JsonResponse({
-            "errors": [{
+        errors = [{
                 "message": str(e)
             } for e in errors]
-        })
+        return HttpResponse(json.dumps({'errors': errors}), content_type='application/json')
 
     def execute_query(self, request, query):
         if not query:
@@ -42,7 +41,7 @@ class GraphQLView(View):
                 if settings.DEBUG:
                     raise e
                 return self.response_errors(e)
-        return JsonResponse(data)
+        return HttpResponse(json.dumps(data), content_type='application/json')
 
     def get(self, request, *args, **kwargs):
         query = request.GET.get('query')
