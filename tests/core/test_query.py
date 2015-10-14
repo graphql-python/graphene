@@ -46,6 +46,8 @@ schema = object()
 
 Human_type = Human.internal_type(schema)
 
+def test_type():
+    assert Human._meta.fields_map['name'].resolve(Human(object()), 1, 2) == 'Peter'
 
 def test_query():
     schema = GraphQLSchema(query=Human_type)
