@@ -69,3 +69,15 @@ def test_field_clashes():
         class Droid(Character):
             name = IntField()
     assert 'clashes' in str(excinfo.value)
+
+
+def test_field_mantain_resolver_tags():
+    class Droid(Character):
+        name = StringField()
+
+        def resolve_name(self, *args):
+            return 'My Droid'
+        resolve_name.custom_tag = True
+
+    field = Droid._meta.fields_map['name'].internal_field(schema)
+    assert field.resolver.custom_tag

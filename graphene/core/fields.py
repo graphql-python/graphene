@@ -1,6 +1,6 @@
 import inspect
 import six
-from functools import total_ordering
+from functools import total_ordering, wraps
 from graphql.core.type import (
     GraphQLField,
     GraphQLList,
@@ -49,12 +49,26 @@ class Field(object):
         cls._meta.add_field(self)
 
     def resolve(self, instance, args, info):
-        if self.resolve_fn:
-            resolve_fn = self.resolve_fn
+        resolve_fn = self.get_resolve_fn()
+        if resolve_fn:
+            return resolve_fn(instance, args, info)
         else:
-            resolve_fn = lambda root, args, info: root.resolve(
-                self.field_name, args, info)
-        return resolve_fn(instance, args, info)
+            return instance.get_field(self.field_name)
+
+    @memoize
+    def get_resolve_fn(self):
+        if self.resolve_fn:
+            return self.resolve_fn
+        else:
+            custom_resolve_fn_name = 'resolve_%s' % self.field_name
+            if hasattr(self.object_type, custom_resolve_fn_name):
+                resolve_fn = getattr(self.object_type, custom_resolve_fn_name)
+
+                @wraps(resolve_fn)
+                def custom_resolve_fn(instance, args, info):
+                    custom_fn = getattr(instance, custom_resolve_fn_name)
+                    return custom_fn(args, info)
+                return custom_resolve_fn
 
     def get_object_type(self, schema):
         field_type = self.field_type
@@ -110,11 +124,18 @@ class Field(object):
         if not internal_type:
             raise Exception("Internal type for field %s is None" % self)
 
+        resolve_fn = self.get_resolve_fn()
+        if resolve_fn:
+            @wraps(resolve_fn)
+            def resolver(*args):
+                return self.resolve(*args)
+        else:
+            resolver = self.resolve
         return GraphQLField(
             internal_type,
             description=self.description,
             args=self.args,
-            resolver=self.resolve,
+            resolver=resolver,
         )
 
     def __str__(self):
@@ -144,7 +165,7 @@ class Field(object):
         return NotImplemented
 
     def __hash__(self):
-        return hash(self.creation_counter)
+        return hash((self.creation_counter, self.object_type))
 
     def __copy__(self):
         # We need to avoid hitting __reduce__, so define this
