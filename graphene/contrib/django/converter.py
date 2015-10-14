@@ -60,6 +60,7 @@ def _(field):
     return BooleanField(description=field.help_text)
 
 
+@convert_django_field.register(models.DecimalField)
 @convert_django_field.register(models.FloatField)
 def _(field):
     return FloatField(description=field.help_text)
