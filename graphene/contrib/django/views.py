@@ -30,12 +30,12 @@ class GraphQLView(View):
             } for e in errors]
         return HttpResponse(json.dumps({'errors': errors}), content_type='application/json')
 
-    def execute_query(self, request, query):
+    def execute_query(self, request, query, *args, **kwargs):
         if not query:
             return self.response_errors(Exception("Must provide query string."))
         else:
             try:
-                result = self.schema.execute(query, root=object())
+                result = self.schema.execute(query, *args, **kwargs)
                 data = self.format_result(result)
             except Exception as e:
                 if settings.DEBUG:
