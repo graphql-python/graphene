@@ -1,10 +1,12 @@
 from py.test import raises
-from collections import namedtuple
 from pytest import raises
 from graphene.core.fields import (
-    Field,
     IntField,
     StringField,
+)
+from graphql.core.execution.middlewares.utils import (
+    tag_resolver,
+    resolver_has_tag
 )
 from graphql.core.type import (
     GraphQLObjectType,
@@ -12,13 +14,11 @@ from graphql.core.type import (
 )
 
 from graphene.core.types import (
-    Interface,
-    ObjectType
+    Interface
 )
 
 
 class Character(Interface):
-
     '''Character description'''
     name = StringField()
 
@@ -27,7 +27,6 @@ class Character(Interface):
 
 
 class Human(Character):
-
     '''Human description'''
     friends = StringField()
 
@@ -68,6 +67,7 @@ def test_field_clashes():
     with raises(Exception) as excinfo:
         class Droid(Character):
             name = IntField()
+
     assert 'clashes' in str(excinfo.value)
 
 
@@ -77,7 +77,8 @@ def test_field_mantain_resolver_tags():
 
         def resolve_name(self, *args):
             return 'My Droid'
-        resolve_name.custom_tag = True
+
+        tag_resolver(resolve_name, 'test')
 
     field = Droid._meta.fields_map['name'].internal_field(schema)
-    assert field.resolver.custom_tag
+    assert resolver_has_tag(field.resolver, 'test')
