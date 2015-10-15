@@ -71,7 +71,7 @@ class NodeTypeField(LazyField):
             if resolved_global_id.type == self.field_object_type._meta.type_name:
                 return node_field.resolver(instance, args, info)
 
-        args = OrderedDict([(a.name, a) for a in node_field.args])
+        args = OrderedDict(node_field.args.items())
         field = Field(self.field_object_type, id=args['id'], resolve=resolver)
         field.contribute_to_class(self.object_type, self.field_name)
 

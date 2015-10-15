@@ -1,12 +1,13 @@
+from graphql.core.type import GraphQLEnumValue
 import graphene
 from graphene import resolve_only_args
 
 from .data import getHero, getHuman, getCharacter, getDroid, Human as _Human, Droid as _Droid
 
 Episode = graphene.Enum('Episode', dict(
-    NEWHOPE=4,
-    EMPIRE=5,
-    JEDI=6
+    NEWHOPE=GraphQLEnumValue(4),
+    EMPIRE=GraphQLEnumValue(5),
+    JEDI=GraphQLEnumValue(6)
 ))
 
 
@@ -47,7 +48,7 @@ class Query(graphene.ObjectType):
                            )
 
     class Meta:
-        type_name = 'core.Query'
+        type_name = 'core_Query'
 
     @resolve_only_args
     def resolve_hero(self, episode=None):

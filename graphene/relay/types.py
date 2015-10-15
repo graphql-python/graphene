@@ -11,7 +11,7 @@ from graphene.core.fields import LazyNativeField
 from graphene.utils import memoize
 
 
-def get_node_type(schema, obj):
+def get_node_type(schema, obj, info):
     return obj.internal_type(schema)
 
 
