@@ -134,7 +134,8 @@ class Field(object):
     def __eq__(self, other):
         # Needed for @total_ordering
         if isinstance(other, Field):
-            return self.creation_counter == other.creation_counter
+            return self.creation_counter == other.creation_counter and \
+                self.object_type == other.object_type
         return NotImplemented
 
     def __lt__(self, other):
@@ -152,6 +153,8 @@ class Field(object):
         obj = Empty()
         obj.__class__ = self.__class__
         obj.__dict__ = self.__dict__.copy()
+        if self.field_type == 'self':
+            obj.field_type = self.object_type
         return obj
 
 
