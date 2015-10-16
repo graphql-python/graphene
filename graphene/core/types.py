@@ -132,13 +132,6 @@ class BaseObjectType(object):
     def get_field(self, field):
         return getattr(self.instance, field, None)
 
-    def resolve(self, field_name, args, info):
-        custom_resolve_fn = 'resolve_%s' % field_name
-        if hasattr(self, custom_resolve_fn):
-            resolve_fn = getattr(self, custom_resolve_fn)
-            return resolve_fn(args, info)
-        return self.get_field(field_name)
-
     @classmethod
     def resolve_objecttype(cls, schema, instance, *_):
         return instance
