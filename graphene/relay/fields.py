@@ -7,13 +7,15 @@ from graphql_relay.connection.connection import (
     connectionArgs
 )
 from graphql_relay.node.node import (
-    global_id_field,
-    to_global_id,
     from_global_id
 )
+from graphql.core.type import (
+    GraphQLNonNull,
+    GraphQLID,
+    GraphQLArgument,
+)
 
-from graphene.core.fields import Field, LazyNativeField, IDField
-from graphene.utils import cached_property
+from graphene.core.fields import Field, IDField
 from graphene.utils import memoize
 
 
@@ -36,44 +38,48 @@ class ConnectionField(Field):
 
     @memoize
     def internal_type(self, schema):
-        from graphene.relay.types import BaseNode
+        from graphene.relay.utils import is_node
         object_type = self.get_object_type(schema)
-        assert issubclass(
-            object_type, BaseNode), 'Only nodes have connections.'
+        assert is_node(object_type), 'Only nodes have connections.'
         return object_type.get_connection(schema)
 
 
-class NodeField(LazyNativeField):
+class NodeField(Field):
     def __init__(self, object_type=None, *args, **kwargs):
-        super(NodeField, self).__init__(*args, **kwargs)
+        from graphene.relay.types import Node
+        super(NodeField, self).__init__(object_type or Node, *args, **kwargs)
         self.field_object_type = object_type
+        self.args['id'] = GraphQLArgument(
+            GraphQLNonNull(GraphQLID),
+            description='The ID of an object'
+        )
 
-    def get_object_type_field(self, schema):
-        from graphene.relay.types import BaseNode
-        node_field = BaseNode.get_definitions(schema).node_field
+    def id_fetcher(self, global_id, info):
+        from graphene.relay.utils import is_node
+        schema = info.schema.graphene_schema
+        resolved_global_id = from_global_id(global_id)
+        _type, _id = resolved_global_id.type, resolved_global_id.id
+        object_type = schema.get_type(_type)
+        if not is_node(object_type) or (self.field_object_type and
+           object_type != self.field_object_type):
+            return
 
-        def resolver(instance, args, info):
-            global_id = args.get('id')
-            resolved_global_id = from_global_id(global_id)
-            if resolved_global_id.type == self.field_object_type._meta.type_name:
-                return node_field.resolver(instance, args, info)
-
-        args = OrderedDict(node_field.args.items())
-        field = Field(self.field_object_type, id=args['id'], resolve=resolver)
-        field.contribute_to_class(self.object_type, self.field_name)
-
-        return field.internal_field(schema)
-
-    def get_field(self, schema):
-        if self.field_object_type:
-            return self.get_object_type_field(schema)
-        from graphene.relay.types import BaseNode
-        return BaseNode.get_definitions(schema).node_field
-
-
-class NodeIDField(IDField):
-    required = True
+        return object_type.get_node(_id)
 
     def resolve(self, instance, args, info):
-        type_name = self.object_type._meta.type_name
-        return to_global_id(type_name, instance.id)
+        global_id = args.get('id')
+        return self.id_fetcher(global_id, info)
+
+
+class GlobalIDField(IDField):
+    '''The ID of an object'''
+    required = True
+
+    def contribute_to_class(self, cls, name, add=True):
+        from graphene.relay.utils import is_node, is_node_type
+        in_node = is_node(cls) or is_node_type(cls)
+        assert in_node, 'GlobalIDField could only be inside a Node, but got %r' % cls
+        super(GlobalIDField, self).contribute_to_class(cls, name, add)
+
+    def resolve(self, instance, args, info):
+        return self.object_type.to_global_id(instance, args, info)

@@ -4,6 +4,7 @@ from django.db import models
 from graphene.core.options import Options
 from graphene.core.types import BaseObjectType
 from graphene.relay.utils import is_node
+from graphene.relay.types import Node
 
 VALID_ATTRS = ('model', 'only_fields', 'exclude_fields')
 
@@ -26,6 +27,7 @@ class DjangoOptions(Options):
         super(DjangoOptions, self).contribute_to_class(cls, name)
         if is_node(cls):
             self.exclude_fields += ['id']
+            self.interfaces.append(Node)
         if not is_node(cls) and not is_base(cls):
             return
         if not self.model:

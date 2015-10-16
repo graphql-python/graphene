@@ -7,6 +7,7 @@ from graphene.core.fields import Field, LazyField
 from graphene.utils import cached_property, memoize, LazyMap
 
 from graphene.relay.types import BaseNode
+from graphene.relay.utils import is_node
 from graphene.contrib.django.utils import get_type_for_model, lazy_map
 
 
@@ -28,7 +29,7 @@ class ConnectionOrListField(LazyField):
     def get_field(self, schema):
         model_field = self.field_type
         field_object_type = model_field.get_object_type(schema)
-        if field_object_type and issubclass(field_object_type, BaseNode):
+        if is_node(field_object_type):
             field = DjangoConnectionField(model_field)
         else:
             field = LazyListField(model_field)

@@ -2,7 +2,7 @@ from py.test import raises
 from collections import namedtuple
 from pytest import raises
 from graphene.relay.fields import (
-    NodeIDField
+    GlobalIDField
 )
 from graphene.core.fields import (
     Field,
@@ -62,12 +62,12 @@ def test_pseudo_interface():
 
 def test_djangonode_idfield():
     idfield = DjangoNode._meta.fields_map['id']
-    assert isinstance(idfield, NodeIDField)
+    assert isinstance(idfield, GlobalIDField)
 
 
 def test_node_idfield():
     idfield = Human._meta.fields_map['id']
-    assert isinstance(idfield, NodeIDField)
+    assert isinstance(idfield, GlobalIDField)
 
 
 def test_node_replacedfield():
@@ -95,4 +95,9 @@ def test_object_type():
     #     'reporter': fields_map['reporter'].internal_field(schema),
     #     'pubDate': fields_map['pub_date'].internal_field(schema),
     # }
-    assert object_type.get_interfaces() == [DjangoNode.internal_type(schema)]
+    assert DjangoNode.internal_type(schema) in object_type.get_interfaces()
+
+
+def test_node_notinterface():
+    assert Human._meta.interface is False
+    assert DjangoNode in Human._meta.interfaces

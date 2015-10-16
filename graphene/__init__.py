@@ -31,5 +31,3 @@ from graphene.core.fields import (
 from graphene.decorators import (
     resolve_only_args
 )
-
-# import graphene.relay
