@@ -140,8 +140,13 @@ class BaseObjectType(object):
         return self.get_field(field_name)
 
     @classmethod
+    def resolve_objecttype(cls, schema, instance, *_):
+        return instance
+
+    @classmethod
     def resolve_type(cls, schema, instance, *_):
-        return instance.internal_type(schema)
+        objecttype = cls.resolve_objecttype(schema, instance, *_)
+        return objecttype.internal_type(schema)
 
     @classmethod
     @memoize
