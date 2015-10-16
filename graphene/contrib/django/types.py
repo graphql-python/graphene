@@ -30,10 +30,12 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         all_fields = sorted(list(cls._meta.model._meta.fields) +
                             list(cls._meta.model._meta.local_many_to_many))
         all_fields += list(reverse_fields)
+        already_created_fields = {f.field_name for f in cls._meta.local_fields}
 
         for field in all_fields:
             is_not_in_only = only_fields and field.name not in only_fields
-            is_excluded = field.name in cls._meta.exclude_fields
+            is_already_created = field.name in already_created_fields
+            is_excluded = field.name in cls._meta.exclude_fields or is_already_created
             if is_not_in_only or is_excluded:
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we excldue this field in exclude_fields

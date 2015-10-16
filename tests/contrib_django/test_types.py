@@ -7,6 +7,7 @@ from graphene.relay.fields import (
 from graphene.core.fields import (
     Field,
     StringField,
+    IntField
 )
 from graphql.core.type import (
     GraphQLObjectType,
@@ -25,15 +26,15 @@ from tests.utils import assert_equal_lists
 
 
 class Character(DjangoInterface):
-
     '''Character description'''
     class Meta:
         model = Reporter
 
 
 class Human(DjangoNode):
-
     '''Human description'''
+
+    pub_date = IntField()
 
     def get_node(self, id):
         pass
@@ -67,6 +68,11 @@ def test_djangonode_idfield():
 def test_node_idfield():
     idfield = Human._meta.fields_map['id']
     assert isinstance(idfield, NodeIDField)
+
+
+def test_node_replacedfield():
+    idfield = Human._meta.fields_map['pub_date']
+    assert isinstance(idfield, IntField)
 
 
 def test_interface_resolve_type():
