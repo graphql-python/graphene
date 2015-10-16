@@ -162,7 +162,8 @@ class BaseObjectType(object):
             cls._meta.type_name,
             description=cls._meta.description,
             interfaces=[i.internal_type(schema) for i in cls._meta.interfaces],
-            fields=fields
+            fields=fields,
+            is_type_of=getattr(cls, 'is_type_of', None)
         )
 
 
