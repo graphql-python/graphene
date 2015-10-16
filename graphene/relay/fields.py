@@ -47,21 +47,7 @@ class NodeField(LazyNativeField):
         super(NodeField, self).__init__(*args, **kwargs)
         self.field_object_type = object_type
 
-    def get_field(self, schema):
-        if self.field_object_type:
-            field = NodeTypeField(self.field_object_type)
-            field.contribute_to_class(self.object_type, self.field_name)
-            return field.internal_field(schema)
-        from graphene.relay.types import BaseNode
-        return BaseNode.get_definitions(schema).node_field
-
-
-class NodeTypeField(LazyField):
-    def __init__(self, object_type, *args, **kwargs):
-        super(NodeTypeField, self).__init__(None, *args, **kwargs)
-        self.field_object_type = object_type
-
-    def inner_field(self, schema):
+    def get_object_type_field(self, schema):
         from graphene.relay.types import BaseNode
         node_field = BaseNode.get_definitions(schema).node_field
 
@@ -75,7 +61,13 @@ class NodeTypeField(LazyField):
         field = Field(self.field_object_type, id=args['id'], resolve=resolver)
         field.contribute_to_class(self.object_type, self.field_name)
 
-        return field
+        return field.internal_field(schema)
+
+    def get_field(self, schema):
+        if self.field_object_type:
+            return self.get_object_type_field(schema)
+        from graphene.relay.types import BaseNode
+        return BaseNode.get_definitions(schema).node_field
 
 
 class NodeIDField(LazyNativeField):
