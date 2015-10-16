@@ -8,10 +8,11 @@ from graphql_relay.connection.connection import (
 )
 from graphql_relay.node.node import (
     global_id_field,
+    to_global_id,
     from_global_id
 )
 
-from graphene.core.fields import Field, LazyNativeField, LazyField
+from graphene.core.fields import Field, LazyNativeField, IDField
 from graphene.utils import cached_property
 from graphene.utils import memoize
 
@@ -70,6 +71,9 @@ class NodeField(LazyNativeField):
         return BaseNode.get_definitions(schema).node_field
 
 
-class NodeIDField(LazyNativeField):
-    def get_field(self, schema):
-        return global_id_field(self.object_type._meta.type_name)
+class NodeIDField(IDField):
+    required = True
+
+    def resolve(self, instance, args, info):
+        type_name = self.object_type._meta.type_name
+        return to_global_id(type_name, instance.id)

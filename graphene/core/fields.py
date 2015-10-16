@@ -25,11 +25,12 @@ class Empty(object):
 class Field(object):
     SKIP = GraphQLSkipField
     creation_counter = 0
+    required = False
 
     def __init__(self, field_type, name=None, resolve=None, required=False, args=None, description='', **extra_args):
         self.field_type = field_type
         self.resolve_fn = resolve
-        self.required = required
+        self.required = self.required or required
         self.args = args or {}
         self.extra_args = extra_args
         self._type = None
@@ -39,14 +40,15 @@ class Field(object):
         self.creation_counter = Field.creation_counter
         Field.creation_counter += 1
 
-    def contribute_to_class(self, cls, name):
+    def contribute_to_class(self, cls, name, add=True):
         if not self.name:
             self.name = to_camel_case(name)
         self.field_name = name
         self.object_type = cls
         if isinstance(self.field_type, Field) and not self.field_type.object_type:
-            self.field_type.contribute_to_class(cls, name)
-        cls._meta.add_field(self)
+            self.field_type.contribute_to_class(cls, name, False)
+        if add:
+            cls._meta.add_field(self)
 
     def resolve(self, instance, args, info):
         resolve_fn = self.get_resolve_fn()

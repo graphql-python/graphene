@@ -1,4 +1,8 @@
 from pytest import raises
+from graphql.core.type import (
+    GraphQLNonNull,
+    GraphQLID
+)
 
 import graphene
 from graphene import relay
@@ -41,3 +45,9 @@ def test_nodefield_query():
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected
+
+
+def test_nodeidfield():
+    id_field = MyNode._meta.fields_map['id']
+    assert isinstance(id_field.internal_field(schema).type, GraphQLNonNull)
+    assert id_field.internal_field(schema).type.of_type == GraphQLID

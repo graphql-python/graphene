@@ -24,6 +24,8 @@ class DjangoOptions(Options):
 
     def contribute_to_class(self, cls, name):
         super(DjangoOptions, self).contribute_to_class(cls, name)
+        if is_node(cls):
+            self.exclude_fields += ['id']
         if not is_node(cls) and not is_base(cls):
             return
         if not self.model:

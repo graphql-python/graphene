@@ -1,6 +1,9 @@
 from py.test import raises
 from collections import namedtuple
 from pytest import raises
+from graphene.relay.fields import (
+    NodeIDField
+)
 from graphene.core.fields import (
     Field,
     StringField,
@@ -54,6 +57,16 @@ def test_pseudo_interface():
         object_type.get_fields().keys(),
         ['articles', 'firstName', 'lastName', 'email', 'pets', 'id']
     )
+
+
+def test_djangonode_idfield():
+    idfield = DjangoNode._meta.fields_map['id']
+    assert isinstance(idfield, NodeIDField)
+
+
+def test_node_idfield():
+    idfield = Human._meta.fields_map['id']
+    assert isinstance(idfield, NodeIDField)
 
 
 def test_interface_resolve_type():

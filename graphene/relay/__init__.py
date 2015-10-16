@@ -3,8 +3,6 @@ from graphene.relay.fields import (
     NodeField
 )
 
-import graphene.relay.connections
-
 from graphene.relay.types import (
     Node
 )

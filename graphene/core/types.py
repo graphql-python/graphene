@@ -75,13 +75,13 @@ class ObjectTypeMeta(type):
             for field in parent_fields:
                 if field.name in field_names and field.__class__ != field_names[field.name].__class__:
                     raise Exception(
-                        'Local field %r in class %r clashes '
+                        'Local field %r in class %r (%r) clashes '
                         'with field with similar name from '
-                        'Interface %s (%r != %r)' % (
+                        'Interface %s (%r)' % (
                             field.name,
                             new_class.__name__,
-                            base.__name__,
                             field.__class__,
+                            base.__name__,
                             field_names[field.name].__class__)
                     )
                 new_field = copy.copy(field)
@@ -99,6 +99,8 @@ class ObjectTypeMeta(type):
         pass
 
     def _prepare(cls):
+        if hasattr(cls, '_prepare_class'):
+            cls._prepare_class()
         signals.class_prepared.send(cls)
 
     def add_to_class(cls, name, value):

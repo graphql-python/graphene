@@ -6,6 +6,7 @@ from graphene.contrib.django.options import DjangoOptions
 from graphene.contrib.django.converter import convert_django_field
 
 from graphene.relay.types import Node, BaseNode
+from graphene.relay.fields import NodeIDField
 
 
 def get_reverse_fields(model):
@@ -50,6 +51,8 @@ class DjangoInterface(six.with_metaclass(DjangoObjectTypeMeta, BaseObjectType)):
 
 
 class DjangoNode(BaseNode, DjangoInterface):
+    id = NodeIDField()
+
     @classmethod
     def get_node(cls, id):
         instance = cls._meta.model.objects.filter(id=id).first()

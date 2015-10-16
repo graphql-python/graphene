@@ -8,6 +8,7 @@ from graphql_relay.connection.connection import (
 
 from graphene.core.types import Interface
 from graphene.core.fields import LazyNativeField
+from graphene.relay.fields import NodeIDField
 from graphene.utils import memoize
 
 
@@ -47,6 +48,13 @@ class BaseNode(object):
             return BaseNode.get_definitions(schema).node_interface
         return super(BaseNode, cls).internal_type(schema)
 
+    @classmethod
+    def _prepare_class(cls):
+        from graphene.relay.utils import is_node
+        if is_node(cls):
+            assert hasattr(
+                cls, 'get_node'), 'get_node classmethod not found in %s Node' % cls
+
 
 class Node(BaseNode, Interface):
-    pass
+    id = NodeIDField()
