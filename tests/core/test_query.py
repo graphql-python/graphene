@@ -17,6 +17,7 @@ from graphene.core.types import (
     Interface,
     ObjectType
 )
+from graphene.core.schema import Schema
 
 
 class Character(Interface):
@@ -42,12 +43,15 @@ class Human(Character):
     # def resolve_friends(self, *args, **kwargs):
     #     return 'HEY YOU!'
 
-schema = object()
+
+schema = Schema()
 
 Human_type = Human.internal_type(schema)
 
+
 def test_type():
     assert Human._meta.fields_map['name'].resolve(Human(object()), 1, 2) == 'Peter'
+
 
 def test_query():
     schema = GraphQLSchema(query=Human_type)

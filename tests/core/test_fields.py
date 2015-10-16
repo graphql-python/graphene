@@ -1,13 +1,6 @@
 from py.test import raises
 from collections import namedtuple
 from pytest import raises
-from graphene.core.fields import (
-    Field,
-    StringField,
-    NonNullField
-)
-
-from graphene.core.options import Options
 
 from graphql.core.type import (
     GraphQLField,
@@ -17,6 +10,15 @@ from graphql.core.type import (
     GraphQLBoolean,
     GraphQLID,
 )
+
+from graphene.core.fields import (
+    Field,
+    StringField,
+    NonNullField
+)
+from graphene.core.options import Options
+from graphene.core.schema import Schema
+from graphene.core.types import ObjectType
 
 
 class ObjectType(object):
@@ -35,9 +37,6 @@ ot = ObjectType()
 
 ObjectType._meta.contribute_to_class(ObjectType, '_meta')
 
-
-class Schema(object):
-    pass
 
 schema = Schema()
 
@@ -94,19 +93,16 @@ def test_field_resolve():
 
 
 def test_field_resolve_type_custom():
-    class MyCustomType(object):
+    class MyCustomType(ObjectType):
         pass
 
-    class Schema(object):
-
-        def get_type(self, name):
-            if name == 'MyCustomType':
-                return MyCustomType
+    class OtherType(ObjectType):
+        pass
 
     s = Schema()
 
     f = Field('MyCustomType')
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(OtherType, 'field_name')
     field_type = f.get_object_type(s)
     assert field_type == MyCustomType
 
