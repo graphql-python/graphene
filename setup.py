@@ -56,7 +56,7 @@ setup(
     install_requires=[
         'six>=1.10.0',
         'blinker',
-        'graphql-core==0.1a4',
+        'graphql-core==0.4.7b0',
         'graphql-relay==0.2.0'
     ],
     tests_require=[
