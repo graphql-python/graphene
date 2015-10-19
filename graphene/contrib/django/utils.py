@@ -1,3 +1,4 @@
+from django.db import models
 from django.db.models.query import QuerySet
 from django.db.models.manager import Manager
 
@@ -13,6 +14,13 @@ def get_type_for_model(schema, model):
             _type._meta, 'model', None)
         if model == type_model:
             return _type
+
+
+def get_reverse_fields(model):
+    for name, attr in model.__dict__.items():
+        related = getattr(attr, 'related', None)
+        if isinstance(related, models.ManyToOneRel):
+            yield related
 
 
 def lazy_map(value, func):

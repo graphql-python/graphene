@@ -1,19 +1,12 @@
 import six
-from django.db import models
 
 from graphene.core.types import ObjectTypeMeta, BaseObjectType
 from graphene.contrib.django.options import DjangoOptions
 from graphene.contrib.django.converter import convert_django_field
+from graphene.contrib.django.utils import get_reverse_fields
 
 from graphene.relay.types import BaseNode
 from graphene.relay.fields import GlobalIDField
-
-
-def get_reverse_fields(model):
-    for name, attr in model.__dict__.items():
-        related = getattr(attr, 'related', None)
-        if isinstance(related, models.ManyToOneRel):
-            yield related
 
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
