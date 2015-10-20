@@ -55,7 +55,12 @@ class Field(object):
         if resolve_fn:
             return resolve_fn(instance, args, info)
         else:
-            return instance.get_field(self.field_name)
+            if isinstance(instance, BaseObjectType):
+                return instance.get_field(self.field_name)
+            if hasattr(instance, self.field_name):
+                return getattr(instance, self.field_name)
+            elif hasattr(instance, self.name):
+                return getattr(instance, self.name)
 
     @memoize
     def get_resolve_fn(self):
@@ -74,6 +79,8 @@ class Field(object):
 
     def get_object_type(self, schema):
         field_type = self.field_type
+        if inspect.isfunction(field_type):
+            field_type = field_type(self)
         _is_class = inspect.isclass(field_type)
         if isinstance(field_type, Field):
             return field_type.get_object_type(schema)
