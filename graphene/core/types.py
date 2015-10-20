@@ -30,7 +30,7 @@ class ObjectTypeMeta(type):
             # If this isn't a subclass of Model, don't do anything special.
             return super_new(cls, name, bases, attrs)
 
-        module = attrs.pop('__module__')
+        module = attrs.pop('__module__', None)
         doc = attrs.pop('__doc__', None)
         new_class = super_new(cls, name, bases, {
             '__module__': module,

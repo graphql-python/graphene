@@ -21,9 +21,14 @@ from graphene.utils import memoize
 
 class ConnectionField(Field):
 
-    def __init__(self, field_type, resolve=None, description=''):
+    def __init__(self, field_type, resolve=None, description='', connection_type=None, edge_type=None, **kwargs):
+        from graphene.relay.types import Connection, Edge
         super(ConnectionField, self).__init__(field_type, resolve=resolve,
-                                              args=connectionArgs, description=description)
+                                              args=connectionArgs, description=description, **kwargs)
+        self.connection_type = connection_type or Connection
+        self.edge_type = edge_type or Edge
+        assert issubclass(self.connection_type, Connection), 'connection_type in %r must be a subclass of Connection' % self
+        assert issubclass(self.edge_type, Edge), 'edge_type in %r must be a subclass of Edge' % self
 
     def wrap_resolved(self, value, instance, args, info):
         return value
@@ -39,9 +44,12 @@ class ConnectionField(Field):
     @memoize
     def internal_type(self, schema):
         from graphene.relay.utils import is_node
-        object_type = self.get_object_type(schema)
-        assert is_node(object_type), 'Only nodes have connections.'
-        return object_type.get_connection(schema)
+        node = self.get_object_type(schema)
+        assert is_node(node), 'Only nodes have connections.'
+        schema.register(node)
+        edge_node_type = self.edge_type.for_node(node)
+        connection_node_type = self.connection_type.for_node(node, edge_type=edge_node_type)
+        return connection_node_type.internal_type(schema)
 
 
 class NodeField(Field):

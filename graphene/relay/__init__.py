@@ -4,6 +4,11 @@ from graphene.relay.fields import (
     GlobalIDField,
 )
 
-from graphene.relay.types import Node
+from graphene.relay.types import (
+	Node,
+	PageInfo,
+	Edge,
+	Connection
+)
 
 from graphene.relay.utils import is_node
