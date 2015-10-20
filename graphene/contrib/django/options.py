@@ -26,7 +26,7 @@ class DjangoOptions(Options):
     def contribute_to_class(self, cls, name):
         super(DjangoOptions, self).contribute_to_class(cls, name)
         if is_node(cls):
-            self.exclude_fields += ['id']
+            self.exclude_fields = list(self.exclude_fields) + ['id']
             self.interfaces.append(Node)
         if not is_node(cls) and not is_base(cls):
             return
