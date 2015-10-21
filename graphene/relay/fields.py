@@ -4,7 +4,7 @@ from graphql_relay.connection.arrayconnection import (
     connection_from_list
 )
 from graphql_relay.connection.connection import (
-    connectionArgs
+    connection_args
 )
 from graphql_relay.node.node import (
     from_global_id
@@ -21,25 +21,45 @@ from graphene.utils import memoize
 
 class ConnectionField(Field):
 
-    def __init__(self, field_type, resolve=None, description='', connection_type=None, edge_type=None, **kwargs):
-        from graphene.relay.types import Connection, Edge
+    def __init__(self, field_type, resolve=None, description='',
+                 connection_type=None, edge_type=None, **kwargs):
         super(ConnectionField, self).__init__(field_type, resolve=resolve,
-                                              args=connectionArgs, description=description, **kwargs)
-        self.connection_type = connection_type or Connection
-        self.edge_type = edge_type or Edge
-        assert issubclass(self.connection_type, Connection), 'connection_type in %r must be a subclass of Connection' % self
-        assert issubclass(self.edge_type, Edge), 'edge_type in %r must be a subclass of Edge' % self
+                                              args=connection_args,
+                                              description=description, **kwargs)
+        self.connection_type = connection_type
+        self.edge_type = edge_type
 
     def wrap_resolved(self, value, instance, args, info):
         return value
 
     def resolve(self, instance, args, info):
-        resolved = super(ConnectionField, self).resolve(instance, args, info)
-        if resolved:
-            resolved = self.wrap_resolved(resolved, instance, args, info)
+        from graphene.relay.types import PageInfo
+        schema = info.schema.graphene_schema
+
+        orig_resolved = super(ConnectionField, self).resolve(instance, args, info)
+        if orig_resolved:
+            resolved = self.wrap_resolved(orig_resolved, instance, args, info)
             assert isinstance(
                 resolved, Iterable), 'Resolved value from the connection field have to be iterable'
-            return connection_from_list(resolved, args)
+
+            node = self.get_object_type(schema)
+            connection_type = self.get_connection_type(node)
+            edge_type = self.get_edge_type(node)
+
+            connection = connection_from_list(resolved, args, connection_type=connection_type,
+                                              edge_type=edge_type, pageinfo_type=PageInfo)
+            connection.set_connection_data(orig_resolved)
+            return connection
+
+    @memoize
+    def get_connection_type(self, node):
+        connection_type = self.connection_type or node.get_connection_type()
+        edge_type = self.get_edge_type(node)
+        return connection_type.for_node(node, edge_type=edge_type)
+
+    @memoize
+    def get_edge_type(self, node):
+        return self.edge_type or node.get_edge_type()
 
     @memoize
     def internal_type(self, schema):
@@ -47,9 +67,8 @@ class ConnectionField(Field):
         node = self.get_object_type(schema)
         assert is_node(node), 'Only nodes have connections.'
         schema.register(node)
-        edge_node_type = self.edge_type.for_node(node)
-        connection_node_type = self.connection_type.for_node(node, edge_type=edge_node_type)
-        return connection_node_type.internal_type(schema)
+
+        return self.get_connection_type(node).internal_type(schema)
 
 
 class NodeField(Field):

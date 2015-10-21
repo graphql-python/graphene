@@ -113,17 +113,23 @@ class ObjectTypeMeta(type):
 
 class BaseObjectType(object):
 
-    def __new__(cls, instance=None, *args, **kwargs):
+    def __new__(cls, instance=None, **kwargs):
         if cls._meta.interface:
             raise Exception("An interface cannot be initialized")
         if instance is None:
-            return None
+            if not kwargs:
+                return None
         elif type(instance) is cls:
             instance = instance.instance
-        return super(BaseObjectType, cls).__new__(cls, *args, **kwargs)
 
-    def __init__(self, instance):
+        return super(BaseObjectType, cls).__new__(cls)
+
+    def __init__(self, instance=None, **kwargs):
         signals.pre_init.send(self.__class__, instance=instance)
+        assert instance or kwargs
+        if not instance:
+            init_kwargs = dict({k: None for k in self._meta.fields_map.keys()}, **kwargs)
+            instance = self._meta.object(**init_kwargs)
         self.instance = instance
         signals.post_init.send(self.__class__, instance=self)
 

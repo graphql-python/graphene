@@ -73,8 +73,7 @@ class Field(object):
 
                 @wraps(resolve_fn)
                 def custom_resolve_fn(instance, args, info):
-                    custom_fn = getattr(instance, custom_resolve_fn_name)
-                    return custom_fn(args, info)
+                    return resolve_fn(instance, args, info)
                 return custom_resolve_fn
 
     def get_object_type(self, schema):

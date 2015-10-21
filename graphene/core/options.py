@@ -1,5 +1,5 @@
 from graphene.utils import cached_property
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 
 DEFAULT_NAMES = ('description', 'name', 'interface',
                  'type_name', 'interfaces', 'proxy')
@@ -58,6 +58,10 @@ class Options(object):
             raise Exception("A interface cannot inherit from interfaces")
 
         del self.meta
+
+    @cached_property
+    def object(self):
+        return namedtuple(self.type_name, self.fields_map.keys())
 
     def add_field(self, field):
         self.local_fields.append(field)

@@ -24,8 +24,8 @@ def test_field_no_contributed_raises_error():
 
 def test_node_should_have_same_connection_always():
     s = object()
-    connection1 = OtherNode.get_connection(s)
-    connection2 = OtherNode.get_connection(s)
+    connection1 = relay.Connection.for_node(OtherNode)
+    connection2 = relay.Connection.for_node(OtherNode)
 
     assert connection1 == connection2
 
