@@ -36,9 +36,9 @@ class ConnectionField(Field):
         from graphene.relay.types import PageInfo
         schema = info.schema.graphene_schema
 
-        orig_resolved = super(ConnectionField, self).resolve(instance, args, info)
-        if orig_resolved:
-            resolved = self.wrap_resolved(orig_resolved, instance, args, info)
+        resolved = super(ConnectionField, self).resolve(instance, args, info)
+        if resolved:
+            resolved = self.wrap_resolved(resolved, instance, args, info)
             assert isinstance(
                 resolved, Iterable), 'Resolved value from the connection field have to be iterable'
 
@@ -48,7 +48,7 @@ class ConnectionField(Field):
 
             connection = connection_from_list(resolved, args, connection_type=connection_type,
                                               edge_type=edge_type, pageinfo_type=PageInfo)
-            connection.set_connection_data(orig_resolved)
+            connection.set_connection_data(resolved)
             return connection
 
     @memoize
