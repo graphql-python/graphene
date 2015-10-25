@@ -55,12 +55,7 @@ class Field(object):
         if resolve_fn:
             return resolve_fn(instance, args, info)
         else:
-            if isinstance(instance, BaseObjectType):
-                return instance.get_field(self.field_name)
-            if hasattr(instance, self.field_name):
-                return getattr(instance, self.field_name)
-            elif hasattr(instance, self.name):
-                return getattr(instance, self.name)
+            return getattr(instance, self.field_name, None)
 
     @memoize
     def get_resolve_fn(self):

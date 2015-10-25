@@ -120,7 +120,7 @@ class BaseObjectType(object):
             if not kwargs:
                 return None
         elif type(instance) is cls:
-            instance = instance.instance
+            return instance
 
         return super(BaseObjectType, cls).__new__(cls)
 
@@ -136,9 +136,6 @@ class BaseObjectType(object):
     def __getattr__(self, name):
         if self.instance:
             return getattr(self.instance, name)
-
-    def get_field(self, field):
-        return getattr(self.instance, field, None)
 
     @classmethod
     def resolve_objecttype(cls, schema, instance, *_):
