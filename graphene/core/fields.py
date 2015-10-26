@@ -91,7 +91,6 @@ class Field(object):
             field_type = GraphQLNonNull(field_type)
         return field_type
 
-    @memoize
     def internal_type(self, schema):
         field_type = self.field_type
         if isinstance(field_type, Field):
@@ -127,8 +126,11 @@ class Field(object):
         if not internal_type:
             raise Exception("Internal type for field %s is None" % self)
 
+        description = self.description
         resolve_fn = self.get_resolve_fn()
         if resolve_fn:
+            description = resolve_fn.__doc__ or description
+
             @wraps(resolve_fn)
             def resolver(*args):
                 return self.resolve(*args)
@@ -136,7 +138,7 @@ class Field(object):
             resolver = self.resolve
         return GraphQLField(
             internal_type,
-            description=self.description,
+            description=description,
             args=self.args,
             resolver=resolver,
         )

@@ -24,11 +24,9 @@ from graphene.core.types import ObjectType
 class ObjectType(object):
     _meta = Options()
 
-    def resolve(self, *args, **kwargs):
+    def resolve_customdoc(self, *args, **kwargs):
+        '''Resolver documentation'''
         return None
-
-    def can_resolve(self, *args):
-        return True
 
     def __str__(self):
         return "ObjectType"
@@ -172,3 +170,10 @@ def test_field_repr_contributed():
     f = StringField()
     f.contribute_to_class(ot, 'field_name')
     assert repr(f) == "<graphene.core.fields.StringField: field_name>"
+
+
+def test_field_resolve_objecttype_cos():
+    f = StringField()
+    f.contribute_to_class(ot, 'customdoc')
+    field = f.internal_field(schema)
+    assert field.description == 'Resolver documentation'
