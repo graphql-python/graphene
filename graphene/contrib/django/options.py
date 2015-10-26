@@ -2,7 +2,6 @@ import inspect
 from django.db import models
 
 from graphene.core.options import Options
-from graphene.core.types import BaseObjectType
 from graphene.relay.utils import is_node
 from graphene.relay.types import Node
 
