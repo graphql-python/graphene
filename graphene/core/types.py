@@ -5,7 +5,8 @@ from collections import OrderedDict
 
 from graphql.core.type import (
     GraphQLObjectType,
-    GraphQLInterfaceType
+    GraphQLInterfaceType,
+    GraphQLArgument
 )
 
 from graphene import signals
@@ -58,6 +59,10 @@ class ObjectTypeMeta(type):
 
         if new_class._meta.mutation:
             assert hasattr(new_class, 'mutate'), "All mutations must implement mutate method"
+            Input = getattr(new_class, 'Input', None)
+            if Input:
+                input_type = type('{}Input'.format(new_class._meta.type_name), (Input, ObjectType), Input.__dict__)
+                setattr(new_class, 'input_type', input_type)
 
         new_class.add_extra_fields()
 
@@ -140,6 +145,11 @@ class BaseObjectType(object):
     def __getattr__(self, name):
         if self.instance:
             return getattr(self.instance, name)
+
+    @classmethod
+    def fields_as_arguments(cls, schema):
+        return OrderedDict([(f.field_name, GraphQLArgument(f.internal_type(schema)))
+                            for f in cls._meta.fields])
 
     @classmethod
     def resolve_objecttype(cls, schema, instance, *_):

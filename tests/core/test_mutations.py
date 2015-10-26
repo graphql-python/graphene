@@ -12,14 +12,14 @@ class Query(graphene.ObjectType):
 class ChangeNumber(graphene.Mutation):
     '''Result mutation'''
     class Input:
-        id = graphene.IntField(required=True)
+        to = graphene.IntField()
 
     result = graphene.StringField()
 
     @classmethod
     def mutate(cls, instance, args, info):
         global my_id
-        my_id = my_id + 1
+        my_id = args.get('to', my_id + 1)
         return ChangeNumber(result=my_id)
 
 
@@ -30,13 +30,22 @@ class MyResultMutation(graphene.ObjectType):
 schema = Schema(query=Query, mutation=MyResultMutation)
 
 
-def test_mutate():
+def test_mutation_input():
+    assert ChangeNumber.input_type
+    assert ChangeNumber.input_type._meta.type_name == 'ChangeNumberInput'
+    assert list(ChangeNumber.input_type._meta.fields_map.keys()) == ['to']
+
+
+def test_execute_mutations():
     query = '''
     mutation M{
       first: changeNumber {
         result
       },
       second: changeNumber {
+        result
+      }
+      third: changeNumber(to: 5) {
         result
       }
     }
@@ -47,6 +56,9 @@ def test_mutate():
         },
         'second': {
             'result': '2',
+        },
+        'third': {
+            'result': '5',
         }
     }
     result = schema.execute(query, root=object())

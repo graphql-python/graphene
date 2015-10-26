@@ -124,6 +124,13 @@ class Field(object):
                 ','.join(extra_args.keys())
             ))
 
+        args = self.args
+
+        object_type = self.get_object_type(schema)
+        if object_type and object_type._meta.mutation:
+            assert not self.args, 'Arguments provided for mutations are defined in Input class in Mutation'
+            args = object_type.input_type.fields_as_arguments(schema)
+
         internal_type = self.internal_type(schema)
         if not internal_type:
             raise Exception("Internal type for field %s is None" % self)
@@ -141,7 +148,7 @@ class Field(object):
         return GraphQLField(
             internal_type,
             description=description,
-            args=self.args,
+            args=args,
             resolver=resolver,
         )
 
