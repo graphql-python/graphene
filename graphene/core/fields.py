@@ -182,22 +182,6 @@ class Field(object):
         return obj
 
 
-class NativeField(Field):
-
-    def __init__(self, field=None):
-        super(NativeField, self).__init__(None)
-        self.field = field
-
-    def get_field(self, schema):
-        return self.field
-
-    def internal_field(self, schema):
-        return self.get_field(schema)
-
-    def internal_type(self, schema):
-        return self.internal_field(schema).type
-
-
 class LazyField(Field):
 
     def inner_field(self, schema):
@@ -208,22 +192,6 @@ class LazyField(Field):
 
     def internal_field(self, schema):
         return self.inner_field(schema).internal_field(schema)
-
-
-class LazyNativeField(NativeField):
-
-    def __init__(self, *args, **kwargs):
-        super(LazyNativeField, self).__init__(None, *args, **kwargs)
-
-    def get_field(self, schema):
-        raise NotImplementedError(
-            "get_field function not implemented for %s LazyField" % self.__class__)
-
-    def internal_field(self, schema):
-        return self.get_field(schema)
-
-    def internal_type(self, schema):
-        return self.internal_field(schema).type
 
 
 class TypeField(Field):
