@@ -46,12 +46,12 @@ schema = Schema()
 
 
 def test_django_interface():
-    assert DjangoNode._meta.interface is True
+    assert DjangoNode._meta.is_interface is True
 
 
 def test_pseudo_interface():
     object_type = Character.internal_type(schema)
-    assert Character._meta.interface is True
+    assert Character._meta.is_interface is True
     assert isinstance(object_type, GraphQLInterfaceType)
     assert Character._meta.model == Reporter
     assert_equal_lists(
@@ -83,7 +83,7 @@ def test_interface_resolve_type():
 def test_object_type():
     object_type = Human.internal_type(schema)
     fields_map = Human._meta.fields_map
-    assert Human._meta.interface is False
+    assert Human._meta.is_interface is False
     assert isinstance(object_type, GraphQLObjectType)
     assert_equal_lists(
         object_type.get_fields().keys(),
@@ -99,5 +99,5 @@ def test_object_type():
 
 
 def test_node_notinterface():
-    assert Human._meta.interface is False
+    assert Human._meta.is_interface is False
     assert DjangoNode in Human._meta.interfaces

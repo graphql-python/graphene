@@ -48,20 +48,20 @@ class ObjectTypeMeta(type):
 
         new_class.add_to_class('_meta', new_class.options_cls(meta))
 
-        new_class._meta.interface = new_class.is_interface(parents)
-        new_class._meta.mutation = new_class.is_mutation(parents)
+        new_class._meta.is_interface = new_class.is_interface(parents)
+        new_class._meta.is_mutation = new_class.is_mutation(parents)
 
-        assert not (new_class._meta.interface and new_class._meta.mutation)
+        assert not (new_class._meta.is_interface and new_class._meta.is_mutation)
 
         input_class = None
-        if new_class._meta.mutation:
+        if new_class._meta.is_mutation:
             input_class = attrs.pop('Input', None)
 
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
 
-        if new_class._meta.mutation:
+        if new_class._meta.is_mutation:
             assert hasattr(new_class, 'mutate'), "All mutations must implement mutate method"
 
         if input_class:
@@ -103,7 +103,7 @@ class ObjectTypeMeta(type):
                 new_class.add_to_class(field.field_name, new_field)
 
             new_class._meta.parents.append(base)
-            if base._meta.interface:
+            if base._meta.is_interface:
                 new_class._meta.interfaces.append(base)
             # new_class._meta.parents.extend(base._meta.parents)
 
@@ -129,7 +129,7 @@ class ObjectTypeMeta(type):
 class BaseObjectType(object):
 
     def __new__(cls, instance=None, **kwargs):
-        if cls._meta.interface:
+        if cls._meta.is_interface:
             raise Exception("An interface cannot be initialized")
         if instance is None:
             if not kwargs:
@@ -173,7 +173,7 @@ class BaseObjectType(object):
         fields_list = cls._meta.fields
         fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
                                       for f in fields_list])
-        if cls._meta.interface:
+        if cls._meta.is_interface:
             return GraphQLInterfaceType(
                 cls._meta.type_name,
                 description=cls._meta.description,
@@ -190,13 +190,13 @@ class BaseObjectType(object):
         )
 
 
+class Interface(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
+    pass
+
+
 class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
     pass
 
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
-    pass
-
-
-class Interface(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
     pass

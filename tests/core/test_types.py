@@ -39,7 +39,7 @@ schema = Schema()
 
 def test_interface():
     object_type = Character.internal_type(schema)
-    assert Character._meta.interface is True
+    assert Character._meta.is_interface is True
     assert isinstance(object_type, GraphQLInterfaceType)
     assert Character._meta.type_name == 'core_Character'
     assert object_type.description == 'Character description'
@@ -55,7 +55,7 @@ def test_interface_resolve_type():
 
 def test_object_type():
     object_type = Human.internal_type(schema)
-    assert Human._meta.interface is False
+    assert Human._meta.is_interface is False
     assert Human._meta.type_name == 'core_Human'
     assert isinstance(object_type, GraphQLObjectType)
     assert object_type.description == 'Human description'

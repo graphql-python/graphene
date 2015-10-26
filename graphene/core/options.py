@@ -1,7 +1,7 @@
 from graphene.utils import cached_property
 from collections import OrderedDict, namedtuple
 
-DEFAULT_NAMES = ('description', 'name', 'interface', 'mutation',
+DEFAULT_NAMES = ('description', 'name', 'is_interface', 'is_mutation',
                  'type_name', 'interfaces', 'proxy')
 
 
@@ -10,8 +10,8 @@ class Options(object):
     def __init__(self, meta=None):
         self.meta = meta
         self.local_fields = []
-        self.interface = False
-        self.mutation = False
+        self.is_interface = False
+        self.is_mutation = False
         self.proxy = False
         self.interfaces = []
         self.parents = []

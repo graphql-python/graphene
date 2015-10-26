@@ -60,7 +60,7 @@ class Field(object):
 
     def get_resolve_fn(self, schema):
         object_type = self.get_object_type(schema)
-        if object_type and object_type._meta.mutation:
+        if object_type and object_type._meta.is_mutation:
             return object_type.mutate
         elif self.resolve_fn:
             return self.resolve_fn
@@ -109,7 +109,7 @@ class Field(object):
     def internal_field(self, schema):
         if not self.object_type:
             raise Exception(
-                'Field could not be constructed in a non graphene.Type or graphene.Interface')
+                'Field could not be constructed in a non graphene.ObjectType or graphene.Interface')
 
         extra_args = self.extra_args.copy()
         for arg_name, arg_value in self.extra_args.items():
@@ -127,7 +127,7 @@ class Field(object):
         args = self.args
 
         object_type = self.get_object_type(schema)
-        if object_type and object_type._meta.mutation:
+        if object_type and object_type._meta.is_mutation:
             assert not self.args, 'Arguments provided for mutations are defined in Input class in Mutation'
             args = object_type.input_type.fields_as_arguments(schema)
 
