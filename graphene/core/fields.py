@@ -11,9 +11,10 @@ from graphql.core.type import (
     GraphQLID,
     GraphQLArgument,
     GraphQLFloat,
+    GraphQLInputObjectField,
 )
 from graphene.utils import to_camel_case
-from graphene.core.types import BaseObjectType
+from graphene.core.types import BaseObjectType, InputObjectType
 from graphene.core.scalars import GraphQLSkipField
 
 
@@ -145,7 +146,12 @@ class Field(object):
                 return self.resolve(*args)
         else:
             resolver = self.resolve
-        return GraphQLField(
+
+        field_type = GraphQLField
+        if object_type and issubclass(object_type, InputObjectType):
+            field_type = GraphQLInputObjectField
+
+        return field_type(
             internal_type,
             description=description,
             args=args,

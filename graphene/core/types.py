@@ -5,6 +5,7 @@ from collections import OrderedDict
 
 from graphql.core.type import (
     GraphQLObjectType,
+    GraphQLInputObjectType,
     GraphQLInterfaceType,
     GraphQLArgument
 )
@@ -170,9 +171,8 @@ class BaseObjectType(object):
     @memoize
     @register_internal_type
     def internal_type(cls, schema):
-        fields_list = cls._meta.fields
         fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
-                                      for f in fields_list])
+                                      for f in cls._meta.fields])
         if cls._meta.is_interface:
             return GraphQLInterfaceType(
                 cls._meta.type_name,
@@ -200,3 +200,17 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
     pass
+
+
+class InputObjectType(ObjectType):
+    @classmethod
+    @memoize
+    @register_internal_type
+    def internal_type(cls, schema):
+        fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
+                                      for f in cls._meta.fields])
+        return GraphQLInputObjectType(
+            cls._meta.type_name,
+            description=cls._meta.description,
+            fields=fields,
+        )
