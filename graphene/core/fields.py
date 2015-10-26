@@ -51,14 +51,18 @@ class Field(object):
             cls._meta.add_field(self)
 
     def resolve(self, instance, args, info):
-        resolve_fn = self.get_resolve_fn()
+        schema = info and getattr(info.schema, 'graphene_schema', None)
+        resolve_fn = self.get_resolve_fn(schema)
         if resolve_fn:
             return resolve_fn(instance, args, info)
         else:
             return getattr(instance, self.field_name, None)
 
-    def get_resolve_fn(self):
-        if self.resolve_fn:
+    def get_resolve_fn(self, schema):
+        object_type = self.get_object_type(schema)
+        if object_type and object_type._meta.mutation:
+            return object_type.mutate
+        elif self.resolve_fn:
             return self.resolve_fn
         else:
             custom_resolve_fn_name = 'resolve_%s' % self.field_name
@@ -125,7 +129,7 @@ class Field(object):
             raise Exception("Internal type for field %s is None" % self)
 
         description = self.description
-        resolve_fn = self.get_resolve_fn()
+        resolve_fn = self.get_resolve_fn(schema)
         if resolve_fn:
             description = resolve_fn.__doc__ or description
 

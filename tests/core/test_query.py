@@ -50,7 +50,7 @@ Human_type = Human.internal_type(schema)
 
 
 def test_type():
-    assert Human._meta.fields_map['name'].resolve(Human(object()), 1, 2) == 'Peter'
+    assert Human._meta.fields_map['name'].resolve(Human(object()), None, None) == 'Peter'
 
 
 def test_query():

@@ -55,6 +55,10 @@ class ObjectTypeMeta(type):
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
+
+        if new_class._meta.mutation:
+            assert hasattr(new_class, 'mutate'), "All mutations must implement mutate method"
+
         new_class.add_extra_fields()
 
         new_fields = new_class._meta.local_fields

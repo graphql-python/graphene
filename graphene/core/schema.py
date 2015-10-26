@@ -44,6 +44,15 @@ class Schema(object):
         self._query_type = query and query.internal_type(self)
 
     @property
+    def mutation(self):
+        return self._mutation
+
+    @mutation.setter
+    def mutation(self, mutation):
+        self._mutation = mutation
+        self._mutation_type = mutation and mutation.internal_type(self)
+
+    @property
     def executor(self):
         if not self._executor:
             self.executor = Executor([SynchronousExecutionMiddleware()], map_type=OrderedDict)
@@ -57,7 +66,7 @@ class Schema(object):
     def schema(self):
         if not self._query_type:
             raise Exception('You have to define a base query type')
-        return GraphQLSchema(self, query=self._query_type, mutation=self.mutation)
+        return GraphQLSchema(self, query=self._query_type, mutation=self._mutation_type)
 
     def associate_internal_type(self, internal_type, object_type):
         self._internal_types[internal_type.name] = object_type
