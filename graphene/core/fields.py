@@ -12,7 +12,7 @@ from graphql.core.type import (
     GraphQLArgument,
     GraphQLFloat,
 )
-from graphene.utils import memoize, to_camel_case
+from graphene.utils import to_camel_case
 from graphene.core.types import BaseObjectType
 from graphene.core.scalars import GraphQLSkipField
 
@@ -57,7 +57,6 @@ class Field(object):
         else:
             return getattr(instance, self.field_name, None)
 
-    @memoize
     def get_resolve_fn(self):
         if self.resolve_fn:
             return self.resolve_fn
@@ -103,7 +102,6 @@ class Field(object):
         field_type = self.type_wrapper(field_type)
         return field_type
 
-    @memoize
     def internal_field(self, schema):
         if not self.object_type:
             raise Exception(
@@ -193,18 +191,15 @@ class NativeField(Field):
     def get_field(self, schema):
         return self.field
 
-    @memoize
     def internal_field(self, schema):
         return self.get_field(schema)
 
-    @memoize
     def internal_type(self, schema):
         return self.internal_field(schema).type
 
 
 class LazyField(Field):
 
-    @memoize
     def inner_field(self, schema):
         return self.get_field(schema)
 
@@ -224,11 +219,9 @@ class LazyNativeField(NativeField):
         raise NotImplementedError(
             "get_field function not implemented for %s LazyField" % self.__class__)
 
-    @memoize
     def internal_field(self, schema):
         return self.get_field(schema)
 
-    @memoize
     def internal_type(self, schema):
         return self.internal_field(schema).type
 

@@ -4,9 +4,7 @@ from graphene.core.fields import (
 from graphene import relay
 
 from graphene.core.fields import Field, LazyField
-from graphene.utils import cached_property, memoize, LazyMap
 
-from graphene.relay.types import BaseNode
 from graphene.relay.utils import is_node
 from graphene.contrib.django.utils import get_type_for_model, lazy_map
 
@@ -25,7 +23,6 @@ class LazyListField(ListField):
 
 
 class ConnectionOrListField(LazyField):
-    @memoize
     def get_field(self, schema):
         model_field = self.field_type
         field_object_type = model_field.get_object_type(schema)
@@ -52,7 +49,6 @@ class DjangoModelField(Field):
                        ))
         return _type(resolved)
 
-    @memoize
     def internal_type(self, schema):
         _type = self.get_object_type(schema)
         if not _type and self.object_type._meta.only_fields:

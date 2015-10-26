@@ -16,7 +16,6 @@ from graphql.core.type import (
 )
 
 from graphene.core.fields import Field, IDField
-from graphene.utils import memoize
 
 
 class ConnectionField(Field):
@@ -51,17 +50,14 @@ class ConnectionField(Field):
             connection.set_connection_data(resolved)
             return connection
 
-    @memoize
     def get_connection_type(self, node):
         connection_type = self.connection_type or node.get_connection_type()
         edge_type = self.get_edge_type(node)
         return connection_type.for_node(node, edge_type=edge_type)
 
-    @memoize
     def get_edge_type(self, node):
         return self.edge_type or node.get_edge_type()
 
-    @memoize
     def internal_type(self, schema):
         from graphene.relay.utils import is_node
         node = self.get_object_type(schema)
