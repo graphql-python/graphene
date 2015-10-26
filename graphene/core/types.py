@@ -53,16 +53,22 @@ class ObjectTypeMeta(type):
 
         assert not (new_class._meta.interface and new_class._meta.mutation)
 
+        input_class = None
+        if new_class._meta.mutation:
+            input_class = attrs.pop('Input', None)
+
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
 
         if new_class._meta.mutation:
             assert hasattr(new_class, 'mutate'), "All mutations must implement mutate method"
-            Input = getattr(new_class, 'Input', None)
-            if Input:
-                input_type = type('{}Input'.format(new_class._meta.type_name), (Input, ObjectType), Input.__dict__)
-                setattr(new_class, 'input_type', input_type)
+
+        if input_class:
+            items = dict(input_class.__dict__)
+            items.pop('__dict__', None)
+            input_type = type('{}Input'.format(new_class._meta.type_name), (ObjectType, ), items)
+            new_class.add_to_class('input_type', input_type)
 
         new_class.add_extra_fields()
 

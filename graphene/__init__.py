@@ -6,7 +6,7 @@ from graphql.core.type import (
     GraphQLID as ID
 )
 
-from graphene import signals
+# from graphene import signals
 
 from graphene.core.schema import (
     Schema
