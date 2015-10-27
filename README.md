@@ -1,10 +1,10 @@
-# ![Graphene Logo](http://graphene-python.org/favicon.png) [Graphene](http://graphene-python.org) [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
+# ![Graphene Logo](http://graphene-python.org/favicon.png) [Graphene](http://graphene-python.org) [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![PyPI version](https://badge.fury.io/py/graphene.svg)](https://badge.fury.io/py/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
 
 
 Graphene is a Python library for building GraphQL schemas/types fast and easily.
 * **Easy to use:** It maps the models/fields to internal GraphQL objects without effort.
 * **Relay:** Graphene has builtin support for Relay
-* **Django:** Automatic [Django models](#djangorelay-schema) conversion. *See an [example Django](http://github.com/graphql-python/swapi-graphene) implementation*
+* **Django:** Automatic *Django model* mapping to Graphene Types. *See an [example Django](http://github.com/graphql-python/swapi-graphene) implementation*
 
 
 ## Installation
@@ -16,26 +16,21 @@ pip install graphene
 ```
 
 
-## Usage
+## Examples
 
-Example code of a GraphQL schema using Graphene:
-
-### Schema definition
+Here is one example for get you started:
 
 ```python
-class Character(graphene.Interface):
-    id = graphene.IDField()
-    name = graphene.StringField()
-    friends = graphene.ListField('self')
-
-    def resolve_friends(self, args, *_):
-        return [Human(f) for f in self.instance.friends]
-
-class Human(Character):
-    homePlanet = graphene.StringField()
-
 class Query(graphene.ObjectType):
-    human = graphene.Field(Human)
+    hello = graphene.StringField(description='A typical hello world')
+    ping = graphene.StringField(description='Ping someone',
+                                to=graphene.Argument(graphene.String))
+
+    def resolve_hello(self, args, info):
+        return 'World'
+
+    def resolve_ping(self, args, info):
+        return 'Pinging {}'.format(args.get('to'))
 
 schema = graphene.Schema(query=Query)
 ```
@@ -44,48 +39,19 @@ Then Querying `graphene.Schema` is as simple as:
 
 ```python
 query = '''
-    query HeroNameQuery {
-      hero {
-        name
-      }
+    query SayHello {
+      hello
+      ping(to:'peter')
     }
 '''
 result = schema.execute(query)
 ```
 
-### Relay Schema
+If you want to learn even more, you can also check the following examples:
 
-Graphene also supports Relay, check the [Starwars Relay example](tests/starwars_relay)!
+* Relay Schema: [Starwars Relay example](tests/starwars_relay)
+* Django: [Starwars Django example](tests/starwars_django)
 
-```python
-class Ship(relay.Node):
-    name = graphene.StringField()
-
-    @classmethod
-    def get_node(cls, id):
-        return Ship(your_ship_instance)
-
-
-class Query(graphene.ObjectType):
-    ships = relay.ConnectionField(Ship)
-    node = relay.NodeField()
-
-```
-
-### Django+Relay Schema
-
-If you want to use graphene with your Django Models check the [Starwars Django example](tests/starwars_django)!
-
-```python
-class Ship(DjangoNode):
-    class Meta:
-        model = YourDjangoModelHere
-        # only_fields = ('id', 'name') # Only map this fields from the model
-        # exclude_fields ('field_to_exclude', ) # Exclude mapping this fields from the model
-
-class Query(graphene.ObjectType):
-    node = relay.NodeField()
-```
 
 ## Contributing
 

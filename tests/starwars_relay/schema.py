@@ -12,29 +12,28 @@ schema = graphene.Schema(name='Starwars Relay Schema')
 
 
 class Ship(relay.Node):
-
     '''A ship in the Star Wars saga'''
     name = graphene.StringField(description='The name of the ship.')
 
     @classmethod
     def get_node(cls, id):
-        return Ship(getShip(id))
+        return getShip(id)
 
 
 class Faction(relay.Node):
-
     '''A faction in the Star Wars saga'''
     name = graphene.StringField(description='The name of the faction.')
     ships = relay.ConnectionField(
         Ship, description='The ships used by the faction.')
 
     @resolve_only_args
-    def resolve_ships(self, **kwargs):
-        return [Ship(getShip(ship)) for ship in self.instance.ships]
+    def resolve_ships(self, **args):
+        # Transform the instance ship_ids into real instances
+        return [getShip(ship_id) for ship_id in self.ships]
 
     @classmethod
     def get_node(cls, id):
-        return Faction(getFaction(id))
+        return getFaction(id)
 
 
 class Query(graphene.ObjectType):
@@ -44,11 +43,11 @@ class Query(graphene.ObjectType):
 
     @resolve_only_args
     def resolve_rebels(self):
-        return Faction(getRebels())
+        return getRebels()
 
     @resolve_only_args
     def resolve_empire(self):
-        return Faction(getEmpire())
+        return getEmpire()
 
 
 schema.query = Query

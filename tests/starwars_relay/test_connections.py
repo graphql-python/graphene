@@ -1,7 +1,7 @@
-from pytest import raises
-from graphql.core import graphql
-
 from .schema import schema
+from .data import setup
+
+setup()
 
 
 def test_correct_fetch_first_ship_rebels():

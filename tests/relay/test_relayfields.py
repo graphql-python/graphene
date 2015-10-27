@@ -1,4 +1,3 @@
-from pytest import raises
 from graphql.core.type import (
     GraphQLNonNull,
     GraphQLID
@@ -10,11 +9,6 @@ from graphene import relay
 schema = graphene.Schema()
 
 
-class MyType(object):
-    name = 'my'
-    arg = None
-
-
 class MyConnection(relay.Connection):
     my_custom_field = graphene.StringField(resolve=lambda instance, *_: 'Custom')
 
@@ -24,7 +18,7 @@ class MyNode(relay.Node):
 
     @classmethod
     def get_node(cls, id):
-        return MyNode(MyType())
+        return MyNode(name='mo')
 
 
 class Query(graphene.ObjectType):
@@ -32,10 +26,9 @@ class Query(graphene.ObjectType):
     all_my_nodes = relay.ConnectionField(MyNode, connection_type=MyConnection, customArg=graphene.Argument(graphene.String))
 
     def resolve_all_my_nodes(self, args, info):
-        t = MyType()
         custom_arg = args.get('customArg')
         assert custom_arg == "1"
-        return [MyNode(t)]
+        return [MyNode(name='my')]
 
 schema.query = Query
 
@@ -61,7 +54,7 @@ def test_nodefield_query():
     '''
     expected = {
         'myNode': {
-            'name': 'my'
+            'name': 'mo'
         },
         'allMyNodes': {
             'edges': [{

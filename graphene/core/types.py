@@ -129,29 +129,48 @@ class ObjectTypeMeta(type):
 
 class BaseObjectType(object):
 
-    def __new__(cls, instance=None, **kwargs):
+    def __new__(cls, *args, **kwargs):
         if cls._meta.is_interface:
             raise Exception("An interface cannot be initialized")
-        if instance is None:
-            if not kwargs:
-                return None
-        elif type(instance) is cls:
-            return instance
-
+        if not args and not kwargs:
+            return None
         return super(BaseObjectType, cls).__new__(cls)
 
-    def __init__(self, instance=None, **kwargs):
-        signals.pre_init.send(self.__class__, instance=instance)
-        assert instance or kwargs
-        if not instance:
-            init_kwargs = dict({k: None for k in self._meta.fields_map.keys()}, **kwargs)
-            instance = self._meta.object(**init_kwargs)
-        self.instance = instance
-        signals.post_init.send(self.__class__, instance=self)
+    def __init__(self, *args, **kwargs):
+        signals.pre_init.send(self.__class__, args=args, kwargs=kwargs)
+        args_len = len(args)
+        fields = self._meta.fields
+        if args_len > len(fields):
+            # Daft, but matches old exception sans the err msg.
+            raise IndexError("Number of args exceeds number of fields")
+        fields_iter = iter(fields)
 
-    def __getattr__(self, name):
-        if self.instance:
-            return getattr(self.instance, name)
+        if not kwargs:
+            for val, field in zip(args, fields_iter):
+                setattr(self, field.field_name, val)
+        else:
+            for val, field in zip(args, fields_iter):
+                setattr(self, field.field_name, val)
+                kwargs.pop(field.field_name, None)
+
+        for field in fields_iter:
+            try:
+                val = kwargs.pop(field.field_name)
+                setattr(self, field.field_name, val)
+            except KeyError:
+                pass
+
+        if kwargs:
+            for prop in list(kwargs):
+                try:
+                    if isinstance(getattr(self.__class__, prop), property):
+                        setattr(self, prop, kwargs.pop(prop))
+                except AttributeError:
+                    pass
+            if kwargs:
+                raise TypeError("'%s' is an invalid keyword argument for this function" % list(kwargs)[0])
+
+        signals.post_init.send(self.__class__, instance=self)
 
     @classmethod
     def fields_as_arguments(cls, schema):

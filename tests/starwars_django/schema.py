@@ -27,7 +27,7 @@ class Ship(DjangoNode):
 
 
 @schema.register
-class CharacterModel(DjangoObjectType):
+class Character(DjangoObjectType):
     class Meta:
         model = CharacterModel
 

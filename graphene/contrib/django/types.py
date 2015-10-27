@@ -37,11 +37,20 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             cls.add_to_class(field.name, converted_field)
 
 
-class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, BaseObjectType)):
+class InstanceObjectType(BaseObjectType):
+    def __init__(self, instance=None):
+        self.instance = instance
+        super(InstanceObjectType, self).__init__()
+
+    def __getattr__(self, attr):
+        return getattr(self.instance, attr)
+
+
+class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, InstanceObjectType)):
     pass
 
 
-class DjangoInterface(six.with_metaclass(DjangoObjectTypeMeta, BaseObjectType)):
+class DjangoInterface(six.with_metaclass(DjangoObjectTypeMeta, InstanceObjectType)):
     pass
 
 

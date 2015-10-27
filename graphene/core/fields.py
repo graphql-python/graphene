@@ -28,7 +28,7 @@ class Field(object):
     creation_counter = 0
     required = False
 
-    def __init__(self, field_type, name=None, resolve=None, required=False, args=None, description='', **extra_args):
+    def __init__(self, field_type, name=None, resolve=None, required=False, args=None, description='', default=None, **extra_args):
         self.field_type = field_type
         self.resolve_fn = resolve
         self.required = self.required or required
@@ -38,8 +38,12 @@ class Field(object):
         self.name = name
         self.description = description or self.__doc__
         self.object_type = None
+        self.default = default
         self.creation_counter = Field.creation_counter
         Field.creation_counter += 1
+
+    def get_default(self):
+        return self.default
 
     def contribute_to_class(self, cls, name, add=True):
         if not self.name:
@@ -57,7 +61,7 @@ class Field(object):
         if resolve_fn:
             return resolve_fn(instance, args, info)
         else:
-            return getattr(instance, self.field_name, None)
+            return getattr(instance, self.field_name, self.get_default())
 
     def get_resolve_fn(self, schema):
         object_type = self.get_object_type(schema)
