@@ -49,8 +49,8 @@ result = schema.execute(query)
 
 If you want to learn even more, you can also check the following examples:
 
-* Relay Schema: [Starwars Relay example](tests/starwars_relay)
-* Django: [Starwars Django example](tests/starwars_django)
+* Relay Schema: [Starwars Relay example](examples/starwars_relay)
+* Django: [Starwars Django example](examples/starwars_django)
 
 
 ## Contributing

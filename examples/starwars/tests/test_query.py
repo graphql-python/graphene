@@ -1,6 +1,6 @@
-from .schema import Schema, Query
+from ..schema import Schema, Query
 from graphql.core import graphql
-from .data import setup
+from ..data import setup
 
 setup()
 

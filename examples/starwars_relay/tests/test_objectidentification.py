@@ -1,5 +1,5 @@
-from .schema import schema
-from .data import setup
+from ..schema import schema
+from ..data import setup
 
 setup()
 
