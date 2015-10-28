@@ -2,7 +2,7 @@ from graphql_relay.node.node import (
     to_global_id
 )
 
-from graphene.core.types import Interface, ObjectType
+from graphene.core.types import Interface, ObjectType, Mutation, InputObjectType
 from graphene.core.fields import BooleanField, StringField, ListField, Field
 from graphene.relay.fields import GlobalIDField
 from graphene.utils import memoize
@@ -84,3 +84,32 @@ class BaseNode(object):
 class Node(BaseNode, Interface):
     '''An object with an ID'''
     id = GlobalIDField()
+
+
+class MutationInputType(InputObjectType):
+    client_mutation_id = StringField(required=True)
+
+
+class ClientIDMutation(Mutation):
+    client_mutation_id = StringField(required=True)
+
+    @classmethod
+    def _prepare_class(cls):
+        input_type = getattr(cls, 'input_type', None)
+        if input_type:
+            assert hasattr(cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
+            new_input_inner_type = type('{}InnerInput'.format(cls._meta.type_name), (MutationInputType, input_type, ), {})
+            items = {
+                'input': Field(new_input_inner_type)
+            }
+            assert issubclass(new_input_inner_type, InputObjectType)
+            input_type = type('{}Input'.format(cls._meta.type_name), (ObjectType, ), items)
+            setattr(cls, 'input_type', input_type)
+
+    @classmethod
+    def mutate(cls, instance, args, info):
+        input = args.get('input')
+        payload = cls.mutate_and_get_payload(input, info)
+        client_mutation_id = input.get('client_mutation_id')
+        setattr(payload, 'client_mutation_id', client_mutation_id)
+        return payload

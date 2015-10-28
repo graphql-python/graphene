@@ -13,7 +13,7 @@ from graphql.core.type import (
     GraphQLFloat,
     GraphQLInputObjectField,
 )
-from graphene.utils import to_camel_case
+from graphene.utils import to_camel_case, ProxySnakeDict
 from graphene.core.types import BaseObjectType, InputObjectType
 from graphene.core.scalars import GraphQLSkipField
 
@@ -59,7 +59,7 @@ class Field(object):
         schema = info and getattr(info.schema, 'graphene_schema', None)
         resolve_fn = self.get_resolve_fn(schema)
         if resolve_fn:
-            return resolve_fn(instance, args, info)
+            return resolve_fn(instance, ProxySnakeDict(args), info)
         else:
             return getattr(instance, self.field_name, self.get_default())
 

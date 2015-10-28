@@ -8,7 +8,8 @@ from graphene.relay.types import (
     Node,
     PageInfo,
     Edge,
-    Connection
+    Connection,
+    ClientIDMutation
 )
 
 from graphene.relay.utils import is_node
