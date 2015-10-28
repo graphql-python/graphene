@@ -31,10 +31,7 @@ class ObjectType(object):
     def __str__(self):
         return "ObjectType"
 
-ot = ObjectType()
-
-ObjectType._meta.contribute_to_class(ObjectType, '_meta')
-
+ot = ObjectType
 
 schema = Schema()
 

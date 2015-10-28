@@ -134,7 +134,7 @@ class Field(object):
         object_type = self.get_object_type(schema)
         if object_type and object_type._meta.is_mutation:
             assert not self.args, 'Arguments provided for mutations are defined in Input class in Mutation'
-            args = object_type.input_type.fields_as_arguments(schema)
+            args = object_type.get_input_type().fields_as_arguments(schema)
 
         internal_type = self.internal_type(schema)
         if not internal_type:
@@ -151,11 +151,13 @@ class Field(object):
         else:
             resolver = self.resolve
 
-        field_type = GraphQLField
-        if object_type and issubclass(object_type, InputObjectType):
-            field_type = GraphQLInputObjectField
+        if issubclass(self.object_type, InputObjectType):
+            return GraphQLInputObjectField(
+                internal_type,
+                description=description,
+            )
 
-        return field_type(
+        return GraphQLField(
             internal_type,
             description=description,
             args=args,
@@ -164,7 +166,7 @@ class Field(object):
 
     def __str__(self):
         """ Return "object_type.name". """
-        return '%s.%s' % (self.object_type, self.field_name)
+        return '%s.%s' % (self.object_type.__name__, self.field_name)
 
     def __repr__(self):
         """

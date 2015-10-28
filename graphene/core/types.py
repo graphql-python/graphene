@@ -23,7 +23,7 @@ class ObjectTypeMeta(type):
         return Interface in parents
 
     def is_mutation(cls, parents):
-        return Mutation in parents
+        return issubclass(cls, Mutation)
 
     def __new__(cls, name, bases, attrs):
         super_new = super(ObjectTypeMeta, cls).__new__
@@ -218,7 +218,9 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
-    pass
+    @classmethod
+    def get_input_type(cls):
+        return getattr(cls, 'input_type', None)
 
 
 class InputObjectType(ObjectType):
