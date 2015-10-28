@@ -1,12 +1,4 @@
-from graphene.utils import ProxySnakeDict, to_snake_case
-
-
-def test_snake_case():
-    assert to_snake_case('snakesOnAPlane') == 'snakes_on_a_plane'
-    assert to_snake_case('SnakesOnAPlane') == 'snakes_on_a_plane'
-    assert to_snake_case('snakes_on_a_plane') == 'snakes_on_a_plane'
-    assert to_snake_case('IPhoneHysteria') == 'i_phone_hysteria'
-    assert to_snake_case('iPhoneHysteria') == 'i_phone_hysteria'
+from graphene.utils import ProxySnakeDict
 
 
 def test_proxy_snake_dict():
@@ -32,5 +24,3 @@ def test_proxy_snake_dict_as_kwargs():
     def func(**kwargs):
         return kwargs.get('my_data')
     assert func(**p) == 1
-
-
