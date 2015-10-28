@@ -1,5 +1,10 @@
 import inspect
 import six
+try:
+    from enum import Enum
+except ImportError:
+    class Enum(object):
+        pass
 from functools import total_ordering, wraps
 from graphql.core.type import (
     GraphQLField,
@@ -101,8 +106,11 @@ class Field(object):
 
     def internal_type(self, schema):
         field_type = self.field_type
+        _is_class = inspect.isclass(field_type)
         if isinstance(field_type, Field):
             field_type = self.field_type.internal_type(schema)
+        elif _is_class and issubclass(field_type, Enum):
+            field_type = enum_to_graphql_enum(field_type)
         else:
             object_type = self.get_object_type(schema)
             if object_type:
