@@ -13,6 +13,8 @@ For instaling graphene, just run this command in your shell
 
 ```bash
 pip install graphene
+# Or in case of need Django model support
+pip install graphene[django]
 ```
 
 
