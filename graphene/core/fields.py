@@ -18,7 +18,7 @@ from graphql.core.type import (
     GraphQLFloat,
     GraphQLInputObjectField,
 )
-from graphene.utils import to_camel_case, ProxySnakeDict
+from graphene.utils import to_camel_case, ProxySnakeDict, enum_to_graphql_enum
 from graphene.core.types import BaseObjectType, InputObjectType
 from graphene.core.scalars import GraphQLSkipField
 
