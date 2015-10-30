@@ -62,7 +62,7 @@ class DjangoModelField(Field):
                     self.object_type
                 )
             )
-        return _type and _type.internal_type(schema) or Field.SKIP
+        return schema.T(_type) or Field.SKIP
 
     def get_object_type(self, schema):
         return get_type_for_model(schema, self.model)

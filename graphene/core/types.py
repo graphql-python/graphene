@@ -179,15 +179,14 @@ class BaseObjectType(object):
 
     @classmethod
     def resolve_objecttype(cls, schema, instance, *_):
-        return instance
+        return instance.__class__
 
     @classmethod
     def resolve_type(cls, schema, instance, *_):
         objecttype = cls.resolve_objecttype(schema, instance, *_)
-        return objecttype.internal_type(schema)
+        return schema.T(objecttype)
 
     @classmethod
-    @memoize
     @register_internal_type
     def internal_type(cls, schema):
         fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
@@ -203,7 +202,7 @@ class BaseObjectType(object):
         return GraphQLObjectType(
             cls._meta.type_name,
             description=cls._meta.description,
-            interfaces=[i.internal_type(schema) for i in cls._meta.interfaces],
+            interfaces=[schema.T(i) for i in cls._meta.interfaces],
             fields=fields,
             is_type_of=getattr(cls, 'is_type_of', None)
         )
@@ -225,7 +224,6 @@ class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 class InputObjectType(ObjectType):
     @classmethod
-    @memoize
     @register_internal_type
     def internal_type(cls, schema):
         fields = lambda: OrderedDict([(f.name, f.internal_field(schema))

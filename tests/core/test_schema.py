@@ -125,7 +125,21 @@ def test_schema_register():
     class MyType(ObjectType):
         type = StringField(resolve=lambda *_: 'Dog')
 
+    schema.query = MyType
+
     assert schema.get_type('MyType') == MyType
+
+
+def test_schema_register():
+    schema = Schema(name='My own schema')
+
+    @schema.register
+    class MyType(ObjectType):
+        type = StringField(resolve=lambda *_: 'Dog')
+
+    with raises(Exception) as excinfo:
+        schema.get_type('MyType')
+    assert 'base query type' in str(excinfo.value)
 
 
 def test_schema_introspect():
@@ -138,4 +152,3 @@ def test_schema_introspect():
 
     introspection = schema.introspect()
     assert '__schema' in introspection
-

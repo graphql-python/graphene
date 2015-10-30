@@ -46,7 +46,7 @@ class Human(Character):
 
 schema = Schema()
 
-Human_type = Human.internal_type(schema)
+Human_type = schema.T(Human)
 
 
 def test_type():

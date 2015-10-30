@@ -114,7 +114,7 @@ class Field(object):
         else:
             object_type = self.get_object_type(schema)
             if object_type:
-                field_type = object_type.internal_type(schema)
+                field_type = schema.T(object_type)
 
         field_type = self.type_wrapper(field_type)
         return field_type

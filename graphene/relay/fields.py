@@ -63,8 +63,8 @@ class ConnectionField(Field):
         node = self.get_object_type(schema)
         assert is_node(node), 'Only nodes have connections.'
         schema.register(node)
-
-        return self.get_connection_type(node).internal_type(schema)
+        connection_type = self.get_connection_type(node)
+        return schema.T(connection_type)
 
 
 class NodeField(Field):
