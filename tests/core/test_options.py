@@ -10,7 +10,7 @@ from graphene.core.options import Options
 
 
 class Meta:
-    interface = True
+    is_interface = True
     type_name = 'Character'
 
 

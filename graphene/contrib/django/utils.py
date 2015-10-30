@@ -2,10 +2,9 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.db.models.manager import Manager
 
-from graphene.utils import memoize, LazyMap
+from graphene.utils import LazyMap
 
 
-# @memoize
 def get_type_for_model(schema, model):
     schema = schema
     types = schema.types.values()

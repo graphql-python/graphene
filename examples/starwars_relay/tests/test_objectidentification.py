@@ -1,7 +1,7 @@
-from pytest import raises
-from graphql.core import graphql
+from ..schema import schema
+from ..data import setup
 
-from .schema import schema
+setup()
 
 
 def test_correctly_fetches_id_name_rebels():

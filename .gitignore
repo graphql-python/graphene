@@ -59,3 +59,5 @@ docs/_build/
 # PyBuilder
 target/
 
+
+/tests/django.sqlite

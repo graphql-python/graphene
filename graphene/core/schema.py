@@ -25,6 +25,7 @@ class Schema(object):
 
     def __init__(self, query=None, mutation=None, name='Schema', executor=None):
         self._internal_types = {}
+        self._types = {}
         self.mutation = mutation
         self.query = query
         self.name = name
@@ -34,6 +35,13 @@ class Schema(object):
     def __repr__(self):
         return '<Schema: %s (%s)>' % (str(self.name), hash(self))
 
+    def T(self, object_type):
+        if not object_type:
+            return
+        if object_type not in self._types:
+            self._types[object_type] = object_type.internal_type(self)
+        return self._types[object_type]
+
     @property
     def query(self):
         return self._query
@@ -41,7 +49,14 @@ class Schema(object):
     @query.setter
     def query(self, query):
         self._query = query
-        self._query_type = query and query.internal_type(self)
+
+    @property
+    def mutation(self):
+        return self._mutation
+
+    @mutation.setter
+    def mutation(self, mutation):
+        self._mutation = mutation
 
     @property
     def executor(self):
@@ -53,11 +68,11 @@ class Schema(object):
     def executor(self, value):
         self._executor = value
 
-    @cached_property
+    @property
     def schema(self):
-        if not self._query_type:
+        if not self._query:
             raise Exception('You have to define a base query type')
-        return GraphQLSchema(self, query=self._query_type, mutation=self.mutation)
+        return GraphQLSchema(self, query=self.T(self._query), mutation=self.T(self._mutation))
 
     def associate_internal_type(self, internal_type, object_type):
         self._internal_types[internal_type.name] = object_type
@@ -67,6 +82,7 @@ class Schema(object):
         return object_type
 
     def get_type(self, type_name):
+        self.schema._build_type_map()
         if type_name not in self._internal_types:
             raise Exception('Type %s not found in %r' % (type_name, self))
         return self._internal_types[type_name]

@@ -34,18 +34,34 @@ class Human(Character):
     class Meta:
         type_name = 'core_Human'
 
+    @property
+    def readonly_prop(self):
+        return 'readonly'
+
+    @property
+    def write_prop(self):
+        return self._write_prop
+
+    @write_prop.setter
+    def write_prop(self, value):
+        self._write_prop = value
+
 schema = Schema()
 
 
 def test_interface():
-    object_type = Character.internal_type(schema)
-    assert Character._meta.interface is True
+    object_type = schema.T(Character)
+    assert Character._meta.is_interface is True
     assert isinstance(object_type, GraphQLInterfaceType)
     assert Character._meta.type_name == 'core_Character'
     assert object_type.description == 'Character description'
     assert list(object_type.get_fields().keys()) == ['name']
-    # assert object_type.get_fields() == {
-    #     'name': Character._meta.fields_map['name'].internal_field(schema)}
+
+
+def test_interface_cannot_initialize():
+    with raises(Exception) as excinfo:
+        c = Character()
+    assert 'An interface cannot be initialized' == str(excinfo.value)
 
 
 def test_interface_resolve_type():
@@ -54,16 +70,37 @@ def test_interface_resolve_type():
 
 
 def test_object_type():
-    object_type = Human.internal_type(schema)
-    assert Human._meta.interface is False
+    object_type = schema.T(Human)
+    assert Human._meta.is_interface is False
     assert Human._meta.type_name == 'core_Human'
     assert isinstance(object_type, GraphQLObjectType)
     assert object_type.description == 'Human description'
     assert list(object_type.get_fields().keys()) == ['name', 'friends']
     # assert object_type.get_fields() == {'name': Human._meta.fields_map['name'].internal_field(
     #     schema), 'friends': Human._meta.fields_map['friends'].internal_field(schema)}
-    assert object_type.get_interfaces() == [Character.internal_type(schema)]
+    assert object_type.get_interfaces() == [schema.T(Character)]
     assert Human._meta.fields_map['name'].object_type == Human
+
+
+def test_object_type_container():
+    h = Human(name='My name')
+    assert h.name == 'My name'
+
+
+def test_object_type_set_properties():
+    h = Human(readonly_prop='custom', write_prop='custom')
+    assert h.readonly_prop == 'readonly'
+    assert h.write_prop == 'custom'
+
+
+def test_object_type_container_invalid_kwarg():
+    with raises(TypeError):
+        Human(invalid='My name')
+
+
+def test_object_type_container_too_many_args():
+    with raises(IndexError):
+        Human('Peter', 'No friends :(', None)
 
 
 def test_field_clashes():

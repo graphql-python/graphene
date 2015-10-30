@@ -1,5 +1,10 @@
 import inspect
 import six
+try:
+    from enum import Enum
+except ImportError:
+    class Enum(object):
+        pass
 from functools import total_ordering, wraps
 from graphql.core.type import (
     GraphQLField,
@@ -11,9 +16,10 @@ from graphql.core.type import (
     GraphQLID,
     GraphQLArgument,
     GraphQLFloat,
+    GraphQLInputObjectField,
 )
-from graphene.utils import memoize, to_camel_case
-from graphene.core.types import BaseObjectType
+from graphene.utils import to_camel_case, ProxySnakeDict, enum_to_graphql_enum
+from graphene.core.types import BaseObjectType, InputObjectType
 from graphene.core.scalars import GraphQLSkipField
 
 
@@ -27,7 +33,7 @@ class Field(object):
     creation_counter = 0
     required = False
 
-    def __init__(self, field_type, name=None, resolve=None, required=False, args=None, description='', **extra_args):
+    def __init__(self, field_type, name=None, resolve=None, required=False, args=None, description='', default=None, **extra_args):
         self.field_type = field_type
         self.resolve_fn = resolve
         self.required = self.required or required
@@ -37,8 +43,12 @@ class Field(object):
         self.name = name
         self.description = description or self.__doc__
         self.object_type = None
+        self.default = default
         self.creation_counter = Field.creation_counter
         Field.creation_counter += 1
+
+    def get_default(self):
+        return self.default
 
     def contribute_to_class(self, cls, name, add=True):
         if not self.name:
@@ -51,20 +61,18 @@ class Field(object):
             cls._meta.add_field(self)
 
     def resolve(self, instance, args, info):
-        resolve_fn = self.get_resolve_fn()
+        schema = info and getattr(info.schema, 'graphene_schema', None)
+        resolve_fn = self.get_resolve_fn(schema)
         if resolve_fn:
-            return resolve_fn(instance, args, info)
+            return resolve_fn(instance, ProxySnakeDict(args), info)
         else:
-            if isinstance(instance, BaseObjectType):
-                return instance.get_field(self.field_name)
-            if hasattr(instance, self.field_name):
-                return getattr(instance, self.field_name)
-            elif hasattr(instance, self.name):
-                return getattr(instance, self.name)
+            return getattr(instance, self.field_name, self.get_default())
 
-    @memoize
-    def get_resolve_fn(self):
-        if self.resolve_fn:
+    def get_resolve_fn(self, schema):
+        object_type = self.get_object_type(schema)
+        if object_type and object_type._meta.is_mutation:
+            return object_type.mutate
+        elif self.resolve_fn:
             return self.resolve_fn
         else:
             custom_resolve_fn_name = 'resolve_%s' % self.field_name
@@ -96,24 +104,25 @@ class Field(object):
             field_type = GraphQLNonNull(field_type)
         return field_type
 
-    @memoize
     def internal_type(self, schema):
         field_type = self.field_type
+        _is_class = inspect.isclass(field_type)
         if isinstance(field_type, Field):
             field_type = self.field_type.internal_type(schema)
+        elif _is_class and issubclass(field_type, Enum):
+            field_type = enum_to_graphql_enum(field_type)
         else:
             object_type = self.get_object_type(schema)
             if object_type:
-                field_type = object_type.internal_type(schema)
+                field_type = schema.T(object_type)
 
         field_type = self.type_wrapper(field_type)
         return field_type
 
-    @memoize
     def internal_field(self, schema):
         if not self.object_type:
             raise Exception(
-                'Field could not be constructed in a non graphene.Type or graphene.Interface')
+                'Field could not be constructed in a non graphene.ObjectType or graphene.Interface')
 
         extra_args = self.extra_args.copy()
         for arg_name, arg_value in self.extra_args.items():
@@ -128,27 +137,44 @@ class Field(object):
                 ','.join(extra_args.keys())
             ))
 
+        args = self.args
+
+        object_type = self.get_object_type(schema)
+        if object_type and object_type._meta.is_mutation:
+            assert not self.args, 'Arguments provided for mutations are defined in Input class in Mutation'
+            args = object_type.get_input_type().fields_as_arguments(schema)
+
         internal_type = self.internal_type(schema)
         if not internal_type:
             raise Exception("Internal type for field %s is None" % self)
 
-        resolve_fn = self.get_resolve_fn()
+        description = self.description
+        resolve_fn = self.get_resolve_fn(schema)
         if resolve_fn:
+            description = resolve_fn.__doc__ or description
+
             @wraps(resolve_fn)
             def resolver(*args):
                 return self.resolve(*args)
         else:
             resolver = self.resolve
+
+        if issubclass(self.object_type, InputObjectType):
+            return GraphQLInputObjectField(
+                internal_type,
+                description=description,
+            )
+
         return GraphQLField(
             internal_type,
-            description=self.description,
-            args=self.args,
+            description=description,
+            args=args,
             resolver=resolver,
         )
 
     def __str__(self):
         """ Return "object_type.name". """
-        return '%s.%s' % (self.object_type, self.field_name)
+        return '%s.%s' % (self.object_type.__name__, self.field_name)
 
     def __repr__(self):
         """
@@ -189,7 +215,6 @@ class Field(object):
 
 class LazyField(Field):
 
-    @memoize
     def inner_field(self, schema):
         return self.get_field(schema)
 

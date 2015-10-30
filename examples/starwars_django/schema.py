@@ -7,11 +7,12 @@ from graphene.contrib.django import (
 from .models import (
     Ship as ShipModel, Faction as FactionModel, Character as CharacterModel)
 from .data import (
-    getFaction,
-    getShip,
-    getShips,
-    getRebels,
-    getEmpire,
+    get_faction,
+    get_ship,
+    get_ships,
+    get_rebels,
+    get_empire,
+    create_ship
 )
 
 schema = graphene.Schema(name='Starwars Django Relay Schema')
@@ -23,11 +24,11 @@ class Ship(DjangoNode):
 
     @classmethod
     def get_node(cls, id):
-        return Ship(getShip(id))
+        return Ship(get_ship(id))
 
 
 @schema.register
-class CharacterModel(DjangoObjectType):
+class Character(DjangoObjectType):
     class Meta:
         model = CharacterModel
 
@@ -38,7 +39,24 @@ class Faction(DjangoNode):
 
     @classmethod
     def get_node(cls, id):
-        return Faction(getFaction(id))
+        return Faction(get_faction(id))
+
+
+class IntroduceShip(relay.ClientIDMutation):
+    class Input:
+        ship_name = graphene.StringField(required=True)
+        faction_id = graphene.StringField(required=True)
+
+    ship = graphene.Field(Ship)
+    faction = graphene.Field(Faction)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, info):
+        ship_name = input.get('ship_name')
+        faction_id = input.get('faction_id')
+        ship = create_ship(ship_name, faction_id)
+        faction = get_faction(faction_id)
+        return IntroduceShip(ship=ship, faction=faction)
 
 
 class Query(graphene.ObjectType):
@@ -49,15 +67,20 @@ class Query(graphene.ObjectType):
 
     @resolve_only_args
     def resolve_ships(self):
-        return [Ship(s) for s in getShips()]
+        return [Ship(s) for s in get_ships()]
 
     @resolve_only_args
     def resolve_rebels(self):
-        return Faction(getRebels())
+        return Faction(get_rebels())
 
     @resolve_only_args
     def resolve_empire(self):
-        return Faction(getEmpire())
+        return Faction(get_empire())
+
+
+class Mutation(graphene.ObjectType):
+    introduce_ship = graphene.Field(IntroduceShip)
 
 
 schema.query = Query
+schema.mutation = Mutation

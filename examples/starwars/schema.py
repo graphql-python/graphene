@@ -2,7 +2,7 @@ from graphql.core.type import GraphQLEnumValue
 import graphene
 from graphene import resolve_only_args
 
-from .data import getHero, getHuman, getCharacter, getDroid, Human as _Human, Droid as _Droid
+from .data import getHero, getHuman, getCharacter, getDroid
 
 Episode = graphene.Enum('Episode', dict(
     NEWHOPE=GraphQLEnumValue(4),
@@ -11,29 +11,23 @@ Episode = graphene.Enum('Episode', dict(
 ))
 
 
-def wrap_character(character):
-    if isinstance(character, _Human):
-        return Human(character)
-    elif isinstance(character, _Droid):
-        return Droid(character)
-
-
 class Character(graphene.Interface):
     id = graphene.IDField()
     name = graphene.StringField()
     friends = graphene.ListField('self')
-    appearsIn = graphene.ListField(Episode)
+    appears_in = graphene.ListField(Episode)
 
     def resolve_friends(self, args, *_):
-        return [wrap_character(getCharacter(f)) for f in self.instance.friends]
+        # The character friends is a list of strings
+        return [getCharacter(f) for f in self.friends]
 
 
 class Human(Character):
-    homePlanet = graphene.StringField()
+    home_planet = graphene.StringField()
 
 
 class Droid(Character):
-    primaryFunction = graphene.StringField()
+    primary_function = graphene.StringField()
 
 
 class Query(graphene.ObjectType):
@@ -47,20 +41,17 @@ class Query(graphene.ObjectType):
                            id=graphene.Argument(graphene.String)
                            )
 
-    class Meta:
-        type_name = 'core_Query'
-
     @resolve_only_args
     def resolve_hero(self, episode=None):
-        return wrap_character(getHero(episode))
+        return getHero(episode)
 
     @resolve_only_args
     def resolve_human(self, id):
-        return wrap_character(getHuman(id))
+        return getHuman(id)
 
     @resolve_only_args
     def resolve_droid(self, id):
-        return wrap_character(getDroid(id))
+        return getDroid(id)
 
 
 Schema = graphene.Schema(query=Query)

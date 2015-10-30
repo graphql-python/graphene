@@ -1,14 +1,22 @@
-from pytest import raises
+import pytest
 from graphql.core import graphql
 
-from .schema import schema
+from ..models import *
+from ..schema import schema
+from ..data import initialize
+
+pytestmark = pytest.mark.django_db
 
 
 def test_correct_fetch_first_ship_rebels():
+    initialize()
     query = '''
     query RebelsShipsQuery {
       rebels {
         name,
+        hero {
+          name
+        }
         ships(first: 1) {
           edges {
             node {
@@ -22,6 +30,9 @@ def test_correct_fetch_first_ship_rebels():
     expected = {
         'rebels': {
             'name': 'Alliance to Restore the Republic',
+            'hero': {
+                'name': 'Human'
+            },
             'ships': {
                 'edges': [
                     {
