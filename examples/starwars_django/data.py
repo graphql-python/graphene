@@ -85,31 +85,30 @@ def initialize():
     executor.save()
 
 
-def createShip(shipName, factionId):
-    nextShip = len(data['Ship'].keys())+1
-    newShip = Ship(
-        id=str(nextShip),
-        name=shipName
+def create_ship(ship_name, faction_id):
+    new_ship = Ship(
+        name=ship_name,
+        faction_id=faction_id
     )
-    newShip.save()
-    return newShip
+    new_ship.save()
+    return new_ship
 
 
-def getShip(_id):
+def get_ship(_id):
     return Ship.objects.get(id=_id)
 
 
-def getShips():
+def get_ships():
     return Ship.objects.all()
 
 
-def getFaction(_id):
+def get_faction(_id):
     return Faction.objects.get(id=_id)
 
 
-def getRebels():
-    return getFaction(1)
+def get_rebels():
+    return get_faction(1)
 
 
-def getEmpire():
-    return getFaction(2)
+def get_empire():
+    return get_faction(2)

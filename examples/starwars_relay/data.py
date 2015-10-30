@@ -77,28 +77,29 @@ def setup():
     }
 
 
-def createShip(shipName, factionId):
-    nextShip = len(data['Ship'].keys())+1
-    newShip = Ship(
-        id=str(nextShip),
-        name=shipName
+def create_ship(ship_name, faction_id):
+    from .schema import Ship
+    next_ship = len(data['Ship'].keys()) + 1
+    new_ship = Ship(
+        id=str(next_ship),
+        name=ship_name
     )
-    data['Ship'][newShip.id] = newShip
-    data['Faction'][factionId].ships.append(newShip.id)
-    return newShip
+    data['Ship'][new_ship.id] = new_ship
+    data['Faction'][faction_id].ships.append(new_ship.id)
+    return new_ship
 
 
-def getShip(_id):
+def get_ship(_id):
     return data['Ship'][_id]
 
 
-def getFaction(_id):
+def get_faction(_id):
     return data['Faction'][_id]
 
 
-def getRebels():
-    return getFaction('1')
+def get_rebels():
+    return get_faction('1')
 
 
-def getEmpire():
-    return getFaction('2')
+def get_empire():
+    return get_faction('2')

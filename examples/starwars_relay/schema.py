@@ -2,10 +2,11 @@ import graphene
 from graphene import resolve_only_args, relay
 
 from .data import (
-    getFaction,
-    getShip,
-    getRebels,
-    getEmpire,
+    get_faction,
+    get_ship,
+    get_rebels,
+    get_empire,
+    create_ship,
 )
 
 schema = graphene.Schema(name='Starwars Relay Schema')
@@ -17,7 +18,7 @@ class Ship(relay.Node):
 
     @classmethod
     def get_node(cls, id):
-        return getShip(id)
+        return get_ship(id)
 
 
 class Faction(relay.Node):
@@ -29,11 +30,28 @@ class Faction(relay.Node):
     @resolve_only_args
     def resolve_ships(self, **args):
         # Transform the instance ship_ids into real instances
-        return [getShip(ship_id) for ship_id in self.ships]
+        return [get_ship(ship_id) for ship_id in self.ships]
 
     @classmethod
     def get_node(cls, id):
-        return getFaction(id)
+        return get_faction(id)
+
+
+class IntroduceShip(relay.ClientIDMutation):
+    class Input:
+        ship_name = graphene.StringField(required=True)
+        faction_id = graphene.StringField(required=True)
+
+    ship = graphene.Field(Ship)
+    faction = graphene.Field(Faction)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, info):
+        ship_name = input.get('ship_name')
+        faction_id = input.get('faction_id')
+        ship = create_ship(ship_name, faction_id)
+        faction = get_faction(faction_id)
+        return IntroduceShip(ship=ship, faction=faction)
 
 
 class Query(graphene.ObjectType):
@@ -43,11 +61,16 @@ class Query(graphene.ObjectType):
 
     @resolve_only_args
     def resolve_rebels(self):
-        return getRebels()
+        return get_rebels()
 
     @resolve_only_args
     def resolve_empire(self):
-        return getEmpire()
+        return get_empire()
+
+
+class Mutation(graphene.ObjectType):
+    introduce_ship = graphene.Field(IntroduceShip)
 
 
 schema.query = Query
+schema.mutation = Mutation
