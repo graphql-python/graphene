@@ -24,10 +24,10 @@ class ProxySnakeDict(collections.MutableMapping):
     def __len__(self):
         return len(self.data)
 
-    def __delitem__(self):
+    def __delitem__(self, item):
         raise TypeError('ProxySnakeDict does not support item deletion')
 
-    def __setitem__(self):
+    def __setitem__(self, item, value):
         raise TypeError('ProxySnakeDict does not support item assignment')
 
     def __getitem__(self, key):
@@ -59,5 +59,12 @@ class ProxySnakeDict(collections.MutableMapping):
         for k in self.iterkeys():
             yield k, self[k]
 
+    def to_data_dict(self):
+        return self.data.__class__(self.iteritems())
+
+    def __eq__(self, other):
+        return self.to_data_dict() == other.to_data_dict()
+
     def __repr__(self):
-        return dict(self.iteritems()).__repr__()
+        data_repr = self.to_data_dict().__repr__()
+        return '<ProxySnakeDict {}>'.format(data_repr)

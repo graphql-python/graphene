@@ -55,14 +55,7 @@ class Options(object):
         else:
             self.proxy = False
 
-        if self.interfaces != [] and self.interface:
-            raise Exception("A interface cannot inherit from interfaces")
-
         del self.meta
-
-    @cached_property
-    def object(self):
-        return namedtuple(self.type_name, self.fields_map.keys())
 
     def add_field(self, field):
         self.local_fields.append(field)

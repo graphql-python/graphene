@@ -132,8 +132,6 @@ class BaseObjectType(object):
     def __new__(cls, *args, **kwargs):
         if cls._meta.is_interface:
             raise Exception("An interface cannot be initialized")
-        if not args and not kwargs:
-            return None
         return super(BaseObjectType, cls).__new__(cls)
 
     def __init__(self, *args, **kwargs):

@@ -1,3 +1,4 @@
+from py.test import raises
 from graphene.utils import ProxySnakeDict
 
 
@@ -8,6 +9,7 @@ def test_proxy_snake_dict():
     assert 'two' in p
     assert 'threeOrFor' in p
     assert 'none' in p
+    assert len(p) == len(my_data)
     assert p['none'] is None
     assert p.get('none') is None
     assert p.get('none_existent') is None
@@ -15,6 +17,11 @@ def test_proxy_snake_dict():
     assert p.get('three_or_for') == 3
     assert 'inside' in p
     assert 'other_camel_case' in p['inside']
+    assert sorted(p.items()) == sorted(list([('inside', ProxySnakeDict({'other_camel_case': 3})),
+                                             ('none', None),
+                                             ('three_or_for', 3),
+                                             ('two', 2),
+                                             ('one', 1)]))
 
 
 def test_proxy_snake_dict_as_kwargs():
@@ -24,3 +31,22 @@ def test_proxy_snake_dict_as_kwargs():
     def func(**kwargs):
         return kwargs.get('my_data')
     assert func(**p) == 1
+
+
+def test_proxy_snake_dict_repr():
+    my_data = {'myData': 1}
+    p = ProxySnakeDict(my_data)
+
+    assert repr(p) == "<ProxySnakeDict {'my_data': 1}>"
+
+
+def test_proxy_snake_dict_set():
+    p = ProxySnakeDict({})
+    with raises(TypeError):
+        p['a'] = 2
+
+
+def test_proxy_snake_dict_delete():
+    p = ProxySnakeDict({})
+    with raises(TypeError):
+        del p['a']
