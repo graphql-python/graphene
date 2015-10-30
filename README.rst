@@ -2,12 +2,15 @@
 =========================================================================================================
 
 Graphene is a Python library for building GraphQL schemas/types fast and
-easily. \* **Easy to use:** It maps the models/fields to internal
-GraphQL objects without effort. \* **Relay:** Graphene has builtin
-support for Relay \* **Django:** Automatic *Django model* mapping to
-Graphene Types. *See an `example
-Django <http://github.com/graphql-python/swapi-graphene>`__
+easily. \* **Easy to use:** Graphene helps you use GraphQL in Python
+without effort. \* **Relay:** Graphene has builtin support for Relay \*
+**Django:** Automatic *Django model* mapping to Graphene Types. *See an
+`example Django <http://github.com/graphql-python/swapi-graphene>`__
 implementation*
+
+*But, what is supported in this Python version?* **Everything**:
+Interfaces, ObjectTypes, Mutations and Relay (Nodes, Connections and
+Mutations).
 
 Installation
 ------------
@@ -53,10 +56,13 @@ Then Querying ``graphene.Schema`` is as simple as:
     result = schema.execute(query)
 
 If you want to learn even more, you can also check the following
-examples:
+`examples <examples/>`__:
 
--  Relay Schema: `Starwars Relay example <examples/starwars_relay>`__
--  Django: `Starwars Django example <examples/starwars_django>`__
+-  **Basic Schema**: `Starwars example <examples/starwars>`__
+-  **Relay Schema**: `Starwars Relay
+   example <examples/starwars_relay>`__
+-  **Django model mapping**: `Starwars Django
+   example <examples/starwars_django>`__
 
 Contributing
 ------------
