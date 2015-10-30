@@ -2,11 +2,15 @@
 =========================================================================================================
 
 Graphene is a Python library for building GraphQL schemas/types fast and
-easily. \* **Easy to use:** Graphene helps you use GraphQL in Python
-without effort. \* **Relay:** Graphene has builtin support for Relay \*
-**Django:** Automatic *Django model* mapping to Graphene Types. *See an
-`example Django <http://github.com/graphql-python/swapi-graphene>`__
-implementation*
+easily.
+
+-  **Easy to use:** Graphene helps you use GraphQL in Python without
+   effort.
+-  **Relay:** Graphene has builtin support for Relay
+-  **Django:** Automatic *Django model* mapping to Graphene Types. Check
+   a fully working
+   `Django <http://github.com/graphql-python/swapi-graphene>`__
+   implementation
 
 *But, what is supported in this Python version?* **Everything**:
 Interfaces, ObjectTypes, Mutations and Relay (Nodes, Connections and
@@ -50,7 +54,7 @@ Then Querying ``graphene.Schema`` is as simple as:
     query = '''
         query SayHello {
           hello
-          ping(to:'peter')
+          ping(to:"peter")
         }
     '''
     result = schema.execute(query)
