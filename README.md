@@ -46,7 +46,7 @@ Then Querying `graphene.Schema` is as simple as:
 query = '''
     query SayHello {
       hello
-      ping(to:'peter')
+      ping(to:"peter")
     }
 '''
 result = schema.execute(query)
