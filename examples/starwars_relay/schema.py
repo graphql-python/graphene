@@ -1,13 +1,7 @@
 import graphene
-from graphene import resolve_only_args, relay
+from graphene import relay, resolve_only_args
 
-from .data import (
-    get_faction,
-    get_ship,
-    get_rebels,
-    get_empire,
-    create_ship,
-)
+from .data import create_ship, get_empire, get_faction, get_rebels, get_ship
 
 schema = graphene.Schema(name='Starwars Relay Schema')
 
@@ -38,6 +32,7 @@ class Faction(relay.Node):
 
 
 class IntroduceShip(relay.ClientIDMutation):
+
     class Input:
         ship_name = graphene.StringField(required=True)
         faction_id = graphene.StringField(required=True)

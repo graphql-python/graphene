@@ -1,8 +1,8 @@
 import json
 
+from django.conf import settings
 from django.http import HttpResponse
 from django.views.generic import View
-from django.conf import settings
 
 from graphql.core.error import GraphQLError, format_error
 
@@ -26,8 +26,8 @@ class GraphQLView(View):
 
     def response_errors(self, *errors):
         errors = [{
-                "message": str(e)
-            } for e in errors]
+            "message": str(e)
+        } for e in errors]
         return HttpResponse(json.dumps({'errors': errors}), content_type='application/json')
 
     def execute_query(self, request, query, *args, **kwargs):

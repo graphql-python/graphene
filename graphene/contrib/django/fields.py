@@ -1,21 +1,18 @@
-from graphene.core.fields import (
-    ListField
-)
 from graphene import relay
-
-from graphene.core.fields import Field, LazyField
-
-from graphene.relay.utils import is_node
 from graphene.contrib.django.utils import get_type_for_model, lazy_map
+from graphene.core.fields import Field, LazyField, ListField
+from graphene.relay.utils import is_node
 
 
 class DjangoConnectionField(relay.ConnectionField):
+
     def wrap_resolved(self, value, instance, args, info):
         schema = info.schema.graphene_schema
         return lazy_map(value, self.get_object_type(schema))
 
 
 class LazyListField(ListField):
+
     def resolve(self, instance, args, info):
         schema = info.schema.graphene_schema
         resolved = super(LazyListField, self).resolve(instance, args, info)
@@ -23,6 +20,7 @@ class LazyListField(ListField):
 
 
 class ConnectionOrListField(LazyField):
+
     def get_field(self, schema):
         model_field = self.field_type
         field_object_type = model_field.get_object_type(schema)
@@ -35,6 +33,7 @@ class ConnectionOrListField(LazyField):
 
 
 class DjangoModelField(Field):
+
     def __init__(self, model, *args, **kwargs):
         super(DjangoModelField, self).__init__(None, *args, **kwargs)
         self.model = model

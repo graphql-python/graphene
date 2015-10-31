@@ -1,6 +1,6 @@
 from datetime import date
 
-from .models import Reporter, Article
+from .models import Article, Reporter
 
 r = Reporter(first_name='John', last_name='Smith', email='john@example.com')
 r.save()

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+autoflake ./ -r  --remove-unused-variables --remove-all-unused-imports --in-place
+isort -rc .

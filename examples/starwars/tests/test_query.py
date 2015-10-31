@@ -1,8 +1,9 @@
-from ..schema import Schema, Query
-from graphql.core import graphql
+
 from ..data import setup
+from ..schema import Schema
 
 setup()
+
 
 def test_hero_name_query():
     query = '''

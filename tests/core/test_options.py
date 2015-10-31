@@ -1,11 +1,8 @@
-from py.test import raises
-from collections import namedtuple
-from pytest import raises
-from graphene.core.fields import (
-    Field,
-    StringField,
-)
 
+from py.test import raises
+from pytest import raises
+
+from graphene.core.fields import StringField
 from graphene.core.options import Options
 
 
@@ -57,7 +54,6 @@ def test_options_description():
     class ObjectType(object):
 
         '''False description'''
-        pass
 
     opt.contribute_to_class(ObjectType, '_meta')
     assert opt.description == 'False description'

@@ -1,24 +1,12 @@
+
 from py.test import raises
-from collections import namedtuple
 from pytest import raises
+
+from graphene import Interface, ObjectType, Schema
+from graphene.core.fields import Field, ListField, StringField
 from graphql.core import graphql
-from graphene.core.fields import (
-    Field,
-    StringField,
-    ListField,
-)
-from graphql.core.type import (
-    GraphQLObjectType,
-    GraphQLSchema,
-    GraphQLInterfaceType
-)
-
-from graphene import (
-    Interface,
-    ObjectType,
-    Schema
-)
-
+from graphql.core.type import (GraphQLInterfaceType, GraphQLObjectType,
+                               GraphQLSchema)
 from tests.utils import assert_equal_lists
 
 schema = Schema(name='My own schema')
@@ -63,7 +51,7 @@ def test_schema_query():
 
 
 def test_query_schema_graphql():
-    a = object()
+    object()
     query = '''
     {
       name
@@ -84,7 +72,7 @@ def test_query_schema_graphql():
 
 
 def test_query_schema_execute():
-    a = object()
+    object()
     query = '''
     {
       name
@@ -107,7 +95,8 @@ def test_query_schema_execute():
 def test_schema_get_type_map():
     assert_equal_lists(
         schema.schema.get_type_map().keys(),
-        ['__Field', 'String', 'Pet', 'Character', '__InputValue', '__Directive', '__TypeKind', '__Schema', '__Type', 'Human', '__EnumValue', 'Boolean']
+        ['__Field', 'String', 'Pet', 'Character', '__InputValue', '__Directive',
+            '__TypeKind', '__Schema', '__Type', 'Human', '__EnumValue', 'Boolean']
     )
 
 

@@ -15,4 +15,4 @@ from graphene.relay.types import (
 from graphene.relay.utils import is_node
 
 __all__ = ['ConnectionField', 'NodeField', 'GlobalIDField', 'Node',
-           'PageInfo', 'Edge', 'Connection', 'is_node']
+           'PageInfo', 'Edge', 'Connection', 'ClientIDMutation', 'is_node']

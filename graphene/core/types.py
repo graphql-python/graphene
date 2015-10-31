@@ -1,19 +1,14 @@
-import inspect
-import six
 import copy
+import inspect
 from collections import OrderedDict
 
-from graphql.core.type import (
-    GraphQLObjectType,
-    GraphQLInputObjectType,
-    GraphQLInterfaceType,
-    GraphQLArgument
-)
+import six
 
 from graphene import signals
 from graphene.core.options import Options
-from graphene.utils import memoize
 from graphene.core.schema import register_internal_type
+from graphql.core.type import (GraphQLArgument, GraphQLInputObjectType,
+                               GraphQLInterfaceType, GraphQLObjectType)
 
 
 class ObjectTypeMeta(type):
@@ -45,14 +40,15 @@ class ObjectTypeMeta(type):
         else:
             meta = attr_meta
 
-        base_meta = getattr(new_class, '_meta', None)
+        getattr(new_class, '_meta', None)
 
         new_class.add_to_class('_meta', new_class.options_cls(meta))
 
         new_class._meta.is_interface = new_class.is_interface(parents)
         new_class._meta.is_mutation = new_class.is_mutation(parents)
 
-        assert not (new_class._meta.is_interface and new_class._meta.is_mutation)
+        assert not (
+            new_class._meta.is_interface and new_class._meta.is_mutation)
 
         input_class = None
         if new_class._meta.is_mutation:
@@ -63,12 +59,14 @@ class ObjectTypeMeta(type):
             new_class.add_to_class(obj_name, obj)
 
         if new_class._meta.is_mutation:
-            assert hasattr(new_class, 'mutate'), "All mutations must implement mutate method"
+            assert hasattr(
+                new_class, 'mutate'), "All mutations must implement mutate method"
 
         if input_class:
             items = dict(input_class.__dict__)
             items.pop('__dict__', None)
-            input_type = type('{}Input'.format(new_class._meta.type_name), (ObjectType, ), items)
+            input_type = type('{}Input'.format(
+                new_class._meta.type_name), (ObjectType, ), items)
             new_class.add_to_class('input_type', input_type)
 
         new_class.add_extra_fields()
@@ -166,7 +164,8 @@ class BaseObjectType(object):
                 except AttributeError:
                     pass
             if kwargs:
-                raise TypeError("'%s' is an invalid keyword argument for this function" % list(kwargs)[0])
+                raise TypeError(
+                    "'%s' is an invalid keyword argument for this function" % list(kwargs)[0])
 
         signals.post_init.send(self.__class__, instance=self)
 
@@ -215,12 +214,14 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
+
     @classmethod
     def get_input_type(cls):
         return getattr(cls, 'input_type', None)
 
 
 class InputObjectType(ObjectType):
+
     @classmethod
     @register_internal_type
     def internal_type(cls, schema):

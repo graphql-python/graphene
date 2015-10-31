@@ -1,24 +1,18 @@
 import graphene
-from graphene import resolve_only_args, relay
-from graphene.contrib.django import (
-    DjangoObjectType,
-    DjangoNode
-)
-from .models import (
-    Ship as ShipModel, Faction as FactionModel, Character as CharacterModel)
-from .data import (
-    get_faction,
-    get_ship,
-    get_ships,
-    get_rebels,
-    get_empire,
-    create_ship
-)
+from graphene import relay, resolve_only_args
+from graphene.contrib.django import DjangoNode, DjangoObjectType
+
+from .data import (create_ship, get_empire, get_faction, get_rebels, get_ship,
+                   get_ships)
+from .models import Character as CharacterModel
+from .models import Faction as FactionModel
+from .models import Ship as ShipModel
 
 schema = graphene.Schema(name='Starwars Django Relay Schema')
 
 
 class Ship(DjangoNode):
+
     class Meta:
         model = ShipModel
 
@@ -29,11 +23,13 @@ class Ship(DjangoNode):
 
 @schema.register
 class Character(DjangoObjectType):
+
     class Meta:
         model = CharacterModel
 
 
 class Faction(DjangoNode):
+
     class Meta:
         model = FactionModel
 
@@ -43,6 +39,7 @@ class Faction(DjangoNode):
 
 
 class IntroduceShip(relay.ClientIDMutation):
+
     class Input:
         ship_name = graphene.StringField(required=True)
         faction_id = graphene.StringField(required=True)

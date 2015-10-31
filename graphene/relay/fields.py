@@ -1,21 +1,10 @@
-from collections import Iterable, OrderedDict
-
-from graphql_relay.connection.arrayconnection import (
-    connection_from_list
-)
-from graphql_relay.connection.connection import (
-    connection_args
-)
-from graphql_relay.node.node import (
-    from_global_id
-)
-from graphql.core.type import (
-    GraphQLNonNull,
-    GraphQLID,
-    GraphQLArgument,
-)
+from collections import Iterable
 
 from graphene.core.fields import Field, IDField
+from graphql.core.type import GraphQLArgument, GraphQLID, GraphQLNonNull
+from graphql_relay.connection.arrayconnection import connection_from_list
+from graphql_relay.connection.connection import connection_args
+from graphql_relay.node.node import from_global_id
 
 
 class ConnectionField(Field):
@@ -68,6 +57,7 @@ class ConnectionField(Field):
 
 
 class NodeField(Field):
+
     def __init__(self, object_type=None, *args, **kwargs):
         from graphene.relay.types import Node
         super(NodeField, self).__init__(object_type or Node, *args, **kwargs)
@@ -84,7 +74,7 @@ class NodeField(Field):
         _type, _id = resolved_global_id.type, resolved_global_id.id
         object_type = schema.get_type(_type)
         if not is_node(object_type) or (self.field_object_type and
-           object_type != self.field_object_type):
+                                        object_type != self.field_object_type):
             return
 
         return object_type.get_node(_id)

@@ -1,5 +1,6 @@
+from collections import OrderedDict
+
 from graphene.utils import cached_property
-from collections import OrderedDict, namedtuple
 
 DEFAULT_NAMES = ('description', 'name', 'is_interface', 'is_mutation',
                  'type_name', 'interfaces', 'proxy')

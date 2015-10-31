@@ -1,5 +1,5 @@
+
 import graphene
-from py.test import raises
 from graphene.core.schema import Schema
 
 my_id = 0

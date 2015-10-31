@@ -1,23 +1,11 @@
-from py.test import raises
-from collections import namedtuple
-from pytest import raises
-from graphql.core import graphql
-from graphene.core.fields import (
-    Field,
-    StringField,
-    ListField,
-)
-from graphql.core.type import (
-    GraphQLObjectType,
-    GraphQLSchema,
-    GraphQLInterfaceType
-)
 
-from graphene.core.types import (
-    Interface,
-    ObjectType
-)
+
+from graphene.core.fields import Field, ListField, StringField
 from graphene.core.schema import Schema
+from graphene.core.types import Interface, ObjectType
+from graphql.core import graphql
+from graphql.core.type import (GraphQLInterfaceType, GraphQLObjectType,
+                               GraphQLSchema)
 
 
 class Character(Interface):
@@ -50,7 +38,8 @@ Human_type = schema.T(Human)
 
 
 def test_type():
-    assert Human._meta.fields_map['name'].resolve(Human(object()), None, None) == 'Peter'
+    assert Human._meta.fields_map['name'].resolve(
+        Human(object()), None, None) == 'Peter'
 
 
 def test_query():

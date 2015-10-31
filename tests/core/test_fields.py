@@ -1,24 +1,13 @@
+
 from py.test import raises
-from collections import namedtuple
 from pytest import raises
 
-from graphql.core.type import (
-    GraphQLField,
-    GraphQLNonNull,
-    GraphQLInt,
-    GraphQLString,
-    GraphQLBoolean,
-    GraphQLID,
-)
-
-from graphene.core.fields import (
-    Field,
-    StringField,
-    NonNullField
-)
+from graphene.core.fields import Field, NonNullField, StringField
 from graphene.core.options import Options
 from graphene.core.schema import Schema
 from graphene.core.types import ObjectType
+from graphql.core.type import (GraphQLBoolean, GraphQLField, GraphQLID,
+                               GraphQLInt, GraphQLNonNull, GraphQLString)
 
 
 class ObjectType(object):
@@ -149,7 +138,8 @@ def test_field_none_type_raises_error():
     f.contribute_to_class(ot, 'field_name')
     with raises(Exception) as excinfo:
         f.internal_field(s)
-    assert str(excinfo.value) == "Internal type for field ObjectType.field_name is None"
+    assert str(
+        excinfo.value) == "Internal type for field ObjectType.field_name is None"
 
 
 def test_field_str():

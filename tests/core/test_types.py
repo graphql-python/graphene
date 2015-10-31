@@ -1,22 +1,12 @@
 from py.test import raises
 from pytest import raises
-from graphene.core.fields import (
-    IntField,
-    StringField,
-)
-from graphql.core.execution.middlewares.utils import (
-    tag_resolver,
-    resolver_has_tag
-)
-from graphql.core.type import (
-    GraphQLObjectType,
-    GraphQLInterfaceType
-)
 
-from graphene.core.types import (
-    Interface
-)
+from graphene.core.fields import IntField, StringField
 from graphene.core.schema import Schema
+from graphene.core.types import Interface
+from graphql.core.execution.middlewares.utils import (resolver_has_tag,
+                                                      tag_resolver)
+from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 
 
 class Character(Interface):
@@ -60,7 +50,7 @@ def test_interface():
 
 def test_interface_cannot_initialize():
     with raises(Exception) as excinfo:
-        c = Character()
+        Character()
     assert 'An interface cannot be initialized' == str(excinfo.value)
 
 
@@ -77,7 +67,8 @@ def test_object_type():
     assert object_type.description == 'Human description'
     assert list(object_type.get_fields().keys()) == ['name', 'friends']
     # assert object_type.get_fields() == {'name': Human._meta.fields_map['name'].internal_field(
-    #     schema), 'friends': Human._meta.fields_map['friends'].internal_field(schema)}
+    # schema), 'friends':
+    # Human._meta.fields_map['friends'].internal_field(schema)}
     assert object_type.get_interfaces() == [schema.T(Character)]
     assert Human._meta.fields_map['name'].object_type == Human
 

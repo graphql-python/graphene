@@ -1,6 +1,6 @@
 from django.db import models
-from django.db.models.query import QuerySet
 from django.db.models.manager import Manager
+from django.db.models.query import QuerySet
 
 from graphene.utils import LazyMap
 

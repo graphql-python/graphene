@@ -3,7 +3,7 @@ data = {}
 
 def setup():
     global data
-    
+
     from .schema import Ship, Faction
     xwing = Ship(
         id='1',

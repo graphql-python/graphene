@@ -1,9 +1,7 @@
 import pytest
-from graphql.core import graphql
 
-from ..models import *
-from ..schema import schema
 from ..data import initialize
+from ..schema import schema
 
 pytestmark = pytest.mark.django_db
 

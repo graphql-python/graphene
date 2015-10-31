@@ -1,19 +1,16 @@
-from functools import wraps
 from collections import OrderedDict
+from functools import wraps
 
-from graphql.core.type import (
-    GraphQLSchema as _GraphQLSchema
-)
-
-from graphql.core.execution.executor import Executor
-from graphql.core.execution.middlewares.sync import SynchronousExecutionMiddleware
-
-from graphql.core.utils.introspection_query import introspection_query
 from graphene import signals
-from graphene.utils import cached_property
+from graphql.core.execution.executor import Executor
+from graphql.core.execution.middlewares.sync import \
+    SynchronousExecutionMiddleware
+from graphql.core.type import GraphQLSchema as _GraphQLSchema
+from graphql.core.utils.introspection_query import introspection_query
 
 
 class GraphQLSchema(_GraphQLSchema):
+
     def __init__(self, schema, *args, **kwargs):
         self.graphene_schema = schema
         super(GraphQLSchema, self).__init__(*args, **kwargs)
@@ -61,7 +58,8 @@ class Schema(object):
     @property
     def executor(self):
         if not self._executor:
-            self.executor = Executor([SynchronousExecutionMiddleware()], map_type=OrderedDict)
+            self.executor = Executor(
+                [SynchronousExecutionMiddleware()], map_type=OrderedDict)
         return self._executor
 
     @executor.setter

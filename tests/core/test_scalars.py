@@ -1,6 +1,4 @@
-from graphene.core.scalars import (
-    GraphQLSkipField
-)
+from graphene.core.scalars import GraphQLSkipField
 
 
 def test_skipfield_serialize():

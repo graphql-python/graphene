@@ -1,16 +1,13 @@
-from graphql.core.type import (
-    GraphQLNonNull,
-    GraphQLID
-)
-
 import graphene
 from graphene import relay
+from graphql.core.type import GraphQLID, GraphQLNonNull
 
 schema = graphene.Schema()
 
 
 class MyConnection(relay.Connection):
-    my_custom_field = graphene.StringField(resolve=lambda instance, *_: 'Custom')
+    my_custom_field = graphene.StringField(
+        resolve=lambda instance, *_: 'Custom')
 
 
 class MyNode(relay.Node):
@@ -23,7 +20,8 @@ class MyNode(relay.Node):
 
 class Query(graphene.ObjectType):
     my_node = relay.NodeField(MyNode)
-    all_my_nodes = relay.ConnectionField(MyNode, connection_type=MyConnection, customArg=graphene.Argument(graphene.String))
+    all_my_nodes = relay.ConnectionField(
+        MyNode, connection_type=MyConnection, customArg=graphene.Argument(graphene.String))
 
     def resolve_all_my_nodes(self, args, info):
         custom_arg = args.get('customArg')

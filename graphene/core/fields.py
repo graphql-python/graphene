@@ -1,26 +1,21 @@
 import inspect
+from functools import total_ordering, wraps
+
 import six
+
+from graphene.core.scalars import GraphQLSkipField
+from graphene.core.types import BaseObjectType, InputObjectType
+from graphene.utils import ProxySnakeDict, enum_to_graphql_enum, to_camel_case
+from graphql.core.type import (GraphQLArgument, GraphQLBoolean, GraphQLField,
+                               GraphQLFloat, GraphQLID,
+                               GraphQLInputObjectField, GraphQLInt,
+                               GraphQLList, GraphQLNonNull, GraphQLString)
+
 try:
     from enum import Enum
 except ImportError:
     class Enum(object):
         pass
-from functools import total_ordering, wraps
-from graphql.core.type import (
-    GraphQLField,
-    GraphQLList,
-    GraphQLNonNull,
-    GraphQLInt,
-    GraphQLString,
-    GraphQLBoolean,
-    GraphQLID,
-    GraphQLArgument,
-    GraphQLFloat,
-    GraphQLInputObjectField,
-)
-from graphene.utils import to_camel_case, ProxySnakeDict, enum_to_graphql_enum
-from graphene.core.types import BaseObjectType, InputObjectType
-from graphene.core.scalars import GraphQLSkipField
 
 
 class Empty(object):
@@ -252,10 +247,12 @@ class FloatField(TypeField):
 
 
 class ListField(Field):
+
     def type_wrapper(self, field_type):
         return GraphQLList(field_type)
 
 
 class NonNullField(Field):
+
     def type_wrapper(self, field_type):
         return GraphQLNonNull(field_type)

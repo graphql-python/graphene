@@ -1,4 +1,5 @@
 class LazyMap(object):
+
     def __init__(self, origin, _map, state=None):
         self._origin = origin
         self._origin_iter = origin.__iter__()

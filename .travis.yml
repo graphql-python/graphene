@@ -13,6 +13,6 @@ install:
 - python setup.py develop
 script:
 - py.test --cov=graphene
-# - flake8
+- flake8
 after_success:
 - coveralls

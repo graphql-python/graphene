@@ -1,4 +1,4 @@
-from .models import Ship, Faction, Character
+from .models import Character, Faction, Ship
 
 
 def initialize():

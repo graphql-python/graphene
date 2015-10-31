@@ -1,18 +1,15 @@
 from django.conf.urls import url
 
-from graphene.contrib.django.views import GraphQLView
-
 import graphene
 from graphene import Schema
-from graphene.contrib.django.types import (
-    DjangoNode,
-    DjangoInterface
-)
+from graphene.contrib.django.types import DjangoNode
+from graphene.contrib.django.views import GraphQLView
 
-from .models import Reporter, Article
+from .models import Article, Reporter
 
 
 class Character(DjangoNode):
+
     class Meta:
         model = Reporter
 

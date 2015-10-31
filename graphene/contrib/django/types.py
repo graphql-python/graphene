@@ -1,12 +1,11 @@
 import six
 
-from graphene.core.types import ObjectTypeMeta, BaseObjectType
-from graphene.contrib.django.options import DjangoOptions
 from graphene.contrib.django.converter import convert_django_field
+from graphene.contrib.django.options import DjangoOptions
 from graphene.contrib.django.utils import get_reverse_fields
-
-from graphene.relay.types import BaseNode
+from graphene.core.types import BaseObjectType, ObjectTypeMeta
 from graphene.relay.fields import GlobalIDField
+from graphene.relay.types import BaseNode
 
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
@@ -38,6 +37,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
 
 
 class InstanceObjectType(BaseObjectType):
+
     def __init__(self, instance=None):
         self.instance = instance
         super(InstanceObjectType, self).__init__()

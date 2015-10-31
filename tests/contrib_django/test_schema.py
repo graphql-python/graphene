@@ -1,15 +1,13 @@
+
 from py.test import raises
-from collections import namedtuple
 from pytest import raises
+
 import graphene
 from graphene import relay
-from graphene.contrib.django import (
-    DjangoObjectType,
-    DjangoNode
-)
-from .models import Reporter, Article
-
+from graphene.contrib.django import DjangoNode, DjangoObjectType
 from tests.utils import assert_equal_lists
+
+from .models import Article, Reporter
 
 
 def test_should_raise_if_no_model():

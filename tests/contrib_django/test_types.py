@@ -1,28 +1,13 @@
-from py.test import raises
-from collections import namedtuple
-from pytest import raises
-from graphene.relay.fields import (
-    GlobalIDField
-)
-from graphene.core.fields import (
-    Field,
-    StringField,
-    IntField
-)
-from graphql.core.type import (
-    GraphQLObjectType,
-    GraphQLInterfaceType
-)
+
 
 from graphene import Schema
-from graphene.contrib.django.types import (
-    DjangoNode,
-    DjangoInterface
-)
-
-from .models import Reporter, Article
-
+from graphene.contrib.django.types import DjangoInterface, DjangoNode
+from graphene.core.fields import IntField
+from graphene.relay.fields import GlobalIDField
+from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 from tests.utils import assert_equal_lists
+
+from .models import Article, Reporter
 
 
 class Character(DjangoInterface):
@@ -82,7 +67,7 @@ def test_interface_resolve_type():
 
 def test_object_type():
     object_type = schema.T(Human)
-    fields_map = Human._meta.fields_map
+    Human._meta.fields_map
     assert Human._meta.is_interface is False
     assert isinstance(object_type, GraphQLObjectType)
     assert_equal_lists(

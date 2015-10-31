@@ -1,18 +1,20 @@
-from graphql_relay.node.node import (
-    to_global_id
-)
-
-from graphene.core.types import Interface, ObjectType, Mutation, InputObjectType
-from graphene.core.fields import BooleanField, StringField, ListField, Field
+from graphene.core.fields import BooleanField, Field, ListField, StringField
+from graphene.core.types import (InputObjectType, Interface, Mutation,
+                                 ObjectType)
 from graphene.relay.fields import GlobalIDField
 from graphene.utils import memoize
+from graphql_relay.node.node import to_global_id
 
 
 class PageInfo(ObjectType):
-    has_next_page = BooleanField(required=True, description='When paginating forwards, are there more items?')
-    has_previous_page = BooleanField(required=True, description='When paginating backwards, are there more items?')
-    start_cursor = StringField(description='When paginating backwards, the cursor to continue.')
-    end_cursor = StringField(description='When paginating forwards, the cursor to continue.')
+    has_next_page = BooleanField(
+        required=True, description='When paginating forwards, are there more items?')
+    has_previous_page = BooleanField(
+        required=True, description='When paginating backwards, are there more items?')
+    start_cursor = StringField(
+        description='When paginating backwards, the cursor to continue.')
+    end_cursor = StringField(
+        description='When paginating forwards, the cursor to continue.')
 
 
 class Edge(ObjectType):
@@ -20,8 +22,10 @@ class Edge(ObjectType):
     class Meta:
         type_name = 'DefaultEdge'
 
-    node = Field(lambda field: field.object_type.node_type, description='The item at the end of the edge')
-    cursor = StringField(required=True, description='A cursor for use in pagination')
+    node = Field(lambda field: field.object_type.node_type,
+                 description='The item at the end of the edge')
+    cursor = StringField(
+        required=True, description='A cursor for use in pagination')
 
     @classmethod
     @memoize
@@ -36,8 +40,10 @@ class Connection(ObjectType):
     class Meta:
         type_name = 'DefaultConnection'
 
-    page_info = Field(PageInfo, required=True, description='The Information to aid in pagination')
-    edges = ListField(lambda field: field.object_type.edge_type, description='Information to aid in pagination.')
+    page_info = Field(PageInfo, required=True,
+                      description='The Information to aid in pagination')
+    edges = ListField(lambda field: field.object_type.edge_type,
+                      description='Information to aid in pagination.')
 
     _connection_data = None
 
@@ -57,6 +63,7 @@ class Connection(ObjectType):
 
 
 class BaseNode(object):
+
     @classmethod
     def _prepare_class(cls):
         from graphene.relay.utils import is_node
@@ -97,13 +104,16 @@ class ClientIDMutation(Mutation):
     def _prepare_class(cls):
         input_type = getattr(cls, 'input_type', None)
         if input_type:
-            assert hasattr(cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
-            new_input_inner_type = type('{}InnerInput'.format(cls._meta.type_name), (MutationInputType, input_type, ), {})
+            assert hasattr(
+                cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
+            new_input_inner_type = type('{}InnerInput'.format(
+                cls._meta.type_name), (MutationInputType, input_type, ), {})
             items = {
                 'input': Field(new_input_inner_type)
             }
             assert issubclass(new_input_inner_type, InputObjectType)
-            input_type = type('{}Input'.format(cls._meta.type_name), (ObjectType, ), items)
+            input_type = type('{}Input'.format(
+                cls._meta.type_name), (ObjectType, ), items)
             setattr(cls, 'input_type', input_type)
 
     @classmethod

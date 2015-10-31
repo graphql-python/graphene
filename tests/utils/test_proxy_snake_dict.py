@@ -1,9 +1,11 @@
 from py.test import raises
+
 from graphene.utils import ProxySnakeDict
 
 
 def test_proxy_snake_dict():
-    my_data = {'one': 1, 'two': 2, 'none': None, 'threeOrFor': 3, 'inside': {'otherCamelCase': 3}}
+    my_data = {'one': 1, 'two': 2, 'none': None,
+               'threeOrFor': 3, 'inside': {'otherCamelCase': 3}}
     p = ProxySnakeDict(my_data)
     assert 'one' in p
     assert 'two' in p

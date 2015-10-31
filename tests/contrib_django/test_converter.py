@@ -1,16 +1,13 @@
-from py.test import raises
-from collections import namedtuple
-from pytest import raises
-import graphene
-from graphene import relay
-from graphene.contrib.django.converter import (
-    convert_django_field
-)
-from graphene.contrib.django.fields import (
-    ConnectionOrListField,
-    DjangoModelField
-)
+
 from django.db import models
+from py.test import raises
+from pytest import raises
+
+import graphene
+from graphene.contrib.django.converter import convert_django_field
+from graphene.contrib.django.fields import (ConnectionOrListField,
+                                            DjangoModelField)
+
 from .models import Article, Reporter
 
 

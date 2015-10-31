@@ -1,8 +1,8 @@
-from graphql.core.type import GraphQLEnumValue
 import graphene
 from graphene import resolve_only_args
+from graphql.core.type import GraphQLEnumValue
 
-from .data import getHero, getHuman, getCharacter, getDroid
+from .data import getCharacter, getDroid, getHero, getHuman
 
 Episode = graphene.Enum('Episode', dict(
     NEWHOPE=GraphQLEnumValue(4),

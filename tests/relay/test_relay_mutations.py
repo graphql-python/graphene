@@ -1,11 +1,8 @@
-from graphql.core.type import (
-    GraphQLInputObjectField
-)
-
 import graphene
 from graphene import relay
-from graphene.core.types import InputObjectType
 from graphene.core.schema import Schema
+from graphene.core.types import InputObjectType
+from graphql.core.type import GraphQLInputObjectField
 
 my_id = 0
 
@@ -41,11 +38,13 @@ def test_mutation_input():
     assert list(ChangeNumber.input_type._meta.fields_map.keys()) == ['input']
     _input = ChangeNumber.input_type._meta.fields_map['input']
     inner_type = _input.get_object_type(schema)
-    client_mutation_id_field = inner_type._meta.fields_map['client_mutation_id']
+    client_mutation_id_field = inner_type._meta.fields_map[
+        'client_mutation_id']
     assert issubclass(inner_type, InputObjectType)
     assert isinstance(client_mutation_id_field, graphene.StringField)
     assert client_mutation_id_field.object_type == inner_type
-    assert isinstance(client_mutation_id_field.internal_field(schema), GraphQLInputObjectField)
+    assert isinstance(client_mutation_id_field.internal_field(
+        schema), GraphQLInputObjectField)
 
 
 def test_execute_mutations():
