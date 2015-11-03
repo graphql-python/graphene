@@ -1,10 +1,10 @@
-humanData = {}
-droidData = {}
+human_data = {}
+droid_data = {}
 
 
 def setup():
     from .schema import Human, Droid
-    global humanData, droidData
+    global human_data, droid_data
     luke = Human(
         id='1000',
         name='Luke Skywalker',
@@ -45,7 +45,7 @@ def setup():
         home_planet=None,
     )
 
-    humanData = {
+    human_data = {
         '1000': luke,
         '1001': vader,
         '1002': han,
@@ -69,29 +69,29 @@ def setup():
         primary_function='Astromech',
     )
 
-    droidData = {
+    droid_data = {
         '2000': threepio,
         '2001': artoo,
     }
 
 
-def getCharacter(id):
-    return humanData.get(id) or droidData.get(id)
+def get_character(id):
+    return human_data.get(id) or droid_data.get(id)
 
 
-def getFriends(character):
-    return map(getCharacter, character.friends)
+def get_friends(character):
+    return map(get_character, character.friends)
 
 
-def getHero(episode):
+def get_hero(episode):
     if episode == 5:
-        return humanData['1000']
-    return droidData['2001']
+        return human_data['1000']
+    return droid_data['2001']
 
 
-def getHuman(id):
-    return humanData.get(id)
+def get_human(id):
+    return human_data.get(id)
 
 
-def getDroid(id):
-    return droidData.get(id)
+def get_droid(id):
+    return droid_data.get(id)

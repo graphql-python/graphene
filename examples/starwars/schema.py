@@ -2,7 +2,7 @@ import graphene
 from graphene import resolve_only_args
 from graphql.core.type import GraphQLEnumValue
 
-from .data import getCharacter, getDroid, getHero, getHuman
+from .data import get_character, get_droid, get_hero, get_human
 
 Episode = graphene.Enum('Episode', dict(
     NEWHOPE=GraphQLEnumValue(4),
@@ -19,7 +19,7 @@ class Character(graphene.Interface):
 
     def resolve_friends(self, args, *_):
         # The character friends is a list of strings
-        return [getCharacter(f) for f in self.friends]
+        return [get_character(f) for f in self.friends]
 
 
 class Human(Character):
@@ -43,15 +43,15 @@ class Query(graphene.ObjectType):
 
     @resolve_only_args
     def resolve_hero(self, episode=None):
-        return getHero(episode)
+        return get_hero(episode)
 
     @resolve_only_args
     def resolve_human(self, id):
-        return getHuman(id)
+        return get_human(id)
 
     @resolve_only_args
     def resolve_droid(self, id):
-        return getDroid(id)
+        return get_droid(id)
 
 
 Schema = graphene.Schema(query=Query)
