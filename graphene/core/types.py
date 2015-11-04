@@ -7,7 +7,6 @@ import six
 
 from graphene import signals
 from graphene.core.options import Options
-from graphene.core.schema import register_internal_type
 from graphql.core.type import (GraphQLArgument, GraphQLInputObjectType,
                                GraphQLInterfaceType, GraphQLObjectType)
 
@@ -185,7 +184,6 @@ class BaseObjectType(object):
         return schema.T(objecttype)
 
     @classmethod
-    @register_internal_type
     def internal_type(cls, schema):
         fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
                                       for f in cls._meta.fields])
@@ -223,7 +221,6 @@ class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 class InputObjectType(ObjectType):
 
     @classmethod
-    @register_internal_type
     def internal_type(cls, schema):
         fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
                                       for f in cls._meta.fields])
