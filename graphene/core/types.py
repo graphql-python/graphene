@@ -176,12 +176,12 @@ class BaseObjectType(object):
                             for f in cls._meta.fields])
 
     @classmethod
-    def resolve_objecttype(cls, schema, instance, *_):
+    def resolve_objecttype(cls, schema, instance, *args):
         return instance.__class__
 
     @classmethod
-    def resolve_type(cls, schema, instance, *_):
-        objecttype = cls.resolve_objecttype(schema, instance, *_)
+    def resolve_type(cls, schema, instance, *args):
+        objecttype = cls.resolve_objecttype(schema, instance, *args)
         return schema.T(objecttype)
 
     @classmethod
