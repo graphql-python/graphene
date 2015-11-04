@@ -1,6 +1,7 @@
 import copy
 import inspect
 from collections import OrderedDict
+from functools import partial
 
 import six
 
@@ -192,8 +193,7 @@ class BaseObjectType(object):
             return GraphQLInterfaceType(
                 cls._meta.type_name,
                 description=cls._meta.description,
-                resolve_type=lambda *
-                args, **kwargs: cls.resolve_type(schema, *args, **kwargs),
+                resolve_type=partial(cls.resolve_type, schema),
                 fields=fields
             )
         return GraphQLObjectType(
