@@ -99,7 +99,7 @@ class ObjectTypeMeta(type):
                             field_names[field.name].__class__)
                     )
                 new_field = copy.copy(field)
-                new_class.add_to_class(field.field_name, new_field)
+                new_class.add_to_class(field.attname, new_field)
 
             new_class._meta.parents.append(base)
             if base._meta.is_interface:
@@ -143,16 +143,16 @@ class BaseObjectType(object):
 
         if not kwargs:
             for val, field in zip(args, fields_iter):
-                setattr(self, field.field_name, val)
+                setattr(self, field.attname, val)
         else:
             for val, field in zip(args, fields_iter):
-                setattr(self, field.field_name, val)
-                kwargs.pop(field.field_name, None)
+                setattr(self, field.attname, val)
+                kwargs.pop(field.attname, None)
 
         for field in fields_iter:
             try:
-                val = kwargs.pop(field.field_name)
-                setattr(self, field.field_name, val)
+                val = kwargs.pop(field.attname)
+                setattr(self, field.attname, val)
             except KeyError:
                 pass
 
@@ -171,7 +171,7 @@ class BaseObjectType(object):
 
     @classmethod
     def fields_as_arguments(cls, schema):
-        return OrderedDict([(f.field_name, GraphQLArgument(f.internal_type(schema)))
+        return OrderedDict([(f.attname, GraphQLArgument(f.internal_type(schema)))
                             for f in cls._meta.fields])
 
     @classmethod

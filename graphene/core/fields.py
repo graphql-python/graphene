@@ -48,7 +48,7 @@ class Field(object):
     def contribute_to_class(self, cls, name, add=True):
         if not self.name:
             self.name = to_camel_case(name)
-        self.field_name = name
+        self.attname = name
         self.object_type = cls
         if isinstance(self.field_type, Field) and not self.field_type.object_type:
             self.field_type.contribute_to_class(cls, name, False)
@@ -61,7 +61,7 @@ class Field(object):
         if resolve_fn:
             return resolve_fn(instance, ProxySnakeDict(args), info)
         else:
-            return getattr(instance, self.field_name, self.get_default())
+            return getattr(instance, self.attname, self.get_default())
 
     def get_resolve_fn(self, schema):
         object_type = self.get_object_type(schema)
@@ -70,7 +70,7 @@ class Field(object):
         elif self.resolve_fn:
             return self.resolve_fn
         else:
-            custom_resolve_fn_name = 'resolve_%s' % self.field_name
+            custom_resolve_fn_name = 'resolve_%s' % self.attname
             if hasattr(self.object_type, custom_resolve_fn_name):
                 resolve_fn = getattr(self.object_type, custom_resolve_fn_name)
 
@@ -128,7 +128,7 @@ class Field(object):
         if extra_args != {}:
             raise TypeError("Field %s.%s initiated with invalid args: %s" % (
                 self.object_type,
-                self.field_name,
+                self.attname,
                 ','.join(extra_args.keys())
             ))
 
@@ -169,14 +169,14 @@ class Field(object):
 
     def __str__(self):
         """ Return "object_type.name". """
-        return '%s.%s' % (self.object_type.__name__, self.field_name)
+        return '%s.%s' % (self.object_type.__name__, self.attname)
 
     def __repr__(self):
         """
         Displays the module, class and name of the field.
         """
         path = '%s.%s' % (self.__class__.__module__, self.__class__.__name__)
-        name = getattr(self, 'field_name', None)
+        name = getattr(self, 'attname', None)
         if name is not None:
             return '<%s: %s>' % (path, name)
         return '<%s>' % path

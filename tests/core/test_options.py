@@ -23,7 +23,7 @@ def test_field_added_in_meta():
 
     opt.contribute_to_class(ObjectType, '_meta')
     f = StringField()
-    f.field_name = 'string_field'
+    f.attname = 'string_field'
     opt.add_field(f)
     assert f in opt.fields
 

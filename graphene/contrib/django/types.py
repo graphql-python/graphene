@@ -22,7 +22,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         all_fields = sorted(list(cls._meta.model._meta.fields) +
                             list(cls._meta.model._meta.local_many_to_many))
         all_fields += list(reverse_fields)
-        already_created_fields = {f.field_name for f in cls._meta.local_fields}
+        already_created_fields = {f.attname for f in cls._meta.local_fields}
 
         for field in all_fields:
             is_not_in_only = only_fields and field.name not in only_fields

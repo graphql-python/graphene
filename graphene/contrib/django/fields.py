@@ -44,7 +44,7 @@ class DjangoModelField(Field):
         _type = self.get_object_type(schema)
         assert _type, ("Field %s cannot be retrieved as the "
                        "ObjectType is not registered by the schema" % (
-                           self.field_name
+                           self.attname
                        ))
         return _type(resolved)
 
@@ -57,7 +57,7 @@ class DjangoModelField(Field):
                 "using @schema.register. "
                 "Or disable the field %s in %s" % (
                     self.model,
-                    self.field_name,
+                    self.attname,
                     self.object_type
                 )
             )

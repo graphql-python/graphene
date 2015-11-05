@@ -67,4 +67,4 @@ class Options(object):
 
     @cached_property
     def fields_map(self):
-        return OrderedDict([(f.field_name, f) for f in self.fields])
+        return OrderedDict([(f.attname, f) for f in self.fields])
