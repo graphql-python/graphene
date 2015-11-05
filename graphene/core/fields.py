@@ -184,7 +184,8 @@ class Field(object):
     def __eq__(self, other):
         # Needed for @total_ordering
         if isinstance(other, Field):
-            return self.creation_counter == other.creation_counter
+            return self.creation_counter == other.creation_counter and \
+                self.object_type == other.object_type
         return NotImplemented
 
     def __lt__(self, other):
@@ -194,7 +195,7 @@ class Field(object):
         return NotImplemented
 
     def __hash__(self):
-        return hash((self.creation_counter))
+        return hash((self.creation_counter, self.object_type))
 
     def __copy__(self):
         # We need to avoid hitting __reduce__, so define this
