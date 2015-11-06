@@ -37,7 +37,9 @@ class Schema(object):
         if object_type not in self._types:
             internal_type = object_type.internal_type(self)
             self._types[object_type] = internal_type
-            self._types_names[internal_type.name] = object_type
+            name = getattr(internal_type, 'name', None)
+            if name:
+                self._types_names[name] = object_type
         return self._types[object_type]
 
     @property

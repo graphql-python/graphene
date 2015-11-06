@@ -62,6 +62,7 @@ setup(
     tests_require=[
         'pytest>=2.7.2',
         'pytest-django',
+        'mock',
     ],
     extras_require={
         'django': [
