@@ -42,4 +42,4 @@ def test_to_arguments_wrong_type():
         to_arguments(
             p=3
         )
-    assert 'Unknown argument value type 3' == str(excinfo.value)
+    assert 'Unknown argument p=3' == str(excinfo.value)
