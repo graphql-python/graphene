@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from functools import wraps
 
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
@@ -29,9 +30,34 @@ class Field(OrderedType):
             self.type = cls
         cls._meta.add_field(self)
 
+    @property
+    def resolver(self):
+        return self._resolver
+
+    @resolver.setter
+    def resolver(self, value):
+        self._resolver = value
+
+    def get_resolver_fn(self):
+        resolve_fn_name = 'resolve_%s' % self.attname
+        if hasattr(self.object_type, resolve_fn_name):
+            resolve_fn = getattr(self.object_type, resolve_fn_name)
+
+            @wraps(resolve_fn)
+            def custom_resolve_fn(instance, args, info):
+                return resolve_fn(instance, args, info)
+            return custom_resolve_fn
+
     def internal_type(self, schema):
-        return GraphQLField(schema.T(self.type), args=self.get_arguments(schema), resolver=self.resolver,
-                            description=self.description,)
+        resolver = self.resolver
+        description = self.description
+        if not resolver:
+            resolver = self.get_resolver_fn()
+        if not description and resolver:
+            description = resolver.__doc__
+
+        return GraphQLField(schema.T(self.type), args=self.get_arguments(schema), resolver=resolver,
+                            description=description,)
 
     def get_arguments(self, schema):
         if not self.arguments:

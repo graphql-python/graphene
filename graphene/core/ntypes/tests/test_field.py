@@ -17,10 +17,29 @@ def test_field_internal_type():
 
     type = schema.T(field)
     assert field.name == 'myField'
+    assert field.attname == 'my_field'
     assert isinstance(type, GraphQLField)
     assert type.description == 'My argument'
     assert type.resolver == resolver
     assert type.type == GraphQLString
+
+
+def test_field_objectype_resolver():
+    field = Field(String)
+
+    class Query(ObjectType):
+        my_field = field
+
+        def resolve_my_field(self, *args, **kwargs):
+            '''Custom description'''
+            return 'RESOLVED'
+
+    schema = Schema(query=Query)
+
+    type = schema.T(field)
+    assert isinstance(type, GraphQLField)
+    assert type.description == 'Custom description'
+    assert type.resolver(Query(), {}, None) == 'RESOLVED'
 
 
 def test_field_custom_name():
@@ -30,6 +49,7 @@ def test_field_custom_name():
         my_field = field
 
     assert field.name == 'my_customName'
+    assert field.attname == 'my_field'
 
 
 def test_field_custom_arguments():
@@ -57,6 +77,7 @@ def test_inputfield_internal_type():
 
     type = schema.T(field)
     assert field.name == 'myField'
+    assert field.attname == 'my_field'
     assert isinstance(type, GraphQLInputObjectField)
     assert type.description == 'My input field'
     assert type.default_value == '3'
