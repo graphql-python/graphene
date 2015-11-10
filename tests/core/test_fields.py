@@ -10,9 +10,7 @@ from graphql.core.type import (GraphQLBoolean, GraphQLField, GraphQLID,
                                GraphQLInt, GraphQLNonNull, GraphQLString)
 
 
-class ObjectType(object):
-    _meta = Options()
-
+class ot(ObjectType):
     def resolve_customdoc(self, *args, **kwargs):
         '''Resolver documentation'''
         return None
@@ -20,22 +18,20 @@ class ObjectType(object):
     def __str__(self):
         return "ObjectType"
 
-ot = ObjectType
-
 schema = Schema()
 
 
 def test_field_no_contributed_raises_error():
     f = Field(GraphQLString)
     with raises(Exception) as excinfo:
-        f.internal_field(schema)
+        schema.T(f)
 
 
 def test_field_type():
     f = Field(GraphQLString)
     f.contribute_to_class(ot, 'field_name')
-    assert isinstance(f.internal_field(schema), GraphQLField)
-    assert f.internal_type(schema) == GraphQLString
+    assert isinstance(schema.T(f), GraphQLField)
+    assert schema.T(f).type == GraphQLString
 
 
 def test_field_name_automatic_camelcase():

@@ -1,9 +1,14 @@
 from functools import total_ordering
-from ..types import BaseObjectType, InputObjectType
+
+
+class BaseType(object):
+    @classmethod
+    def internal_type(cls, schema):
+        return getattr(cls, 'T', None)
 
 
 @total_ordering
-class OrderedType(object):
+class OrderedType(BaseType):
     creation_counter = 0
 
     def __init__(self, _creation_counter=None):
@@ -38,10 +43,6 @@ class MirroredType(OrderedType):
         self.args = args
         self.kwargs = kwargs
 
-    @classmethod
-    def internal_type(cls, schema):
-        return getattr(cls, 'T', None)
-
 
 class ArgumentType(MirroredType):
     def as_argument(self):
@@ -51,6 +52,7 @@ class ArgumentType(MirroredType):
 
 class FieldType(MirroredType):
     def contribute_to_class(self, cls, name):
+        from ..types import BaseObjectType, InputObjectType
         if issubclass(cls, InputObjectType):
             inputfield = self.as_inputfield()
             return inputfield.contribute_to_class(cls, name)
@@ -60,11 +62,11 @@ class FieldType(MirroredType):
 
     def as_field(self):
         from .field import Field
-        return Field(self.__class__, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
+        return Field(self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
 
     def as_inputfield(self):
         from .field import InputField
-        return InputField(self.__class__, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
+        return InputField(self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
 
 
 class MountedType(FieldType, ArgumentType):

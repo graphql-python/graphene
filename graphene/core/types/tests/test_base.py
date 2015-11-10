@@ -21,7 +21,7 @@ def test_orderedtype_different():
     assert b > a
 
 
-@patch('graphene.core.ntypes.field.Field')
+@patch('graphene.core.types.field.Field')
 def test_type_as_field_called(Field):
     resolver = lambda x: x
     a = MountedType(2, description='A', resolver=resolver)
@@ -29,7 +29,7 @@ def test_type_as_field_called(Field):
     Field.assert_called_with(MountedType, 2, _creation_counter=a.creation_counter, description='A', resolver=resolver)
 
 
-@patch('graphene.core.ntypes.argument.Argument')
+@patch('graphene.core.types.argument.Argument')
 def test_type_as_argument_called(Argument):
     a = MountedType(2, description='A')
     a.as_argument()

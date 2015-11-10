@@ -1,3 +1,4 @@
+import inspect
 from collections import OrderedDict
 
 from graphene import signals
@@ -6,6 +7,7 @@ from graphql.core.execution.middlewares.sync import \
     SynchronousExecutionMiddleware
 from graphql.core.type import GraphQLSchema as _GraphQLSchema
 from graphql.core.utils.introspection_query import introspection_query
+from graphene.core.types.base import BaseType
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -34,13 +36,15 @@ class Schema(object):
     def T(self, object_type):
         if not object_type:
             return
-        if object_type not in self._types:
-            internal_type = object_type.internal_type(self)
-            self._types[object_type] = internal_type
-            name = getattr(internal_type, 'name', None)
-            if name:
-                self._types_names[name] = object_type
-        return self._types[object_type]
+        # if inspect.isclass(object_type) and issubclass(object_type, BaseType):
+        if True:
+            if object_type not in self._types:
+                internal_type = object_type.internal_type(self)
+                self._types[object_type] = internal_type
+                name = getattr(internal_type, 'name', None)
+                if name:
+                    self._types_names[name] = object_type
+            return self._types[object_type]
 
     @property
     def query(self):

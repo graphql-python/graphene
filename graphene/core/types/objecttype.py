@@ -7,6 +7,7 @@ import six
 
 from graphene import signals
 from graphene.core.options import Options
+from graphene.core.types.base import BaseType
 from graphql.core.type import (GraphQLArgument, GraphQLInputObjectType,
                                GraphQLInterfaceType, GraphQLObjectType)
 
@@ -125,7 +126,7 @@ class ObjectTypeMeta(type):
             setattr(cls, name, value)
 
 
-class BaseObjectType(object):
+class BaseObjectType(BaseType):
 
     def __new__(cls, *args, **kwargs):
         if cls._meta.is_interface:
@@ -185,7 +186,7 @@ class BaseObjectType(object):
 
     @classmethod
     def internal_type(cls, schema):
-        fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
+        fields = lambda: OrderedDict([(f.name, schema.T(f))
                                       for f in cls._meta.fields])
         if cls._meta.is_interface:
             return GraphQLInterfaceType(
@@ -222,7 +223,7 @@ class InputObjectType(ObjectType):
 
     @classmethod
     def internal_type(cls, schema):
-        fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
+        fields = lambda: OrderedDict([(f.name, schema.T(f))
                                       for f in cls._meta.fields])
         return GraphQLInputObjectType(
             cls._meta.type_name,

@@ -9,6 +9,10 @@ from ...utils import to_camel_case
 from ..types import BaseObjectType, InputObjectType
 
 
+class Empty(object):
+    pass
+ 
+
 class Field(OrderedType):
     def __init__(self, type, description=None, args=None, name=None, resolver=None, *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
@@ -18,6 +22,7 @@ class Field(OrderedType):
         self.description = description
         args = OrderedDict(args or {}, **kwargs)
         self.arguments = to_arguments(*args_list, **args)
+        self.object_type = None
         self.resolver = resolver
 
     def contribute_to_class(self, cls, attname):
@@ -32,7 +37,7 @@ class Field(OrderedType):
 
     @property
     def resolver(self):
-        return self._resolver
+        return self._resolver or self.get_resolver_fn()
 
     @resolver.setter
     def resolver(self, value):
@@ -51,8 +56,6 @@ class Field(OrderedType):
     def internal_type(self, schema):
         resolver = self.resolver
         description = self.description
-        if not resolver:
-            resolver = self.get_resolver_fn()
         if not description and resolver:
             description = resolver.__doc__
 
@@ -64,6 +67,26 @@ class Field(OrderedType):
             return None
 
         return OrderedDict([(arg.name, schema.T(arg)) for arg in self.arguments])
+
+    def __copy__(self):
+        obj = Empty()
+        obj.__class__ = self.__class__
+        obj.__dict__ = self.__dict__.copy()
+        obj.object_type = None
+        return obj
+
+    def __repr__(self):
+        """
+        Displays the module, class and name of the field.
+        """
+        path = '%s.%s' % (self.__class__.__module__, self.__class__.__name__)
+        name = getattr(self, 'attname', None)
+        if name is not None:
+            return '<%s: %s>' % (path, name)
+        return '<%s>' % path
+
+    def __hash__(self):
+        return hash((self.creation_counter, self.object_type))
 
 
 class InputField(OrderedType):

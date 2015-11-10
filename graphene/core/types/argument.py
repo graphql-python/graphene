@@ -31,7 +31,7 @@ def to_arguments(*args, **kwargs):
         elif isinstance(arg, ArgumentType):
             argument = arg.as_argument()
         else:
-            raise ValueError('Unknown argument value type %r' % arg)
+            raise ValueError('Unknown argument %s=%r' % (name, arg))
 
         if name:
             argument.name = to_camel_case(name)
