@@ -2,6 +2,7 @@ from graphql.core.type import GraphQLField, GraphQLInputObjectField, GraphQLStri
 
 from ..field import Field, InputField
 from ..scalars import String
+from ..base import LazyType
 from graphene.core.types import ObjectType, InputObjectType
 from graphene.core.schema import Schema
 
@@ -50,6 +51,25 @@ def test_field_custom_name():
 
     assert field.name == 'my_customName'
     assert field.attname == 'my_field'
+
+
+def test_field_self():
+    field = Field('self', name='my_customName')
+
+    class MyObjectType(ObjectType):
+        my_field = field
+
+    assert field.type == MyObjectType
+
+
+def test_field_string_reference():
+    field = Field('MyObjectType', name='my_customName')
+
+    class MyObjectType(ObjectType):
+        my_field = field
+
+    assert isinstance(field.type, LazyType)
+    assert field.type.type_str == 'MyObjectType'
 
 
 def test_field_custom_arguments():

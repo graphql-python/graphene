@@ -36,8 +36,7 @@ class Schema(object):
     def T(self, object_type):
         if not object_type:
             return
-        # if inspect.isclass(object_type) and issubclass(object_type, BaseType):
-        if True:
+        if inspect.isclass(object_type) and issubclass(object_type, BaseType) or isinstance(object_type, BaseType):
             if object_type not in self._types:
                 internal_type = object_type.internal_type(self)
                 self._types[object_type] = internal_type

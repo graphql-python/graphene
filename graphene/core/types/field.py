@@ -1,9 +1,10 @@
+import six
 from collections import OrderedDict
 from functools import wraps
 
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
-from .base import OrderedType
+from .base import LazyType, OrderedType
 from .argument import to_arguments
 from ...utils import to_camel_case
 from ..types import BaseObjectType, InputObjectType
@@ -18,6 +19,8 @@ class Field(OrderedType):
         _creation_counter = kwargs.pop('_creation_counter', None)
         super(Field, self).__init__(_creation_counter=_creation_counter)
         self.name = name
+        if isinstance(type, six.string_types) and type != 'self':
+            type = LazyType(type)
         self.type = type
         self.description = description
         args = OrderedDict(args or {}, **kwargs)

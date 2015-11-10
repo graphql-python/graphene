@@ -7,6 +7,15 @@ class BaseType(object):
         return getattr(cls, 'T', None)
 
 
+class LazyType(BaseType):
+    def __init__(self, type_str):
+        self.type_str = type_str
+
+    def internal_type(self, schema):
+        type = schema.get_type(self.type_str)
+        return schema.T(type)
+
+
 @total_ordering
 class OrderedType(BaseType):
     creation_counter = 0
