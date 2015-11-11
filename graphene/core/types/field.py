@@ -21,7 +21,8 @@ class Field(OrderedType):
         self.name = name
         if isinstance(type, six.string_types):
             type = LazyType(type)
-        if required:
+        self.required = required
+        if self.required:
             type = NonNull(type)
         self.type = type
         self.description = description
@@ -68,7 +69,7 @@ class Field(OrderedType):
         type_objecttype = schema.objecttype(type)
         if type_objecttype and type_objecttype._meta.is_mutation:
             assert len(arguments) == 0
-            arguments = type_objecttype.arguments
+            arguments = type_objecttype.get_arguments()
             resolver = getattr(type_objecttype, 'mutate')
 
         assert type, 'Internal type for field %s is None' % str(self)

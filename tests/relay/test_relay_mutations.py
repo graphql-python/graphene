@@ -32,19 +32,19 @@ class MyResultMutation(graphene.ObjectType):
 schema = Schema(query=Query, mutation=MyResultMutation)
 
 
-def test_mutation_input():
-    assert ChangeNumber.input_type
-    assert ChangeNumber.input_type._meta.type_name == 'ChangeNumberInput'
-    assert list(ChangeNumber.input_type._meta.fields_map.keys()) == ['input']
-    _input = ChangeNumber.input_type._meta.fields_map['input']
-    inner_type = _input.get_object_type(schema)
-    client_mutation_id_field = inner_type._meta.fields_map[
-        'client_mutation_id']
-    assert issubclass(inner_type, InputObjectType)
-    assert isinstance(client_mutation_id_field, graphene.StringField)
-    assert client_mutation_id_field.object_type == inner_type
-    assert isinstance(client_mutation_id_field.internal_field(
-        schema), GraphQLInputObjectField)
+def test_mutation_arguments():
+    assert ChangeNumber.arguments
+    assert list(ChangeNumber.arguments) == ['input']
+    _input = ChangeNumber.arguments['input']
+
+    # inner_type = _input.get_object_type(schema)
+    # client_mutation_id_field = inner_type._meta.fields_map[
+    #     'client_mutation_id']
+    # assert issubclass(inner_type, InputObjectType)
+    # assert isinstance(client_mutation_id_field, graphene.StringField)
+    # assert client_mutation_id_field.object_type == inner_type
+    # assert isinstance(client_mutation_id_field.internal_field(
+    #     schema), GraphQLInputObjectField)
 
 
 def test_execute_mutations():

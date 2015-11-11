@@ -52,10 +52,6 @@ class ObjectTypeMeta(type):
         assert not (
             new_class._meta.is_interface and new_class._meta.is_mutation)
 
-        input_class = None
-        if new_class._meta.is_mutation:
-            input_class = attrs.pop('Input', None)
-
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
@@ -63,14 +59,6 @@ class ObjectTypeMeta(type):
         if new_class._meta.is_mutation:
             assert hasattr(
                 new_class, 'mutate'), "All mutations must implement mutate method"
-
-        if input_class:
-            items = dict(input_class.__dict__)
-            items.pop('__dict__', None)
-            items.pop('__doc__', None)
-            items.pop('__module__', None)
-            arguments = ArgumentsGroup(**items)
-            new_class.add_to_class('arguments', arguments)
 
         new_class.add_extra_fields()
 
@@ -215,7 +203,21 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
-    pass
+    @classmethod
+    def _prepare_class(cls):
+        input_class = getattr(cls, 'Input', None)
+        if input_class:
+            items = dict(input_class.__dict__)
+            items.pop('__dict__', None)
+            items.pop('__doc__', None)
+            items.pop('__module__', None)
+            arguments = ArgumentsGroup(**items)
+            cls.add_to_class('arguments', arguments)
+            delattr(cls, 'Input')
+
+    @classmethod
+    def get_arguments(cls):
+        return cls.arguments
 
 
 class InputObjectType(ObjectType):

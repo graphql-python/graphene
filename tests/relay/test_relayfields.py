@@ -21,7 +21,7 @@ class MyNode(relay.Node):
 class Query(graphene.ObjectType):
     my_node = relay.NodeField(MyNode)
     all_my_nodes = relay.ConnectionField(
-        MyNode, connection_type=MyConnection, customArg=graphene.Argument(graphene.String))
+        MyNode, connection_type=MyConnection, customArg=graphene.String())
 
     def resolve_all_my_nodes(self, args, info):
         custom_arg = args.get('customArg')
@@ -73,5 +73,6 @@ def test_nodefield_query():
 
 def test_nodeidfield():
     id_field = MyNode._meta.fields_map['id']
-    assert isinstance(id_field.internal_field(schema).type, GraphQLNonNull)
-    assert id_field.internal_field(schema).type.of_type == GraphQLID
+    id_field_type = schema.T(id_field)
+    assert isinstance(id_field_type.type, GraphQLNonNull)
+    assert id_field_type.type.of_type == GraphQLID

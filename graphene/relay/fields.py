@@ -1,18 +1,21 @@
 from collections import Iterable
 
 from graphene.core.fields import Field, IDField
+from graphene.core.types.scalars import String, ID
 from graphql.core.type import GraphQLArgument, GraphQLID, GraphQLNonNull
 from graphql_relay.connection.arrayconnection import connection_from_list
-from graphql_relay.connection.connection import connection_args
 from graphql_relay.node.node import from_global_id
 
 
 class ConnectionField(Field):
 
-    def __init__(self, field_type, resolve=None, description='',
+    def __init__(self, field_type, resolver=None, description='',
                  connection_type=None, edge_type=None, **kwargs):
-        super(ConnectionField, self).__init__(field_type, resolve=resolve,
-                                              args=connection_args,
+        super(ConnectionField, self).__init__(field_type, resolver=resolver,
+                                              before=String(),
+                                              after=String(),
+                                              first=String(),
+                                              last=String(),
                                               description=description, **kwargs)
         self.connection_type = connection_type
         self.edge_type = edge_type
@@ -60,12 +63,9 @@ class NodeField(Field):
 
     def __init__(self, object_type=None, *args, **kwargs):
         from graphene.relay.types import Node
+        kwargs['id'] = ID(description='The ID of an object')
         super(NodeField, self).__init__(object_type or Node, *args, **kwargs)
         self.field_object_type = object_type
-        self.args['id'] = GraphQLArgument(
-            GraphQLNonNull(GraphQLID),
-            description='The ID of an object'
-        )
 
     def id_fetcher(self, global_id, info):
         from graphene.relay.utils import is_node
@@ -88,11 +88,11 @@ class GlobalIDField(IDField):
     '''The ID of an object'''
     required = True
 
-    def contribute_to_class(self, cls, name, add=True):
+    def contribute_to_class(self, cls, name):
         from graphene.relay.utils import is_node, is_node_type
         in_node = is_node(cls) or is_node_type(cls)
         assert in_node, 'GlobalIDField could only be inside a Node, but got %r' % cls
-        super(GlobalIDField, self).contribute_to_class(cls, name, add)
+        super(GlobalIDField, self).contribute_to_class(cls, name)
 
     def resolve(self, instance, args, info):
         return self.object_type.to_global_id(instance, args, info)
