@@ -8,7 +8,7 @@ from graphene.core.schema import Schema
 
 
 def test_field_internal_type():
-    resolver = lambda *args: args
+    resolver = lambda *args: 'RESOLVED'
 
     field = Field(String, description='My argument', resolver=resolver)
 
@@ -21,7 +21,7 @@ def test_field_internal_type():
     assert field.attname == 'my_field'
     assert isinstance(type, GraphQLField)
     assert type.description == 'My argument'
-    assert type.resolver == resolver
+    assert type.resolver(None, {}, None) == 'RESOLVED'
     assert type.type == GraphQLString
 
 

@@ -33,7 +33,7 @@ def test_type_as_field_called(Field):
 def test_type_as_argument_called(Argument):
     a = MountedType(2, description='A')
     a.as_argument()
-    Argument.assert_called_with(MountedType, 2, _creation_counter=a.creation_counter, description='A')
+    Argument.assert_called_with(a, 2, _creation_counter=a.creation_counter, description='A')
 
 
 def test_type_as_field():
