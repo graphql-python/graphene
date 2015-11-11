@@ -65,8 +65,8 @@ class NodeField(Field):
 
     def __init__(self, object_type=None, *args, **kwargs):
         from graphene.relay.types import Node
-        kwargs['id'] = ID(description='The ID of an object')
-        super(NodeField, self).__init__(object_type or Node, *args, **kwargs)
+        id = kwargs.pop('id', None) or ID(description='The ID of an object')
+        super(NodeField, self).__init__(object_type or Node, id=id, *args, **kwargs)
         self.field_object_type = object_type
 
     def id_fetcher(self, global_id, info):
