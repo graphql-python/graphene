@@ -1,6 +1,7 @@
 from graphene.core.fields import BooleanField, Field, ListField, StringField
 from graphene.core.types import (InputObjectType, Interface, Mutation,
                                  ObjectType)
+from graphene.core.types.base import LazyType
 from graphene.core.types.argument import ArgumentsGroup
 from graphene.core.types.definitions import NonNull
 from graphene.relay.fields import GlobalIDField
@@ -24,7 +25,7 @@ class Edge(ObjectType):
     class Meta:
         type_name = 'DefaultEdge'
 
-    node = Field(lambda field: field.object_type.node_type,
+    node = Field(LazyType(lambda object_type: object_type.node_type),
                  description='The item at the end of the edge')
     cursor = StringField(
         required=True, description='A cursor for use in pagination')
@@ -44,7 +45,7 @@ class Connection(ObjectType):
 
     page_info = Field(PageInfo, required=True,
                       description='The Information to aid in pagination')
-    edges = ListField(lambda field: field.object_type.edge_type,
+    edges = ListField(LazyType(lambda object_type: object_type.edge_type),
                       description='Information to aid in pagination.')
 
     _connection_data = None

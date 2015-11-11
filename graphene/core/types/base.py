@@ -1,3 +1,4 @@
+import six
 from functools import total_ordering
 
 
@@ -7,20 +8,36 @@ class BaseType(object):
         return getattr(cls, 'T', None)
 
 
-class LazyType(BaseType):
-    def __init__(self, type_str):
-        self.type_str = type_str
+class MountType(BaseType):
+    parent = None
 
+    def mount(self, cls):
+        self.parent = cls
+
+
+class LazyType(MountType):
+    def __init__(self, type):
+        self.type = type
+
+    @property
     def is_self(self):
-        return self.type_str == 'self'
+        return self.type == 'self'
 
     def internal_type(self, schema):
-        type = schema.get_type(self.type_str)
+        type = None
+        if callable(self.type):
+            type = self.type(self.parent)
+        elif isinstance(self.type, six.string_types):
+            if self.is_self:
+                type = self.parent
+            else:
+                type = schema.get_type(self.type)
+        assert type, 'Type in %s %r cannot be none' % (self.type, self.parent)
         return schema.T(type)
 
 
 @total_ordering
-class OrderedType(BaseType):
+class OrderedType(MountType):
     creation_counter = 0
 
     def __init__(self, _creation_counter=None):
@@ -42,6 +59,12 @@ class OrderedType(BaseType):
         # This is needed because bisect does not take a comparison function.
         if type(self) == type(other):
             return self.creation_counter < other.creation_counter
+        return NotImplemented
+
+    def __gt__(self, other):
+        # This is needed because bisect does not take a comparison function.
+        if type(self) == type(other):
+            return self.creation_counter > other.creation_counter
         return NotImplemented
 
     def __hash__(self):

@@ -3,6 +3,7 @@ from graphql.core.type import GraphQLField, GraphQLInputObjectField, GraphQLStri
 from ..field import Field, InputField
 from ..scalars import String
 from ..base import LazyType
+from ..definitions import List
 from graphene.core.types import ObjectType, InputObjectType
 from graphene.core.schema import Schema
 
@@ -59,7 +60,19 @@ def test_field_self():
     class MyObjectType(ObjectType):
         my_field = field
 
-    assert field.type == MyObjectType
+    schema = Schema()
+
+    assert schema.T(field).type == schema.T(MyObjectType)
+
+
+def test_field_mounted():
+    field = Field(List('MyObjectType'), name='my_customName')
+
+    class MyObjectType(ObjectType):
+        my_field = field
+
+    assert field.parent == MyObjectType
+    assert field.type.parent == MyObjectType
 
 
 def test_field_string_reference():

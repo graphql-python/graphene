@@ -23,6 +23,7 @@ class ConnectionField(Field):
     def wrap_resolved(self, value, instance, args, info):
         return value
 
+
     def resolve(self, instance, args, info):
         from graphene.relay.types import PageInfo
         schema = info.schema.graphene_schema
@@ -50,9 +51,10 @@ class ConnectionField(Field):
     def get_edge_type(self, node):
         return self.edge_type or node.get_edge_type()
 
-    def internal_type(self, schema):
+    def get_type(self, schema):
         from graphene.relay.utils import is_node
-        node = self.get_object_type(schema)
+        type = schema.T(self.type)
+        node = schema.objecttype(type)
         assert is_node(node), 'Only nodes have connections.'
         schema.register(node)
         connection_type = self.get_connection_type(node)

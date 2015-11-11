@@ -4,7 +4,7 @@ from functools import wraps
 
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
-from .base import LazyType, OrderedType
+from .base import MountType, LazyType, OrderedType
 from .argument import ArgumentsGroup
 from .definitions import NonNull
 from ...utils import to_camel_case, ProxySnakeDict
@@ -47,8 +47,9 @@ class Field(OrderedType):
             self.name = to_camel_case(attname)
         self.attname = attname
         self.object_type = cls
-        if isinstance(self.type, LazyType) and self.type.is_self():
-            self.type = cls
+        self.mount(cls)
+        if isinstance(self.type, MountType):
+            self.type.mount(cls)
         cls._meta.add_field(self)
 
     @property
@@ -68,13 +69,16 @@ class Field(OrderedType):
             return getattr(instance, self.attname, self.default)
         return default_getter
 
+    def get_type(self, schema):
+        return self.type
+
     def internal_type(self, schema):
         resolver = self.resolver
         description = self.description
         arguments = self.arguments
         if not description and resolver:
             description = resolver.__doc__
-        type = schema.T(self.type)
+        type = schema.T(self.get_type(schema))
         type_objecttype = schema.objecttype(type)
         if type_objecttype and type_objecttype._meta.is_mutation:
             assert len(arguments) == 0
@@ -120,6 +124,9 @@ class InputField(OrderedType):
             self.name = to_camel_case(attname)
         self.attname = attname
         self.object_type = cls
+        self.mount(cls)
+        if isinstance(self.type, MountType):
+            self.type.mount(cls)
         cls._meta.add_field(self)
 
     def internal_type(self, schema):

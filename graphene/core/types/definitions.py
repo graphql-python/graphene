@@ -1,7 +1,7 @@
 import six
 from graphql.core.type import (GraphQLList, GraphQLNonNull)
 
-from .base import MountedType, LazyType
+from .base import MountType, MountedType, LazyType
 
 
 class OfType(MountedType):
@@ -13,6 +13,11 @@ class OfType(MountedType):
 
     def internal_type(self, schema):
         return self.T(schema.T(self.of_type))
+
+    def mount(self, cls):
+        self.parent = cls
+        if isinstance(self.of_type, MountType):
+            self.of_type.mount(cls)
 
 
 class List(OfType):
