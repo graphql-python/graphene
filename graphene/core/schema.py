@@ -44,6 +44,8 @@ class Schema(object):
                 if name:
                     self._types_names[name] = object_type
             return self._types[object_type]
+        else:
+            return object_type
 
     @property
     def query(self):
@@ -83,7 +85,7 @@ class Schema(object):
         return object_type
 
     def get_type(self, type_name):
-        self.schema._build_type_map()
+        # self.schema._build_type_map()
         if type_name not in self._types_names:
             raise Exception('Type %s not found in %r' % (type_name, self))
         return self._types_names[type_name]

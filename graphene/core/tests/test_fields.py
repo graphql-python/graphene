@@ -59,16 +59,16 @@ def test_nonnullfield_type():
 
 
 def test_stringfield_type_required():
-    f = Field(StringField(required=True))
+    f = StringField(required=True).as_field()
     f.contribute_to_class(ot, 'field_name')
     assert isinstance(schema.T(f), GraphQLField)
     assert isinstance(schema.T(f).type, GraphQLNonNull)
 
 
 def test_field_resolve():
-    f = StringField(required=True, resolve=lambda *args: 'RESOLVED')
+    f = StringField(required=True, resolve=lambda *args: 'RESOLVED').as_field()
     f.contribute_to_class(ot, 'field_name')
-    field_type = f.internal_field(schema)
+    field_type = schema.T(f)
     assert 'RESOLVED' == field_type.resolver(ot, None, None)
 
 
@@ -76,24 +76,16 @@ def test_field_resolve_type_custom():
     class MyCustomType(ObjectType):
         pass
 
-    class OtherType(ObjectType):
-        pass
-
-    s = Schema()
-
     f = Field('MyCustomType')
-    f.contribute_to_class(OtherType, 'field_name')
-    field_type = f.get_object_type(s)
-    assert field_type == MyCustomType
 
+    class OtherType(ObjectType):
+        field_name = f
 
-def test_field_resolve_type_custom():
     s = Schema()
+    s.query = OtherType
+    s.register(MyCustomType)
 
-    f = Field('self')
-    f.contribute_to_class(ot, 'field_name')
-    field_type = f.get_object_type(s)
-    assert field_type == ot
+    assert s.T(f).type == s.T(MyCustomType)
 
 
 def test_field_orders():
@@ -133,30 +125,30 @@ def test_field_none_type_raises_error():
     f = Field(None)
     f.contribute_to_class(ot, 'field_name')
     with raises(Exception) as excinfo:
-        f.internal_field(s)
+        s.T(f)
     assert str(
-        excinfo.value) == "Internal type for field ObjectType.field_name is None"
+        excinfo.value) == "Internal type for field ot.field_name is None"
 
 
 def test_field_str():
-    f = StringField()
+    f = StringField().as_field()
     f.contribute_to_class(ot, 'field_name')
-    assert str(f) == "ObjectType.field_name"
+    assert str(f) == "ot.field_name"
 
 
 def test_field_repr():
-    f = StringField()
-    assert repr(f) == "<graphene.core.fields.StringField>"
+    f = StringField().as_field()
+    assert repr(f) == "<graphene.core.types.field.Field>"
 
 
 def test_field_repr_contributed():
-    f = StringField()
+    f = StringField().as_field()
     f.contribute_to_class(ot, 'field_name')
-    assert repr(f) == "<graphene.core.fields.StringField: field_name>"
+    assert repr(f) == "<graphene.core.types.field.Field: field_name>"
 
 
 def test_field_resolve_objecttype_cos():
-    f = StringField()
+    f = StringField().as_field()
     f.contribute_to_class(ot, 'customdoc')
-    field = f.internal_field(schema)
+    field = schema.T(f)
     assert field.description == 'Resolver documentation'

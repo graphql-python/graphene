@@ -14,7 +14,7 @@ Episode = graphene.Enum('Episode', dict(
 class Character(graphene.Interface):
     id = graphene.IDField()
     name = graphene.StringField()
-    friends = graphene.ListField('self')
+    friends = graphene.ListField('Character')
     appears_in = graphene.ListField(Episode)
 
     def resolve_friends(self, args, *_):

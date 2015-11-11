@@ -1,9 +1,5 @@
 from graphql.core.type import (
-    GraphQLEnumType as Enum,
-    GraphQLArgument as Argument,
-    GraphQLString as String,
-    GraphQLInt as Int,
-    GraphQLID as ID
+    GraphQLEnumType as Enum
 )
 
 from graphene import signals
@@ -16,6 +12,19 @@ from graphene.core.types import (
     ObjectType,
     Interface,
     Mutation,
+    BaseType,
+    LazyType,
+    OrderedType,
+    Argument,
+    Field,
+    InputField,
+    String,
+    Int,
+    Boolean,
+    ID,
+    Float,
+    List,
+    NonNull
 )
 
 from graphene.core.fields import (

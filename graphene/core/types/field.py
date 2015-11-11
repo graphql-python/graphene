@@ -55,14 +55,20 @@ class Field(OrderedType):
             def custom_resolve_fn(instance, args, info):
                 return resolve_fn(instance, args, info)
             return custom_resolve_fn
+        
+        def default_getter(instance, args, info):
+             return getattr(instance, self.attname, None)
+
+        return default_getter
 
     def internal_type(self, schema):
         resolver = self.resolver
         description = self.description
         if not description and resolver:
             description = resolver.__doc__
-
-        return GraphQLField(schema.T(self.type), args=self.get_arguments(schema), resolver=resolver,
+        type = schema.T(self.type)
+        assert type, 'Internal type for field %s is None' % str(self)
+        return GraphQLField(type, args=self.get_arguments(schema), resolver=resolver,
                             description=description,)
 
     def get_arguments(self, schema):
@@ -87,6 +93,10 @@ class Field(OrderedType):
         if name is not None:
             return '<%s: %s>' % (path, name)
         return '<%s>' % path
+
+    def __str__(self):
+        """ Return "object_type.field_name". """
+        return '%s.%s' % (self.object_type.__name__, self.attname)
 
     def __hash__(self):
         return hash((self.creation_counter, self.object_type))
