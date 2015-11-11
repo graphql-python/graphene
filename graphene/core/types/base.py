@@ -59,7 +59,7 @@ class MirroredType(OrderedType):
 class ArgumentType(MirroredType):
     def as_argument(self):
         from .argument import Argument
-        return Argument(self.__class__, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
+        return Argument(self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
 
 
 class FieldType(MirroredType):
