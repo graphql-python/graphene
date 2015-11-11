@@ -1,8 +1,9 @@
+from collections import OrderedDict
 from itertools import chain
 
 from graphql.core.type import GraphQLArgument
 
-from .base import OrderedType, ArgumentType
+from .base import BaseType, OrderedType, ArgumentType
 from ...utils import to_camel_case
 
 
@@ -19,6 +20,27 @@ class Argument(OrderedType):
 
     def __repr__(self):
         return self.name
+
+
+class ArgumentsGroup(BaseType):
+    def __init__(self, *args, **kwargs):
+        arguments = to_arguments(*args, **kwargs)
+        self.arguments = OrderedDict([(arg.name, arg) for arg in arguments])
+
+    def internal_type(self, schema):
+        return OrderedDict([(arg.name, schema.T(arg)) for arg in self.arguments.values()])
+
+    def __len__(self):
+        return len(self.arguments)
+
+    def __iter__(self):
+        return iter(self.arguments)
+
+    def __contains__(self, *args):
+        return self.arguments.__contains__(*args)
+
+    def __getitem__(self, *args):
+        return self.arguments.__getitem__(*args)
 
 
 def to_arguments(*args, **kwargs):

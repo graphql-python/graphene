@@ -11,6 +11,9 @@ class LazyType(BaseType):
     def __init__(self, type_str):
         self.type_str = type_str
 
+    def is_self(self):
+        return self.type_str == 'self'
+
     def internal_type(self, schema):
         type = schema.get_type(self.type_str)
         return schema.T(type)

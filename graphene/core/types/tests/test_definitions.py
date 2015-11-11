@@ -19,7 +19,7 @@ def test_nonnull_scalar():
     assert type.of_type == GraphQLString
 
 
-def test_mixed_scalar():
+def test_nested_scalars():
     type = schema.T(NonNull(List(String())))
     assert isinstance(type, GraphQLNonNull)
     assert isinstance(type.of_type, GraphQLList)

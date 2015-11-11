@@ -8,6 +8,7 @@ from graphql.core.execution.middlewares.sync import \
 from graphql.core.type import GraphQLSchema as _GraphQLSchema
 from graphql.core.utils.introspection_query import introspection_query
 from graphene.core.types.base import BaseType
+from graphene.core.types.objecttype import BaseObjectType
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -18,7 +19,6 @@ class GraphQLSchema(_GraphQLSchema):
 
 
 class Schema(object):
-    _query = None
     _executor = None
 
     def __init__(self, query=None, mutation=None, name='Schema', executor=None):
@@ -48,25 +48,9 @@ class Schema(object):
             return object_type
 
     @property
-    def query(self):
-        return self._query
-
-    @query.setter
-    def query(self, query):
-        self._query = query
-
-    @property
-    def mutation(self):
-        return self._mutation
-
-    @mutation.setter
-    def mutation(self, mutation):
-        self._mutation = mutation
-
-    @property
     def executor(self):
         if not self._executor:
-            self.executor = Executor(
+            self._executor = Executor(
                 [SynchronousExecutionMiddleware()], map_type=OrderedDict)
         return self._executor
 
@@ -76,18 +60,29 @@ class Schema(object):
 
     @property
     def schema(self):
-        if not self._query:
+        if not self.query:
             raise Exception('You have to define a base query type')
-        return GraphQLSchema(self, query=self.T(self._query), mutation=self.T(self._mutation))
+        return GraphQLSchema(self, query=self.T(self.query), mutation=self.T(self.mutation))
 
     def register(self, object_type):
         self._types_names[object_type._meta.type_name] = object_type
         return object_type
 
+    def objecttype(self, type):
+        name = getattr(type, 'name', None)
+        if name:
+            objecttype = self._types_names.get(name, None)
+            if objecttype and inspect.isclass(objecttype) and issubclass(objecttype, BaseObjectType):
+                return objecttype
+
+    def setup(self):
+        assert self.query, 'The base query type is not set'
+        self.T(self.query)
+
     def get_type(self, type_name):
-        # self.schema._build_type_map()
+        self.setup()
         if type_name not in self._types_names:
-            raise Exception('Type %s not found in %r' % (type_name, self))
+            raise KeyError('Type %r not found in %r' % (type_name, self))
         return self._types_names[type_name]
 
     @property

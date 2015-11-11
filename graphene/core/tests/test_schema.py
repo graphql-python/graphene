@@ -120,7 +120,7 @@ def test_schema_register():
     assert schema.get_type('MyType') == MyType
 
 
-def test_schema_register():
+def test_schema_register_no_query_type():
     schema = Schema(name='My own schema')
 
     @schema.register
@@ -149,6 +149,7 @@ def test_lazytype():
 
     t = LazyType('MyType')
 
+    @schema.register
     class MyType(ObjectType):
         type = StringField(resolve=lambda *_: 'Dog')
 

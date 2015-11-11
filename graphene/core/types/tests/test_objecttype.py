@@ -1,5 +1,4 @@
 from py.test import raises
-from pytest import raises
 
 from graphene.core.fields import IntField, StringField
 from graphene.core.schema import Schema
@@ -66,9 +65,6 @@ def test_object_type():
     assert isinstance(object_type, GraphQLObjectType)
     assert object_type.description == 'Human description'
     assert list(object_type.get_fields().keys()) == ['name', 'friends']
-    # assert object_type.get_fields() == {'name': Human._meta.fields_map['name'].internal_field(
-    # schema), 'friends':
-    # Human._meta.fields_map['friends'].internal_field(schema)}
     assert object_type.get_interfaces() == [schema.T(Character)]
     assert Human._meta.fields_map['name'].object_type == Human
 
@@ -115,5 +111,5 @@ def test_field_mantain_resolver_tags():
 
         tag_resolver(resolve_name, 'test')
 
-    field = Droid._meta.fields_map['name'].internal_field(schema)
+    field = schema.T(Droid._meta.fields_map['name'])
     assert resolver_has_tag(field.resolver, 'test')

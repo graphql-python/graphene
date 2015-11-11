@@ -75,12 +75,7 @@ def test_field_string_reference():
 def test_field_custom_arguments():
     field = Field(None, name='my_customName', p=String())
 
-    class MyObjectType(ObjectType):
-        my_field = field
-
-    schema = Schema(query=MyObjectType)
-
-    args = field.get_arguments(schema)
+    args = field.arguments
     assert 'p' in args
 
 

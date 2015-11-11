@@ -8,6 +8,7 @@ import six
 from graphene import signals
 from graphene.core.options import Options
 from graphene.core.types.base import BaseType
+from graphene.core.types.argument import ArgumentsGroup
 from graphql.core.type import (GraphQLArgument, GraphQLInputObjectType,
                                GraphQLInterfaceType, GraphQLObjectType)
 
@@ -66,9 +67,10 @@ class ObjectTypeMeta(type):
         if input_class:
             items = dict(input_class.__dict__)
             items.pop('__dict__', None)
-            input_type = type('{}Input'.format(
-                new_class._meta.type_name), (ObjectType, ), items)
-            new_class.add_to_class('input_type', input_type)
+            items.pop('__doc__', None)
+            items.pop('__module__', None)
+            arguments = ArgumentsGroup(**items)
+            new_class.add_to_class('arguments', arguments)
 
         new_class.add_extra_fields()
 
@@ -88,7 +90,7 @@ class ObjectTypeMeta(type):
             # on the base classes (we cannot handle shadowed fields at the
             # moment).
             for field in parent_fields:
-                if field.name in field_names and field.__class__ != field_names[field.name].__class__:
+                if field.name in field_names and field.type.__class__ != field_names[field.name].type.__class__:
                     raise Exception(
                         'Local field %r in class %r (%r) clashes '
                         'with field with similar name from '
@@ -213,14 +215,10 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
-
-    @classmethod
-    def get_input_type(cls):
-        return getattr(cls, 'input_type', None)
+    pass
 
 
 class InputObjectType(ObjectType):
-
     @classmethod
     def internal_type(cls, schema):
         fields = lambda: OrderedDict([(f.name, schema.T(f))

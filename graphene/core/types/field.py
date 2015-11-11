@@ -1,32 +1,35 @@
 import six
 from collections import OrderedDict
-from functools import wraps
 
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
 from .base import LazyType, OrderedType
-from .argument import to_arguments
+from .argument import ArgumentsGroup
+from .definitions import NonNull
 from ...utils import to_camel_case
 from ..types import BaseObjectType, InputObjectType
 
 
 class Empty(object):
     pass
- 
+
 
 class Field(OrderedType):
-    def __init__(self, type, description=None, args=None, name=None, resolver=None, *args_list, **kwargs):
+    def __init__(self, type, description=None, args=None, name=None, resolver=None, required=False, default=None, *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
         super(Field, self).__init__(_creation_counter=_creation_counter)
         self.name = name
-        if isinstance(type, six.string_types) and type != 'self':
+        if isinstance(type, six.string_types):
             type = LazyType(type)
+        if required:
+            type = NonNull(type)
         self.type = type
         self.description = description
         args = OrderedDict(args or {}, **kwargs)
-        self.arguments = to_arguments(*args_list, **args)
+        self.arguments = ArgumentsGroup(*args_list, **args)
         self.object_type = None
         self.resolver = resolver
+        self.default = default
 
     def contribute_to_class(self, cls, attname):
         assert issubclass(cls, BaseObjectType), 'Field {} cannot be mounted in {}'.format(self, cls)
@@ -34,7 +37,7 @@ class Field(OrderedType):
             self.name = to_camel_case(attname)
         self.attname = attname
         self.object_type = cls
-        if self.type == 'self':
+        if isinstance(self.type, LazyType) and self.type.is_self():
             self.type = cls
         cls._meta.add_field(self)
 
@@ -49,40 +52,28 @@ class Field(OrderedType):
     def get_resolver_fn(self):
         resolve_fn_name = 'resolve_%s' % self.attname
         if hasattr(self.object_type, resolve_fn_name):
-            resolve_fn = getattr(self.object_type, resolve_fn_name)
+            return getattr(self.object_type, resolve_fn_name)
 
-            @wraps(resolve_fn)
-            def custom_resolve_fn(instance, args, info):
-                return resolve_fn(instance, args, info)
-            return custom_resolve_fn
-        
         def default_getter(instance, args, info):
-             return getattr(instance, self.attname, None)
-
+            return getattr(instance, self.attname, self.default)
         return default_getter
 
     def internal_type(self, schema):
         resolver = self.resolver
         description = self.description
+        arguments = self.arguments
         if not description and resolver:
             description = resolver.__doc__
         type = schema.T(self.type)
+        type_objecttype = schema.objecttype(type)
+        if type_objecttype and type_objecttype._meta.is_mutation:
+            assert len(arguments) == 0
+            arguments = type_objecttype.arguments
+            resolver = getattr(type_objecttype, 'mutate')
+
         assert type, 'Internal type for field %s is None' % str(self)
-        return GraphQLField(type, args=self.get_arguments(schema), resolver=resolver,
+        return GraphQLField(type, args=schema.T(arguments), resolver=resolver,
                             description=description,)
-
-    def get_arguments(self, schema):
-        if not self.arguments:
-            return None
-
-        return OrderedDict([(arg.name, schema.T(arg)) for arg in self.arguments])
-
-    def __copy__(self):
-        obj = Empty()
-        obj.__class__ = self.__class__
-        obj.__dict__ = self.__dict__.copy()
-        obj.object_type = None
-        return obj
 
     def __repr__(self):
         """
@@ -103,9 +94,11 @@ class Field(OrderedType):
 
 
 class InputField(OrderedType):
-    def __init__(self, type, description=None, default=None, name=None, _creation_counter=None):
+    def __init__(self, type, description=None, default=None, name=None, _creation_counter=None, required=False):
         super(InputField, self).__init__(_creation_counter=_creation_counter)
         self.name = name
+        if required:
+            type = NonNull(type)
         self.type = type
         self.description = description
         self.default = default
