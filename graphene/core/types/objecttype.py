@@ -10,6 +10,7 @@ from graphene.core.exceptions import SkipField
 from graphene.core.options import Options
 from graphene.core.types.argument import ArgumentsGroup
 from graphene.core.types.base import BaseType
+from graphene.core.types.definitions import List, NonNull
 from graphql.core.type import (GraphQLArgument, GraphQLInputObjectType,
                                GraphQLInterfaceType, GraphQLObjectType)
 
@@ -98,6 +99,9 @@ class ObjectTypeMeta(type):
             if base._meta.is_interface:
                 new_class._meta.interfaces.append(base)
             # new_class._meta.parents.extend(base._meta.parents)
+
+        setattr(new_class, 'NonNull', NonNull(new_class))
+        setattr(new_class, 'List', List(new_class))
 
         new_class._prepare()
         return new_class

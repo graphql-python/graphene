@@ -112,3 +112,17 @@ def test_field_mantain_resolver_tags():
 
     field = schema.T(Droid._meta.fields_map['name'])
     assert resolver_has_tag(field.resolver, 'test')
+
+
+def test_type_has_nonnull():
+    class Droid(Character):
+        name = String()
+
+    assert Droid.NonNull.of_type == Droid
+
+
+def test_type_has_list():
+    class Droid(Character):
+        name = String()
+
+    assert Droid.List.of_type == Droid

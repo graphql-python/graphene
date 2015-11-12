@@ -82,6 +82,16 @@ class MirroredType(OrderedType):
         self.args = args
         self.kwargs = kwargs
 
+    @property
+    def List(self):  # noqa
+        from .definitions import List
+        return List(self, *self.args, **self.kwargs)
+
+    @property
+    def NonNull(self):  # noqa
+        from .definitions import NonNull
+        return NonNull(self, *self.args, **self.kwargs)
+
 
 class ArgumentType(MirroredType):
 

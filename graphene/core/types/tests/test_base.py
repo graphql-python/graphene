@@ -5,6 +5,7 @@ from graphene.core.types import InputObjectType, ObjectType
 from ..argument import Argument
 from ..base import MountedType, OrderedType
 from ..field import Field, InputField
+from ..definitions import List, NonNull
 
 
 def test_orderedtype_equal():
@@ -71,3 +72,23 @@ def test_type_as_argument():
     a = MountedType(description='A')
     argument = a.as_argument()
     assert isinstance(argument, Argument)
+
+
+def test_type_as_list():
+    m = MountedType(2, 3, my_c='A')
+    a = m.List
+
+    assert isinstance(a, List)
+    assert a.of_type == m
+    assert a.args == (2, 3)
+    assert a.kwargs == {'my_c': 'A'}
+
+
+def test_type_as_nonnull():
+    m = MountedType(2, 3, my_c='A')
+    a = m.NonNull
+
+    assert isinstance(a, NonNull)
+    assert a.of_type == m
+    assert a.args == (2, 3)
+    assert a.kwargs == {'my_c': 'A'}
