@@ -79,7 +79,8 @@ class ObjectTypeMeta(type):
             # on the base classes (we cannot handle shadowed fields at the
             # moment).
             for field in parent_fields:
-                if field.name in field_names and field.type.__class__ != field_names[field.name].type.__class__:
+                if field.name in field_names and field.type.__class__ != field_names[
+                        field.name].type.__class__:
                     raise Exception(
                         'Local field %r in class %r (%r) clashes '
                         'with field with similar name from '
@@ -111,7 +112,8 @@ class ObjectTypeMeta(type):
 
     def add_to_class(cls, name, value):
         # We should call the contribute_to_class method only if it's bound
-        if not inspect.isclass(value) and hasattr(value, 'contribute_to_class'):
+        if not inspect.isclass(value) and hasattr(
+                value, 'contribute_to_class'):
             value.contribute_to_class(cls, name)
         else:
             setattr(cls, name, value)
@@ -157,14 +159,16 @@ class BaseObjectType(BaseType):
                     pass
             if kwargs:
                 raise TypeError(
-                    "'%s' is an invalid keyword argument for this function" % list(kwargs)[0])
+                    "'%s' is an invalid keyword argument for this function" %
+                    list(kwargs)[0])
 
         signals.post_init.send(self.__class__, instance=self)
 
     @classmethod
     def fields_as_arguments(cls, schema):
-        return OrderedDict([(f.attname, GraphQLArgument(f.internal_type(schema)))
-                            for f in cls._meta.fields])
+        return OrderedDict(
+            [(f.attname, GraphQLArgument(f.internal_type(schema)))
+             for f in cls._meta.fields])
 
     @classmethod
     def resolve_objecttype(cls, schema, instance, *args):

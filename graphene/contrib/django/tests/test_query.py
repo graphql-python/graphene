@@ -87,7 +87,8 @@ def test_should_node():
         article = graphene.Field(ArticleNode)
 
         def resolve_reporter(self, *args, **kwargs):
-            return ReporterNode(Reporter(id=1, first_name='ABA', last_name='X'))
+            return ReporterNode(
+                Reporter(id=1, first_name='ABA', last_name='X'))
 
     query = '''
         query ReporterQuery {

@@ -19,11 +19,14 @@ def test_proxy_snake_dict():
     assert p.get('three_or_for') == 3
     assert 'inside' in p
     assert 'other_camel_case' in p['inside']
-    assert sorted(p.items()) == sorted(list([('inside', ProxySnakeDict({'other_camel_case': 3})),
-                                             ('none', None),
-                                             ('three_or_for', 3),
-                                             ('two', 2),
-                                             ('one', 1)]))
+    assert sorted(
+        p.items()) == sorted(
+        list(
+            [('inside', ProxySnakeDict({'other_camel_case': 3})),
+             ('none', None),
+             ('three_or_for', 3),
+             ('two', 2),
+             ('one', 1)]))
 
 
 def test_proxy_snake_dict_as_kwargs():

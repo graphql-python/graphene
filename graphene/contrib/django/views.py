@@ -28,11 +28,14 @@ class GraphQLView(View):
         errors = [{
             "message": str(e)
         } for e in errors]
-        return HttpResponse(json.dumps({'errors': errors}), content_type='application/json')
+        return HttpResponse(
+            json.dumps({'errors': errors}),
+            content_type='application/json')
 
     def execute_query(self, request, query, *args, **kwargs):
         if not query:
-            return self.response_errors(Exception("Must provide query string."))
+            return self.response_errors(
+                Exception("Must provide query string."))
         else:
             try:
                 result = self.schema.execute(query, *args, **kwargs)
@@ -59,7 +62,8 @@ class GraphQLView(View):
                 received_json_data = json.loads(request.body.decode())
                 query = received_json_data.get('query')
             except ValueError:
-                return self.response_errors(ValueError("Malformed json body in the post data"))
+                return self.response_errors(ValueError(
+                    "Malformed json body in the post data"))
         else:
             query = request.POST.get('query') or request.GET.get('query')
         return self.execute_query(request, query or '')

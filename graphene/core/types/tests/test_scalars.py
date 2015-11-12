@@ -40,7 +40,8 @@ def test_custom_scalar():
         @staticmethod
         def parse_literal(node):
             if isinstance(node, ast.StringValue):
-                return datetime.datetime.strptime(node.value, "%Y-%m-%dT%H:%M:%S.%f")
+                return datetime.datetime.strptime(
+                    node.value, "%Y-%m-%dT%H:%M:%S.%f")
 
         @staticmethod
         def parse_value(value):

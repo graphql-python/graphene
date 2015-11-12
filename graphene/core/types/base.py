@@ -54,7 +54,7 @@ class OrderedType(MountType):
 
     def __eq__(self, other):
         # Needed for @total_ordering
-        if type(self) == type(other):
+        if isinstance(self, type(other)):
             return self.creation_counter == other.creation_counter
         return NotImplemented
 
@@ -87,7 +87,8 @@ class ArgumentType(MirroredType):
 
     def as_argument(self):
         from .argument import Argument
-        return Argument(self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
+        return Argument(
+            self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
 
 
 class FieldType(MirroredType):
@@ -103,11 +104,13 @@ class FieldType(MirroredType):
 
     def as_field(self):
         from .field import Field
-        return Field(self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
+        return Field(self, _creation_counter=self.creation_counter,
+                     *self.args, **self.kwargs)
 
     def as_inputfield(self):
         from .field import InputField
-        return InputField(self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
+        return InputField(
+            self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
 
 
 class MountedType(FieldType, ArgumentType):

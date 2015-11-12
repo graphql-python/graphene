@@ -16,7 +16,8 @@ except AttributeError:
 @singledispatch
 def convert_django_field(field):
     raise Exception(
-        "Don't know how to convert the Django field %s (%s)" % (field, field.__class__))
+        "Don't know how to convert the Django field %s (%s)" %
+        (field, field.__class__))
 
 
 @convert_django_field.register(models.DateField)

@@ -9,7 +9,8 @@ from .base import ArgumentType, BaseType, OrderedType
 
 class Argument(OrderedType):
 
-    def __init__(self, type, description=None, default=None, name=None, _creation_counter=None):
+    def __init__(self, type, description=None, default=None,
+                 name=None, _creation_counter=None):
         super(Argument, self).__init__(_creation_counter=_creation_counter)
         self.name = name
         self.type = type
@@ -17,7 +18,9 @@ class Argument(OrderedType):
         self.default = default
 
     def internal_type(self, schema):
-        return GraphQLArgument(schema.T(self.type), self.default, self.description)
+        return GraphQLArgument(
+            schema.T(self.type),
+            self.default, self.description)
 
     def __repr__(self):
         return self.name
@@ -30,7 +33,8 @@ class ArgumentsGroup(BaseType):
         self.arguments = OrderedDict([(arg.name, arg) for arg in arguments])
 
     def internal_type(self, schema):
-        return OrderedDict([(arg.name, schema.T(arg)) for arg in self.arguments.values()])
+        return OrderedDict([(arg.name, schema.T(arg))
+                            for arg in self.arguments.values()])
 
     def __len__(self):
         return len(self.arguments)

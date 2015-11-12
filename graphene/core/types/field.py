@@ -26,7 +26,9 @@ class Empty(object):
 
 class Field(OrderedType):
 
-    def __init__(self, type, description=None, args=None, name=None, resolver=None, required=False, default=None, *args_list, **kwargs):
+    def __init__(
+            self, type, description=None, args=None, name=None, resolver=None,
+            required=False, default=None, *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
         super(Field, self).__init__(_creation_counter=_creation_counter)
         self.name = name
@@ -43,7 +45,8 @@ class Field(OrderedType):
 
     def contribute_to_class(self, cls, attname):
         assert issubclass(
-            cls, BaseObjectType), 'Field {} cannot be mounted in {}'.format(self, cls)
+            cls, BaseObjectType), 'Field {} cannot be mounted in {}'.format(
+            self, cls)
         if not self.name:
             self.name = to_camel_case(attname)
         self.attname = attname
@@ -109,7 +112,7 @@ class Field(OrderedType):
 
     def __eq__(self, other):
         eq = super(Field, self).__eq__(other)
-        if type(self) == type(other):
+        if isinstance(self, type(other)):
             return eq and self.object_type == other.object_type
         return NotImplemented
 
@@ -119,7 +122,8 @@ class Field(OrderedType):
 
 class InputField(OrderedType):
 
-    def __init__(self, type, description=None, default=None, name=None, _creation_counter=None, required=False):
+    def __init__(self, type, description=None, default=None,
+                 name=None, _creation_counter=None, required=False):
         super(InputField, self).__init__(_creation_counter=_creation_counter)
         self.name = name
         if required:
@@ -130,7 +134,8 @@ class InputField(OrderedType):
 
     def contribute_to_class(self, cls, attname):
         assert issubclass(
-            cls, InputObjectType), 'InputField {} cannot be mounted in {}'.format(self, cls)
+            cls, InputObjectType), 'InputField {} cannot be mounted in {}'.format(
+            self, cls)
         if not self.name:
             self.name = to_camel_case(attname)
         self.attname = attname
@@ -141,5 +146,6 @@ class InputField(OrderedType):
         cls._meta.add_field(self)
 
     def internal_type(self, schema):
-        return GraphQLInputObjectField(schema.T(self.type), default_value=self.default,
-                                       description=self.description)
+        return GraphQLInputObjectField(
+            schema.T(self.type),
+            default_value=self.default, description=self.description)

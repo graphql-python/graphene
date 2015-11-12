@@ -21,7 +21,8 @@ class GraphQLSchema(_GraphQLSchema):
 class Schema(object):
     _executor = None
 
-    def __init__(self, query=None, mutation=None, name='Schema', executor=None):
+    def __init__(self, query=None, mutation=None,
+                 name='Schema', executor=None):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
@@ -36,7 +37,9 @@ class Schema(object):
     def T(self, object_type):
         if not object_type:
             return
-        if inspect.isclass(object_type) and issubclass(object_type, BaseType) or isinstance(object_type, BaseType):
+        if inspect.isclass(object_type) and issubclass(
+                object_type, BaseType) or isinstance(
+                object_type, BaseType):
             if object_type not in self._types:
                 internal_type = object_type.internal_type(self)
                 self._types[object_type] = internal_type
@@ -63,7 +66,9 @@ class Schema(object):
     def schema(self):
         if not self.query:
             raise Exception('You have to define a base query type')
-        return GraphQLSchema(self, query=self.T(self.query), mutation=self.T(self.mutation))
+        return GraphQLSchema(
+            self, query=self.T(self.query),
+            mutation=self.T(self.mutation))
 
     def register(self, object_type):
         type_name = object_type._meta.type_name
@@ -78,7 +83,8 @@ class Schema(object):
         name = getattr(type, 'name', None)
         if name:
             objecttype = self._types_names.get(name, None)
-            if objecttype and inspect.isclass(objecttype) and issubclass(objecttype, BaseObjectType):
+            if objecttype and inspect.isclass(
+                    objecttype) and issubclass(objecttype, BaseObjectType):
                 return objecttype
 
     def setup(self):
@@ -95,7 +101,8 @@ class Schema(object):
     def types(self):
         return self._types_names
 
-    def execute(self, request='', root=None, vars=None, operation_name=None, **kwargs):
+    def execute(self, request='', root=None, vars=None,
+                operation_name=None, **kwargs):
         root = root or object()
         return self.executor.execute(
             self.schema,

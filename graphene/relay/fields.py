@@ -10,12 +10,17 @@ class ConnectionField(Field):
 
     def __init__(self, field_type, resolver=None, description='',
                  connection_type=None, edge_type=None, **kwargs):
-        super(ConnectionField, self).__init__(field_type, resolver=resolver,
-                                              before=String(),
-                                              after=String(),
-                                              first=Int(),
-                                              last=Int(),
-                                              description=description, **kwargs)
+        super(
+            ConnectionField,
+            self).__init__(
+            field_type,
+            resolver=resolver,
+            before=String(),
+            after=String(),
+            first=Int(),
+            last=Int(),
+            description=description,
+            **kwargs)
         self.connection_type = connection_type
         self.edge_type = edge_type
 
@@ -37,8 +42,9 @@ class ConnectionField(Field):
             connection_type = self.get_connection_type(node)
             edge_type = self.get_edge_type(node)
 
-            connection = connection_from_list(resolved, args, connection_type=connection_type,
-                                              edge_type=edge_type, pageinfo_type=PageInfo)
+            connection = connection_from_list(
+                resolved, args, connection_type=connection_type,
+                edge_type=edge_type, pageinfo_type=PageInfo)
             connection.set_connection_data(resolved)
             return connection
 

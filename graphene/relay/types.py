@@ -11,9 +11,11 @@ from graphql_relay.node.node import to_global_id
 
 class PageInfo(ObjectType):
     has_next_page = BooleanField(
-        required=True, description='When paginating forwards, are there more items?')
+        required=True,
+        description='When paginating forwards, are there more items?')
     has_previous_page = BooleanField(
-        required=True, description='When paginating backwards, are there more items?')
+        required=True,
+        description='When paginating backwards, are there more items?')
     start_cursor = StringField(
         description='When paginating backwards, the cursor to continue.')
     end_cursor = StringField(
@@ -35,7 +37,10 @@ class Edge(ObjectType):
     def for_node(cls, node):
         from graphene.relay.utils import is_node
         assert is_node(node), 'ObjectTypes in a edge have to be Nodes'
-        return type('%s%s' % (node._meta.type_name, cls._meta.type_name), (cls, ), {'node_type': node})
+        return type(
+            '%s%s' % (node._meta.type_name, cls._meta.type_name),
+            (cls,),
+            {'node_type': node})
 
 
 class Connection(ObjectType):
@@ -56,7 +61,10 @@ class Connection(ObjectType):
         from graphene.relay.utils import is_node
         edge_type = edge_type or Edge
         assert is_node(node), 'ObjectTypes in a connection have to be Nodes'
-        return type('%s%s' % (node._meta.type_name, cls._meta.type_name), (cls, ), {'edge_type': edge_type.for_node(node)})
+        return type(
+            '%s%s' % (node._meta.type_name, cls._meta.type_name),
+            (cls,),
+            {'edge_type': edge_type.for_node(node)})
 
     def set_connection_data(self, data):
         self._connection_data = data

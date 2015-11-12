@@ -28,7 +28,11 @@ def test_type_as_field_called(Field):
     a = MountedType(2, description='A', resolver=resolver)
     a.as_field()
     Field.assert_called_with(
-        a, 2, _creation_counter=a.creation_counter, description='A', resolver=resolver)
+        a,
+        2,
+        _creation_counter=a.creation_counter,
+        description='A',
+        resolver=resolver)
 
 
 @patch('graphene.core.types.argument.Argument')
