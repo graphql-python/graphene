@@ -31,14 +31,12 @@ class Field(OrderedType):
         if isinstance(type, six.string_types):
             type = LazyType(type)
         self.required = required
-        if self.required:
-            type = NonNull(type)
         self.type = type
         self.description = description
         args = OrderedDict(args or {}, **kwargs)
         self.arguments = ArgumentsGroup(*args_list, **args)
         self.object_type = None
-        self.resolver = resolver
+        self.resolver_fn = resolver
         self.default = default
 
     def contribute_to_class(self, cls, attname):
@@ -54,11 +52,11 @@ class Field(OrderedType):
 
     @property
     def resolver(self):
-        return self._resolver or self.get_resolver_fn()
+        return self.resolver_fn or self.get_resolver_fn()
 
     @resolver.setter
     def resolver(self, value):
-        self._resolver = value
+        self.resolver_fn = value
 
     def get_resolver_fn(self):
         resolve_fn_name = 'resolve_%s' % self.attname
@@ -70,6 +68,8 @@ class Field(OrderedType):
         return default_getter
 
     def get_type(self, schema):
+        if self.required:
+            return NonNull(self.type)
         return self.type
 
     def internal_type(self, schema):

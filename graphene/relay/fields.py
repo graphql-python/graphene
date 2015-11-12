@@ -1,7 +1,7 @@
 from collections import Iterable
 
 from graphene.core.fields import Field, IDField
-from graphene.core.types.scalars import String, ID
+from graphene.core.types.scalars import String, ID, Int
 from graphql.core.type import GraphQLArgument, GraphQLID, GraphQLNonNull
 from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import from_global_id
@@ -14,8 +14,8 @@ class ConnectionField(Field):
         super(ConnectionField, self).__init__(field_type, resolver=resolver,
                                               before=String(),
                                               after=String(),
-                                              first=String(),
-                                              last=String(),
+                                              first=Int(),
+                                              last=Int(),
                                               description=description, **kwargs)
         self.connection_type = connection_type
         self.edge_type = edge_type
@@ -24,17 +24,18 @@ class ConnectionField(Field):
         return value
 
 
-    def resolve(self, instance, args, info):
+    def resolver(self, instance, args, info):
         from graphene.relay.types import PageInfo
         schema = info.schema.graphene_schema
 
-        resolved = super(ConnectionField, self).resolve(instance, args, info)
+        resolved = super(ConnectionField, self).resolver(instance, args, info)
         if resolved:
             resolved = self.wrap_resolved(resolved, instance, args, info)
             assert isinstance(
                 resolved, Iterable), 'Resolved value from the connection field have to be iterable'
 
-            node = self.get_object_type(schema)
+            type = schema.T(self.type)
+            node = schema.objecttype(type)
             connection_type = self.get_connection_type(node)
             edge_type = self.get_edge_type(node)
 
@@ -81,14 +82,16 @@ class NodeField(Field):
 
         return object_type.get_node(_id)
 
-    def resolve(self, instance, args, info):
+    def resolver(self, instance, args, info):
         global_id = args.get('id')
         return self.id_fetcher(global_id, info)
 
 
-class GlobalIDField(IDField):
+class GlobalIDField(Field):
     '''The ID of an object'''
-    required = True
+    def __init__(self, *args, **kwargs):
+        super(GlobalIDField, self).__init__(ID(), *args, **kwargs)
+        self.required = True
 
     def contribute_to_class(self, cls, name):
         from graphene.relay.utils import is_node, is_node_type
@@ -96,5 +99,5 @@ class GlobalIDField(IDField):
         assert in_node, 'GlobalIDField could only be inside a Node, but got %r' % cls
         super(GlobalIDField, self).contribute_to_class(cls, name)
 
-    def resolve(self, instance, args, info):
+    def resolver(self, instance, args, info):
         return self.object_type.to_global_id(instance, args, info)
