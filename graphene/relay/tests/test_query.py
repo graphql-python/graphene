@@ -15,7 +15,7 @@ class MyNode(relay.Node):
 
     @classmethod
     def get_node(cls, id):
-        return MyNode(name='mo')
+        return MyNode(id=id, name='mo')
 
 
 class Query(graphene.ObjectType):
@@ -35,6 +35,7 @@ def test_nodefield_query():
     query = '''
     query RebelsShipsQuery {
       myNode(id:"TXlOb2RlOjE=") {
+        id
         name
       },
       allMyNodes (customArg:"1") {
@@ -52,6 +53,7 @@ def test_nodefield_query():
     '''
     expected = {
         'myNode': {
+            'id': 'TXlOb2RlOjE=',
             'name': 'mo'
         },
         'allMyNodes': {

@@ -40,9 +40,9 @@ class Schema(object):
             if object_type not in self._types:
                 internal_type = object_type.internal_type(self)
                 self._types[object_type] = internal_type
-                name = getattr(internal_type, 'name', None)
-                if name:
-                    self._types_names[name] = object_type
+                is_objecttype = inspect.isclass(object_type) and issubclass(object_type, BaseObjectType)
+                if is_objecttype:
+                    self.register(object_type)
             return self._types[object_type]
         else:
             return object_type
@@ -65,6 +65,10 @@ class Schema(object):
         return GraphQLSchema(self, query=self.T(self.query), mutation=self.T(self.mutation))
 
     def register(self, object_type):
+        type_name = object_type._meta.type_name
+        registered_object_type = self._types_names.get(type_name, None)
+        if registered_object_type:
+            assert registered_object_type == object_type, 'Type {} already registered with other object type'.format(type_name)
         self._types_names[object_type._meta.type_name] = object_type
         return object_type
 
