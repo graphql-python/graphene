@@ -6,12 +6,12 @@ schema = graphene.Schema()
 
 
 class MyConnection(relay.Connection):
-    my_custom_field = graphene.StringField(
-        resolve=lambda instance, *_: 'Custom')
+    my_custom_field = graphene.String(
+        resolver=lambda instance, *_: 'Custom')
 
 
 class MyNode(relay.Node):
-    name = graphene.StringField()
+    name = graphene.String()
 
     @classmethod
     def get_node(cls, id):

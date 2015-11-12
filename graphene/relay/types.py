@@ -1,6 +1,5 @@
-from graphene.core.fields import BooleanField, Field, ListField, StringField
-from graphene.core.types import (InputObjectType, Interface, Mutation,
-                                 ObjectType)
+from graphene.core.types import (Boolean, Field, InputObjectType, Interface,
+                                 List, Mutation, ObjectType, String)
 from graphene.core.types.argument import ArgumentsGroup
 from graphene.core.types.base import LazyType
 from graphene.core.types.definitions import NonNull
@@ -10,15 +9,15 @@ from graphql_relay.node.node import to_global_id
 
 
 class PageInfo(ObjectType):
-    has_next_page = BooleanField(
+    has_next_page = Boolean(
         required=True,
         description='When paginating forwards, are there more items?')
-    has_previous_page = BooleanField(
+    has_previous_page = Boolean(
         required=True,
         description='When paginating backwards, are there more items?')
-    start_cursor = StringField(
+    start_cursor = String(
         description='When paginating backwards, the cursor to continue.')
-    end_cursor = StringField(
+    end_cursor = String(
         description='When paginating forwards, the cursor to continue.')
 
 
@@ -29,7 +28,7 @@ class Edge(ObjectType):
 
     node = Field(LazyType(lambda object_type: object_type.node_type),
                  description='The item at the end of the edge')
-    cursor = StringField(
+    cursor = String(
         required=True, description='A cursor for use in pagination')
 
     @classmethod
@@ -50,8 +49,8 @@ class Connection(ObjectType):
 
     page_info = Field(PageInfo, required=True,
                       description='The Information to aid in pagination')
-    edges = ListField(LazyType(lambda object_type: object_type.edge_type),
-                      description='Information to aid in pagination.')
+    edges = List(LazyType(lambda object_type: object_type.edge_type),
+                 description='Information to aid in pagination.')
 
     _connection_data = None
 
@@ -104,11 +103,11 @@ class Node(BaseNode, Interface):
 
 
 class MutationInputType(InputObjectType):
-    client_mutation_id = StringField(required=True)
+    client_mutation_id = String(required=True)
 
 
 class ClientIDMutation(Mutation):
-    client_mutation_id = StringField(required=True)
+    client_mutation_id = String(required=True)
 
     @classmethod
     def _prepare_class(cls):

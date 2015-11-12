@@ -1,20 +1,21 @@
 import graphene
 from graphene import relay
 from graphene.core.schema import Schema
+from graphql.core.type import GraphQLInputObjectField
 
 my_id = 0
 
 
 class Query(graphene.ObjectType):
-    base = graphene.StringField()
+    base = graphene.String()
 
 
 class ChangeNumber(relay.ClientIDMutation):
     '''Result mutation'''
     class Input:
-        to = graphene.IntField()
+        to = graphene.Int()
 
-    result = graphene.StringField()
+    result = graphene.String()
 
     @classmethod
     def mutate_and_get_payload(cls, input, info):
@@ -33,16 +34,15 @@ schema = Schema(query=Query, mutation=MyResultMutation)
 def test_mutation_arguments():
     assert ChangeNumber.arguments
     assert list(ChangeNumber.arguments) == ['input']
-    ChangeNumber.arguments['input']
-
-    # inner_type = _input.get_object_type(schema)
-    # client_mutation_id_field = inner_type._meta.fields_map[
-    #     'client_mutation_id']
-    # assert issubclass(inner_type, InputObjectType)
-    # assert isinstance(client_mutation_id_field, graphene.StringField)
-    # assert client_mutation_id_field.object_type == inner_type
-    # assert isinstance(client_mutation_id_field.internal_field(
-    #     schema), GraphQLInputObjectField)
+    assert 'input' in ChangeNumber.arguments
+    inner_type = ChangeNumber.input_type
+    client_mutation_id_field = inner_type._meta.fields_map[
+        'client_mutation_id']
+    assert issubclass(inner_type, graphene.InputObjectType)
+    assert isinstance(client_mutation_id_field.type, graphene.NonNull)
+    assert isinstance(client_mutation_id_field.type.of_type, graphene.String)
+    assert client_mutation_id_field.object_type == inner_type
+    assert isinstance(schema.T(client_mutation_id_field), GraphQLInputObjectField)
 
 
 def test_execute_mutations():

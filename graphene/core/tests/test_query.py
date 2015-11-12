@@ -1,22 +1,22 @@
 
 
-from graphene.core.fields import Field, ListField, StringField
+from graphene.core.fields import Field
 from graphene.core.schema import Schema
-from graphene.core.types import Interface, ObjectType
+from graphene.core.types import Interface, List, ObjectType, String
 from graphql.core import graphql
 from graphql.core.type import GraphQLSchema
 
 
 class Character(Interface):
-    name = StringField()
+    name = String()
 
 
 class Pet(ObjectType):
-    type = StringField(resolve=lambda *_: 'Dog')
+    type = String(resolver=lambda *_: 'Dog')
 
 
 class Human(Character):
-    friends = ListField(Character)
+    friends = List(Character)
     pet = Field(Pet)
 
     def resolve_name(self, *args):
@@ -27,8 +27,6 @@ class Human(Character):
 
     def resolve_pet(self, *args):
         return Pet(object())
-    # def resolve_friends(self, *args, **kwargs):
-    #     return 'HEY YOU!'
 
 
 schema = Schema()

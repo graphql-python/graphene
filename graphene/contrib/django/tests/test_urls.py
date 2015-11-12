@@ -18,7 +18,7 @@ class Character(DjangoNode):
 
 
 class Human(DjangoNode):
-    raises = graphene.StringField()
+    raises = graphene.String()
 
     class Meta:
         model = Article

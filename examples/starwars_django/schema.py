@@ -40,8 +40,8 @@ class Faction(DjangoNode):
 class IntroduceShip(relay.ClientIDMutation):
 
     class Input:
-        ship_name = graphene.StringField(required=True)
-        faction_id = graphene.StringField(required=True)
+        ship_name = graphene.String(required=True)
+        faction_id = graphene.String(required=True)
 
     ship = graphene.Field(Ship)
     faction = graphene.Field(Faction)

@@ -1,7 +1,7 @@
 from py.test import raises
 
-from graphene import Interface, ObjectType, Schema
-from graphene.core.fields import Field, ListField, StringField
+from graphene import Interface, List, ObjectType, Schema, String
+from graphene.core.fields import Field
 from graphene.core.types.base import LazyType
 from graphql.core import graphql
 from tests.utils import assert_equal_lists
@@ -10,15 +10,15 @@ schema = Schema(name='My own schema')
 
 
 class Character(Interface):
-    name = StringField()
+    name = String()
 
 
 class Pet(ObjectType):
-    type = StringField(resolve=lambda *_: 'Dog')
+    type = String(resolver=lambda *_: 'Dog')
 
 
 class Human(Character):
-    friends = ListField(Character)
+    friends = List(Character)
     pet = Field(Pet)
 
     def resolve_name(self, *args):
@@ -109,7 +109,7 @@ def test_schema_register():
 
     @schema.register
     class MyType(ObjectType):
-        type = StringField(resolve=lambda *_: 'Dog')
+        type = String(resolver=lambda *_: 'Dog')
 
     schema.query = MyType
 
@@ -121,7 +121,7 @@ def test_schema_register_no_query_type():
 
     @schema.register
     class MyType(ObjectType):
-        type = StringField(resolve=lambda *_: 'Dog')
+        type = String(resolver=lambda *_: 'Dog')
 
     with raises(Exception) as excinfo:
         schema.get_type('MyType')
@@ -132,7 +132,7 @@ def test_schema_introspect():
     schema = Schema(name='My own schema')
 
     class MyType(ObjectType):
-        type = StringField(resolve=lambda *_: 'Dog')
+        type = String(resolver=lambda *_: 'Dog')
 
     schema.query = MyType
 
@@ -147,7 +147,7 @@ def test_lazytype():
 
     @schema.register
     class MyType(ObjectType):
-        type = StringField(resolve=lambda *_: 'Dog')
+        type = String(resolver=lambda *_: 'Dog')
 
     schema.query = MyType
 

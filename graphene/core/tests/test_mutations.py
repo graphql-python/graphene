@@ -5,15 +5,15 @@ my_id = 0
 
 
 class Query(graphene.ObjectType):
-    base = graphene.StringField()
+    base = graphene.String()
 
 
 class ChangeNumber(graphene.Mutation):
     '''Result mutation'''
     class Input:
-        to = graphene.IntField()
+        to = graphene.Int()
 
-    result = graphene.StringField()
+    result = graphene.String()
 
     @classmethod
     def mutate(cls, instance, args, info):

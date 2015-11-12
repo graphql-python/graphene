@@ -10,6 +10,7 @@ from graphene.core.schema import (
 
 from graphene.core.types import (
     ObjectType,
+    InputObjectType,
     Interface,
     Mutation,
     BaseType,
@@ -55,6 +56,7 @@ __all__ = [
     'BaseType',
     'LazyType',
     'ObjectType',
+    'InputObjectType',
     'Interface',
     'Mutation',
     'Field',

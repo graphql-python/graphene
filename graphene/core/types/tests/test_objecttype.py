@@ -1,8 +1,7 @@
 from py.test import raises
 
-from graphene.core.fields import IntField, StringField
 from graphene.core.schema import Schema
-from graphene.core.types import Interface
+from graphene.core.types import Int, Interface, String
 from graphql.core.execution.middlewares.utils import (resolver_has_tag,
                                                       tag_resolver)
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
@@ -10,7 +9,7 @@ from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 
 class Character(Interface):
     '''Character description'''
-    name = StringField()
+    name = String()
 
     class Meta:
         type_name = 'core_Character'
@@ -18,7 +17,7 @@ class Character(Interface):
 
 class Human(Character):
     '''Human description'''
-    friends = StringField()
+    friends = String()
 
     class Meta:
         type_name = 'core_Human'
@@ -93,7 +92,7 @@ def test_object_type_container_too_many_args():
 def test_field_clashes():
     with raises(Exception) as excinfo:
         class Droid(Character):
-            name = IntField()
+            name = Int()
 
     assert 'clashes' in str(excinfo.value)
 
@@ -104,7 +103,7 @@ def test_fields_inherited_should_be_different():
 
 def test_field_mantain_resolver_tags():
     class Droid(Character):
-        name = StringField()
+        name = String()
 
         def resolve_name(self, *args):
             return 'My Droid'

@@ -8,7 +8,7 @@ schema = graphene.Schema(name='Starwars Relay Schema')
 
 class Ship(relay.Node):
     '''A ship in the Star Wars saga'''
-    name = graphene.StringField(description='The name of the ship.')
+    name = graphene.String(description='The name of the ship.')
 
     @classmethod
     def get_node(cls, id):
@@ -17,7 +17,7 @@ class Ship(relay.Node):
 
 class Faction(relay.Node):
     '''A faction in the Star Wars saga'''
-    name = graphene.StringField(description='The name of the faction.')
+    name = graphene.String(description='The name of the faction.')
     ships = relay.ConnectionField(
         Ship, description='The ships used by the faction.')
 
@@ -34,8 +34,8 @@ class Faction(relay.Node):
 class IntroduceShip(relay.ClientIDMutation):
 
     class Input:
-        ship_name = graphene.StringField(required=True)
-        faction_id = graphene.StringField(required=True)
+        ship_name = graphene.String(required=True)
+        faction_id = graphene.String(required=True)
 
     ship = graphene.Field(Ship)
     faction = graphene.Field(Faction)

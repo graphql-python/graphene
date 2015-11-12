@@ -1,6 +1,6 @@
 from py.test import raises
 
-from graphene.core.fields import StringField
+from graphene.core.fields import Field
 from graphene.core.options import Options
 
 
@@ -20,7 +20,7 @@ def test_field_added_in_meta():
         pass
 
     opt.contribute_to_class(ObjectType, '_meta')
-    f = StringField()
+    f = Field(None)
     f.attname = 'string_field'
     opt.add_field(f)
     assert f in opt.fields

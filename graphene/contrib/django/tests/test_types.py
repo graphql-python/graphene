@@ -2,7 +2,7 @@
 
 from graphene import Schema
 from graphene.contrib.django.types import DjangoInterface, DjangoNode
-from graphene.core.fields import Field, IntField
+from graphene.core.fields import Field
 from graphene.core.types.scalars import Int
 from graphene.relay.fields import GlobalIDField
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
@@ -23,7 +23,7 @@ class Character(DjangoInterface):
 class Human(DjangoNode):
     '''Human description'''
 
-    pub_date = IntField()
+    pub_date = Int()
 
     def get_node(self, id):
         pass
