@@ -1,10 +1,11 @@
 from pytest import raises
+
+from graphene.core.schema import Schema
+from graphene.core.types import ObjectType
 from graphql.core.type import GraphQLArgument
 
 from ..argument import Argument, to_arguments
 from ..scalars import String
-from graphene.core.types import ObjectType
-from graphene.core.schema import Schema
 
 
 def test_argument_internal_type():
@@ -26,7 +27,8 @@ def test_to_arguments():
         other_kwarg=String(),
     )
 
-    assert [a.name for a in arguments] == ['myArg', 'otherArg', 'myKwarg', 'otherKwarg']
+    assert [a.name for a in arguments] == [
+        'myArg', 'otherArg', 'myKwarg', 'otherKwarg']
 
 
 def test_to_arguments_no_name():

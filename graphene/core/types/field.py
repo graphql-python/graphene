@@ -1,14 +1,15 @@
-import six
 from collections import OrderedDict
 from functools import wraps
 
+import six
+
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
-from .base import MountType, LazyType, OrderedType
-from .argument import ArgumentsGroup
-from .definitions import NonNull
-from ...utils import to_camel_case, ProxySnakeDict
+from ...utils import ProxySnakeDict, to_camel_case
 from ..types import BaseObjectType, InputObjectType
+from .argument import ArgumentsGroup
+from .base import LazyType, MountType, OrderedType
+from .definitions import NonNull
 
 
 def make_args_snake_case(resolver):
@@ -24,6 +25,7 @@ class Empty(object):
 
 
 class Field(OrderedType):
+
     def __init__(self, type, description=None, args=None, name=None, resolver=None, required=False, default=None, *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
         super(Field, self).__init__(_creation_counter=_creation_counter)
@@ -40,7 +42,8 @@ class Field(OrderedType):
         self.default = default
 
     def contribute_to_class(self, cls, attname):
-        assert issubclass(cls, BaseObjectType), 'Field {} cannot be mounted in {}'.format(self, cls)
+        assert issubclass(
+            cls, BaseObjectType), 'Field {} cannot be mounted in {}'.format(self, cls)
         if not self.name:
             self.name = to_camel_case(attname)
         self.attname = attname
@@ -104,11 +107,18 @@ class Field(OrderedType):
         """ Return "object_type.field_name". """
         return '%s.%s' % (self.object_type.__name__, self.attname)
 
+    def __eq__(self, other):
+        eq = super(Field, self).__eq__(other)
+        if type(self) == type(other):
+            return eq and self.object_type == other.object_type
+        return NotImplemented
+
     def __hash__(self):
         return hash((self.creation_counter, self.object_type))
 
 
 class InputField(OrderedType):
+
     def __init__(self, type, description=None, default=None, name=None, _creation_counter=None, required=False):
         super(InputField, self).__init__(_creation_counter=_creation_counter)
         self.name = name
@@ -119,7 +129,8 @@ class InputField(OrderedType):
         self.default = default
 
     def contribute_to_class(self, cls, attname):
-        assert issubclass(cls, InputObjectType), 'InputField {} cannot be mounted in {}'.format(self, cls)
+        assert issubclass(
+            cls, InputObjectType), 'InputField {} cannot be mounted in {}'.format(self, cls)
         if not self.name:
             self.name = to_camel_case(attname)
         self.attname = attname

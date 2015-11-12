@@ -1,8 +1,10 @@
-import six
 from functools import total_ordering
+
+import six
 
 
 class BaseType(object):
+
     @classmethod
     def internal_type(cls, schema):
         return getattr(cls, 'T', None)
@@ -16,6 +18,7 @@ class MountType(BaseType):
 
 
 class LazyType(MountType):
+
     def __init__(self, type):
         self.type = type
 
@@ -57,13 +60,13 @@ class OrderedType(MountType):
 
     def __lt__(self, other):
         # This is needed because bisect does not take a comparison function.
-        if type(self) == type(other):
+        if isinstance(other, OrderedType):
             return self.creation_counter < other.creation_counter
         return NotImplemented
 
     def __gt__(self, other):
         # This is needed because bisect does not take a comparison function.
-        if type(self) == type(other):
+        if isinstance(other, OrderedType):
             return self.creation_counter > other.creation_counter
         return NotImplemented
 
@@ -72,6 +75,7 @@ class OrderedType(MountType):
 
 
 class MirroredType(OrderedType):
+
     def __init__(self, *args, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
         super(MirroredType, self).__init__(_creation_counter=_creation_counter)
@@ -80,12 +84,14 @@ class MirroredType(OrderedType):
 
 
 class ArgumentType(MirroredType):
+
     def as_argument(self):
         from .argument import Argument
         return Argument(self, _creation_counter=self.creation_counter, *self.args, **self.kwargs)
 
 
 class FieldType(MirroredType):
+
     def contribute_to_class(self, cls, name):
         from ..types import BaseObjectType, InputObjectType
         if issubclass(cls, InputObjectType):

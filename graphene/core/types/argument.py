@@ -3,11 +3,12 @@ from itertools import chain
 
 from graphql.core.type import GraphQLArgument
 
-from .base import BaseType, OrderedType, ArgumentType
 from ...utils import to_camel_case
+from .base import ArgumentType, BaseType, OrderedType
 
 
 class Argument(OrderedType):
+
     def __init__(self, type, description=None, default=None, name=None, _creation_counter=None):
         super(Argument, self).__init__(_creation_counter=_creation_counter)
         self.name = name
@@ -23,6 +24,7 @@ class Argument(OrderedType):
 
 
 class ArgumentsGroup(BaseType):
+
     def __init__(self, *args, **kwargs):
         arguments = to_arguments(*args, **kwargs)
         self.arguments = OrderedDict([(arg.name, arg) for arg in arguments])
@@ -58,7 +60,8 @@ def to_arguments(*args, **kwargs):
         if name:
             argument.name = to_camel_case(name)
         assert argument.name, 'Argument in field must have a name'
-        assert argument.name not in arguments, 'Found more than one Argument with same name {}'.format(argument.name)
+        assert argument.name not in arguments, 'Found more than one Argument with same name {}'.format(
+            argument.name)
         arguments[argument.name] = argument
 
     return sorted(arguments.values())

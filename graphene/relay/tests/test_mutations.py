@@ -1,8 +1,6 @@
 import graphene
 from graphene import relay
 from graphene.core.schema import Schema
-from graphene.core.types import InputObjectType
-from graphql.core.type import GraphQLInputObjectField
 
 my_id = 0
 
@@ -35,7 +33,7 @@ schema = Schema(query=Query, mutation=MyResultMutation)
 def test_mutation_arguments():
     assert ChangeNumber.arguments
     assert list(ChangeNumber.arguments) == ['input']
-    _input = ChangeNumber.arguments['input']
+    ChangeNumber.arguments['input']
 
     # inner_type = _input.get_object_type(schema)
     # client_mutation_id_field = inner_type._meta.fields_map[

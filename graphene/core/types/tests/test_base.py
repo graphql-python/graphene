@@ -1,9 +1,10 @@
 from mock import patch
 
-from ..base import OrderedType, MountedType
-from ..field import Field, InputField
+from graphene.core.types import InputObjectType, ObjectType
+
 from ..argument import Argument
-from graphene.core.types import ObjectType, InputObjectType
+from ..base import MountedType, OrderedType
+from ..field import Field, InputField
 
 
 def test_orderedtype_equal():
@@ -26,14 +27,16 @@ def test_type_as_field_called(Field):
     resolver = lambda x: x
     a = MountedType(2, description='A', resolver=resolver)
     a.as_field()
-    Field.assert_called_with(a, 2, _creation_counter=a.creation_counter, description='A', resolver=resolver)
+    Field.assert_called_with(
+        a, 2, _creation_counter=a.creation_counter, description='A', resolver=resolver)
 
 
 @patch('graphene.core.types.argument.Argument')
 def test_type_as_argument_called(Argument):
     a = MountedType(2, description='A')
     a.as_argument()
-    Argument.assert_called_with(a, 2, _creation_counter=a.creation_counter, description='A')
+    Argument.assert_called_with(
+        a, 2, _creation_counter=a.creation_counter, description='A')
 
 
 def test_type_as_field():

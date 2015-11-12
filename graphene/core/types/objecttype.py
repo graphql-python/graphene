@@ -6,9 +6,10 @@ from functools import partial
 import six
 
 from graphene import signals
+from graphene.core.exceptions import SkipField
 from graphene.core.options import Options
-from graphene.core.types.base import BaseType
 from graphene.core.types.argument import ArgumentsGroup
+from graphene.core.types.base import BaseType
 from graphql.core.type import (GraphQLArgument, GraphQLInputObjectType,
                                GraphQLInterfaceType, GraphQLObjectType)
 
@@ -176,22 +177,31 @@ class BaseObjectType(BaseType):
 
     @classmethod
     def internal_type(cls, schema):
-        fields = lambda: OrderedDict([(f.name, schema.T(f))
-                                      for f in cls._meta.fields])
         if cls._meta.is_interface:
             return GraphQLInterfaceType(
                 cls._meta.type_name,
                 description=cls._meta.description,
                 resolve_type=partial(cls.resolve_type, schema),
-                fields=fields
+                fields=partial(cls.get_fields, schema)
             )
         return GraphQLObjectType(
             cls._meta.type_name,
             description=cls._meta.description,
             interfaces=[schema.T(i) for i in cls._meta.interfaces],
-            fields=fields,
+            fields=partial(cls.get_fields, schema),
             is_type_of=getattr(cls, 'is_type_of', None)
         )
+
+    @classmethod
+    def get_fields(cls, schema):
+        fields = []
+        for field in cls._meta.fields:
+            try:
+                fields.append((field.name, schema.T(field)))
+            except SkipField:
+                continue
+
+        return OrderedDict(fields)
 
 
 class Interface(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
@@ -203,14 +213,16 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
+
     @classmethod
     def _prepare_class(cls):
         input_class = getattr(cls, 'Input', None)
         if input_class:
-            items = dict(input_class.__dict__)
+            items = dict(vars(input_class))
             items.pop('__dict__', None)
             items.pop('__doc__', None)
             items.pop('__module__', None)
+            items.pop('__weakref__', None)
             arguments = ArgumentsGroup(**items)
             cls.add_to_class('arguments', arguments)
             delattr(cls, 'Input')
@@ -221,6 +233,7 @@ class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 
 class InputObjectType(ObjectType):
+
     @classmethod
     def internal_type(cls, schema):
         fields = lambda: OrderedDict([(f.name, schema.T(f))

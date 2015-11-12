@@ -1,16 +1,16 @@
-
 from py.test import raises
-from pytest import raises
 
-from graphene.core.fields import Field, NonNullField, StringField
-from graphene.core.options import Options
+from graphene.core.fields import (BooleanField, Field, FloatField, IDField,
+                                  IntField, NonNullField, StringField)
 from graphene.core.schema import Schema
 from graphene.core.types import ObjectType
-from graphql.core.type import (GraphQLBoolean, GraphQLField, GraphQLID,
-                               GraphQLInt, GraphQLNonNull, GraphQLString)
+from graphql.core.type import (GraphQLBoolean, GraphQLField, GraphQLFloat,
+                               GraphQLID, GraphQLInt, GraphQLNonNull,
+                               GraphQLString)
 
 
-class ot(ObjectType):
+class MyOt(ObjectType):
+
     def resolve_customdoc(self, *args, **kwargs):
         '''Resolver documentation'''
         return None
@@ -23,53 +23,77 @@ schema = Schema()
 
 def test_field_no_contributed_raises_error():
     f = Field(GraphQLString)
-    with raises(Exception) as excinfo:
+    with raises(Exception):
         schema.T(f)
 
 
 def test_field_type():
     f = Field(GraphQLString)
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     assert isinstance(schema.T(f), GraphQLField)
     assert schema.T(f).type == GraphQLString
 
 
 def test_field_name_automatic_camelcase():
     f = Field(GraphQLString)
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     assert f.name == 'fieldName'
 
 
 def test_field_name_use_name_if_exists():
     f = Field(GraphQLString, name='my_custom_name')
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     assert f.name == 'my_custom_name'
 
 
 def test_stringfield_type():
     f = StringField()
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     assert schema.T(f) == GraphQLString
+
+
+def test_idfield_type():
+    f = IDField()
+    f.contribute_to_class(MyOt, 'field_name')
+    assert schema.T(f) == GraphQLID
+
+
+def test_booleanfield_type():
+    f = BooleanField()
+    f.contribute_to_class(MyOt, 'field_name')
+    assert schema.T(f) == GraphQLBoolean
+
+
+def test_intfield_type():
+    f = IntField()
+    f.contribute_to_class(MyOt, 'field_name')
+    assert schema.T(f) == GraphQLInt
+
+
+def test_floatfield_type():
+    f = FloatField()
+    f.contribute_to_class(MyOt, 'field_name')
+    assert schema.T(f) == GraphQLFloat
 
 
 def test_nonnullfield_type():
     f = NonNullField(StringField())
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     assert isinstance(schema.T(f), GraphQLNonNull)
 
 
 def test_stringfield_type_required():
     f = StringField(required=True).as_field()
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     assert isinstance(schema.T(f), GraphQLField)
     assert isinstance(schema.T(f).type, GraphQLNonNull)
 
 
 def test_field_resolve():
     f = StringField(required=True, resolve=lambda *args: 'RESOLVED').as_field()
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     field_type = schema.T(f)
-    assert 'RESOLVED' == field_type.resolver(ot, None, None)
+    assert 'RESOLVED' == field_type.resolver(MyOt, None, None)
 
 
 def test_field_resolve_type_custom():
@@ -123,17 +147,17 @@ def test_field_hash():
 def test_field_none_type_raises_error():
     s = Schema()
     f = Field(None)
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     with raises(Exception) as excinfo:
         s.T(f)
     assert str(
-        excinfo.value) == "Internal type for field ot.field_name is None"
+        excinfo.value) == "Internal type for field MyOt.field_name is None"
 
 
 def test_field_str():
     f = StringField().as_field()
-    f.contribute_to_class(ot, 'field_name')
-    assert str(f) == "ot.field_name"
+    f.contribute_to_class(MyOt, 'field_name')
+    assert str(f) == "MyOt.field_name"
 
 
 def test_field_repr():
@@ -143,12 +167,12 @@ def test_field_repr():
 
 def test_field_repr_contributed():
     f = StringField().as_field()
-    f.contribute_to_class(ot, 'field_name')
+    f.contribute_to_class(MyOt, 'field_name')
     assert repr(f) == "<graphene.core.types.field.Field: field_name>"
 
 
 def test_field_resolve_objecttype_cos():
     f = StringField().as_field()
-    f.contribute_to_class(ot, 'customdoc')
+    f.contribute_to_class(MyOt, 'customdoc')
     field = schema.T(f)
     assert field.description == 'Resolver documentation'

@@ -1,6 +1,4 @@
-
 from py.test import raises
-from pytest import raises
 
 from graphene.core.fields import StringField
 from graphene.core.options import Options

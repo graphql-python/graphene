@@ -1,8 +1,8 @@
 from graphene.core.fields import BooleanField, Field, ListField, StringField
 from graphene.core.types import (InputObjectType, Interface, Mutation,
                                  ObjectType)
-from graphene.core.types.base import LazyType
 from graphene.core.types.argument import ArgumentsGroup
+from graphene.core.types.base import LazyType
 from graphene.core.types.definitions import NonNull
 from graphene.relay.fields import GlobalIDField
 from graphene.utils import memoize
@@ -74,10 +74,9 @@ class BaseNode(object):
             assert hasattr(
                 cls, 'get_node'), 'get_node classmethod not found in %s Node' % cls
 
-    @classmethod
-    def to_global_id(cls, instance, args, info):
-        type_name = cls._meta.type_name
-        return to_global_id(type_name, instance.id)
+    def to_global_id(self):
+        type_name = self._meta.type_name
+        return to_global_id(type_name, self.id)
 
     connection_type = Connection
     edge_type = Edge
@@ -105,13 +104,16 @@ class ClientIDMutation(Mutation):
 
     @classmethod
     def _prepare_class(cls):
-        Input = getattr(cls, 'Input', None)
-        if Input:
+        input_class = getattr(cls, 'Input', None)
+        if input_class:
             assert hasattr(
                 cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
 
-            items = dict(Input.__dict__)
+            items = dict(vars(input_class))
             items.pop('__dict__', None)
+            items.pop('__doc__', None)
+            items.pop('__module__', None)
+            items.pop('__weakref__', None)
             new_input_type = type('{}Input'.format(
                 cls._meta.type_name), (MutationInputType, ), items)
             cls.add_to_class('input_type', new_input_type)

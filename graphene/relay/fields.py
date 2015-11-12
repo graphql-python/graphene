@@ -1,8 +1,7 @@
 from collections import Iterable
 
-from graphene.core.fields import Field, IDField
-from graphene.core.types.scalars import String, ID, Int
-from graphql.core.type import GraphQLArgument, GraphQLID, GraphQLNonNull
+from graphene.core.fields import Field
+from graphene.core.types.scalars import ID, Int, String
 from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import from_global_id
 
@@ -22,7 +21,6 @@ class ConnectionField(Field):
 
     def wrap_resolved(self, value, instance, args, info):
         return value
-
 
     def resolver(self, instance, args, info):
         from graphene.relay.types import PageInfo
@@ -59,7 +57,7 @@ class ConnectionField(Field):
         assert is_node(node), 'Only nodes have connections.'
         schema.register(node)
         connection_type = self.get_connection_type(node)
-        return schema.T(connection_type)
+        return connection_type
 
 
 class NodeField(Field):
@@ -67,7 +65,8 @@ class NodeField(Field):
     def __init__(self, object_type=None, *args, **kwargs):
         from graphene.relay.types import Node
         id = kwargs.pop('id', None) or ID(description='The ID of an object')
-        super(NodeField, self).__init__(object_type or Node, id=id, *args, **kwargs)
+        super(NodeField, self).__init__(
+            object_type or Node, id=id, *args, **kwargs)
         self.field_object_type = object_type
 
     def id_fetcher(self, global_id, info):
@@ -89,6 +88,7 @@ class NodeField(Field):
 
 class GlobalIDField(Field):
     '''The ID of an object'''
+
     def __init__(self, *args, **kwargs):
         super(GlobalIDField, self).__init__(ID(), *args, **kwargs)
         self.required = True
@@ -100,4 +100,4 @@ class GlobalIDField(Field):
         super(GlobalIDField, self).contribute_to_class(cls, name)
 
     def resolver(self, instance, args, info):
-        return self.object_type.to_global_id(instance, args, info)
+        return instance.to_global_id()

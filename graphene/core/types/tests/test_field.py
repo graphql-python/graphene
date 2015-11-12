@@ -1,11 +1,12 @@
-from graphql.core.type import GraphQLField, GraphQLInputObjectField, GraphQLString
+from graphene.core.schema import Schema
+from graphene.core.types import InputObjectType, ObjectType
+from graphql.core.type import (GraphQLField, GraphQLInputObjectField,
+                               GraphQLString)
 
-from ..field import Field, InputField
-from ..scalars import String
 from ..base import LazyType
 from ..definitions import List
-from graphene.core.types import ObjectType, InputObjectType
-from graphene.core.schema import Schema
+from ..field import Field, InputField
+from ..scalars import String
 
 
 def test_field_internal_type():
@@ -81,8 +82,10 @@ def test_field_string_reference():
     class MyObjectType(ObjectType):
         my_field = field
 
+    schema = Schema(query=MyObjectType)
+
     assert isinstance(field.type, LazyType)
-    assert field.type.type_str == 'MyObjectType'
+    assert schema.T(field.type) == schema.T(MyObjectType)
 
 
 def test_field_custom_arguments():

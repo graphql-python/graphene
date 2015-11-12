@@ -25,6 +25,7 @@ class Float(MountedType):
 
 
 class Scalar(MountedType):
+
     @classmethod
     def internal_type(cls, schema):
         serialize = getattr(cls, 'serialize')

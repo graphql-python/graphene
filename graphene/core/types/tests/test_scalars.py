@@ -1,8 +1,8 @@
+from graphene.core.schema import Schema
 from graphql.core.type import (GraphQLBoolean, GraphQLFloat, GraphQLID,
                                GraphQLInt, GraphQLScalarType, GraphQLString)
 
-from ..scalars import String, Int, Boolean, ID, Float, Scalar
-from graphene.core.schema import Schema
+from ..scalars import ID, Boolean, Float, Int, Scalar, String
 
 schema = Schema()
 

@@ -1,8 +1,8 @@
-from graphql.core.type import (GraphQLList, GraphQLString, GraphQLNonNull)
+from graphene.core.schema import Schema
+from graphql.core.type import GraphQLList, GraphQLNonNull, GraphQLString
 
 from ..definitions import List, NonNull
 from ..scalars import String
-from graphene.core.schema import Schema
 
 schema = Schema()
 

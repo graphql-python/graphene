@@ -30,7 +30,7 @@ schema = Schema(query=Query, mutation=MyResultMutation)
 
 
 def test_mutation_input():
-    assert schema.T(ChangeNumber.arguments).keys() == ['to']
+    assert list(schema.T(ChangeNumber.arguments).keys()) == ['to']
 
 
 def test_execute_mutations():

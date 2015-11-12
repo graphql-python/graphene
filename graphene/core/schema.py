@@ -2,13 +2,13 @@ import inspect
 from collections import OrderedDict
 
 from graphene import signals
+from graphene.core.types.base import BaseType
+from graphene.core.types.objecttype import BaseObjectType
 from graphql.core.execution.executor import Executor
 from graphql.core.execution.middlewares.sync import \
     SynchronousExecutionMiddleware
 from graphql.core.type import GraphQLSchema as _GraphQLSchema
 from graphql.core.utils.introspection_query import introspection_query
-from graphene.core.types.base import BaseType
-from graphene.core.types.objecttype import BaseObjectType
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -40,7 +40,8 @@ class Schema(object):
             if object_type not in self._types:
                 internal_type = object_type.internal_type(self)
                 self._types[object_type] = internal_type
-                is_objecttype = inspect.isclass(object_type) and issubclass(object_type, BaseObjectType)
+                is_objecttype = inspect.isclass(
+                    object_type) and issubclass(object_type, BaseObjectType)
                 if is_objecttype:
                     self.register(object_type)
             return self._types[object_type]
@@ -68,7 +69,8 @@ class Schema(object):
         type_name = object_type._meta.type_name
         registered_object_type = self._types_names.get(type_name, None)
         if registered_object_type:
-            assert registered_object_type == object_type, 'Type {} already registered with other object type'.format(type_name)
+            assert registered_object_type == object_type, 'Type {} already registered with other object type'.format(
+                type_name)
         self._types_names[object_type._meta.type_name] = object_type
         return object_type
 

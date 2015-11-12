@@ -1,7 +1,9 @@
 from graphene import relay
 from graphene.contrib.django.utils import get_type_for_model, lazy_map
-from graphene.core.fields import Field, ListField
+from graphene.core.exceptions import SkipField
+from graphene.core.fields import Field
 from graphene.core.types.base import FieldType
+from graphene.core.types.definitions import List
 from graphene.relay.utils import is_node
 
 
@@ -12,7 +14,10 @@ class DjangoConnectionField(relay.ConnectionField):
         return lazy_map(value, self.type.get_object_type(schema))
 
 
-class LazyListField(ListField):
+class LazyListField(Field):
+
+    def get_type(self, schema):
+        return List(self.type)
 
     def resolver(self, instance, args, info):
         schema = info.schema.graphene_schema
@@ -51,6 +56,8 @@ class DjangoModelField(FieldType):
                     self.parent,
                 )
             )
+        if not _type:
+            raise SkipField()
         return schema.T(_type)
 
     def get_object_type(self, schema):

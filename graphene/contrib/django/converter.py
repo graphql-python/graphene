@@ -3,9 +3,7 @@ from singledispatch import singledispatch
 
 from graphene.contrib.django.fields import (ConnectionOrListField,
                                             DjangoModelField)
-from graphene.core.fields import (BooleanField, FloatField, IDField, IntField,
-                                  StringField)
-from graphene.core.types.scalars import Boolean, Float, ID, Int, String
+from graphene.core.types.scalars import ID, Boolean, Float, Int, String
 
 try:
     UUIDField = models.UUIDField
