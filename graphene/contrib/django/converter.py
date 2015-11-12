@@ -5,6 +5,7 @@ from graphene.contrib.django.fields import (ConnectionOrListField,
                                             DjangoModelField)
 from graphene.core.fields import (BooleanField, FloatField, IDField, IntField,
                                   StringField)
+from graphene.core.types.scalars import Boolean, Float, ID, Int, String
 
 try:
     UUIDField = models.UUIDField
@@ -28,12 +29,12 @@ def convert_django_field(field):
 @convert_django_field.register(models.URLField)
 @convert_django_field.register(UUIDField)
 def convert_field_to_string(field):
-    return StringField(description=field.help_text)
+    return String(description=field.help_text)
 
 
 @convert_django_field.register(models.AutoField)
 def convert_field_to_id(field):
-    return IDField(description=field.help_text)
+    return ID(description=field.help_text)
 
 
 @convert_django_field.register(models.PositiveIntegerField)
@@ -42,23 +43,23 @@ def convert_field_to_id(field):
 @convert_django_field.register(models.BigIntegerField)
 @convert_django_field.register(models.IntegerField)
 def convert_field_to_int(field):
-    return IntField(description=field.help_text)
+    return Int(description=field.help_text)
 
 
 @convert_django_field.register(models.BooleanField)
 def convert_field_to_boolean(field):
-    return BooleanField(description=field.help_text, required=True)
+    return Boolean(description=field.help_text, required=True)
 
 
 @convert_django_field.register(models.NullBooleanField)
 def convert_field_to_nullboolean(field):
-    return BooleanField(description=field.help_text)
+    return Boolean(description=field.help_text)
 
 
 @convert_django_field.register(models.DecimalField)
 @convert_django_field.register(models.FloatField)
 def convert_field_to_float(field):
-    return FloatField(description=field.help_text)
+    return Float(description=field.help_text)
 
 
 @convert_django_field.register(models.ManyToManyField)

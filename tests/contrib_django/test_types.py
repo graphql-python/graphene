@@ -2,7 +2,8 @@
 
 from graphene import Schema
 from graphene.contrib.django.types import DjangoInterface, DjangoNode
-from graphene.core.fields import IntField
+from graphene.core.fields import IntField, Field
+from graphene.core.types.scalars import String, Int
 from graphene.relay.fields import GlobalIDField
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 from tests.utils import assert_equal_lists
@@ -57,7 +58,8 @@ def test_node_idfield():
 
 def test_node_replacedfield():
     idfield = Human._meta.fields_map['pub_date']
-    assert isinstance(idfield, IntField)
+    assert isinstance(idfield, Field)
+    assert schema.T(idfield).type == schema.T(Int())
 
 
 def test_interface_resolve_type():
