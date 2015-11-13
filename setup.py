@@ -56,7 +56,7 @@ setup(
     install_requires=[
         'six>=1.10.0',
         'blinker',
-        'graphql-core==0.4.7b0',
+        'graphql-core==0.4.7b2',
         'graphql-relay==0.3.3'
     ],
     tests_require=[
@@ -68,6 +68,7 @@ setup(
         'django': [
             'Django>=1.6.0,<1.9',
             'singledispatch>=3.4.0.3',
+            'graphql-django-view>=1.0.0',
         ],
     },
 
