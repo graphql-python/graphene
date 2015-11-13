@@ -244,10 +244,8 @@ class InputObjectType(ObjectType):
 
     @classmethod
     def internal_type(cls, schema):
-        fields = lambda: OrderedDict([(f.name, schema.T(f))
-                                      for f in cls._meta.fields])
         return GraphQLInputObjectType(
             cls._meta.type_name,
             description=cls._meta.description,
-            fields=fields,
+            fields=partial(cls.get_fields, schema),
         )
