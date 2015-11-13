@@ -104,7 +104,7 @@ def test_client_post_good_query_json(settings, client):
 def test_client_post_good_query_graphql(settings, client):
     settings.ROOT_URLCONF = 'tests.contrib_django.test_urls'
     response = client.post(
-        '/graphql', '{ headline }'), 'application/graphql')
+        '/graphql', '{ headline }', 'application/graphql')
     json_response = format_response(response)
     expected_json = {
         'data': {
