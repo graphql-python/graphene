@@ -23,7 +23,8 @@ class Human(DjangoNode):
     class Meta:
         model = Article
 
-    def resolve_raises(self, *args):
+    @staticmethod
+    def resolve_raises(*args):
         raise Exception("This field should raise exception")
 
     def get_node(self, id):
