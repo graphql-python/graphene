@@ -26,7 +26,7 @@ def test_client_post_malformed_json(settings, client):
     response = client.post('/graphql', 'MALFORMED', 'application/json')
     json_response = format_response(response)
     assert json_response == {'errors': [
-        {'message': 'Malformed json body in the post data'}]}
+        {'message': 'POST body sent invalid JSON.'}]}
 
 
 def test_client_post_empty_query_json(settings, client):
