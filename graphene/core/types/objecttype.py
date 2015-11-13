@@ -6,7 +6,11 @@ from functools import partial
 import six
 
 from graphene import signals
+from graphene.core.exceptions import SkipField
 from graphene.core.options import Options
+from graphene.core.types.argument import ArgumentsGroup
+from graphene.core.types.base import BaseType
+from graphene.core.types.definitions import List, NonNull
 from graphql.core.type import (GraphQLArgument, GraphQLInputObjectType,
                                GraphQLInterfaceType, GraphQLObjectType)
 
@@ -50,10 +54,6 @@ class ObjectTypeMeta(type):
         assert not (
             new_class._meta.is_interface and new_class._meta.is_mutation)
 
-        input_class = None
-        if new_class._meta.is_mutation:
-            input_class = attrs.pop('Input', None)
-
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
@@ -61,13 +61,6 @@ class ObjectTypeMeta(type):
         if new_class._meta.is_mutation:
             assert hasattr(
                 new_class, 'mutate'), "All mutations must implement mutate method"
-
-        if input_class:
-            items = dict(input_class.__dict__)
-            items.pop('__dict__', None)
-            input_type = type('{}Input'.format(
-                new_class._meta.type_name), (ObjectType, ), items)
-            new_class.add_to_class('input_type', input_type)
 
         new_class.add_extra_fields()
 
@@ -87,7 +80,8 @@ class ObjectTypeMeta(type):
             # on the base classes (we cannot handle shadowed fields at the
             # moment).
             for field in parent_fields:
-                if field.name in field_names and field.__class__ != field_names[field.name].__class__:
+                if field.name in field_names and field.type.__class__ != field_names[
+                        field.name].type.__class__:
                     raise Exception(
                         'Local field %r in class %r (%r) clashes '
                         'with field with similar name from '
@@ -106,6 +100,9 @@ class ObjectTypeMeta(type):
                 new_class._meta.interfaces.append(base)
             # new_class._meta.parents.extend(base._meta.parents)
 
+        setattr(new_class, 'NonNull', NonNull(new_class))
+        setattr(new_class, 'List', List(new_class))
+
         new_class._prepare()
         return new_class
 
@@ -119,13 +116,14 @@ class ObjectTypeMeta(type):
 
     def add_to_class(cls, name, value):
         # We should call the contribute_to_class method only if it's bound
-        if not inspect.isclass(value) and hasattr(value, 'contribute_to_class'):
+        if not inspect.isclass(value) and hasattr(
+                value, 'contribute_to_class'):
             value.contribute_to_class(cls, name)
         else:
             setattr(cls, name, value)
 
 
-class BaseObjectType(object):
+class BaseObjectType(BaseType):
 
     def __new__(cls, *args, **kwargs):
         if cls._meta.is_interface:
@@ -165,14 +163,16 @@ class BaseObjectType(object):
                     pass
             if kwargs:
                 raise TypeError(
-                    "'%s' is an invalid keyword argument for this function" % list(kwargs)[0])
+                    "'%s' is an invalid keyword argument for this function" %
+                    list(kwargs)[0])
 
         signals.post_init.send(self.__class__, instance=self)
 
     @classmethod
     def fields_as_arguments(cls, schema):
-        return OrderedDict([(f.attname, GraphQLArgument(f.internal_type(schema)))
-                            for f in cls._meta.fields])
+        return OrderedDict(
+            [(f.attname, GraphQLArgument(f.internal_type(schema)))
+             for f in cls._meta.fields])
 
     @classmethod
     def resolve_objecttype(cls, schema, instance, *args):
@@ -185,22 +185,31 @@ class BaseObjectType(object):
 
     @classmethod
     def internal_type(cls, schema):
-        fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
-                                      for f in cls._meta.fields])
         if cls._meta.is_interface:
             return GraphQLInterfaceType(
                 cls._meta.type_name,
                 description=cls._meta.description,
                 resolve_type=partial(cls.resolve_type, schema),
-                fields=fields
+                fields=partial(cls.get_fields, schema)
             )
         return GraphQLObjectType(
             cls._meta.type_name,
             description=cls._meta.description,
             interfaces=[schema.T(i) for i in cls._meta.interfaces],
-            fields=fields,
+            fields=partial(cls.get_fields, schema),
             is_type_of=getattr(cls, 'is_type_of', None)
         )
+
+    @classmethod
+    def get_fields(cls, schema):
+        fields = []
+        for field in cls._meta.fields:
+            try:
+                fields.append((field.name, schema.T(field)))
+            except SkipField:
+                continue
+
+        return OrderedDict(fields)
 
 
 class Interface(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
@@ -212,20 +221,33 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
+    @classmethod
+    def _construct_arguments(cls, items):
+        return ArgumentsGroup(**items)
 
     @classmethod
-    def get_input_type(cls):
-        return getattr(cls, 'input_type', None)
+    def _prepare_class(cls):
+        input_class = getattr(cls, 'Input', None)
+        if input_class:
+            items = dict(vars(input_class))
+            items.pop('__dict__', None)
+            items.pop('__doc__', None)
+            items.pop('__module__', None)
+            items.pop('__weakref__', None)
+            cls.add_to_class('arguments', cls._construct_arguments(items))
+            delattr(cls, 'Input')
+
+    @classmethod
+    def get_arguments(cls):
+        return cls.arguments
 
 
 class InputObjectType(ObjectType):
 
     @classmethod
     def internal_type(cls, schema):
-        fields = lambda: OrderedDict([(f.name, f.internal_field(schema))
-                                      for f in cls._meta.fields])
         return GraphQLInputObjectType(
             cls._meta.type_name,
             description=cls._meta.description,
-            fields=fields,
+            fields=partial(cls.get_fields, schema),
         )

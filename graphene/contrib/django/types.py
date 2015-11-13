@@ -46,11 +46,13 @@ class InstanceObjectType(BaseObjectType):
         return getattr(self.instance, attr)
 
 
-class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, InstanceObjectType)):
+class DjangoObjectType(six.with_metaclass(
+        DjangoObjectTypeMeta, InstanceObjectType)):
     pass
 
 
-class DjangoInterface(six.with_metaclass(DjangoObjectTypeMeta, InstanceObjectType)):
+class DjangoInterface(six.with_metaclass(
+        DjangoObjectTypeMeta, InstanceObjectType)):
     pass
 
 

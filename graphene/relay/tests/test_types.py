@@ -7,7 +7,7 @@ schema = graphene.Schema()
 
 
 class OtherNode(relay.Node):
-    name = graphene.StringField()
+    name = graphene.String()
 
     @classmethod
     def get_node(cls, id):
@@ -17,7 +17,7 @@ class OtherNode(relay.Node):
 def test_field_no_contributed_raises_error():
     with raises(Exception) as excinfo:
         class Part(relay.Node):
-            x = graphene.StringField()
+            x = graphene.String()
 
     assert 'get_node' in str(excinfo.value)
 

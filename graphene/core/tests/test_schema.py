@@ -1,27 +1,24 @@
-
 from py.test import raises
-from pytest import raises
 
-from graphene import Interface, ObjectType, Schema
-from graphene.core.fields import Field, ListField, StringField
+from graphene import Interface, List, ObjectType, Schema, String
+from graphene.core.fields import Field
+from graphene.core.types.base import LazyType
 from graphql.core import graphql
-from graphql.core.type import (GraphQLInterfaceType, GraphQLObjectType,
-                               GraphQLSchema)
 from tests.utils import assert_equal_lists
 
 schema = Schema(name='My own schema')
 
 
 class Character(Interface):
-    name = StringField()
+    name = String()
 
 
 class Pet(ObjectType):
-    type = StringField(resolve=lambda *_: 'Dog')
+    type = String(resolver=lambda *_: 'Dog')
 
 
 class Human(Character):
-    friends = ListField(Character)
+    friends = List(Character)
     pet = Field(Pet)
 
     def resolve_name(self, *args):
@@ -95,9 +92,9 @@ def test_query_schema_execute():
 def test_schema_get_type_map():
     assert_equal_lists(
         schema.schema.get_type_map().keys(),
-        ['__Field', 'String', 'Pet', 'Character', '__InputValue', '__Directive',
-            '__TypeKind', '__Schema', '__Type', 'Human', '__EnumValue', 'Boolean']
-    )
+        ['__Field', 'String', 'Pet', 'Character', '__InputValue',
+         '__Directive', '__TypeKind', '__Schema', '__Type', 'Human',
+         '__EnumValue', 'Boolean'])
 
 
 def test_schema_no_query():
@@ -112,19 +109,19 @@ def test_schema_register():
 
     @schema.register
     class MyType(ObjectType):
-        type = StringField(resolve=lambda *_: 'Dog')
+        type = String(resolver=lambda *_: 'Dog')
 
     schema.query = MyType
 
     assert schema.get_type('MyType') == MyType
 
 
-def test_schema_register():
+def test_schema_register_no_query_type():
     schema = Schema(name='My own schema')
 
     @schema.register
     class MyType(ObjectType):
-        type = StringField(resolve=lambda *_: 'Dog')
+        type = String(resolver=lambda *_: 'Dog')
 
     with raises(Exception) as excinfo:
         schema.get_type('MyType')
@@ -135,9 +132,23 @@ def test_schema_introspect():
     schema = Schema(name='My own schema')
 
     class MyType(ObjectType):
-        type = StringField(resolve=lambda *_: 'Dog')
+        type = String(resolver=lambda *_: 'Dog')
 
     schema.query = MyType
 
     introspection = schema.introspect()
     assert '__schema' in introspection
+
+
+def test_lazytype():
+    schema = Schema(name='My own schema')
+
+    t = LazyType('MyType')
+
+    @schema.register
+    class MyType(ObjectType):
+        type = String(resolver=lambda *_: 'Dog')
+
+    schema.query = MyType
+
+    assert schema.T(t) == schema.T(MyType)

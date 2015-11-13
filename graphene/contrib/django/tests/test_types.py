@@ -2,12 +2,15 @@
 
 from graphene import Schema
 from graphene.contrib.django.types import DjangoInterface, DjangoNode
-from graphene.core.fields import IntField
+from graphene.core.fields import Field
+from graphene.core.types.scalars import Int
 from graphene.relay.fields import GlobalIDField
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 from tests.utils import assert_equal_lists
 
 from .models import Article, Reporter
+
+schema = Schema()
 
 
 class Character(DjangoInterface):
@@ -16,10 +19,11 @@ class Character(DjangoInterface):
         model = Reporter
 
 
+@schema.register
 class Human(DjangoNode):
     '''Human description'''
 
-    pub_date = IntField()
+    pub_date = Int()
 
     def get_node(self, id):
         pass
@@ -27,14 +31,12 @@ class Human(DjangoNode):
     class Meta:
         model = Article
 
-schema = Schema()
-
 
 def test_django_interface():
     assert DjangoNode._meta.is_interface is True
 
 
-def test_pseudo_interface():
+def test_pseudo_interface_registered():
     object_type = schema.T(Character)
     assert Character._meta.is_interface is True
     assert isinstance(object_type, GraphQLInterfaceType)
@@ -57,7 +59,8 @@ def test_node_idfield():
 
 def test_node_replacedfield():
     idfield = Human._meta.fields_map['pub_date']
-    assert isinstance(idfield, IntField)
+    assert isinstance(idfield, Field)
+    assert schema.T(idfield).type == schema.T(Int())
 
 
 def test_interface_resolve_type():

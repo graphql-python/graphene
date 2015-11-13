@@ -35,9 +35,9 @@ Here is one example for get you started:
 .. code:: python
 
     class Query(graphene.ObjectType):
-        hello = graphene.StringField(description='A typical hello world')
-        ping = graphene.StringField(description='Ping someone',
-                                    to=graphene.Argument(graphene.String))
+        hello = graphene.String(description='A typical hello world')
+        ping = graphene.String(description='Ping someone',
+                               to=graphene.String())
 
         def resolve_hello(self, args, info):
             return 'World'

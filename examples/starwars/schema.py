@@ -12,10 +12,10 @@ Episode = graphene.Enum('Episode', dict(
 
 
 class Character(graphene.Interface):
-    id = graphene.IDField()
-    name = graphene.StringField()
-    friends = graphene.ListField('self')
-    appears_in = graphene.ListField(Episode)
+    id = graphene.ID()
+    name = graphene.String()
+    friends = graphene.List('Character')
+    appears_in = graphene.List(Episode)
 
     def resolve_friends(self, args, *_):
         # The character friends is a list of strings
@@ -23,11 +23,11 @@ class Character(graphene.Interface):
 
 
 class Human(Character):
-    home_planet = graphene.StringField()
+    home_planet = graphene.String()
 
 
 class Droid(Character):
-    primary_function = graphene.StringField()
+    primary_function = graphene.String()
 
 
 class Query(graphene.ObjectType):
@@ -35,10 +35,10 @@ class Query(graphene.ObjectType):
                           episode=graphene.Argument(Episode)
                           )
     human = graphene.Field(Human,
-                           id=graphene.Argument(graphene.String)
+                           id=graphene.String()
                            )
     droid = graphene.Field(Droid,
-                           id=graphene.Argument(graphene.String)
+                           id=graphene.String()
                            )
 
     @resolve_only_args

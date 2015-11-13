@@ -1,0 +1,2 @@
+class SkipField(Exception):
+    pass

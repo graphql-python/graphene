@@ -32,6 +32,7 @@ class DjangoOptions(Options):
             return
         if not self.model:
             raise Exception(
-                'Django ObjectType %s must have a model in the Meta class attr' % cls)
+                'Django ObjectType %s must have a model in the Meta class attr' %
+                cls)
         elif not inspect.isclass(self.model) or not issubclass(self.model, models.Model):
             raise Exception('Provided model in %s is not a Django model' % cls)

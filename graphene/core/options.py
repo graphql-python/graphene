@@ -52,7 +52,9 @@ class Options(object):
             # Any leftover attributes must be invalid.
             if meta_attrs != {}:
                 raise TypeError(
-                    "'class Meta' got invalid attribute(s): %s" % ','.join(meta_attrs.keys()))
+                    "'class Meta' got invalid attribute(s): %s" %
+                    ','.join(
+                        meta_attrs.keys()))
         else:
             self.proxy = False
 

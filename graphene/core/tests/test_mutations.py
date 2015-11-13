@@ -1,4 +1,3 @@
-
 import graphene
 from graphene.core.schema import Schema
 
@@ -6,15 +5,15 @@ my_id = 0
 
 
 class Query(graphene.ObjectType):
-    base = graphene.StringField()
+    base = graphene.String()
 
 
 class ChangeNumber(graphene.Mutation):
     '''Result mutation'''
     class Input:
-        to = graphene.IntField()
+        to = graphene.Int()
 
-    result = graphene.StringField()
+    result = graphene.String()
 
     @classmethod
     def mutate(cls, instance, args, info):
@@ -31,9 +30,7 @@ schema = Schema(query=Query, mutation=MyResultMutation)
 
 
 def test_mutation_input():
-    assert ChangeNumber.input_type
-    assert ChangeNumber.input_type._meta.type_name == 'ChangeNumberInput'
-    assert list(ChangeNumber.input_type._meta.fields_map.keys()) == ['to']
+    assert list(schema.T(ChangeNumber.arguments).keys()) == ['to']
 
 
 def test_execute_mutations():

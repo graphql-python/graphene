@@ -1,9 +1,7 @@
 from py.test import raises
-from pytest import raises
 
-from graphene.core.fields import IntField, StringField
 from graphene.core.schema import Schema
-from graphene.core.types import Interface
+from graphene.core.types import Int, Interface, String
 from graphql.core.execution.middlewares.utils import (resolver_has_tag,
                                                       tag_resolver)
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
@@ -11,7 +9,7 @@ from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 
 class Character(Interface):
     '''Character description'''
-    name = StringField()
+    name = String()
 
     class Meta:
         type_name = 'core_Character'
@@ -19,7 +17,7 @@ class Character(Interface):
 
 class Human(Character):
     '''Human description'''
-    friends = StringField()
+    friends = String()
 
     class Meta:
         type_name = 'core_Human'
@@ -66,9 +64,6 @@ def test_object_type():
     assert isinstance(object_type, GraphQLObjectType)
     assert object_type.description == 'Human description'
     assert list(object_type.get_fields().keys()) == ['name', 'friends']
-    # assert object_type.get_fields() == {'name': Human._meta.fields_map['name'].internal_field(
-    # schema), 'friends':
-    # Human._meta.fields_map['friends'].internal_field(schema)}
     assert object_type.get_interfaces() == [schema.T(Character)]
     assert Human._meta.fields_map['name'].object_type == Human
 
@@ -97,7 +92,7 @@ def test_object_type_container_too_many_args():
 def test_field_clashes():
     with raises(Exception) as excinfo:
         class Droid(Character):
-            name = IntField()
+            name = Int()
 
     assert 'clashes' in str(excinfo.value)
 
@@ -108,12 +103,26 @@ def test_fields_inherited_should_be_different():
 
 def test_field_mantain_resolver_tags():
     class Droid(Character):
-        name = StringField()
+        name = String()
 
         def resolve_name(self, *args):
             return 'My Droid'
 
         tag_resolver(resolve_name, 'test')
 
-    field = Droid._meta.fields_map['name'].internal_field(schema)
+    field = schema.T(Droid._meta.fields_map['name'])
     assert resolver_has_tag(field.resolver, 'test')
+
+
+def test_type_has_nonnull():
+    class Droid(Character):
+        name = String()
+
+    assert Droid.NonNull.of_type == Droid
+
+
+def test_type_has_list():
+    class Droid(Character):
+        name = String()
+
+    assert Droid.List.of_type == Droid

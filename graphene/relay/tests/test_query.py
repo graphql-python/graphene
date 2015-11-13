@@ -6,22 +6,22 @@ schema = graphene.Schema()
 
 
 class MyConnection(relay.Connection):
-    my_custom_field = graphene.StringField(
-        resolve=lambda instance, *_: 'Custom')
+    my_custom_field = graphene.String(
+        resolver=lambda instance, *_: 'Custom')
 
 
 class MyNode(relay.Node):
-    name = graphene.StringField()
+    name = graphene.String()
 
     @classmethod
     def get_node(cls, id):
-        return MyNode(name='mo')
+        return MyNode(id=id, name='mo')
 
 
 class Query(graphene.ObjectType):
     my_node = relay.NodeField(MyNode)
     all_my_nodes = relay.ConnectionField(
-        MyNode, connection_type=MyConnection, customArg=graphene.Argument(graphene.String))
+        MyNode, connection_type=MyConnection, customArg=graphene.String())
 
     def resolve_all_my_nodes(self, args, info):
         custom_arg = args.get('customArg')
@@ -35,6 +35,7 @@ def test_nodefield_query():
     query = '''
     query RebelsShipsQuery {
       myNode(id:"TXlOb2RlOjE=") {
+        id
         name
       },
       allMyNodes (customArg:"1") {
@@ -52,6 +53,7 @@ def test_nodefield_query():
     '''
     expected = {
         'myNode': {
+            'id': 'TXlOb2RlOjE=',
             'name': 'mo'
         },
         'allMyNodes': {
@@ -73,5 +75,6 @@ def test_nodefield_query():
 
 def test_nodeidfield():
     id_field = MyNode._meta.fields_map['id']
-    assert isinstance(id_field.internal_field(schema).type, GraphQLNonNull)
-    assert id_field.internal_field(schema).type.of_type == GraphQLID
+    id_field_type = schema.T(id_field)
+    assert isinstance(id_field_type.type, GraphQLNonNull)
+    assert id_field_type.type.of_type == GraphQLID
