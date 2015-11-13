@@ -60,6 +60,8 @@ class GraphQLView(View):
                 query = received_json_data.get('query')
             except ValueError:
                 return self.response_errors(ValueError("Malformed json body in the post data"))
+        elif content_type == 'application/graphql':
+            query = request.body.decode()
         else:
             query = request.POST.get('query') or request.GET.get('query')
         return self.execute_query(request, query or '')
