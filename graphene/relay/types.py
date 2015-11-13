@@ -110,23 +110,13 @@ class ClientIDMutation(Mutation):
     client_mutation_id = String(required=True)
 
     @classmethod
-    def _prepare_class(cls):
-        input_class = getattr(cls, 'Input', None)
-        if input_class:
-            assert hasattr(
-                cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
-
-            items = dict(vars(input_class))
-            items.pop('__dict__', None)
-            items.pop('__doc__', None)
-            items.pop('__module__', None)
-            items.pop('__weakref__', None)
-            new_input_type = type('{}Input'.format(
-                cls._meta.type_name), (MutationInputType, ), items)
-            cls.add_to_class('input_type', new_input_type)
-            arguments = ArgumentsGroup(input=NonNull(new_input_type))
-            cls.add_to_class('arguments', arguments)
-            delattr(cls, 'Input')
+    def _construct_arguments(cls, items):
+        assert hasattr(
+            cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
+        new_input_type = type('{}Input'.format(
+            cls._meta.type_name), (MutationInputType, ), items)
+        cls.add_to_class('input_type', new_input_type)
+        return ArgumentsGroup(input=NonNull(new_input_type))
 
     @classmethod
     def mutate(cls, instance, args, info):

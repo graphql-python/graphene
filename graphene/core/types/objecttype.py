@@ -221,6 +221,9 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
 
 
 class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
+    @classmethod
+    def _construct_arguments(cls, items):
+        return ArgumentsGroup(**items)
 
     @classmethod
     def _prepare_class(cls):
@@ -231,8 +234,7 @@ class Mutation(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
             items.pop('__doc__', None)
             items.pop('__module__', None)
             items.pop('__weakref__', None)
-            arguments = ArgumentsGroup(**items)
-            cls.add_to_class('arguments', arguments)
+            cls.add_to_class('arguments', cls._construct_arguments(items))
             delattr(cls, 'Input')
 
     @classmethod
