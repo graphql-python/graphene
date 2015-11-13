@@ -29,7 +29,7 @@ def test_client_post_malformed_json(settings, client):
         {'message': 'Malformed json body in the post data'}]}
 
 
-def test_client_post_empty_query(settings, client):
+def test_client_post_empty_query_json(settings, client):
     settings.ROOT_URLCONF = 'graphene.contrib.django.tests.test_urls'
     response = client.post(
         '/graphql', json.dumps({'query': ''}), 'application/json')
@@ -38,10 +38,29 @@ def test_client_post_empty_query(settings, client):
         {'message': 'Must provide query string.'}]}
 
 
-def test_client_post_bad_query(settings, client):
+def test_client_post_empty_query_graphql(settings, client):
+    settings.ROOT_URLCONF = 'graphene.contrib.django.tests.test_urls'
+    response = client.post(
+        '/graphql', '', 'application/graphql')
+    json_response = format_response(response)
+    assert json_response == {'errors': [
+        {'message': 'Must provide query string.'}]}
+
+
+def test_client_post_bad_query_json(settings, client):
     settings.ROOT_URLCONF = 'graphene.contrib.django.tests.test_urls'
     response = client.post(
         '/graphql', json.dumps({'query': '{ MALFORMED'}), 'application/json')
+    json_response = format_response(response)
+    assert 'errors' in json_response
+    assert len(json_response['errors']) == 1
+    assert 'Syntax Error GraphQL' in json_response['errors'][0]['message']
+
+
+def test_client_post_bad_query_graphql(settings, client):
+    settings.ROOT_URLCONF = 'graphene.contrib.django.tests.test_urls'
+    response = client.post(
+        '/graphql', '{ MALFORMED', 'application/graphql')
     json_response = format_response(response)
     assert 'errors' in json_response
     assert len(json_response['errors']) == 1
@@ -69,7 +88,7 @@ def test_client_get_good_query_with_raise(settings, client):
     assert json_response['data']['raises'] is None
 
 
-def test_client_post_good_query(settings, client):
+def test_client_post_good_query_json(settings, client):
     settings.ROOT_URLCONF = 'graphene.contrib.django.tests.test_urls'
     response = client.post(
         '/graphql', json.dumps({'query': '{ headline }'}), 'application/json')
@@ -82,8 +101,21 @@ def test_client_post_good_query(settings, client):
     assert json_response == expected_json
 
 
+def test_client_post_good_query_graphql(settings, client):
+    settings.ROOT_URLCONF = 'graphene.contrib.django.tests.test_urls'
+    response = client.post(
+        '/graphql', '{ headline }', 'application/graphql')
+    json_response = format_response(response)
+    expected_json = {
+        'data': {
+            'headline': None
+        }
+    }
+    assert json_response == expected_json
+
+
 # def test_client_get_bad_query(settings, client):
-#     settings.ROOT_URLCONF = 'tests.contrib_django.test_urls'
+#     settings.ROOT_URLCONF = 'graphene.contrib.django.tests.test_urls'
 #     response = client.get('/graphql')
 #     json_response = format_response(response)
 #     assert json_response == {'errors': [{'message': 'Must provide query string.'}]}
