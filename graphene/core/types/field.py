@@ -1,23 +1,14 @@
 from collections import OrderedDict
-from functools import wraps
 
 import six
 
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
-from ...utils import ProxySnakeDict, to_camel_case
+from ...utils import to_camel_case
 from ..types import BaseObjectType, InputObjectType
-from .argument import ArgumentsGroup
+from .argument import ArgumentsGroup, snake_case_args
 from .base import LazyType, MountType, OrderedType
 from .definitions import NonNull
-
-
-def make_args_snake_case(resolver):
-    @wraps(resolver)
-    def wrapped_resolver(instance, args, info):
-        return resolver(instance, ProxySnakeDict(args), info)
-
-    return wrapped_resolver
 
 
 class Empty(object):
@@ -91,7 +82,7 @@ class Field(OrderedType):
             arguments = type_objecttype.get_arguments()
             resolver = getattr(type_objecttype, 'mutate')
 
-        resolver = make_args_snake_case(resolver)
+        resolver = snake_case_args(resolver)
         assert type, 'Internal type for field %s is None' % str(self)
         return GraphQLField(type, args=schema.T(arguments), resolver=resolver,
                             description=description,)

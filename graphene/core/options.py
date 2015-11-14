@@ -3,7 +3,7 @@ from collections import OrderedDict
 from graphene.utils import cached_property
 
 DEFAULT_NAMES = ('description', 'name', 'is_interface', 'is_mutation',
-                 'type_name', 'interfaces', 'proxy')
+                 'type_name', 'interfaces')
 
 
 class Options(object):
@@ -13,7 +13,6 @@ class Options(object):
         self.local_fields = []
         self.is_interface = False
         self.is_mutation = False
-        self.proxy = False
         self.interfaces = []
         self.parents = []
         self.valid_attrs = DEFAULT_NAMES
@@ -55,8 +54,6 @@ class Options(object):
                     "'class Meta' got invalid attribute(s): %s" %
                     ','.join(
                         meta_attrs.keys()))
-        else:
-            self.proxy = False
 
         del self.meta
 

@@ -1,9 +1,10 @@
 from collections import OrderedDict
+from functools import wraps
 from itertools import chain
 
 from graphql.core.type import GraphQLArgument
 
-from ...utils import to_camel_case
+from ...utils import to_camel_case, ProxySnakeDict
 from .base import ArgumentType, BaseType, OrderedType
 
 
@@ -69,3 +70,11 @@ def to_arguments(*args, **kwargs):
         arguments[argument.name] = argument
 
     return sorted(arguments.values())
+
+
+def snake_case_args(resolver):
+    @wraps(resolver)
+    def wrapped_resolver(instance, args, info):
+        return resolver(instance, ProxySnakeDict(args), info)
+
+    return wrapped_resolver

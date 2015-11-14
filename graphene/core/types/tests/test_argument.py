@@ -4,7 +4,7 @@ from graphene.core.schema import Schema
 from graphene.core.types import ObjectType
 from graphql.core.type import GraphQLArgument
 
-from ..argument import Argument, to_arguments
+from ..argument import Argument, to_arguments, snake_case_args
 from ..scalars import String
 
 
@@ -45,3 +45,9 @@ def test_to_arguments_wrong_type():
             p=3
         )
     assert 'Unknown argument p=3' == str(excinfo.value)
+
+
+def test_snake_case_args():
+    resolver = lambda instance, args, info: args['my_arg']['inner_arg']
+    r = snake_case_args(resolver)
+    assert r(None, {'myArg': {'innerArg': 3}}, None) == 3

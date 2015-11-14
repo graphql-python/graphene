@@ -169,19 +169,8 @@ class BaseObjectType(BaseType):
         signals.post_init.send(self.__class__, instance=self)
 
     @classmethod
-    def fields_as_arguments(cls, schema):
-        return OrderedDict(
-            [(f.attname, GraphQLArgument(f.internal_type(schema)))
-             for f in cls._meta.fields])
-
-    @classmethod
-    def resolve_objecttype(cls, schema, instance, *args):
-        return instance.__class__
-
-    @classmethod
     def resolve_type(cls, schema, instance, *args):
-        objecttype = cls.resolve_objecttype(schema, instance, *args)
-        return schema.T(objecttype)
+        return schema.T(instance.__class__)
 
     @classmethod
     def internal_type(cls, schema):

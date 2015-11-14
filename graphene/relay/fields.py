@@ -1,6 +1,7 @@
 from collections import Iterable
 
 from graphene.core.fields import Field
+from graphene.core.types.definitions import NonNull
 from graphene.core.types.scalars import ID, Int, String
 from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import from_global_id
@@ -67,6 +68,7 @@ class ConnectionField(Field):
 
 
 class NodeField(Field):
+    '''Fetches an object given its ID'''
 
     def __init__(self, object_type=None, *args, **kwargs):
         from graphene.relay.types import Node
@@ -96,8 +98,7 @@ class GlobalIDField(Field):
     '''The ID of an object'''
 
     def __init__(self, *args, **kwargs):
-        super(GlobalIDField, self).__init__(ID(), *args, **kwargs)
-        self.required = True
+        super(GlobalIDField, self).__init__(NonNull(ID()), *args, **kwargs)
 
     def contribute_to_class(self, cls, name):
         from graphene.relay.utils import is_node, is_node_type

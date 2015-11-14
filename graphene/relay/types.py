@@ -99,7 +99,7 @@ class BaseNode(object):
 
 class Node(BaseNode, Interface):
     '''An object with an ID'''
-    id = GlobalIDField(required=True)
+    id = GlobalIDField()
 
 
 class MutationInputType(InputObjectType):
