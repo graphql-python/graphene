@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
 
-from graphene.utils import LazyMap
+from ...utils import LazyMap
 
 
 def get_type_for_model(schema, model):

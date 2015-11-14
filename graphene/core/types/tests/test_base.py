@@ -4,8 +4,8 @@ from graphene.core.types import InputObjectType, ObjectType
 
 from ..argument import Argument
 from ..base import MountedType, OrderedType
-from ..field import Field, InputField
 from ..definitions import List, NonNull
+from ..field import Field, InputField
 
 
 def test_orderedtype_equal():

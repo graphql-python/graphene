@@ -4,7 +4,7 @@ from itertools import chain
 
 from graphql.core.type import GraphQLArgument
 
-from ...utils import to_camel_case, ProxySnakeDict
+from ...utils import ProxySnakeDict, to_camel_case
 from .base import ArgumentType, BaseType, OrderedType
 
 

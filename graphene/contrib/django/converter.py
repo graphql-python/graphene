@@ -1,9 +1,8 @@
 from django.db import models
 from singledispatch import singledispatch
 
-from graphene.contrib.django.fields import (ConnectionOrListField,
-                                            DjangoModelField)
-from graphene.core.types.scalars import ID, Boolean, Float, Int, String
+from ...core.types.scalars import ID, Boolean, Float, Int, String
+from .fields import ConnectionOrListField, DjangoModelField
 
 try:
     UUIDField = models.UUIDField

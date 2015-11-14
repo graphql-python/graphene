@@ -1,4 +1,4 @@
-from graphene.relay.types import BaseNode
+from .types import BaseNode
 
 
 def is_node(object_type):

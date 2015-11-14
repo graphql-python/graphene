@@ -1,10 +1,11 @@
 from collections import Iterable
 
-from graphene.core.fields import Field
-from graphene.core.types.definitions import NonNull
-from graphene.core.types.scalars import ID, Int, String
 from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import from_global_id
+
+from ..core.fields import Field
+from ..core.types.definitions import NonNull
+from ..core.types.scalars import ID, Int, String
 
 
 class ConnectionField(Field):

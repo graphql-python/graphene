@@ -4,7 +4,7 @@ from graphene.core.schema import Schema
 from graphene.core.types import ObjectType
 from graphql.core.type import GraphQLArgument
 
-from ..argument import Argument, to_arguments, snake_case_args
+from ..argument import Argument, snake_case_args, to_arguments
 from ..scalars import String
 
 

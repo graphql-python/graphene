@@ -1,13 +1,13 @@
-from graphene import relay
-from graphene.contrib.django.utils import get_type_for_model, lazy_map
-from graphene.core.exceptions import SkipField
-from graphene.core.fields import Field
-from graphene.core.types.base import FieldType
-from graphene.core.types.definitions import List
-from graphene.relay.utils import is_node
+from ...core.exceptions import SkipField
+from ...core.fields import Field
+from ...core.types.base import FieldType
+from ...core.types.definitions import List
+from ...relay import ConnectionField
+from ...relay.utils import is_node
+from .utils import get_type_for_model, lazy_map
 
 
-class DjangoConnectionField(relay.ConnectionField):
+class DjangoConnectionField(ConnectionField):
 
     def wrap_resolved(self, value, instance, args, info):
         schema = info.schema.graphene_schema

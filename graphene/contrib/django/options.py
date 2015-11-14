@@ -2,9 +2,9 @@ import inspect
 
 from django.db import models
 
-from graphene.core.options import Options
-from graphene.relay.types import Node
-from graphene.relay.utils import is_node
+from ...core.options import Options
+from ...relay.types import Node
+from ...relay.utils import is_node
 
 VALID_ATTRS = ('model', 'only_fields', 'exclude_fields')
 
