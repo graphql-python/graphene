@@ -1,7 +1,8 @@
 import collections
 
-from graphene.utils.misc import enum_to_graphql_enum
 from graphql.core.type import GraphQLEnumType
+
+from ..misc import enum_to_graphql_enum
 
 item = collections.namedtuple('type', 'name value')
 

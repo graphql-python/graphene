@@ -1,6 +1,6 @@
 from py.test import raises
 
-from graphene.utils import ProxySnakeDict
+from ..proxy_snake_dict import ProxySnakeDict
 
 
 def test_proxy_snake_dict():

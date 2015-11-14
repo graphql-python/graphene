@@ -1,4 +1,4 @@
-from graphene.utils import to_camel_case, to_snake_case
+from ..str_converters import to_camel_case, to_snake_case
 
 
 def test_snake_case():

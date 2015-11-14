@@ -31,7 +31,7 @@ class LazyMap(object):
         return self.__next__()
 
     def __getitem__(self, key):
-        item = self._origin.__getitem__(key)
+        item = self._origin[key]
         if isinstance(key, slice):
             return LazyMap(item, self._map)
         return self._map(item)
