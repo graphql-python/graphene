@@ -1,11 +1,10 @@
-
+from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 
 from graphene import Schema
 from graphene.contrib.django.types import DjangoInterface, DjangoNode
 from graphene.core.fields import Field
 from graphene.core.types.scalars import Int
 from graphene.relay.fields import GlobalIDField
-from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 from tests.utils import assert_equal_lists
 
 from .models import Article, Reporter
@@ -77,12 +76,6 @@ def test_object_type():
         object_type.get_fields().keys(),
         ['headline', 'id', 'reporter', 'pubDate']
     )
-    # assert object_type.get_fields() == {
-    #     'headline': fields_map['headline'].internal_field(schema),
-    #     'id': fields_map['id'].internal_field(schema),
-    #     'reporter': fields_map['reporter'].internal_field(schema),
-    #     'pubDate': fields_map['pub_date'].internal_field(schema),
-    # }
     assert schema.T(DjangoNode) in object_type.get_interfaces()
 
 
