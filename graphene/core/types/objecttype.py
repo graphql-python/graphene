@@ -6,8 +6,8 @@ from functools import partial
 import six
 
 from graphene import signals
-from graphql.core.type import (GraphQLArgument, GraphQLInputObjectType,
-                               GraphQLInterfaceType, GraphQLObjectType)
+from graphql.core.type import (GraphQLInputObjectType, GraphQLInterfaceType,
+                               GraphQLObjectType)
 
 from ..exceptions import SkipField
 from ..options import Options
