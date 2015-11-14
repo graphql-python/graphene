@@ -37,7 +37,7 @@ from graphene.core.fields import (
     FloatField,
 )
 
-from graphene.decorators import (
+from graphene.utils import (
     resolve_only_args
 )
 
