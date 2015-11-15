@@ -51,10 +51,6 @@ class Field(OrderedType):
     def resolver(self):
         return self.resolver_fn or self.get_resolver_fn()
 
-    @resolver.setter
-    def resolver(self, value):
-        self.resolver_fn = value
-
     def get_resolver_fn(self):
         resolve_fn_name = 'resolve_%s' % self.attname
         if hasattr(self.object_type, resolve_fn_name):

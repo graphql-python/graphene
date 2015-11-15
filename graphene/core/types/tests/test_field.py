@@ -66,6 +66,13 @@ def test_field_self():
     assert schema.T(field).type == schema.T(MyObjectType)
 
 
+def test_field_eq():
+    field = Field('self', name='my_customName')
+    field2 = Field('self', name='my_customName')
+    assert field == field
+    assert field2 != field
+
+
 def test_field_mounted():
     field = Field(List('MyObjectType'), name='my_customName')
 

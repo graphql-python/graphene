@@ -1,3 +1,5 @@
+from mock import patch
+
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 
 from graphene import Schema
@@ -24,15 +26,18 @@ class Human(DjangoNode):
 
     pub_date = Int()
 
-    def get_node(self, id):
-        pass
-
     class Meta:
         model = Article
 
 
 def test_django_interface():
     assert DjangoNode._meta.is_interface is True
+
+
+@patch('graphene.contrib.django.tests.models.Article.objects.filter')
+def test_django_get_node(objects):
+    Human.get_node(1)
+    objects.assert_called_with(id=1)
 
 
 def test_pseudo_interface_registered():
