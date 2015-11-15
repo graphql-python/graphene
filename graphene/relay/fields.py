@@ -81,7 +81,10 @@ class NodeField(Field):
     def id_fetcher(self, global_id, info):
         from graphene.relay.utils import is_node
         schema = info.schema.graphene_schema
-        resolved_global_id = from_global_id(global_id)
+        try:
+            resolved_global_id = from_global_id(global_id)
+        except:
+            return None
         _type, _id = resolved_global_id.type, resolved_global_id.id
         object_type = schema.get_type(_type)
         if not is_node(object_type) or (self.field_object_type and

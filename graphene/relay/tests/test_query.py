@@ -38,6 +38,10 @@ def test_nodefield_query():
         id
         name
       },
+      false: myNode(id:"WrongNodeId") {
+        id
+        name
+      },
       allMyNodes (customArg:"1") {
         edges {
           node {
@@ -56,6 +60,7 @@ def test_nodefield_query():
             'id': 'TXlOb2RlOjE=',
             'name': 'mo'
         },
+        'false': None,
         'allMyNodes': {
             'edges': [{
                 'node': {
