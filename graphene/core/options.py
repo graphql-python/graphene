@@ -13,8 +13,10 @@ class Options(object):
         self.local_fields = []
         self.is_interface = False
         self.is_mutation = False
+        self.is_union = False
         self.interfaces = []
         self.parents = []
+        self.types = []
         self.valid_attrs = DEFAULT_NAMES
 
     def contribute_to_class(self, cls, name):

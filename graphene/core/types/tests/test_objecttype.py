@@ -4,7 +4,8 @@ from graphene.core.schema import Schema
 from graphene.core.types import Int, Interface, String
 from graphql.core.execution.middlewares.utils import (resolver_has_tag,
                                                       tag_resolver)
-from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
+from graphql.core.type import (GraphQLInterfaceType, GraphQLObjectType,
+                               GraphQLUnionType)
 
 
 class Character(Interface):
@@ -34,6 +35,16 @@ class Human(Character):
     def write_prop(self, value):
         self._write_prop = value
 
+
+class Droid(Character):
+    '''Droid description'''
+    pass
+
+
+class CharacterType(Droid, Human):
+    '''Union Type'''
+    pass
+
 schema = Schema()
 
 
@@ -50,6 +61,19 @@ def test_interface_cannot_initialize():
     with raises(Exception) as excinfo:
         Character()
     assert 'An interface cannot be initialized' == str(excinfo.value)
+
+
+def test_union():
+    object_type = schema.T(CharacterType)
+    assert CharacterType._meta.is_union is True
+    assert isinstance(object_type, GraphQLUnionType)
+    assert object_type.description == 'Union Type'
+
+
+def test_union_cannot_initialize():
+    with raises(Exception) as excinfo:
+        CharacterType()
+    assert 'An union cannot be initialized' == str(excinfo.value)
 
 
 def test_interface_resolve_type():

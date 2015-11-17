@@ -12,9 +12,9 @@ easily.
    `Django <http://github.com/graphql-python/swapi-graphene>`__
    implementation
 
-*But, what is supported in this Python version?* **Everything**:
-Interfaces, ObjectTypes, Mutations and Relay (Nodes, Connections and
-Mutations).
+*What is supported in this Python version?* **Everything**: Interfaces,
+ObjectTypes, Mutations, Scalars, Unions and Relay (Nodes, Connections
+and Mutations).
 
 Installation
 ------------

@@ -7,7 +7,7 @@ import six
 
 from graphene import signals
 from graphql.core.type import (GraphQLInputObjectType, GraphQLInterfaceType,
-                               GraphQLObjectType)
+                               GraphQLObjectType, GraphQLUnionType)
 
 from ..exceptions import SkipField
 from ..options import Options
@@ -51,9 +51,16 @@ class ObjectTypeMeta(type):
 
         new_class._meta.is_interface = new_class.is_interface(parents)
         new_class._meta.is_mutation = new_class.is_mutation(parents)
+        union_types = [p for p in parents if issubclass(p, BaseObjectType)]
+
+        new_class._meta.is_union = len(union_types) > 1
+        new_class._meta.types = union_types
 
         assert not (
             new_class._meta.is_interface and new_class._meta.is_mutation)
+
+        assert not (
+            new_class._meta.is_interface and new_class._meta.is_union)
 
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
@@ -66,6 +73,8 @@ class ObjectTypeMeta(type):
         new_class.add_extra_fields()
 
         new_fields = new_class._meta.local_fields
+        assert not(new_class._meta.is_union and new_fields), 'An union cannot have extra fields'
+
         field_names = {f.name: f for f in new_fields}
 
         for base in parents:
@@ -129,6 +138,8 @@ class BaseObjectType(BaseType):
     def __new__(cls, *args, **kwargs):
         if cls._meta.is_interface:
             raise Exception("An interface cannot be initialized")
+        if cls._meta.is_union:
+            raise Exception("An union cannot be initialized")
         return super(BaseObjectType, cls).__new__(cls)
 
     def __init__(self, *args, **kwargs):
@@ -181,6 +192,12 @@ class BaseObjectType(BaseType):
                 description=cls._meta.description,
                 resolve_type=partial(cls.resolve_type, schema),
                 fields=partial(cls.get_fields, schema)
+            )
+        elif cls._meta.is_union:
+            return GraphQLUnionType(
+                cls._meta.type_name,
+                types=cls._meta.types,
+                description=cls._meta.description,
             )
         return GraphQLObjectType(
             cls._meta.type_name,
