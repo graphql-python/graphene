@@ -1,7 +1,8 @@
+from graphql.core.type import GraphQLInputObjectField
+
 import graphene
 from graphene import relay
 from graphene.core.schema import Schema
-from graphql.core.type import GraphQLInputObjectField
 
 my_id = 0
 

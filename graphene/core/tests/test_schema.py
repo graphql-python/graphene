@@ -1,9 +1,9 @@
+from graphql.core import graphql
 from py.test import raises
 
 from graphene import Interface, List, ObjectType, Schema, String
 from graphene.core.fields import Field
 from graphene.core.types.base import LazyType
-from graphql.core import graphql
 from tests.utils import assert_equal_lists
 
 schema = Schema(name='My own schema')

@@ -1,7 +1,8 @@
-from graphene.core.schema import Schema
-from graphene.core.types import InputObjectType, ObjectType
 from graphql.core.type import (GraphQLField, GraphQLInputObjectField,
                                GraphQLString)
+
+from graphene.core.schema import Schema
+from graphene.core.types import InputObjectType, ObjectType
 
 from ..base import LazyType
 from ..definitions import List

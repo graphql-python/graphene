@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 import six
-
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
 from ...utils import to_camel_case

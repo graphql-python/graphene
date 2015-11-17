@@ -1,12 +1,13 @@
 import inspect
 from collections import OrderedDict
 
-from graphene import signals
 from graphql.core.execution.executor import Executor
 from graphql.core.execution.middlewares.sync import \
     SynchronousExecutionMiddleware
 from graphql.core.type import GraphQLSchema as _GraphQLSchema
 from graphql.core.utils.introspection_query import introspection_query
+
+from graphene import signals
 
 from .types.base import BaseType
 from .types.objecttype import BaseObjectType

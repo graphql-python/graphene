@@ -1,6 +1,7 @@
-from graphene.core.schema import Schema
 from graphql.core.type import (GraphQLBoolean, GraphQLFloat, GraphQLID,
                                GraphQLInt, GraphQLScalarType, GraphQLString)
+
+from graphene.core.schema import Schema
 
 from ..scalars import ID, Boolean, Float, Int, Scalar, String
 

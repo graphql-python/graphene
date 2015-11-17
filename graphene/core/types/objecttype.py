@@ -4,10 +4,10 @@ from collections import OrderedDict
 from functools import partial
 
 import six
-
-from graphene import signals
 from graphql.core.type import (GraphQLInputObjectType, GraphQLInterfaceType,
                                GraphQLObjectType, GraphQLUnionType)
+
+from graphene import signals
 
 from ..exceptions import SkipField
 from ..options import Options

@@ -1,8 +1,8 @@
+from graphql.core.type import GraphQLArgument
 from pytest import raises
 
 from graphene.core.schema import Schema
 from graphene.core.types import ObjectType
-from graphql.core.type import GraphQLArgument
 
 from ..argument import Argument, snake_case_args, to_arguments
 from ..scalars import String

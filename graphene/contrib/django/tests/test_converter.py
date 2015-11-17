@@ -1,5 +1,5 @@
-from py.test import raises
 from django.db import models
+from py.test import raises
 
 import graphene
 from graphene.contrib.django.converter import convert_django_field

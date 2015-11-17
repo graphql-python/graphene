@@ -1,11 +1,11 @@
-from py.test import raises
-
-from graphene.core.schema import Schema
-from graphene.core.types import Int, Interface, String
 from graphql.core.execution.middlewares.utils import (resolver_has_tag,
                                                       tag_resolver)
 from graphql.core.type import (GraphQLInterfaceType, GraphQLObjectType,
                                GraphQLUnionType)
+from py.test import raises
+
+from graphene.core.schema import Schema
+from graphene.core.types import Int, Interface, String
 
 
 class Character(Interface):
@@ -38,12 +38,10 @@ class Human(Character):
 
 class Droid(Character):
     '''Droid description'''
-    pass
 
 
 class CharacterType(Droid, Human):
     '''Union Type'''
-    pass
 
 schema = Schema()
 

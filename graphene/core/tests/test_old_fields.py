@@ -1,12 +1,12 @@
+from graphql.core.type import (GraphQLBoolean, GraphQLField, GraphQLFloat,
+                               GraphQLID, GraphQLInt, GraphQLNonNull,
+                               GraphQLString)
 from py.test import raises
 
 from graphene.core.fields import (BooleanField, Field, FloatField, IDField,
                                   IntField, NonNullField, StringField)
 from graphene.core.schema import Schema
 from graphene.core.types import ObjectType
-from graphql.core.type import (GraphQLBoolean, GraphQLField, GraphQLFloat,
-                               GraphQLID, GraphQLInt, GraphQLNonNull,
-                               GraphQLString)
 
 
 class MyOt(ObjectType):

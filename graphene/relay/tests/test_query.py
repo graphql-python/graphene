@@ -1,6 +1,7 @@
+from graphql.core.type import GraphQLID, GraphQLNonNull
+
 import graphene
 from graphene import relay
-from graphql.core.type import GraphQLID, GraphQLNonNull
 
 schema = graphene.Schema()
 

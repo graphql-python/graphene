@@ -1,5 +1,6 @@
-from graphene.core.schema import Schema
 from graphql.core.type import GraphQLList, GraphQLNonNull, GraphQLString
+
+from graphene.core.schema import Schema
 
 from ..definitions import List, NonNull
 from ..scalars import String

@@ -1,10 +1,11 @@
 
 
+from graphql.core import graphql
+from graphql.core.type import GraphQLSchema
+
 from graphene.core.fields import Field
 from graphene.core.schema import Schema
 from graphene.core.types import Interface, List, ObjectType, String
-from graphql.core import graphql
-from graphql.core.type import GraphQLSchema
 
 
 class Character(Interface):

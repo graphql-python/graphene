@@ -1,6 +1,7 @@
+from graphql.core.type import GraphQLEnumValue
+
 import graphene
 from graphene import resolve_only_args
-from graphql.core.type import GraphQLEnumValue
 
 from .data import get_character, get_droid, get_hero, get_human
 
