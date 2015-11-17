@@ -1,9 +1,9 @@
 from collections import OrderedDict
 
-from graphene.utils import cached_property
+from ..utils import cached_property
 
 DEFAULT_NAMES = ('description', 'name', 'is_interface', 'is_mutation',
-                 'type_name', 'interfaces', 'proxy')
+                 'type_name', 'interfaces')
 
 
 class Options(object):
@@ -13,9 +13,10 @@ class Options(object):
         self.local_fields = []
         self.is_interface = False
         self.is_mutation = False
-        self.proxy = False
+        self.is_union = False
         self.interfaces = []
         self.parents = []
+        self.types = []
         self.valid_attrs = DEFAULT_NAMES
 
     def contribute_to_class(self, cls, name):
@@ -52,9 +53,9 @@ class Options(object):
             # Any leftover attributes must be invalid.
             if meta_attrs != {}:
                 raise TypeError(
-                    "'class Meta' got invalid attribute(s): %s" % ','.join(meta_attrs.keys()))
-        else:
-            self.proxy = False
+                    "'class Meta' got invalid attribute(s): %s" %
+                    ','.join(
+                        meta_attrs.keys()))
 
         del self.meta
 

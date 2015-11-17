@@ -8,7 +8,7 @@ Graphene is a Python library for building GraphQL schemas/types fast and easily.
 - **Django:** Automatic *Django model* mapping to Graphene Types. Check a fully working [Django](http://github.com/graphql-python/swapi-graphene) implementation
 
 
-*But, what is supported in this Python version?* **Everything**: Interfaces, ObjectTypes, Mutations and Relay (Nodes, Connections and Mutations).
+*What is supported in this Python version?* **Everything**: Interfaces, ObjectTypes, Mutations, Scalars, Unions and Relay (Nodes, Connections and Mutations).
 
 
 ## Installation
@@ -28,9 +28,9 @@ Here is one example for get you started:
 
 ```python
 class Query(graphene.ObjectType):
-    hello = graphene.StringField(description='A typical hello world')
-    ping = graphene.StringField(description='Ping someone',
-                                to=graphene.Argument(graphene.String))
+    hello = graphene.String(description='A typical hello world')
+    ping = graphene.String(description='Ping someone',
+                           to=graphene.String())
 
     def resolve_hello(self, args, info):
         return 'World'

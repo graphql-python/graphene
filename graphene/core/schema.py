@@ -1,11 +1,16 @@
+import inspect
 from collections import OrderedDict
 
-from graphene import signals
 from graphql.core.execution.executor import Executor
 from graphql.core.execution.middlewares.sync import \
     SynchronousExecutionMiddleware
 from graphql.core.type import GraphQLSchema as _GraphQLSchema
 from graphql.core.utils.introspection_query import introspection_query
+
+from graphene import signals
+
+from .types.base import BaseType
+from .types.objecttype import BaseObjectType
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -16,10 +21,10 @@ class GraphQLSchema(_GraphQLSchema):
 
 
 class Schema(object):
-    _query = None
     _executor = None
 
-    def __init__(self, query=None, mutation=None, name='Schema', executor=None):
+    def __init__(self, query=None, mutation=None,
+                 name='Schema', executor=None):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
@@ -34,32 +39,24 @@ class Schema(object):
     def T(self, object_type):
         if not object_type:
             return
-        if object_type not in self._types:
-            internal_type = object_type.internal_type(self)
-            self._types[object_type] = internal_type
-            self._types_names[internal_type.name] = object_type
-        return self._types[object_type]
-
-    @property
-    def query(self):
-        return self._query
-
-    @query.setter
-    def query(self, query):
-        self._query = query
-
-    @property
-    def mutation(self):
-        return self._mutation
-
-    @mutation.setter
-    def mutation(self, mutation):
-        self._mutation = mutation
+        if inspect.isclass(object_type) and issubclass(
+                object_type, BaseType) or isinstance(
+                object_type, BaseType):
+            if object_type not in self._types:
+                internal_type = object_type.internal_type(self)
+                self._types[object_type] = internal_type
+                is_objecttype = inspect.isclass(
+                    object_type) and issubclass(object_type, BaseObjectType)
+                if is_objecttype:
+                    self.register(object_type)
+            return self._types[object_type]
+        else:
+            return object_type
 
     @property
     def executor(self):
         if not self._executor:
-            self.executor = Executor(
+            self._executor = Executor(
                 [SynchronousExecutionMiddleware()], map_type=OrderedDict)
         return self._executor
 
@@ -69,25 +66,45 @@ class Schema(object):
 
     @property
     def schema(self):
-        if not self._query:
+        if not self.query:
             raise Exception('You have to define a base query type')
-        return GraphQLSchema(self, query=self.T(self._query), mutation=self.T(self._mutation))
+        return GraphQLSchema(
+            self, query=self.T(self.query),
+            mutation=self.T(self.mutation))
 
     def register(self, object_type):
+        type_name = object_type._meta.type_name
+        registered_object_type = self._types_names.get(type_name, None)
+        if registered_object_type:
+            assert registered_object_type == object_type, 'Type {} already registered with other object type'.format(
+                type_name)
         self._types_names[object_type._meta.type_name] = object_type
         return object_type
 
+    def objecttype(self, type):
+        name = getattr(type, 'name', None)
+        if name:
+            objecttype = self._types_names.get(name, None)
+            if objecttype and inspect.isclass(
+                    objecttype) and issubclass(objecttype, BaseObjectType):
+                return objecttype
+
+    def setup(self):
+        assert self.query, 'The base query type is not set'
+        self.T(self.query)
+
     def get_type(self, type_name):
-        self.schema._build_type_map()
+        self.setup()
         if type_name not in self._types_names:
-            raise Exception('Type %s not found in %r' % (type_name, self))
+            raise KeyError('Type %r not found in %r' % (type_name, self))
         return self._types_names[type_name]
 
     @property
     def types(self):
         return self._types_names
 
-    def execute(self, request='', root=None, vars=None, operation_name=None, **kwargs):
+    def execute(self, request='', root=None, vars=None,
+                operation_name=None, **kwargs):
         root = root or object()
         return self.executor.execute(
             self.schema,

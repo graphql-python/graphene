@@ -2,7 +2,6 @@ SECRET_KEY = 1
 
 INSTALLED_APPS = [
     'examples.starwars_django',
-    'tests.contrib_django',
 ]
 
 DATABASES = {

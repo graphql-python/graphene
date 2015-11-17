@@ -1,10 +1,10 @@
-from graphene.relay.fields import (
+from .fields import (
     ConnectionField,
     NodeField,
     GlobalIDField,
 )
 
-from graphene.relay.types import (
+from .types import (
     Node,
     PageInfo,
     Edge,
@@ -12,7 +12,7 @@ from graphene.relay.types import (
     ClientIDMutation
 )
 
-from graphene.relay.utils import is_node
+from .utils import is_node
 
 __all__ = ['ConnectionField', 'NodeField', 'GlobalIDField', 'Node',
            'PageInfo', 'Edge', 'Connection', 'ClientIDMutation', 'is_node']

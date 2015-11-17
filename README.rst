@@ -12,9 +12,9 @@ easily.
    `Django <http://github.com/graphql-python/swapi-graphene>`__
    implementation
 
-*But, what is supported in this Python version?* **Everything**:
-Interfaces, ObjectTypes, Mutations and Relay (Nodes, Connections and
-Mutations).
+*What is supported in this Python version?* **Everything**: Interfaces,
+ObjectTypes, Mutations, Scalars, Unions and Relay (Nodes, Connections
+and Mutations).
 
 Installation
 ------------
@@ -35,9 +35,9 @@ Here is one example for get you started:
 .. code:: python
 
     class Query(graphene.ObjectType):
-        hello = graphene.StringField(description='A typical hello world')
-        ping = graphene.StringField(description='Ping someone',
-                                    to=graphene.Argument(graphene.String))
+        hello = graphene.String(description='A typical hello world')
+        ping = graphene.String(description='Ping someone',
+                               to=graphene.String())
 
         def resolve_hello(self, args, info):
             return 'World'
