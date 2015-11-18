@@ -92,7 +92,7 @@ class NodeField(Field):
                                         object_type != self.field_object_type):
             return
 
-        return object_type.get_node(_id)
+        return object_type.get_node(_id, info)
 
     def resolver(self, instance, args, info):
         global_id = args.get('id')

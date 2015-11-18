@@ -1,3 +1,4 @@
+import pytest
 from graphql.core.type import GraphQLID, GraphQLNonNull
 
 import graphene
@@ -15,12 +16,22 @@ class MyNode(relay.Node):
     name = graphene.String()
 
     @classmethod
-    def get_node(cls, id):
+    def get_node(cls, id, info):
         return MyNode(id=id, name='mo')
+
+
+class SpecialNode(relay.Node):
+    value = graphene.String()
+
+    @classmethod
+    def get_node(cls, id, info):
+        value = "!!!" if info.request_context.get('is_special') else "???"
+        return SpecialNode(id=id, value=value)
 
 
 class Query(graphene.ObjectType):
     my_node = relay.NodeField(MyNode)
+    special_node = relay.NodeField(SpecialNode)
     all_my_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection, customArg=graphene.String())
 
@@ -75,6 +86,28 @@ def test_nodefield_query():
         }
     }
     result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected
+
+
+@pytest.mark.parametrize('specialness,value', [(True, '!!!'), (False, '???')])
+def test_get_node_info(specialness, value):
+    query = '''
+    query ValueQuery {
+      specialNode(id:"U3BlY2lhbE5vZGU6Mg==") {
+        id
+        value
+      }
+    }
+    '''
+
+    expected = {
+        'specialNode': {
+            'id': 'U3BlY2lhbE5vZGU6Mg==',
+            'value': value,
+        },
+    }
+    result = schema.execute(query, request_context={'is_special': specialness})
     assert not result.errors
     assert result.data == expected
 
