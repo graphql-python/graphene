@@ -17,7 +17,7 @@ class Ship(DjangoNode):
         model = ShipModel
 
     @classmethod
-    def get_node(cls, id):
+    def get_node(cls, id, info):
         return Ship(get_ship(id))
 
 
@@ -33,7 +33,7 @@ class Faction(DjangoNode):
         model = FactionModel
 
     @classmethod
-    def get_node(cls, id):
+    def get_node(cls, id, info):
         return Faction(get_faction(id))
 
 

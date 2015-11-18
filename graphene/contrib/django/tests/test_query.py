@@ -66,7 +66,7 @@ def test_should_node():
             model = Reporter
 
         @classmethod
-        def get_node(cls, id):
+        def get_node(cls, id, info):
             return ReporterNode(Reporter(id=2, first_name='Cookie Monster'))
 
         def resolve_articles(self, *args, **kwargs):
@@ -78,7 +78,7 @@ def test_should_node():
             model = Article
 
         @classmethod
-        def get_node(cls, id):
+        def get_node(cls, id, info):
             return ArticleNode(Article(id=1, headline='Article node'))
 
     class Query(graphene.ObjectType):
