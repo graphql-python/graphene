@@ -3,7 +3,6 @@ from graphql_relay.node.node import to_global_id
 from ..core.types import (Boolean, Field, InputObjectType, Interface, List,
                           Mutation, ObjectType, String)
 from ..core.types.argument import ArgumentsGroup
-from ..core.types.base import LazyType
 from ..core.types.definitions import NonNull
 from ..utils import memoize
 from .fields import GlobalIDField

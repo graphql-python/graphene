@@ -10,7 +10,6 @@ from .utils import get_type_for_model, lazy_map
 class DjangoConnectionField(ConnectionField):
 
     def wrap_resolved(self, value, instance, args, info):
-        schema = info.schema.graphene_schema
         return lazy_map(value, self.type)
 
 
@@ -20,7 +19,6 @@ class LazyListField(Field):
         return List(self.type)
 
     def resolver(self, instance, args, info):
-        schema = info.schema.graphene_schema
         resolved = super(LazyListField, self).resolver(instance, args, info)
         return lazy_map(resolved, self.type)
 
