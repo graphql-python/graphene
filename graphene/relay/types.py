@@ -24,11 +24,6 @@ class PageInfo(ObjectType):
 
 class Edge(ObjectType):
     '''An edge in a connection.'''
-    class Meta:
-        type_name = 'DefaultEdge'
-
-    node = Field(LazyType(lambda object_type: object_type.node_type),
-                 description='The item at the end of the edge')
     cursor = String(
         required=True, description='A cursor for use in pagination')
 
@@ -37,10 +32,11 @@ class Edge(ObjectType):
     def for_node(cls, node):
         from graphene.relay.utils import is_node
         assert is_node(node), 'ObjectTypes in a edge have to be Nodes'
+        node_field = Field(node, description='The item at the end of the edge')
         return type(
             '%s%s' % (node._meta.type_name, cls._meta.type_name),
             (cls,),
-            {'node_type': node})
+            {'node_type': node, 'node': node_field})
 
 
 class Connection(ObjectType):
@@ -50,8 +46,6 @@ class Connection(ObjectType):
 
     page_info = Field(PageInfo, required=True,
                       description='The Information to aid in pagination')
-    edges = List(LazyType(lambda object_type: object_type.edge_type),
-                 description='Information to aid in pagination.')
 
     _connection_data = None
 
@@ -59,12 +53,13 @@ class Connection(ObjectType):
     @memoize
     def for_node(cls, node, edge_type=None):
         from graphene.relay.utils import is_node
-        edge_type = edge_type or Edge
+        edge_type = edge_type or Edge.for_node(node)
         assert is_node(node), 'ObjectTypes in a connection have to be Nodes'
+        edges = List(edge_type, description='Information to aid in pagination.')
         return type(
             '%s%s' % (node._meta.type_name, cls._meta.type_name),
             (cls,),
-            {'edge_type': edge_type.for_node(node)})
+            {'edge_type': edge_type, 'edges': edges})
 
     def set_connection_data(self, data):
         self._connection_data = data

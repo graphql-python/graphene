@@ -11,7 +11,7 @@ class DjangoConnectionField(ConnectionField):
 
     def wrap_resolved(self, value, instance, args, info):
         schema = info.schema.graphene_schema
-        return lazy_map(value, self.type.get_object_type(schema))
+        return lazy_map(value, self.type)
 
 
 class LazyListField(Field):
@@ -22,7 +22,7 @@ class LazyListField(Field):
     def resolver(self, instance, args, info):
         schema = info.schema.graphene_schema
         resolved = super(LazyListField, self).resolver(instance, args, info)
-        return lazy_map(resolved, self.get_object_type(schema))
+        return lazy_map(resolved, self.type)
 
 
 class ConnectionOrListField(Field):
@@ -30,12 +30,14 @@ class ConnectionOrListField(Field):
     def internal_type(self, schema):
         model_field = self.type
         field_object_type = model_field.get_object_type(schema)
+        if not field_object_type:
+            raise SkipField()
         if is_node(field_object_type):
-            field = DjangoConnectionField(model_field)
+            field = DjangoConnectionField(field_object_type)
         else:
-            field = LazyListField(model_field)
+            field = LazyListField(field_object_type)
         field.contribute_to_class(self.object_type, self.name)
-        return field.internal_type(schema)
+        return schema.T(field)
 
 
 class DjangoModelField(FieldType):

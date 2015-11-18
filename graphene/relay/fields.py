@@ -10,12 +10,12 @@ from ..core.types.scalars import ID, Int, String
 
 class ConnectionField(Field):
 
-    def __init__(self, field_type, resolver=None, description='',
+    def __init__(self, type, resolver=None, description='',
                  connection_type=None, edge_type=None, **kwargs):
         super(
             ConnectionField,
             self).__init__(
-            field_type,
+            type,
             resolver=resolver,
             before=String(),
             after=String(),
@@ -38,7 +38,6 @@ class ConnectionField(Field):
             resolved = self.wrap_resolved(resolved, instance, args, info)
             assert isinstance(
                 resolved, Iterable), 'Resolved value from the connection field have to be iterable'
-
             type = schema.T(self.type)
             node = schema.objecttype(type)
             connection_type = self.get_connection_type(node)
@@ -56,7 +55,8 @@ class ConnectionField(Field):
         return connection_type.for_node(node, edge_type=edge_type)
 
     def get_edge_type(self, node):
-        return self.edge_type or node.get_edge_type()
+        edge_type = self.edge_type or node.get_edge_type()
+        return edge_type.for_node(node)
 
     def get_type(self, schema):
         from graphene.relay.utils import is_node
@@ -65,6 +65,7 @@ class ConnectionField(Field):
         assert is_node(node), 'Only nodes have connections.'
         schema.register(node)
         connection_type = self.get_connection_type(node)
+
         return connection_type
 
 
