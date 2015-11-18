@@ -39,7 +39,51 @@ First we're going to define some GraphQL ObjectTypes and relay Nodes for our `Sc
 ```python
 import graphene
 from graphene import relay
-from somewhere import (fetch_user_from_database, fetch_users_from_database)
+
+USER_DATA = [
+    {
+        user_id = '1'
+        first_name = 'Peter'
+        last_name = 'Cabbage'
+        email_address = 'peter@cabbage.com'
+        age = 32
+    },
+    {
+        user_id = '2'
+        first_name = 'Lukas'
+        last_name = 'Chard'
+        email_address = 'lukas@broccoli.com'
+        age = 54
+    },
+    {
+        user_id = '3'
+        first_name = 'Marie'
+        last_name = 'Cauliflower'
+        email_address = 'marie@cauliflower.com'
+        age = 27
+    },
+]
+
+def fetch_user_from_database(user_id):
+    user, = [user for user in USER_DATA if user['user_id'] == user_id]
+    return user
+
+def fetch_users_from_database(args):
+    full_name = args.get('fullName', None)
+    if full_name:
+        full_name = full_name.upper()
+    sort_key = args.get('sortKey', None)
+    sort_direction = args.get('sortDirection', None)
+    reversed = False
+    if sort_directon == 'DESC':
+        reversed = True
+
+    filtered_users = [user for user in USER_DATA if full_name is None or full_name in
+    user['first_name'].upper() + ' ' + user['last_name'].upper()]
+    if sort_key and sort_direction:
+        filtered_users.sort(lambda item: item[sort_key], reverse=reversed)
+
+    return filtered_users
 
 schema = graphene.Schema()
 
@@ -60,11 +104,9 @@ class User(relay.Node):
         return User(**user_dict)
 
     def resolve_full_name(self, *args):
-        if self.first_name and self.last_name:
-            return self.first_name + ' ' + self.last_name
-        return None
+        return ' '.join([self.first_name, self.last_name])
 
-def _create_relay_user(user):
+def _user_container(user):
     # user_dict will contain the fields, user_id, first_name, last_name, email_address and age
     user['id'] = user['user_id']
     return User(**user)
@@ -72,17 +114,17 @@ def _create_relay_user(user):
 # This will be our root query
 class Query(graphene.ObjectType):
         users = graphene.List(User,
-                            userName=graphene.Argument(graphene.String),
-                            sortKey=graphene.Argument(graphene.String),
-                            sortDirection=graphene.Argument(graphene.String))
+                            fullName=graphene.String(),
+                            sortKey=graphene.String(),
+                            sortDirection=graphene.String())
         user = relay.NodeField(Users)
         viewer = graphene.Field('self') # needed for Relay
         
-        # args will be a dict with 'userName', 'sortKey' and 'sortDirection'
+        # args will be a dict with 'fullName', 'sortKey' and 'sortDirection'
         # info is an object with information about the query being sent
         def resolve_users(self, args, info):
             list_of_user_dicts = fetch_users_from_database(args)
-            return [_create_relay_user(user) for user in list_of_user_dicts]
+            return [_user_container(user) for user in list_of_user_dicts]
 
         def resolve_viewer(self, *args, **kwargs):
             return self
@@ -96,7 +138,7 @@ Then, we can start querying our schema:
 ```python
 result = schema.execute('query { users { fullName } }')
 
-# result.data should be {'users': [{fullName: 'Provided Name'}]}
+# result.data should be {'users': [{fullName: 'Peter Cabbage'}, {fullName: 'Lukas Chart'}, {fullName: 'Marie Cauliflower'}]}
 users = result.data['users']
 
 print(users)
