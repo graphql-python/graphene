@@ -42,25 +42,25 @@ from graphene import relay
 
 USER_DATA = [
     {
-        user_id = '1'
-        first_name = 'Peter'
-        last_name = 'Cabbage'
-        email_address = 'peter@cabbage.com'
-        age = 32
+        'user_id': '1'
+        'first_name': 'Peter'
+        'last_name': 'Cabbage'
+        'email_address': 'peter@cabbage.com'
+        'age': 32
     },
     {
-        user_id = '2'
-        first_name = 'Lukas'
-        last_name = 'Chard'
-        email_address = 'lukas@broccoli.com'
-        age = 54
+        'user_id': '2'
+        'first_name': 'Lukas'
+        'last_name': 'Chard'
+        'email_address': 'lukas@broccoli.com'
+        'age': 54
     },
     {
-        user_id = '3'
-        first_name = 'Marie'
-        last_name = 'Cauliflower'
-        email_address = 'marie@cauliflower.com'
-        age = 27
+        'user_id': '3'
+        'first_name': 'Marie'
+        'last_name': 'Cauliflower'
+        'email_address': 'marie@cauliflower.com'
+        'age': 27
     },
 ]
 
