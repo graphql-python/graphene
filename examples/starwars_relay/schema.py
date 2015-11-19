@@ -11,7 +11,7 @@ class Ship(relay.Node):
     name = graphene.String(description='The name of the ship.')
 
     @classmethod
-    def get_node(cls, id):
+    def get_node(cls, id, info):
         return get_ship(id)
 
 
@@ -27,7 +27,7 @@ class Faction(relay.Node):
         return [get_ship(ship_id) for ship_id in self.ships]
 
     @classmethod
-    def get_node(cls, id):
+    def get_node(cls, id, info):
         return get_faction(id)
 
 
