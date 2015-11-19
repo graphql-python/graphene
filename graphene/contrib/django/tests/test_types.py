@@ -89,6 +89,7 @@ def test_interface_objecttype_init_unexpected():
         Human(object())
     assert str(excinfo.value) == "Human received a non-compatible instance (object) when expecting Article"
 
+
 def test_object_type():
     object_type = schema.T(Human)
     Human._meta.fields_map
