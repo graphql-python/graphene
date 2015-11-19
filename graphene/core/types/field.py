@@ -79,6 +79,7 @@ class Field(OrderedType):
             resolver = getattr(type_objecttype, 'mutate')
         else:
             my_resolver = resolver
+
             @wraps(my_resolver)
             def wrapped_func(instance, args, info):
                 if not isinstance(instance, self.object_type):
