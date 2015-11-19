@@ -152,3 +152,22 @@ def test_lazytype():
     schema.query = MyType
 
     assert schema.T(t) == schema.T(MyType)
+
+
+def test_schema_str():
+    expected = """
+interface Character {
+  name: String
+}
+
+type Human implements Character {
+  name: String
+  friends: [Character]
+  pet: Pet
+}
+
+type Pet {
+  type: String
+}
+""".lstrip()
+    assert str(schema) == expected
