@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from functools import wraps
 
 import six
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
@@ -76,6 +77,14 @@ class Field(OrderedType):
             assert len(arguments) == 0
             arguments = type_objecttype.get_arguments()
             resolver = getattr(type_objecttype, 'mutate')
+        else:
+            my_resolver = resolver
+            @wraps(my_resolver)
+            def wrapped_func(instance, args, info):
+                if not isinstance(instance, self.object_type):
+                    instance = self.object_type(_root=instance)
+                return my_resolver(instance, args, info)
+            resolver = wrapped_func
 
         resolver = snake_case_args(resolver)
         assert type, 'Internal type for field %s is None' % str(self)

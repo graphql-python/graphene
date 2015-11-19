@@ -38,12 +38,19 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
 
 class InstanceObjectType(BaseObjectType):
 
-    def __init__(self, instance=None):
-        self.instance = instance
-        super(InstanceObjectType, self).__init__()
+    def __init__(self, _root=None):
+        if _root:
+            assert isinstance(_root, self._meta.model), (
+                '{} received a non-compatible instance ({}) '
+                'when expecting {}'.format(
+                    self.__class__.__name__,
+                    _root.__class__.__name__,
+                    self._meta.model.__name__
+                ))
+        super(InstanceObjectType, self).__init__(_root=_root)
 
     def __getattr__(self, attr):
-        return getattr(self.instance, attr)
+        return getattr(self._root, attr)
 
 
 class DjangoObjectType(six.with_metaclass(
@@ -61,5 +68,8 @@ class DjangoNode(BaseNode, DjangoInterface):
 
     @classmethod
     def get_node(cls, id):
-        instance = cls._meta.model.objects.filter(id=id).first()
-        return cls(instance)
+        try:
+            instance = cls._meta.model.objects.get(id=id)
+            return cls(instance)
+        except cls._meta.model.DoesNotExist:
+            return None

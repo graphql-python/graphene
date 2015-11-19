@@ -1,3 +1,4 @@
+from pytest import raises
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 from mock import patch
 
@@ -33,10 +34,11 @@ def test_django_interface():
     assert DjangoNode._meta.is_interface is True
 
 
-@patch('graphene.contrib.django.tests.models.Article.objects.filter')
-def test_django_get_node(objects):
-    Human.get_node(1)
-    objects.assert_called_with(id=1)
+@patch('graphene.contrib.django.tests.models.Article.objects.get', return_value=Article(id=1))
+def test_django_get_node(get):
+    human = Human.get_node(1)
+    get.assert_called_with(id=1)
+    assert human.id == 1
 
 
 def test_pseudo_interface_registered():
@@ -67,9 +69,25 @@ def test_node_replacedfield():
 
 
 def test_interface_resolve_type():
-    resolve_type = Character.resolve_type(schema, Human(object()))
+    resolve_type = Character.resolve_type(schema, Human())
     assert isinstance(resolve_type, GraphQLObjectType)
 
+
+def test_interface_objecttype_init_none():
+    h = Human()
+    assert h._root is None
+
+
+def test_interface_objecttype_init_good():
+    instance = Article()
+    h = Human(instance)
+    assert h._root == instance
+
+
+def test_interface_objecttype_init_unexpected():
+    with raises(AssertionError) as excinfo:
+        Human(object())
+    assert str(excinfo.value) == "Human received a non-compatible instance (object) when expecting Article"
 
 def test_object_type():
     object_type = schema.T(Human)

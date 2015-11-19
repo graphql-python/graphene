@@ -144,6 +144,7 @@ class BaseObjectType(BaseType):
 
     def __init__(self, *args, **kwargs):
         signals.pre_init.send(self.__class__, args=args, kwargs=kwargs)
+        self._root = kwargs.pop('_root', None)
         args_len = len(args)
         fields = self._meta.fields
         if args_len > len(fields):

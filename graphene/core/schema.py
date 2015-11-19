@@ -113,7 +113,7 @@ class Schema(object):
         return self.executor.execute(
             self.schema,
             request,
-            root=self.query(root),
+            root=root,
             args=vars,
             operation_name=operation_name,
             **kwargs
