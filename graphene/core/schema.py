@@ -24,12 +24,13 @@ class GraphQLSchema(_GraphQLSchema):
 class Schema(object):
     _executor = None
 
-    def __init__(self, query=None, mutation=None,
+    def __init__(self, query=None, mutation=None, subscription=None,
                  name='Schema', executor=None):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
         self.query = query
+        self.subscription = subscription
         self.name = name
         self.executor = executor
         signals.init_schema.send(self)
@@ -70,8 +71,10 @@ class Schema(object):
         if not self.query:
             raise Exception('You have to define a base query type')
         return GraphQLSchema(
-            self, query=self.T(self.query),
-            mutation=self.T(self.mutation))
+            self,
+            query=self.T(self.query),
+            mutation=self.T(self.mutation),
+            subscription=self.T(self.subscription))
 
     def register(self, object_type):
         type_name = object_type._meta.type_name
