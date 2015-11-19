@@ -6,6 +6,7 @@ from graphql.core.execution.middlewares.sync import \
     SynchronousExecutionMiddleware
 from graphql.core.type import GraphQLSchema as _GraphQLSchema
 from graphql.core.utils.introspection_query import introspection_query
+from graphql.core.utils.schema_printer import print_schema
 
 from graphene import signals
 
@@ -88,6 +89,9 @@ class Schema(object):
             if objecttype and inspect.isclass(
                     objecttype) and issubclass(objecttype, BaseObjectType):
                 return objecttype
+
+    def __str__(self):
+        return print_schema(self.schema)
 
     def setup(self):
         assert self.query, 'The base query type is not set'
