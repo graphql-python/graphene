@@ -49,6 +49,14 @@ class InstanceObjectType(BaseObjectType):
                 ))
         super(InstanceObjectType, self).__init__(_root=_root)
 
+    @property
+    def instance(self):
+        return self._root
+
+    @instance.setter
+    def instance(self, value):
+        self._root = value
+
     def __getattr__(self, attr):
         return getattr(self._root, attr)
 
@@ -67,7 +75,7 @@ class DjangoNode(BaseNode, DjangoInterface):
     id = GlobalIDField()
 
     @classmethod
-    def get_node(cls, id):
+    def get_node(cls, id, info=None):
         try:
             instance = cls._meta.model.objects.get(id=id)
             return cls(instance)
