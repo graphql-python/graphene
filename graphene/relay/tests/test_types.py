@@ -1,5 +1,5 @@
-from pytest import raises
 from graphql.core.type import GraphQLList
+from pytest import raises
 
 import graphene
 from graphene import relay

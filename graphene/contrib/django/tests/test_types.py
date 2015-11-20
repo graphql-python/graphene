@@ -1,6 +1,6 @@
-from pytest import raises
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
 from mock import patch
+from pytest import raises
 
 from graphene import Schema
 from graphene.contrib.django.types import DjangoInterface, DjangoNode
