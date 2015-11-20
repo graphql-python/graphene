@@ -49,6 +49,14 @@ class InstanceObjectType(BaseObjectType):
                 ))
         super(InstanceObjectType, self).__init__(_root=_root)
 
+    @property
+    def instance(self):
+        return self._root
+
+    @instance.setter
+    def instance(self, value):
+        self._root = value
+
     def __getattr__(self, attr):
         return getattr(self._root, attr)
 
