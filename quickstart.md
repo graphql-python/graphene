@@ -43,7 +43,7 @@ schema = graphene.Schema()
 
 # This will be our root query
 class Query(graphene.ObjectType):
-    username = graphene.StringField(description='The username')
+    username = graphene.String(description='The username')
 
    	def resolve_username(self, *args):
    		return 'Hello World'
