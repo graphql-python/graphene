@@ -1,3 +1,4 @@
+import inspect
 import warnings
 from functools import wraps
 from graphql_relay.node.node import to_global_id
@@ -82,7 +83,8 @@ class BaseNode(object):
             if isinstance(get_node, staticmethod):
                 args -= 1
 
-            if get_node.func_code.co_argcount < args:
+            get_node_num_args = len(inspect.getargspec(get_node).args)
+            if get_node_num_args < args:
                 warnings.warn("get_node will receive also the info arg"
                               " in future versions of graphene".format(cls.__name__),
                               FutureWarning)
