@@ -117,7 +117,7 @@ class Query(graphene.ObjectType):
                             fullName=graphene.String(),
                             sortKey=graphene.String(),
                             sortDirection=graphene.String())
-        user = relay.NodeField(Users)
+        user = relay.NodeField(User)
         viewer = graphene.Field('self') # needed for Relay
         
         # args will be a dict with 'fullName', 'sortKey' and 'sortDirection'
