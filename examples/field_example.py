@@ -28,4 +28,4 @@ query = '''
 '''
 result = schema.execute(query)
 # Print the result
-print result.data['patron']
+print(result.data['patron'])
