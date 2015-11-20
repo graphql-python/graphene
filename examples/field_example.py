@@ -1,11 +1,14 @@
 import graphene
 
+
 class Person(graphene.Interface):
     name = graphene.String()
     age = graphene.ID()
 
+
 class Patron(Person):
     id = graphene.ID()
+
 
 class Query(graphene.ObjectType):
 
@@ -26,5 +29,3 @@ query = '''
 result = schema.execute(query)
 # Print the result
 print result.data['patron']
-
-
