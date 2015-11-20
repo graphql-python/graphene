@@ -34,7 +34,7 @@ class ConnectionOrListField(Field):
             field = DjangoConnectionField(field_object_type)
         else:
             field = LazyListField(field_object_type)
-        field.contribute_to_class(self.object_type, self.name)
+        field.contribute_to_class(self.object_type, self.attname)
         return schema.T(field)
 
 
