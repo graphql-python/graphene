@@ -1,3 +1,5 @@
+import warnings
+from functools import wraps
 from graphql_relay.node.node import to_global_id
 
 from ..core.types import (Boolean, Field, InputObjectType, Interface, List,
@@ -73,8 +75,26 @@ class BaseNode(object):
     def _prepare_class(cls):
         from graphene.relay.utils import is_node
         if is_node(cls):
-            assert hasattr(
-                cls, 'get_node'), 'get_node classmethod not found in %s Node' % cls
+            get_node = getattr(cls, 'get_node')
+            assert get_node, 'get_node classmethod not found in %s Node' % cls
+            assert callable(get_node), 'get_node have to be callable'
+            args = 3
+            if isinstance(get_node, staticmethod):
+                args -= 1
+
+            if get_node.func_code.co_argcount < args:
+                warnings.warn("get_node will receive also the info arg"
+                              " in future versions of graphene".format(cls.__name__),
+                              FutureWarning)
+
+                @staticmethod
+                @wraps(get_node)
+                def wrapped_node(*node_args):
+                    if len(node_args) < args:
+                        node_args += (None, )
+                    return get_node(*node_args[:-1])
+
+                setattr(cls, 'get_node', wrapped_node)
 
     def to_global_id(self):
         type_name = self._meta.type_name

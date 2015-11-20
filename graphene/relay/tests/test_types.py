@@ -11,8 +11,30 @@ class OtherNode(relay.Node):
     name = graphene.String()
 
     @classmethod
-    def get_node(cls, id):
+    def get_node(cls, id, info):
         pass
+
+
+def test_works_old_get_node():
+    class Part(relay.Node):
+        x = graphene.String()
+
+        @classmethod
+        def get_node(cls, id):
+            return id
+
+    assert Part.get_node(1) == 1
+
+
+def test_works_old_static_get_node():
+    class Part(relay.Node):
+        x = graphene.String()
+
+        @staticmethod
+        def get_node(id):
+            return id
+
+    assert Part.get_node(1) == 1
 
 
 def test_field_no_contributed_raises_error():

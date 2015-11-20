@@ -36,7 +36,7 @@ def test_django_interface():
 
 @patch('graphene.contrib.django.tests.models.Article.objects.get', return_value=Article(id=1))
 def test_django_get_node(get):
-    human = Human.get_node(1)
+    human = Human.get_node(1, None)
     get.assert_called_with(id=1)
     assert human.id == 1
 

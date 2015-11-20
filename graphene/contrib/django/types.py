@@ -67,7 +67,7 @@ class DjangoNode(BaseNode, DjangoInterface):
     id = GlobalIDField()
 
     @classmethod
-    def get_node(cls, id):
+    def get_node(cls, id, info=None):
         try:
             instance = cls._meta.model.objects.get(id=id)
             return cls(instance)
