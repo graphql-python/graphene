@@ -1,24 +1,22 @@
+import warnings
+
 from ...core.exceptions import SkipField
 from ...core.fields import Field
 from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
-from .utils import get_type_for_model, lazy_map
+from .utils import get_type_for_model
 
 
 class DjangoConnectionField(ConnectionField):
-    pass
 
-
-class LazyListField(Field):
-
-    def get_type(self, schema):
-        return List(self.type)
-
-    def resolver(self, instance, args, info):
-        resolved = super(LazyListField, self).resolver(instance, args, info)
-        return lazy_map(resolved, self.type)
+    def __init__(self, *args, **kwargs):
+        cls = self.__class__
+        warnings.warn("Using {} will be not longer supported."
+                      " Use relay.ConnectionField instead".format(cls.__name__),
+                      FutureWarning)
+        return super(DjangoConnectionField, self).__init__(*args, **kwargs)
 
 
 class ConnectionOrListField(Field):
@@ -31,7 +29,7 @@ class ConnectionOrListField(Field):
         if is_node(field_object_type):
             field = DjangoConnectionField(field_object_type)
         else:
-            field = LazyListField(field_object_type)
+            field = Field(List(field_object_type))
         field.contribute_to_class(self.object_type, self.attname)
         return schema.T(field)
 

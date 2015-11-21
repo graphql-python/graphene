@@ -1,8 +1,5 @@
 from django.db import models
 from django.db.models.manager import Manager
-from django.db.models.query import QuerySet
-
-from ...utils import LazyMap
 
 
 def get_type_for_model(schema, model):
@@ -22,9 +19,7 @@ def get_reverse_fields(model):
             yield related
 
 
-def lazy_map(value, func):
+def maybe_queryset(value):
     if isinstance(value, Manager):
         value = value.get_queryset()
-    if isinstance(value, QuerySet):
-        return LazyMap(value, func)
     return value
