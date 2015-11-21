@@ -1,0 +1,212 @@
+@import 'nib'
+@import 'jeet'
+
+@import 'https://fonts.googleapis.com/css?family=Raleway:400,500,600,200,100&.css'
+
+normalize-css()
+
+$wrapper
+  center(960px, pad:20px)
+
+.wrapper
+  @extend $wrapper
+  position relative
+
+a, a:hover
+  text-decoration none
+
+html, body
+  font-family "Helvetica Neue", Helvetica, Arial, sans-serif
+  font-weight 300
+  font-size 16px
+  color #606060
+  line-height 1.5
+
+.header
+  clearfix()
+  position relative
+  text-align center
+  background: #DB594C;
+  background-image: radial-gradient(95% 101%, #E46643 5%, rgba(226,91,72,0.00) 100%)
+  .logo
+    width 42px
+    height @width
+    vertical-align middle
+
+  h1
+    max-width 380px
+    font-family 'Raleway', sans-serif
+    font-weight 200
+    font-size 42px
+    color #FFFFFF
+    line-height 49px
+    margin 80px auto 40px
+    z-index 110
+  
+  .get-started
+    font-family 'Raleway'
+    display inline-block
+    margin 0 auto
+    font-size 13px
+    color #FFFFFF
+    padding 0 18px
+    text-transform uppercase
+    font-weight 600
+    line-height 15px
+    border 1px solid #FFFFFF
+    border-radius 2px
+    padding 12px 18px
+    z-index 111
+    position relative
+    &:hover
+      background white
+      color #E05B49
+      text-decoration none
+
+.header-wrapper
+  @extend $wrapper
+  text-align left
+  padding-top 32px
+  padding-bottom 32px
+  position relative
+  z-index 100
+
+.header-extended
+  padding-bottom 100px
+
+.header-nav
+  margin-top 8px
+  a
+    font-family 'Raleway'
+    font-size 13px
+    color #FFFFFF
+    margin 0 16px
+    padding 0 2px
+    text-transform uppercase
+    font-weight 600
+    line-height 15px
+
+.header-logo
+  font-family 'Raleway'
+  font-size 22px
+  color #FFFFFF
+  float left
+  font-weight 500
+  text-transform uppercase
+  text-decoration none
+
+.header-nav
+  float right
+
+.logo
+  path
+    stroke-dasharray 250
+    stroke-dashoffset 250
+    animation logo-dash .9s ease-in-out forwards
+    animation-delay .12s
+  g
+    ellipse
+      animation logo-dot .3s ease forwards
+      animation-fill-mode both
+      transform-origin 50% 50%
+    &:nth-child(2)
+      ellipse
+        animation-delay .1s
+    &:nth-child(3)
+      ellipse
+        animation-delay .2s
+    &:nth-child(4)
+      ellipse
+        animation-delay .3s
+    &:nth-child(5)
+      ellipse
+        animation-delay .4s
+    &:nth-child(6)
+      ellipse
+        animation-delay .5s
+    &:nth-child(7)
+      ellipse
+        animation-delay .6s
+    &:nth-child(8)
+      ellipse
+        animation-delay .7s
+
+@keyframes logo-dash
+  to
+    stroke-dashoffset 0
+
+@keyframes logo-dot
+  from
+    opacity 0.5
+    transform scale(0)
+  to
+    opacity 1
+    transform scale(1)
+
+#header-background
+  z-index 0
+  display block
+  position absolute
+  width 100%
+  top 0
+  bottom 0
+  right 0
+  left 0
+
+.particles-js-canvas-el
+  display block
+  opacity 0
+  position absolute
+
+.starwars-example
+  background: #3C3C3C
+  display inline-block
+  position absolute
+  right 20px
+  top -100px
+  box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.25);
+  border-radius: 100px
+  font-size 13px
+  padding 17px 17px 17px 71px
+  width 226px
+  box-sizing border-box
+  color white
+  font-family 'Raleway'
+  font-weight 500
+  &:before
+    content: ''
+    display block
+    position absolute
+    left 0
+    top 0
+    height 32px
+    width 32px
+    image '../assets/starwars-icon.png'
+
+.improve-document-link
+  @extend $wrapper
+
+.markdown
+  .wrapper
+    margin-top 60px
+
+    h1, h2, h3, h4, h5, h6
+      font-family: 'Raleway';
+      font-weight 600
+      color #4A4A4A
+    strong
+      font-weight 500
+  
+  margin-bottom 40px
+
+.title
+  background: #F9F9F9;
+  padding 30px 0
+
+  h1
+    @extend $wrapper
+    font-family: 'Raleway';
+    font-size: 42px;
+    font-weight 200
+    color: #585858;
+    line-height: 49px;
