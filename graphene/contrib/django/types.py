@@ -2,10 +2,10 @@ import six
 
 from ...core.types import BaseObjectType, ObjectTypeMeta
 from ...relay.fields import GlobalIDField
-from ...relay.types import BaseNode
+from ...relay.types import BaseNode, Connection
 from .converter import convert_django_field
 from .options import DjangoOptions
-from .utils import get_reverse_fields
+from .utils import get_reverse_fields, lazy_map
 
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
@@ -71,6 +71,13 @@ class DjangoInterface(six.with_metaclass(
     pass
 
 
+class DjangoConnection(Connection):
+    @classmethod
+    def from_list(cls, iterable, *args, **kwargs):
+        iterable = lazy_map(iterable, cls.edge_type.node_type)
+        return super(DjangoConnection, cls).from_list(iterable, *args, **kwargs)
+
+
 class DjangoNode(BaseNode, DjangoInterface):
     id = GlobalIDField()
 
@@ -81,3 +88,5 @@ class DjangoNode(BaseNode, DjangoInterface):
             return cls(instance)
         except cls._meta.model.DoesNotExist:
             return None
+
+    connection_type = DjangoConnection

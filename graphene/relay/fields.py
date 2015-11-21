@@ -1,6 +1,3 @@
-from collections import Iterable
-
-from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import from_global_id
 
 from ..core.fields import Field
@@ -30,24 +27,11 @@ class ConnectionField(Field):
         return value
 
     def resolver(self, instance, args, info):
-        from graphene.relay.types import PageInfo
         schema = info.schema.graphene_schema
-
+        connection_type = self.get_type(schema)
         resolved = super(ConnectionField, self).resolver(instance, args, info)
-        if resolved:
-            resolved = self.wrap_resolved(resolved, instance, args, info)
-            assert isinstance(
-                resolved, Iterable), 'Resolved value from the connection field have to be iterable'
-            type = schema.T(self.type)
-            node = schema.objecttype(type)
-            connection_type = self.get_connection_type(node)
-            edge_type = self.get_edge_type(node)
-
-            connection = connection_from_list(
-                resolved, args, connection_type=connection_type,
-                edge_type=edge_type, pageinfo_type=PageInfo)
-            connection.set_connection_data(resolved)
-            return connection
+        if not isinstance(resolved, connection_type):
+            return connection_type.from_list(resolved, args, info)
 
     def get_connection_type(self, node):
         connection_type = self.connection_type or node.get_connection_type()

@@ -219,6 +219,10 @@ class BaseObjectType(BaseType):
 
         return OrderedDict(fields)
 
+    @classmethod
+    def wrap(cls, instance, args, info):
+        return cls(_root=instance)
+
 
 class Interface(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
     pass

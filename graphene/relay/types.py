@@ -1,6 +1,8 @@
 import inspect
 import warnings
+from collections import Iterable
 from functools import wraps
+from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import to_global_id
 
 from ..core.types import (Boolean, Field, InputObjectType, Interface, List,
@@ -62,6 +64,16 @@ class Connection(ObjectType):
             '%s%s' % (node._meta.type_name, cls._meta.type_name),
             (cls,),
             {'edge_type': edge_type, 'edges': edges})
+
+    @classmethod
+    def from_list(cls, iterable, args, info):
+        assert isinstance(
+            iterable, Iterable), 'Resolved value from the connection field have to be iterable'
+        connection = connection_from_list(
+            iterable, args, connection_type=cls,
+            edge_type=cls.edge_type, pageinfo_type=PageInfo)
+        connection.set_connection_data(iterable)
+        return connection
 
     def set_connection_data(self, data):
         self._connection_data = data

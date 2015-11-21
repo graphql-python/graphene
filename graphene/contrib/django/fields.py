@@ -8,9 +8,7 @@ from .utils import get_type_for_model, lazy_map
 
 
 class DjangoConnectionField(ConnectionField):
-
-    def wrap_resolved(self, value, instance, args, info):
-        return lazy_map(value, self.type)
+    pass
 
 
 class LazyListField(Field):
