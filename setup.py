@@ -70,6 +70,9 @@ setup(
             'singledispatch>=3.4.0.3',
             'graphql-django-view>=1.0.0',
         ],
+        'sqlalchemy': [
+            'SQLAlchemy'
+        ]
     },
 
     cmdclass={'test': PyTest},
