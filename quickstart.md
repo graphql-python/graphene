@@ -42,24 +42,24 @@ from graphene import relay
 
 USER_DATA = [
     {
-        'user_id': '1'
-        'first_name': 'Peter'
-        'last_name': 'Cabbage'
-        'email_address': 'peter@cabbage.com'
+        'user_id': '1',
+        'first_name': 'Peter',
+        'last_name': 'Cabbage',
+        'email_address': 'peter@cabbage.com',
         'age': 32
     },
     {
-        'user_id': '2'
-        'first_name': 'Lukas'
-        'last_name': 'Chard'
-        'email_address': 'lukas@broccoli.com'
+        'user_id': '2',
+        'first_name': 'Lukas',
+        'last_name': 'Chard',
+        'email_address': 'lukas@broccoli.com',
         'age': 54
     },
     {
-        'user_id': '3'
-        'first_name': 'Marie'
-        'last_name': 'Cauliflower'
-        'email_address': 'marie@cauliflower.com'
+        'user_id': '3',
+        'first_name': 'Marie',
+        'last_name': 'Cauliflower',
+        'email_address': 'marie@cauliflower.com',
         'age': 27
     },
 ]
@@ -75,7 +75,7 @@ def fetch_users_from_database(args):
     sort_key = args.get('sortKey', None)
     sort_direction = args.get('sortDirection', None)
     reversed = False
-    if sort_directon == 'DESC':
+    if sort_directon and sort_directon == 'DESC':
         reversed = True
 
     filtered_users = [user for user in USER_DATA if full_name is None or full_name in
@@ -97,7 +97,7 @@ class User(relay.Node):
     age = graphene.Int()
 
     @classmethod
-    def get_node(cls, user_id):
+    def get_node(cls, user_id, info):
         user_dict = fetch_user_from_database(user_id)
         # user_dict will contain the fields, user_id, first_name, last_name, email_address and age
         user_dict['id'] = user_dict['user_id'] # will be used to set the global ID used by relay
