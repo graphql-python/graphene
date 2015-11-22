@@ -75,7 +75,7 @@ def fetch_users_from_database(args):
     sort_key = args.get('sortKey', None)
     sort_direction = args.get('sortDirection', None)
     reversed = False
-    if sort_directon and sort_directon == 'DESC':
+    if sort_direction and sort_direction == 'DESC':
         reversed = True
 
     filtered_users = [user for user in USER_DATA if full_name is None or full_name in
