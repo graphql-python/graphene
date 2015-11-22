@@ -72,6 +72,7 @@ class DjangoInterface(six.with_metaclass(
 
 
 class DjangoConnection(Connection):
+
     @classmethod
     def from_list(cls, iterable, *args, **kwargs):
         iterable = maybe_queryset(iterable)
