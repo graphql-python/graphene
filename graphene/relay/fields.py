@@ -30,8 +30,9 @@ class ConnectionField(Field):
         schema = info.schema.graphene_schema
         connection_type = self.get_type(schema)
         resolved = super(ConnectionField, self).resolver(instance, args, info)
-        if not isinstance(resolved, connection_type):
-            return connection_type.from_list(resolved, args, info)
+        if isinstance(resolved, connection_type):
+            return resolved
+        return connection_type.from_list(resolved, args, info)
 
     def get_connection_type(self, node):
         connection_type = self.connection_type or node.get_connection_type()
