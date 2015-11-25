@@ -13,7 +13,10 @@ class Character(Interface):
 
 
 class Pet(ObjectType):
-    type = String(resolver=lambda *_: 'Dog')
+    type = String()
+
+    def resolve_type(self, args, info):
+        return 'Dog'
 
 
 class Human(Character):

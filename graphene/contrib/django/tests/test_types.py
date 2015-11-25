@@ -69,7 +69,7 @@ def test_node_replacedfield():
 
 
 def test_interface_resolve_type():
-    resolve_type = Character.resolve_type(schema, Human())
+    resolve_type = Character._resolve_type(schema, Human())
     assert isinstance(resolve_type, GraphQLObjectType)
 
 
