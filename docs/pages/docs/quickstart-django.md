@@ -1,13 +1,10 @@
 ---
-title: Django Quickstart Guide
-active_tab: quickstart
+title: Guide to Django
 description: A Quick guide to Graphene in Django
 ---
 
-## Django Quickstart
-
 In our previous quickstart page we created a very simple schema.
-Now we will adapt the schema for our Django models.
+Now we will adapt the schema to map automatically some Django models.
 
 ## Project setup
 

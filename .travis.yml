@@ -6,22 +6,25 @@ python:
 - 3.4
 - 3.5
 - pypy
+node_js:
+- 4.1
 cache:
-  - pip
-  - directories:
+  directories:
     - .cache/pip/
-    - docs/node_modules
+    - $HOME/.cache/pip
+    - docs/node_modules/
+    - $HOME/docs/node_modules
 install:
-- pip install --download-cache .cache/pip/ pytest pytest-cov coveralls flake8 six
+- pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls flake8 six
   blinker pytest-django
-- pip install --download-cache .cache/pip/ -e .[django]
+- pip install --download-cache $HOME/.cache/pip/ -e .[django]
 - python setup.py develop
 script:
 - py.test --cov=graphene
 - flake8
 after_success:
 - coveralls
-- cd docs && npm run deploy
+- nvm install 4.1 && cd docs && npm run deploy
 
 env:
   matrix:

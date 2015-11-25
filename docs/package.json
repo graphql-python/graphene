@@ -5,7 +5,7 @@
   "main": "n/a",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm install -g gatsby && npm install",
+    "build": "npm install -g gatsby && npm install && gatsby build",
     "deploy": "npm run build"
   },
   "keywords": [

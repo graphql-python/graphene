@@ -1,6 +1,13 @@
 var IN_BROWSER = typeof window != 'undefined';
 import React from 'react';
+var browser_supported;
 if (IN_BROWSER) {
+    var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+                   navigator.userAgent && !navigator.userAgent.match('CriOS');
+    var browser_supported = !isSafari;
+}
+console.log(browser_supported);
+if (IN_BROWSER && browser_supported) {
   var glfx = require('../vendor/glfx.optim')
   var particlesJS = require('../vendor/particles.js')
 }
@@ -23,12 +30,12 @@ class Header extends React.Component {
     this.mounted = false;
   }
   componentDidMount() {
-    if (!IN_BROWSER) return;
+    if (!(IN_BROWSER && browser_supported)) return;
     this.mounted = true;
     new particlesJS('header-background', {
       "particles": {
         "number": {
-          "value": 36,
+          "value": 40,
           "density": {
             "enable": true,
             "value_area": 800

@@ -1,6 +1,7 @@
 @import 'nib'
 @import 'jeet'
 
+@import 'hljs.css'
 @import 'https://fonts.googleapis.com/css?family=Raleway:400,500,600,200,100&.css'
 
 normalize-css()
@@ -14,6 +15,9 @@ $wrapper
 
 a, a:hover
   text-decoration none
+
+a
+  color rgb(42,93,173)
 
 html, body
   font-family "Helvetica Neue", Helvetica, Arial, sans-serif
@@ -85,7 +89,19 @@ html, body
     text-transform uppercase
     font-weight 600
     line-height 15px
-
+    position relative
+    &.active:before
+      content: ''
+      width 5px
+      height 5px
+      border-radius 100%
+      display block
+      position absolute
+      background white
+      left 50%
+      margin-left -3px
+      bottom -24px
+      
 .header-logo
   font-family 'Raleway'
   font-size 22px
@@ -168,45 +184,183 @@ html, body
   border-radius: 100px
   font-size 13px
   padding 17px 17px 17px 71px
-  width 226px
+  width 236px
   box-sizing border-box
   color white
   font-family 'Raleway'
   font-weight 500
+  transition all .2s ease-in-out
   &:before
     content: ''
     display block
     position absolute
-    left 0
-    top 0
+    left 20px
+    top 20px
     height 32px
     width 32px
-    image '../assets/starwars-icon.png'
+    image '~!file-loader!../assets/starwars-icon.png' 32px 32px
+
+  &:hover
+    transform translateY(-3px)
+    box-shadow 0px 4px 8px 0px rgba(0,0,0,0.32)
 
 .improve-document-link
-  @extend $wrapper
+  position fixed
+  right 0
+  bottom 70px
+  transform-origin 100% 100%
+  background: #999;
+  border: 1px solid #919191;
+  border-radius: 3px 3px 0 0;
+  border-bottom 0
+  padding 9px 12px 12px 34px
+  transform: rotate(270deg) translateX(100%) translateY(3px);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform uppercase
+  color: #FFFFFF;
+  letter-spacing: 0.3px;
+  line-height: 11px;
+  transition all .2s ease-in-out
+  &:before
+    content: ''
+    display block
+    position absolute
+    left 10px
+    top 8px
+    height 16px
+    width 16px
+    image '~!file-loader!../assets/edit.png' 16px 16px
+  &:hover
+    transform: rotate(270deg) translateX(100%)
+    background #666
+    border-color #555
+  +below(600px)
+    display none
+
+$title
+  display block
+  font-family: 'Raleway';
+  font-weight 500
+  line-height 1.2em
+  padding-top .3em
+  margin-bottom .5em
+  padding-bottom .5em
+  color #4A4A4A
 
 .markdown
   .wrapper
     margin-top 60px
 
-    h1, h2, h3, h4, h5, h6
-      font-family: 'Raleway';
-      font-weight 600
-      color #4A4A4A
-    strong
-      font-weight 500
-  
+  h1, h2, h3, h4, h5, h6
+    @extend $title
+
+  h1
+    font-size 32px
+  h2
+    font-size 26px
+  h3
+    font-size 24px
+  h4
+    font-size 21px
+  h5
+    font-size 18px
+  h6
+    font-size 16px
+  strong
+    font-weight 500
+  pre
+    line-height 20px
+    background #FAFAFA
+    padding 20px
+    white-space: pre
+    display: block;
+    color: #333333;
+    overflow-x: auto;
+  p code, ul code
+    background #FAFAFA
+    padding 2px 4px
+    border-radius 2px
+    border 1px solid #CCC
+    color #000
+  code
+    font-size 14px
+    line-height 20px
+    overflow-x: auto;
   margin-bottom 40px
+
+.markdown h1:first-child
+  margin-top 0
+  padding-top 0
 
 .title
   background: #F9F9F9;
-  padding 30px 0
+  padding 54px 0
 
   h1
+    margin 0 auto
     @extend $wrapper
     font-family: 'Raleway';
     font-size: 42px;
     font-weight 200
     color: #585858;
     line-height: 49px;
+
+.docs
+  @extend $wrapper
+
+.docs-aside
+  col(1/4)
+  margin-top 60px
+  +below(600px)
+    padding 20px
+    width 100%
+    box-sizing content-box
+    margin 0 -20px
+    margin-bottom 30px
+    background #F9F9F9
+
+.docs-aside-group
+  display block
+  margin-bottom 40px
+  h3
+    font-family: 'Raleway';
+    font-weight 500
+    font-size 12px
+    text-transform uppercase
+    line-height 1.2em
+    margin-bottom 1em
+    color #AAA
+  a
+    display block
+    font-size 15px
+    font-weight 400
+    line-height 22px
+    height 28px
+    padding 3px 0
+    color #4A4A4A
+    &.active
+      font-weight 500
+      line-height 21px
+      color #E05B49
+
+  +below(600px)
+    display none
+
+.docs-aside-navselect
+  display none
+  width 100%
+  +below(600px)
+    display block
+
+.docs-content
+  col(3/4)
+  margin-top 60px
+  +below(600px)
+    margin-top 10px
+    col(1)
+
+  >h1
+    margin 0
+    @extend $title
+    font-size 32px

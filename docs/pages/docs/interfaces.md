@@ -1,9 +1,13 @@
+---
+title: Interfaces
+description: Walkthrough Interfaces
+---
+
 # Interfaces
 
 An Interface contains the essential fields that will be shared among multiple ObjectTypes.
 
 The basics:
-
 - Each Interface is a Python class that inherits from graphene.Interface.
 - Each attribute of the Interface represents a GraphQL field.
 
@@ -16,19 +20,19 @@ import graphene
 
 # Character is an Interface
 class Character(graphene.Interface):
-	name = graphene.String()
+    name = graphene.String()
 
 # Human is an ObjectType, as inherits an interface
 class Human(Character):
-	born_in = graphene.String()
+    born_in = graphene.String()
 
 # Droid is an ObjectType, as inherits an interface
 class Droid(Character):
-	function = graphene.String()
+    function = graphene.String()
 
 ```
 
-**name** is a field in the `Character` interface that will be in both `Human` and `Droid` ObjectTypes (as those inherit from Character). Each ObjectType also define extra fields at the same time.
+**name** is a field in the `Character` interface that will be in both `Human` and `Droid` ObjectTypes (as those inherit from `Character`). Each ObjectType also define extra fields at the same time.
 
 The above types would have the following representation in a schema:
 

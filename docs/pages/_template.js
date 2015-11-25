@@ -19,10 +19,10 @@ class Template extends React.Component {
                     Graphene
                 </Link>
                 <nav className="header-nav">
-                    <Link to="/docs/quickstart/">Get started</Link>
-                    <Link to="/">Playground</Link>
-                    <Link to="/">Docs</Link>
+                    <Link to="/try/">Try it out</Link>
+                    <Link to="/docs/quickstart/" className={path.indexOf('/docs')==0?"active":null}>Docs</Link>
                     <Link to="/community/">Community</Link>
+                    <a href="https://github.com/graphql-python/graphene/">Github</a>
                 </nav>
             </div>
             {isIndex?

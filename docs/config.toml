@@ -1,1 +1,17 @@
-siteTitle="Graphene"
+siteTitle = "Graphene"
+
+[docs.quickstart]
+	name = "Quickstart"
+	pages = [
+	  "/docs/quickstart/",
+	  "/docs/quickstart-django/",
+	]
+
+[docs.walkthrough]
+	name = "Walkthrough"
+	pages = [
+	  "/docs/interfaces/",
+	  "/docs/objecttypes/",
+	  "/docs/mutations/",
+	  "/docs/basic-types/",
+	]

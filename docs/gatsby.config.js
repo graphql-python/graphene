@@ -1,12 +1,13 @@
 var nib = require("nib");
 var jeet = require("jeet");
+var rupture = require("rupture");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = function(config, env) {
   var IS_STATIC = env === 'static';
   config.merge({
      stylus: {
-        use: [nib(), jeet()]
+        use: [nib(), jeet(), rupture()]
     }
   });
   if (IS_STATIC) {

@@ -1,10 +1,10 @@
 ---
-title: Quickstart Guide
-active_tab: quickstart
+title: Getting started
 description: A Quick guide to Graphene
 ---
 
-Graphene is a powerful framework for creating GraphQL schemas easily in Python.
+Let's build a basic GraphQL schema from scratch.
+
 
 ## Requirements
 
@@ -23,6 +23,7 @@ cd tutorial
 virtualenv env
 source env/bin/activate  # On Windows use `env\Scripts\activate`
 
+# Install Graphene
 pip install graphene
 ```
 
@@ -30,7 +31,7 @@ pip install graphene
 
 A GraphQL schema describes your data model, and provides a GraphQL server with an associated set of resolve methods that know how to fetch data.
 
-We are going to create a very simple schema, with a `Query` with only one field: `hello`. And when we query it should return 'World'.
+We are going to create a very simple schema, with a `Query` with only one field: `hello`. And when we query it should return `"World"`.
 
 
 ```python

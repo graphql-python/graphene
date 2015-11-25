@@ -17,9 +17,17 @@ If you think working with Graphene is fun, there are many ways you can contribut
 -   **GraphQL Relay**: [Source Code][1] - [PyPI package][2]
 -   **Graphene**: [Source Code][3] - [PyPI package][4]
 
+Django integration:
+-   **graphql-django-view**: [Source Code][5] - [PyPI package][6]
+-   **django-graphiql**: [Source Code][7] - [PyPI package][8]
+
   [Source Code]: https://github.com/graphql-python/graphql-core
   [PyPI package]: https://pypi.python.org/pypi/graphql-core
   [1]: https://github.com/graphql-python/graphql-relay
   [2]: https://pypi.python.org/pypi/graphql-relay
   [3]: https://github.com/graphql-python/graphene
   [4]: https://pypi.python.org/pypi/graphene
+  [5]: https://github.com/graphql-python/graphql-django-view
+  [6]: https://pypi.python.org/pypi/graphql-django-view
+  [7]: https://github.com/graphql-python/django-graphiql
+  [8]: https://pypi.python.org/pypi/django-graphiql

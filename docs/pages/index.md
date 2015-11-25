@@ -1,7 +1,7 @@
 ---
 path: /
 ---
-<a class="starwars-example" href="http://swapi.graphene-python.org/">Check our starwars API example!</a>
+<div><a class="starwars-example" href="http://swapi.graphene-python.org/">Check our Django Starwars API example!</a></div>
 
 ## About Graphene
 
