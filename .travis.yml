@@ -8,44 +8,63 @@ python:
 - pypy
 cache:
   directories:
-    - .cache/pip/
-    - $HOME/.cache/pip
-    - docs/node_modules/
-    - $HOME/docs/node_modules
+  - .cache/pip/
+  - $HOME/.cache/pip
+  - docs/node_modules/
+  - $HOME/docs/node_modules
+  - $(npm config get prefix)/bin/gatsby
 install:
 - |
-    if [ "$TEST_TYPE" = build ]; then
-        pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django
-        pip install --download-cache $HOME/.cache/pip/ -e .[django]
-        python setup.py develop
-    elif [ "$TEST_TYPE" = lint ]; then
-        pip install --download-cache $HOME/.cache/pip/ flake8
-    fi
+  if [ "$TEST_TYPE" = build ]; then
+      pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django
+      pip install --download-cache $HOME/.cache/pip/ -e .[django]
+      python setup.py develop
+  elif [ "$TEST_TYPE" = lint ]; then
+      pip install --download-cache $HOME/.cache/pip/ flake8
+  fi
 script:
 - |
-    if [ "$TEST_TYPE" = build_website ]; then
-        echo "Building the web."
-        nvm install 4.1 && cd docs && npm run deploy
-        exit
-    elif [ "$TEST_TYPE" = lint ]; then
-        echo "Checking Python code lint."
-        flake8
-        exit
-    elif [ "$TEST_TYPE" = build ]; then
-        py.test --cov=graphene
-    fi
+  if [ "$TEST_TYPE" = build_website ]; then
+      echo "Building the web."
+      nvm install 4.0
+
+      GH_PAGES_DIR="$TRAVIS_BUILD_DIR"/docs/public
+      git config --global user.name "Travis CI"
+      git config --global user.email "travis@graphene-python.org"
+      git clone --branch gh-pages-seg --depth=50 \
+        https://graphql-python-bot@github.com/graphql-python/graphene.git \
+        $GH_PAGES_DIR
+      cd docs
+      npm run build
+      cd $GH_PAGES_DIR
+      git status
+      if ! git diff-index --quiet HEAD --; then
+        git add -A .
+        git commit -m "Rebuild website"
+        git push "https://${GITHUB_TOKEN}@github.com/graphql-python/graphene.git" gh-pages-seg
+      fi
+      exit
+  elif [ "$TEST_TYPE" = lint ]; then
+      echo "Checking Python code lint."
+      flake8
+      exit
+  elif [ "$TEST_TYPE" = build ]; then
+      py.test --cov=graphene
+  fi
 after_success:
 - |
-    if [ "$TEST_TYPE" = build ]; then
-        coveralls
-    fi
+  if [ "$TEST_TYPE" = build ]; then
+      coveralls
+  fi
 env:
+  matrix:
   - TEST_TYPE=build
+  global:
+    secure: SQC0eCWCWw8bZxbLE8vQn+UjJOp3Z1m779s9SMK3lCLwJxro/VCLBZ7hj4xsrq1MtcFO2U2Kqf068symw4Hr/0amYI3HFTCFiwXAC3PAKXeURca03eNO2heku+FtnQcOjBanExTsIBQRLDXMOaUkf3MIztpLJ4LHqMfUupKmw9YSB0v40jDbSN8khBnndFykmOnVVHznFp8USoN5F0CiPpnfEvHnJkaX76lNf7Kc9XNShBTTtJsnsHMhuYQeInt0vg9HSjoIYC38Tv2hmMj1myNdzyrHF+LgRjI6ceGi50ApAnGepXC/DNRhXROfECKez+LON/ZSqBGdJhUILqC8A4WmWmIjNcwitVFp3JGBqO7LULS0BI96EtSLe8rD1rkkdTbjivajkbykM1Q0Tnmg1adzGwLxRUbTq9tJQlTTkHBCuXIkpKb1mAtb/TY7A6BqfnPi2xTc/++qEawUG7ePhscdTj0IBrUfZsUNUYZqD8E8XbSWKIuS3SHE+cZ+s/kdAsm4q+FFAlpZKOYGxIkwvgyfu4/Plfol4b7X6iAP9J3r1Kv0DgBVFst5CXEwzZs19/g0CgokQbCXf1N+xeNnUELl6/fImaR3RKP22EaABoil4z8vzl4EqxqVoH1nfhE+WlpryXsuSaF/1R+WklR7aQ1FwoCk8V8HxM2zrj4tI8k=
 matrix:
   fast_finish: true
   include:
-    - python: "2.7"
-      env: TEST_TYPE=build_website
-      secure: e0iu1FvUcGNcsKEDsGQiGTJZMJ8tJMAQ+c+KCuh7I11likoJbninI9FX85efMglG93Xu4GtND1rUwKWnANM94Cz5IrLrT9ga62Cg1sinbzD+JUOG9EobtmcYcLbfNvA1ybkZf4K0KvkYfH1XUxtL3v6jFI6lLjZ1vKa2M6i5t/38pjgUOOh9KlVGi+rqSp2TUsCyjZkMxE2Wwceen5N/B1yZJDn9yHPA+kiV2ScOMgZOuVMqQd0IAPcjhqTbNdaW2VjNQFtS8CQ8FOjJh9NepRAyA42oII7Aq65YzZbifzYL1eSPKKfUHHdc7Bs+vq1kGuaWz+XBqByZAQvw7OtpkecG+KrcO7XDV38y6z33vgCC5MPu9e0BZwITIvyuUOKmFA9vTAx/w963vBDSzHgskgqYtYswxzOoE55TS9tHsc5rgoSatEGW2VXyI8ytWpgkuluCNwT+/ZvNaQ33SCPTwN7mQGWx+DC+eyMBjI1sP9s4aYCaTggCSFNtwhRpQqqM/0HFa7hHDksK/zJhl4fhFUrbmyrJo6wm6Z7/s/WiSulk+zZkrLC9eBs1+XNtU7PzcmgfFmcsJnPGBmBF8WOa8WiX9hOn9DutBT4mLtlOod3YvU22U0Vwj2TjzhDvx8uyYCpDA03a/q9QjE4+klcI2Mw5UNhJsmTpCZQE06aHDKg=
-    - python: "2.7"
-      env: TEST_TYPE=lint
+  - python: '2.7'
+    env: TEST_TYPE=build_website
+  - python: '2.7'
+    env: TEST_TYPE=lint

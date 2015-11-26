@@ -13,8 +13,10 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "copy-webpack-plugin": "^0.2.0",
     "extract-text-webpack-plugin": "^0.9.1",
     "jeet": "^6.1.2",
+    "lodash": "^3.10.1",
     "nib": "^1.1.0",
     "react": "^0.14.3",
     "react-document-title": "^2.0.1",
