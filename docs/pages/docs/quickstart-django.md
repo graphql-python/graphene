@@ -1,10 +1,14 @@
 ---
-title: Guide to Django
+title: Django Tutorial
 description: A Quick guide to Graphene in Django
 ---
 
+# Django Tutorial
+
 In our previous quickstart page we created a very simple schema.
-Now we will adapt the schema to map automatically some Django models.
+
+Now we will adapt the schema to map automatically some Django models, 
+and expose this schema in a `/graphql` API endpoint.
 
 ## Project setup
 
@@ -54,7 +58,7 @@ from graphene.contrib.django import DjangoObjectType
 
 from django.contrib.auth.models import User, Group
 
-# Graphene will map automaticall the User model to UserType with
+# Graphene will map automatically the User model to UserType with
 # the specified fields
 class UserType(DjangoObjectType):
     class Meta:

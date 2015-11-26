@@ -62,29 +62,23 @@ class DateTime(Scalar):
 
 This types if are mounted in a `ObjectType`, `Interface` or `Mutation`,
  would act as `Field`s.
-So, the following examples will behave exactly the same:
 
 ```python
 class Person(graphene.ObjectType):
     name = graphene.String()
-```
-and
 
-```python
+# Is equivalent to:
 class Person(graphene.ObjectType):
     name = graphene.Field(graphene.String())
 ```
 
 ## Mounting in Fields
 
-If this types are mounted in a `Field`, would act as `Argument`s.
-So, the following examples will behave exactly the same:
+If the types are mounted in a `Field`, would act as `Argument`s.
 
 ```python
 graphene.Field(graphene.String(), to=graphene.String())
-```
-and
 
-```python
+# Is equivalent to:
 graphene.Field(graphene.String(), to=graphene.Argument(graphene.String()))
 ```

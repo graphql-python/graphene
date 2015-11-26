@@ -3,6 +3,8 @@ title: Getting started
 description: A Quick guide to Graphene
 ---
 
+# Getting started
+
 Let's build a basic GraphQL schema from scratch.
 
 
@@ -15,15 +17,6 @@ Let's build a basic GraphQL schema from scratch.
 ## Project setup
 
 ```bash
-# Create the project directory
-mkdir tutorial
-cd tutorial
-
-# Create a virtualenv to isolate our package dependencies locally
-virtualenv env
-source env/bin/activate  # On Windows use `env\Scripts\activate`
-
-# Install Graphene
 pip install graphene
 ```
 

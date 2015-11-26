@@ -32,7 +32,7 @@ install:
 script:
 - |
   if [ "$TEST_TYPE" = build_website ]; then
-    if [ "$TRAVIS_BRANCH" = "docs" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
+    if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
       echo "Building the web."
       nvm install 4.0
 

@@ -19,6 +19,9 @@ a, a:hover
 a
   color rgb(42,93,173)
 
+p
+  margin-bottom 1em
+
 html, body
   font-family "Helvetica Neue", Helvetica, Arial, sans-serif
   font-weight 300
@@ -283,6 +286,10 @@ $title
     border-radius 2px
     border 1px solid #CCC
     color #000
+  p + p, p + ul
+    margin-top -.4em
+  p + ul
+    margin-top -.6em
   code
     font-size 14px
     line-height 20px
@@ -295,16 +302,16 @@ $title
 
 .title
   background: #F9F9F9;
-  padding 54px 0
+  padding 48px 0
 
   h1
     margin 0 auto
     @extend $wrapper
     font-family: 'Raleway';
-    font-size: 42px;
+    font-size: 40px;
     font-weight 200
     color: #585858;
-    line-height: 49px;
+    line-height: 50px;
 
 .docs
   @extend $wrapper
@@ -356,6 +363,7 @@ $title
 .docs-content
   col(3/4)
   margin-top 60px
+  margin-bottom 20px
   +below(600px)
     margin-top 10px
     col(1)
@@ -364,3 +372,8 @@ $title
     margin 0
     @extend $title
     font-size 32px
+    
+  .docs-next
+    float right
+    color #e05b49
+    font-weight 400

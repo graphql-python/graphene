@@ -8,7 +8,7 @@ description: Walkthrough ObjectTypes
 An ObjectType is the single, definitive source of information about your data. It contains the essential fields and behaviors of the data you’re querying.
 
 The basics:
-- Each ObjectType is a Python class that inherits graphene.ObjectType or inherits an implemented [Interface](/docs/interfaces/).
+- Each ObjectType is a Python class that inherits `graphene.ObjectType` or inherits an implemented [Interface](/docs/interfaces/).
 - Each attribute of the ObjectType represents a GraphQL field.
 
 ## Quick example

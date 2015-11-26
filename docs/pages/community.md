@@ -5,7 +5,7 @@ active_tab: community
 description: The biggest GraphQL Community in Python
 ---
 
-Graphene is constantly developing thanks to an active volunteer community, There are many different places where you discuss Graphene, share your experiences or ask for help. Your feedback and participation are very welcome!
+Graphene is constantly developing thanks to an active volunteer community, There are many different places where you discuss Graphene, share your experiences or ask for help. **Your feedback and participation are very welcome**!
 
 If you think working with Graphene is fun, there are many ways you can contribute to it. Please join us in the Slack community and help us shape the next generation API’s.
 
@@ -20,6 +20,11 @@ If you think working with Graphene is fun, there are many ways you can contribut
 Django integration:
 -   **graphql-django-view**: [Source Code][5] - [PyPI package][6]
 -   **django-graphiql**: [Source Code][7] - [PyPI package][8]
+
+## Other related projects
+
+- [Flask GraphQL Demo](https://github.com/amitsaha/flask-graphql-demo) by [@echorand](https://twitter.com/echorand)
+
 
   [Source Code]: https://github.com/graphql-python/graphql-core
   [PyPI package]: https://pypi.python.org/pypi/graphql-core

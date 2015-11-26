@@ -12,12 +12,14 @@ class Markdown extends React.Component {
     var showTitle = post.title && !this.props.docs;
     return (
       <DocumentTitle title={`${post.title?post.title+' - ':''}${this.props.config.siteTitle}`}>
-        <div className="markdown">
+        <div>
           {showTitle?<div className="title">
             <h1>{post.title}</h1>
           </div>:null}
-          <div className={!this.props.docs?"wrapper":null} dangerouslySetInnerHTML={{__html: post.body}}/>
-          <a href={documentUrl} className="improve-document-link">Edit page</a>
+          <div className="markdown">
+            <div className={!this.props.docs?"wrapper":null} dangerouslySetInnerHTML={{__html: post.body}}/>
+            <a href={documentUrl} className="improve-document-link">Edit page</a>
+          </div>
         </div>
       </DocumentTitle>
     );
