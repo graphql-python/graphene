@@ -2,6 +2,7 @@
 @import 'jeet'
 
 @import 'hljs.css'
+@import 'bm.css'
 @import 'https://fonts.googleapis.com/css?family=Raleway:400,500,600,200,100&.css'
 
 normalize-css()
@@ -104,7 +105,36 @@ html, body
       left 50%
       margin-left -3px
       bottom -24px
-      
+
+  +below(600px)
+    display none
+
+.bm-burger-button, .bm-menu-wrap, .bm-overlay
+  display none
+  +below(600px)
+    display block
+
+.bm-burger-button
+  z-index 300!important
+
+.bm-overlay
+  z-index 1000!important
+
+.bm-item-list
+  a
+    font-family 'Raleway'
+    display block
+    font-size 15px
+    color #CCC
+    margin 6px 0
+    padding 10px 6px
+    text-transform uppercase
+    font-weight 500
+    line-height 20px
+    position relative
+    &:hover
+      color white
+
 .header-logo
   font-family 'Raleway'
   font-size 22px
@@ -254,6 +284,8 @@ $title
 .markdown
   .wrapper
     margin-top 60px
+    +below(600px)
+      margin-top 30px
 
   h1, h2, h3, h4, h5, h6
     @extend $title
@@ -312,6 +344,9 @@ $title
     font-weight 200
     color: #585858;
     line-height: 50px;
+
+  +below(600px)
+    padding 30px 0
 
 .docs
   @extend $wrapper

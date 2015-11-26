@@ -37,7 +37,7 @@ class Template extends React.Component {
         <div className="docs">
           <aside className="docs-aside">
               {aside_links}
-              <select className="docs-aside-navselect" onChange={this.goToPage.bind(this)}>
+              <select className="docs-aside-navselect" value={this.props.page.path} onChange={this.goToPage.bind(this)}>
                   {aside_options}
               </select>
           </aside>

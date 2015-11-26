@@ -1,6 +1,7 @@
 import React from 'react';
 import { RouteHandler, Link, State } from 'react-router';
 import Icon from 'assets/icon'
+import {stack as Menu} from 'react-burger-menu';
 
 import Header from './_header'
 import logo from '!raw!assets/logo.svg'
@@ -12,6 +13,12 @@ class Template extends React.Component {
     var isIndex = path == '/';
     return (
       <div>
+        <Menu width={200} right>
+            <span><Link to="/try/">Try it out</Link></span>
+            <span><Link to="/docs/quickstart/" className={path.indexOf('/docs')==0?"active":null}>Docs</Link></span>
+            <span><Link to="/community/">Community</Link></span>
+            <a href="https://github.com/graphql-python/graphene/">Github</a>
+        </Menu>
         <header className="header">
             <div className="header-wrapper">
                 <Link className="header-logo" to="/">
