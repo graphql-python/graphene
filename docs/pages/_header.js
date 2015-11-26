@@ -6,7 +6,6 @@ if (IN_BROWSER) {
                    navigator.userAgent && !navigator.userAgent.match('CriOS');
     var browser_supported = !isSafari;
 }
-console.log(browser_supported);
 if (IN_BROWSER && browser_supported) {
   var glfx = require('../vendor/glfx.optim')
   var particlesJS = require('../vendor/particles.js')

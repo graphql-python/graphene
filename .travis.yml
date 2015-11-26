@@ -12,19 +12,27 @@ cache:
   - $HOME/.cache/pip
   - docs/node_modules/
   - $HOME/docs/node_modules
-  - $(npm config get prefix)/bin/gatsby
+before_install:
+- |
+  if [ "$TEST_TYPE" != build_website ] && \
+    ! git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md$)|(^(docs))/'
+  then
+    echo "Only docs were updated, stopping build process."
+    exit
+  fi
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
-      pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django
-      pip install --download-cache $HOME/.cache/pip/ -e .[django]
-      python setup.py develop
+    pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django
+    pip install --download-cache $HOME/.cache/pip/ -e .[django]
+    python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
-      pip install --download-cache $HOME/.cache/pip/ flake8
+    pip install --download-cache $HOME/.cache/pip/ flake8
   fi
 script:
 - |
   if [ "$TEST_TYPE" = build_website ]; then
+    if [ "$TRAVIS_BRANCH" = "docs" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
       echo "Building the web."
       nvm install 4.0
 
@@ -44,12 +52,13 @@ script:
         git push "https://${GITHUB_TOKEN}@github.com/graphql-python/graphene.git" gh-pages-seg
       fi
       exit
+    fi
   elif [ "$TEST_TYPE" = lint ]; then
-      echo "Checking Python code lint."
-      flake8
-      exit
+    echo "Checking Python code lint."
+    flake8
+    exit
   elif [ "$TEST_TYPE" = build ]; then
-      py.test --cov=graphene
+    py.test --cov=graphene
   fi
 after_success:
 - |
