@@ -1,23 +1,23 @@
 import inspect
 
-from sqlalchemy import Table
+from sqlalchemy.ext.declarative.api import DeclarativeMeta
 
-from graphene.core.options import Options
-from graphene.relay.types import Node
-from graphene.relay.utils import is_node
+from ...core.options import Options
+from ...relay.types import Node
+from ...relay.utils import is_node
 
-VALID_ATTRS = ('table', 'only_columns', 'exclude_columns')
+VALID_ATTRS = ('model', 'only_fields', 'exclude_fields')
 
 
 def is_base(cls):
-    from graphene.contrib.SQLAlchemy.types import SQLAlchemyObjectType
+    from graphene.contrib.sqlalchemy.types import SQLAlchemyObjectType
     return SQLAlchemyObjectType in cls.__bases__
 
 
 class SQLAlchemyOptions(Options):
 
     def __init__(self, *args, **kwargs):
-        self.table = None
+        self.model = None
         super(SQLAlchemyOptions, self).__init__(*args, **kwargs)
         self.valid_attrs += VALID_ATTRS
         self.only_fields = None
@@ -30,8 +30,8 @@ class SQLAlchemyOptions(Options):
             self.interfaces.append(Node)
         if not is_node(cls) and not is_base(cls):
             return
-        if not self.table:
+        if not self.model:
             raise Exception(
-                'SQLAlchemy ObjectType %s must have a table in the Meta class attr' % cls)
-        elif not inspect.isclass(self.table) or not issubclass(self.table, Table):
-            raise Exception('Provided table in %s is not a SQLAlchemy table' % cls)
+                'SQLAlchemy ObjectType %s must have a model in the Meta class attr' % cls)
+        elif not inspect.isclass(self.model) or not isinstance(self.model, DeclarativeMeta):
+            raise Exception('Provided model in %s is not a SQLAlchemy model' % cls)
