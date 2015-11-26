@@ -6,8 +6,6 @@ python:
 - 3.4
 - 3.5
 - pypy
-node_js:
-- 4.1
 cache:
   directories:
     - .cache/pip/
@@ -15,17 +13,39 @@ cache:
     - docs/node_modules/
     - $HOME/docs/node_modules
 install:
-- pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls flake8 six
-  blinker pytest-django
-- pip install --download-cache $HOME/.cache/pip/ -e .[django]
-- python setup.py develop
+- |
+    if [ "$TEST_TYPE" = build ]; then
+        pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django
+        pip install --download-cache $HOME/.cache/pip/ -e .[django]
+        python setup.py develop
+    elif [ "$TEST_TYPE" = lint ]; then
+        pip install --download-cache $HOME/.cache/pip/ flake8
+    fi
 script:
-- py.test --cov=graphene
-- flake8
+- |
+    if [ "$TEST_TYPE" = build_website ]; then
+        echo "Building the web."
+        nvm install 4.1 && cd docs && npm run deploy
+        exit
+    elif [ "$TEST_TYPE" = lint ]; then
+        echo "Checking Python code lint."
+        flake8
+        exit
+    elif [ "$TEST_TYPE" = build ]; then
+        py.test --cov=graphene
+    fi
 after_success:
-- coveralls
-- nvm install 4.1 && cd docs && npm run deploy
-
+- |
+    if [ "$TEST_TYPE" = build ]; then
+        coveralls
+    fi
 env:
-  matrix:
-    secure: e0iu1FvUcGNcsKEDsGQiGTJZMJ8tJMAQ+c+KCuh7I11likoJbninI9FX85efMglG93Xu4GtND1rUwKWnANM94Cz5IrLrT9ga62Cg1sinbzD+JUOG9EobtmcYcLbfNvA1ybkZf4K0KvkYfH1XUxtL3v6jFI6lLjZ1vKa2M6i5t/38pjgUOOh9KlVGi+rqSp2TUsCyjZkMxE2Wwceen5N/B1yZJDn9yHPA+kiV2ScOMgZOuVMqQd0IAPcjhqTbNdaW2VjNQFtS8CQ8FOjJh9NepRAyA42oII7Aq65YzZbifzYL1eSPKKfUHHdc7Bs+vq1kGuaWz+XBqByZAQvw7OtpkecG+KrcO7XDV38y6z33vgCC5MPu9e0BZwITIvyuUOKmFA9vTAx/w963vBDSzHgskgqYtYswxzOoE55TS9tHsc5rgoSatEGW2VXyI8ytWpgkuluCNwT+/ZvNaQ33SCPTwN7mQGWx+DC+eyMBjI1sP9s4aYCaTggCSFNtwhRpQqqM/0HFa7hHDksK/zJhl4fhFUrbmyrJo6wm6Z7/s/WiSulk+zZkrLC9eBs1+XNtU7PzcmgfFmcsJnPGBmBF8WOa8WiX9hOn9DutBT4mLtlOod3YvU22U0Vwj2TjzhDvx8uyYCpDA03a/q9QjE4+klcI2Mw5UNhJsmTpCZQE06aHDKg=
+  - TEST_TYPE=build
+matrix:
+  fast_finish: true
+  include:
+    - python: "2.7"
+      env: TEST_TYPE=build_website
+      secure: e0iu1FvUcGNcsKEDsGQiGTJZMJ8tJMAQ+c+KCuh7I11likoJbninI9FX85efMglG93Xu4GtND1rUwKWnANM94Cz5IrLrT9ga62Cg1sinbzD+JUOG9EobtmcYcLbfNvA1ybkZf4K0KvkYfH1XUxtL3v6jFI6lLjZ1vKa2M6i5t/38pjgUOOh9KlVGi+rqSp2TUsCyjZkMxE2Wwceen5N/B1yZJDn9yHPA+kiV2ScOMgZOuVMqQd0IAPcjhqTbNdaW2VjNQFtS8CQ8FOjJh9NepRAyA42oII7Aq65YzZbifzYL1eSPKKfUHHdc7Bs+vq1kGuaWz+XBqByZAQvw7OtpkecG+KrcO7XDV38y6z33vgCC5MPu9e0BZwITIvyuUOKmFA9vTAx/w963vBDSzHgskgqYtYswxzOoE55TS9tHsc5rgoSatEGW2VXyI8ytWpgkuluCNwT+/ZvNaQ33SCPTwN7mQGWx+DC+eyMBjI1sP9s4aYCaTggCSFNtwhRpQqqM/0HFa7hHDksK/zJhl4fhFUrbmyrJo6wm6Z7/s/WiSulk+zZkrLC9eBs1+XNtU7PzcmgfFmcsJnPGBmBF8WOa8WiX9hOn9DutBT4mLtlOod3YvU22U0Vwj2TjzhDvx8uyYCpDA03a/q9QjE4+klcI2Mw5UNhJsmTpCZQE06aHDKg=
+    - python: "2.7"
+      env: TEST_TYPE=lint
