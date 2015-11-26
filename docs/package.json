@@ -24,6 +24,7 @@
     "react-router": "^0.13.5",
     "rupture": "^0.6.1",
     "stylus-loader": "^1.4.2",
+    "url-loader": "^0.5.7",
     "webpack": "^1.12.9"
   }
 }
