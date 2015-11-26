@@ -28,7 +28,6 @@ pip install django-graphiql
 
 # Set up a new project with a single application
 django-admin.py startproject tutorial .  # Note the trailing '.' character
-cd tutorial
 django-admin.py startapp quickstart
 ```
 
@@ -50,13 +49,14 @@ Once you've set up a database and initial user created and ready to go, open up 
 
 ## Schema
 
-Right, we'd better write some types then. Open `tutorial/quickstart/schema.py` and get typing.
+Right, we'd better write some types then. Open `quickstart/schema.py` and get typing.
 
 ```python
 import graphene
 from graphene.contrib.django import DjangoObjectType
 
 from django.contrib.auth.models import User, Group
+
 
 # Graphene will map automatically the User model to UserType with
 # the specified fields
@@ -68,14 +68,16 @@ class UserType(DjangoObjectType):
 
 class GroupType(DjangoObjectType):
     class Meta:
-        model = User
+        model = Group
         only_fields = ('name', )
 
 
 class Query(graphene.ObjectType):
     all_users = graphene.List(UserType)
-    get_user = graphene.Field(UserType
-                              id=graphene.String(required=True))
+    get_user = graphene.Field(UserType,
+                              id=graphene.String().NonNull)
+    get_group = graphene.Field(GroupType,
+                               id=graphene.String().NonNull)
 
     def resolve_all_users(self, args, info):
         return User.objects.all()
@@ -83,9 +85,23 @@ class Query(graphene.ObjectType):
     def resolve_get_user(self, args, info):
         return User.objects.get(id=args.get('id'))
 
+    def resolve_get_group(self, args, info):
+        return Group.objects.get(id=args.get('id'))
+
 schema = graphene.Schema(query=Query)
 ```
 
+
+## Adding GraphiQL
+
+For having the GraphiQL static assets we need to append `django_graphiql` in `INSTALLED_APPS` in `tutorial/settings.py`:
+
+```python
+INSTALLED_APPS = [
+    # The other installed apps
+    'django_graphiql',
+]
+```
 
 ## Creating GraphQL and GraphiQL views
 
@@ -96,7 +112,7 @@ Okay, now let's wire up the GraphQL and GraphiQL urls. On to `tutorial/urls.py`.
 from django.conf.urls import url, include
 from django.views.decorators.csrf import csrf_exempt
 from graphene.contrib.django.views import GraphQLView
-from tutorial.quickstart.schema import schema
+from quickstart.schema import schema
 
 
 # Wire up our GraphQL schema in /graphql.
