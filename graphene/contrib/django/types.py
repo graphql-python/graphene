@@ -2,10 +2,10 @@ import six
 
 from ...core.types import BaseObjectType, ObjectTypeMeta
 from ...relay.fields import GlobalIDField
-from ...relay.types import BaseNode
+from ...relay.types import BaseNode, Connection
 from .converter import convert_django_field
 from .options import DjangoOptions
-from .utils import get_reverse_fields
+from .utils import get_reverse_fields, maybe_queryset
 
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
@@ -30,7 +30,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             is_excluded = field.name in cls._meta.exclude_fields or is_already_created
             if is_not_in_only or is_excluded:
                 # We skip this field if we specify only_fields and is not
-                # in there. Or when we excldue this field in exclude_fields
+                # in there. Or when we exclude this field in exclude_fields
                 continue
             converted_field = convert_django_field(field)
             cls.add_to_class(field.name, converted_field)
@@ -71,6 +71,14 @@ class DjangoInterface(six.with_metaclass(
     pass
 
 
+class DjangoConnection(Connection):
+
+    @classmethod
+    def from_list(cls, iterable, *args, **kwargs):
+        iterable = maybe_queryset(iterable)
+        return super(DjangoConnection, cls).from_list(iterable, *args, **kwargs)
+
+
 class DjangoNode(BaseNode, DjangoInterface):
     id = GlobalIDField()
 
@@ -81,3 +89,5 @@ class DjangoNode(BaseNode, DjangoInterface):
             return cls(instance)
         except cls._meta.model.DoesNotExist:
             return None
+
+    connection_type = DjangoConnection

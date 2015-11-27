@@ -75,7 +75,7 @@ def test_union_cannot_initialize():
 
 
 def test_interface_resolve_type():
-    resolve_type = Character.resolve_type(schema, Human(object()))
+    resolve_type = Character._resolve_type(schema, Human(object()))
     assert isinstance(resolve_type, GraphQLObjectType)
 
 

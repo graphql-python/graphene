@@ -182,7 +182,7 @@ class BaseObjectType(BaseType):
         signals.post_init.send(self.__class__, instance=self)
 
     @classmethod
-    def resolve_type(cls, schema, instance, *args):
+    def _resolve_type(cls, schema, instance, *args):
         return schema.T(instance.__class__)
 
     @classmethod
@@ -191,7 +191,7 @@ class BaseObjectType(BaseType):
             return GraphQLInterfaceType(
                 cls._meta.type_name,
                 description=cls._meta.description,
-                resolve_type=partial(cls.resolve_type, schema),
+                resolve_type=partial(cls._resolve_type, schema),
                 fields=partial(cls.get_fields, schema)
             )
         elif cls._meta.is_union:
@@ -218,6 +218,10 @@ class BaseObjectType(BaseType):
                 continue
 
         return OrderedDict(fields)
+
+    @classmethod
+    def wrap(cls, instance, args, info):
+        return cls(_root=instance)
 
 
 class Interface(six.with_metaclass(ObjectTypeMeta, BaseObjectType)):
