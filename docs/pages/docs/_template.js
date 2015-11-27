@@ -33,7 +33,7 @@ class Template extends React.Component {
     var next_page = pages[next_page_index];
     return (
       <div>
-        <div className="title"><h1>Documentation</h1></div>
+        <div className="page-title"><h1>Documentation</h1></div>
         <div className="docs">
           <aside className="docs-aside">
               {aside_links}

@@ -3,13 +3,24 @@ var jeet = require("jeet");
 var rupture = require("rupture");
 var path = require("path");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var webpack = require("webpack");
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = function(config, env) {
   var IS_STATIC = env === 'static';
+  var entry = config._config.entry.slice();
+  // var output = config._config.output;
+  // output.filename = "[name].js";
+  config._config.entry = {
+    bundle: entry,
+  };
   config.merge({
-     stylus: {
-        use: [nib(), jeet(), rupture()]
+    stylus: {
+      use: [nib(), jeet(), rupture()]
+    },
+    output: {
+      filename: "[name].js",
+      publicPath: "/",
     },
     resolveLoader: {
       root: path.join(__dirname, "node_modules"),
@@ -23,7 +34,9 @@ module.exports = function(config, env) {
       alias: {
         'original-react': path.join(__dirname, "node_modules", "react"),
         'react/lib': path.join(__dirname, "node_modules", "react", "lib"),
-        'react': path.join(__dirname, 'patched-react.js')
+        'react': path.join(__dirname, 'patched-react.js'),
+        'playground-page': (env != "static")?'../playground/page':'../pages/_empty',
+        'playground-wrapper': (env == "develop")?'../playground/page':'../playground/wrapper',
       },
       modulesDirectories: ['./']
     }
@@ -32,6 +45,10 @@ module.exports = function(config, env) {
     config.plugin('extract-css', ExtractTextPlugin, ["app.css"]);
   }
   config.plugin('static', CopyWebpackPlugin, [[{ from: '../static'}]]);
+  config.plugin('define-env', webpack.DefinePlugin, [{"ENV": JSON.stringify(env)}]);
+  // if (env != "static") {
+  //   config.plugin('commons', webpack.optimize.CommonsChunkPlugin, ["commons.js"]);
+  // }
 
   config.loader('stylus', function(cfg) {
     cfg.test = /\.styl$/;
