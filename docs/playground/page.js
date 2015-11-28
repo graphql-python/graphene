@@ -8,6 +8,7 @@ import schema from './schema';
 import pypyjs_vm from 'pypyjs';
 
 import 'codemirror/mode/python/python';
+import 'codemirror/addon/lint/lint';
 import '../css/playground.styl';
 
 if (typeof PUBLIC_PATH === "undefined") {
@@ -31,6 +32,23 @@ class Query(graphene.ObjectType):
 
 schema = graphene.Schema(query=Query)
 `;
+
+CodeMirror.registerHelper('lint', 'python', function (text, options, editor) {
+  return (options.errors || []).map((error) => {
+    var tokens = editor.getLineTokens(error.line - 1);
+    tokens = tokens.filter((token, pos) => {
+      return !!token.type || token.string.trim().length > 0;
+    });
+    if (!tokens) return [];
+    return {
+      message: `${error.name}: ${error.message}`,
+      severity: 'error',
+      type: 'syntax',
+      from: CodeMirror.Pos(error.line - 1, tokens[0].start),
+      to: CodeMirror.Pos(error.line - 1, tokens[tokens.length-1].end),
+    };
+  });
+});
 
 // function graphQLFetcher(graphQLParams) {
 //   return fetch('http://swapi.graphene-python.org/graphql', {
@@ -113,10 +131,13 @@ __graphene_executor = Executor([TrackResolver()], map_type=OrderedDict)
       value: baseCode,
       mode:  "python",
       theme: "graphene",
-      // lineNumbers: true,
+      lineNumbers: true,
       tabSize: 4,
       indentUnit: 4,
-      gutters: ["CodeMirror-linenumbers", "breakpoints"]
+      gutters: ["CodeMirror-linenumbers", "breakpoints"],
+      lint: {
+        errors: [],
+      },
     });
     this.editor.on("change", this.onEditorChange.bind(this));
   }
@@ -132,6 +153,7 @@ __graphene_executor = Executor([TrackResolver()], map_type=OrderedDict)
     this.createSchema(this.editor.getValue());
   }
   createSchema(code) {
+    if (this.previousCode == code) return;
     console.log('createSchema');
     this.validSchema = null;
     this.pypyjs.then(() => {
@@ -142,12 +164,16 @@ assert schema, 'You have to define a schema'
 `)
     }).then(() => {
       console.log('NO ERRORS');
+      this.removeErrors();
       this.validSchema = true;
     }, (err) => {
-      console.log('ERROR', err);
+      this.editor.options.lint.errors = [];
+      console.log('ERRORS', err);
+      this.logError(err);
       this.validSchema = false;
       // this.editor.setGutterMarker(5, "breakpoints", syntaxError());
     }).then(this.updateGraphiQL.bind(this));
+    this.previousCode = code;
   }
   updateGraphiQL() {
     if (this.validSchema) {
@@ -156,6 +182,24 @@ assert schema, 'You have to define a schema'
       this.refs.graphiql.forceUpdate();
       this.refs.graphiql.refs.docExplorer.forceUpdate();
     }
+  }
+  logError(error) {
+    var lines = error.trace.split('\n');
+    var file_errors = lines.map((errorLine) => {
+      return errorLine.match(/File "<string>", line (\d+)/);
+    }).filter((x) => !! x);
+    if (!file_errors.length) return;
+    var line = parseInt(file_errors[file_errors.length-1][1]);
+    error.line = line-2;
+    if (error.name == "ImportError" && error.message == "No module named django") {
+      error.message = "Django is not supported yet in Playground editor";
+    }
+    this.editor.options.lint.errors.push(error);
+    CodeMirror.signal(this.editor, 'change', this.editor);
+  }
+  removeErrors() {
+    this.editor.options.lint.errors = [];
+    CodeMirror.signal(this.editor, 'change', this.editor);
   }
   fetcher (graphQLParams) {
     if (!this.validSchema) {

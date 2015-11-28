@@ -31,9 +31,9 @@
 
   .cm-def
   .cm-variable + .cm-keyword // lambda
-
-    transition all .3s ease-in-out
-    background transparent
+    &:not(.CodeMirror-lint-mark-error)
+      transition all .3s ease-in-out
+      background transparent
 
   .activeline
     .cm-def
