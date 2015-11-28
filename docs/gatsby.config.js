@@ -9,6 +9,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = function(config, env) {
   var IS_STATIC = env === 'static';
   var entry = config._config.entry.slice();
+  var publicPath = config._config.output.publicPath;
   // var output = config._config.output;
   // output.filename = "[name].js";
   config._config.entry = {
@@ -25,9 +26,6 @@ module.exports = function(config, env) {
     resolveLoader: {
       root: path.join(__dirname, "node_modules"),
       modulesDirectories: ['./'],
-      alias: {
-        'copy': 'file-loader?name=[path][name].[ext]&context=./static',
-      }
     },
     resolve: {
       root: path.join(__dirname, "node_modules"),
@@ -35,6 +33,7 @@ module.exports = function(config, env) {
         'original-react': path.join(__dirname, "node_modules", "react"),
         'react/lib': path.join(__dirname, "node_modules", "react", "lib"),
         'react': path.join(__dirname, 'patched-react.js'),
+        'pypyjs': '../playground/graphene-js/pypyjs',
         'playground-page': (env != "static")?'../playground/page':'../pages/_empty',
         'playground-wrapper': (env == "develop")?'../playground/page':'../playground/wrapper',
       },
@@ -45,7 +44,10 @@ module.exports = function(config, env) {
     config.plugin('extract-css', ExtractTextPlugin, ["app.css"]);
   }
   config.plugin('static', CopyWebpackPlugin, [[{ from: '../static'}]]);
-  config.plugin('define-env', webpack.DefinePlugin, [{"ENV": JSON.stringify(env)}]);
+  config.plugin('define-env', webpack.DefinePlugin, [{
+    "ENV": JSON.stringify(env),
+    "PUBLIC_PATH": JSON.stringify(publicPath),
+  }]);
   // if (env != "static") {
   //   config.plugin('commons', webpack.optimize.CommonsChunkPlugin, ["commons.js"]);
   // }

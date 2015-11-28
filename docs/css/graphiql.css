@@ -54,7 +54,7 @@
 }
 
 #graphiql-container .docExplorerShow {
-  background: #F9F9F9;
+  background: transparent;
   border: none;
   border-bottom: solid 1px #d0d0d0;
   border-left: solid 1px rgba(0, 0, 0, 0.2);
@@ -207,10 +207,9 @@
 }
 
 #graphiql-container .execute-button {
-  background: white;
-  border: solid 1px #999;
+  background: transparent;
+  border: solid 1px #777;
   border-radius: 17px;
-  box-shadow: 0 1px 0 #fff;
   cursor: pointer;
   fill: #444;
   height: 34px;
@@ -218,12 +217,22 @@
   padding: 0;
   width: 34px;
 }
+#graphiql-container .execute-button path {
+  fill: #777;
+}
+#graphiql-container .execute-button:hover {
+  border-color: #333;
+}
+#graphiql-container .execute-button:hover path {
+  fill: #333;
+}
 
 #graphiql-container .execute-button:active {
-  background: #EEE;
-  box-shadow:
-    inset 0 0 2px rgba(0, 0, 0, 0.2),
-    inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-color: #db594c;
+}
+#graphiql-container .execute-button:active path {
+  fill: #db594c;
 }
 
 #graphiql-container .execute-button:focus {
@@ -380,72 +389,72 @@ div.CodeMirror-lint-message-error, div.CodeMirror-lint-message-warning {
 }
 
 /* Comment */
-.cm-comment {
+#graphiql-container .cm-comment {
   color: #999;
 }
 
 /* Punctuation */
-.cm-punctuation {
+#graphiql-container .cm-punctuation {
   color: #555;
 }
 
 /* Keyword */
-.cm-keyword {
+#graphiql-container .cm-keyword {
   color: #B11A04;
 }
 
 /* OperationName, FragmentName */
-.cm-def {
+#graphiql-container .cm-def {
   color: #D2054E;
 }
 
 /* FieldName */
-.cm-property {
+#graphiql-container .cm-property {
   color: #1F61A0;
 }
 
 /* FieldAlias */
-.cm-qualifier {
+#graphiql-container .cm-qualifier {
   color: #1C92A9;
 }
 
 /* ArgumentName and ObjectFieldName */
-.cm-attribute {
+#graphiql-container .cm-attribute {
   color: #8B2BB9;
 }
 
 /* Number */
-.cm-number {
+#graphiql-container .cm-number {
   color: #2882F9;
 }
 
 /* String */
-.cm-string {
+#graphiql-container .cm-string {
   color: #D64292;
 }
 
 /* Boolean */
-.cm-builtin {
+#graphiql-container .cm-builtin {
   color: #D47509;
 }
 
 /* EnumValue */
-.cm-string-2 {
+#graphiql-container .cm-string-2 {
   color: #0B7FC7;
 }
 
 /* Variable */
-.cm-variable {
+#graphiql-container .cm-variable {
   color: #397D13;
 }
 
 /* Directive */
-.cm-meta {
+#graphiql-container .cm-meta {
   color: #B33086;
 }
 
 /* Type */
-.cm-atom {
+#graphiql-container .cm-atom {
   color: #CA9800;
 }
 /* BASICS */

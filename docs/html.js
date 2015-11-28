@@ -5,7 +5,7 @@ export default class Html extends React.Component {
   render() {
     var title = this.props.title || DocumentTitle.rewind();
     return (
-      <html lang={this.props.lang}>
+      <html lang={this.props.lang} manifest="/graphene.appcache">
         <head>
           <meta charSet="utf-8"/>
           <meta httpEquiv="X-UA-Compatible" content="IE=edge"/>
