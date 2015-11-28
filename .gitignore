@@ -70,3 +70,5 @@ target/
 
 /docs/playground/graphene-js/pypyjs-release-nojit/
 /docs/static/playground/lib
+
+/docs/static/playground

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd "$(dirname "$0")"
+
 if [ ! -d pypyjs-release-nojit ] ; then
 	git clone git@github.com:pypyjs/pypyjs-release-nojit.git
 fi
