@@ -4,6 +4,7 @@ import _  from 'lodash';
 
 class Template extends React.Component {
   goToPage(event) {
+    event.target.blur();
     var page = event.target.value;
     this.context.router.transitionTo(page);
   }
