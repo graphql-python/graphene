@@ -76,7 +76,29 @@ class Playground extends React.Component {
     }
 
     this.pypyjs = this.pypy_interpreter.ready().then(() => {
-      return this.pypy_interpreter.exec("import graphene");
+      return this.pypy_interpreter.exec(`
+import graphene
+import js
+from collections import OrderedDict
+from graphql.core.execution.executor import Executor
+from graphql.core.execution.middlewares.sync import SynchronousExecutionMiddleware
+from graphql.core.error import GraphQLError, format_error
+
+def get_wrapped(f):
+    if hasattr(f, 'func_closure') and f.func_closure:
+        return get_wrapped(f.func_closure[0].cell_contents)
+    return f
+
+class TrackResolver(SynchronousExecutionMiddleware):
+    @staticmethod
+    def run_resolve_fn(resolver, original_resolver):
+        if resolver.func.__module__ == '__main__':
+            line = get_wrapped(resolver.func).resolver.func_code.co_firstlineno
+            js.globals.markLine(line-3)
+        return SynchronousExecutionMiddleware.run_resolve_fn(resolver, original_resolver)
+
+__graphene_executor = Executor([TrackResolver()], map_type=OrderedDict)
+`);
     }).then(() => {
       this.createSchema(baseCode);
     }).then(() => {
@@ -110,6 +132,7 @@ class Playground extends React.Component {
     this.createSchema(this.editor.getValue());
   }
   createSchema(code) {
+    console.log('createSchema');
     this.validSchema = null;
     this.pypyjs.then(() => {
       return this.pypy_interpreter.exec(`
@@ -117,14 +140,13 @@ schema = None
 ${code}
 assert schema, 'You have to define a schema'
 `)
+    }).then(() => {
+      console.log('NO ERRORS');
+      this.validSchema = true;
     }, (err) => {
+      console.log('ERROR', err);
       this.validSchema = false;
       // this.editor.setGutterMarker(5, "breakpoints", syntaxError());
-      console.log('ERROR', err);
-    }).then(() => {
-      if (this.validSchema === null) {
-        this.validSchema = true;
-      }
     }).then(this.updateGraphiQL.bind(this));
   }
   updateGraphiQL() {
@@ -145,29 +167,8 @@ assert schema, 'You have to define a schema'
     // console.log('execute', query);
     return this.pypyjs.then(() => {
       var x = `
-import js
 import json
-from collections import OrderedDict
-from graphql.core.execution.executor import Executor
-from graphql.core.execution.middlewares.sync import SynchronousExecutionMiddleware
-from graphql.core.error import GraphQLError, format_error
-
-def get_wrapped(f):
-    if hasattr(f, 'func_closure') and f.func_closure:
-        return get_wrapped(f.func_closure[0].cell_contents)
-    return f
-
-class TrackResolver(SynchronousExecutionMiddleware):
-    @staticmethod
-    def run_resolve_fn(resolver, original_resolver):
-        if resolver.func.__module__ == '__main__':
-            line = get_wrapped(resolver.func).resolver.func_code.co_firstlineno
-            js.globals.markLine(line-3)
-        return SynchronousExecutionMiddleware.run_resolve_fn(resolver, original_resolver)
-
-executor = Executor([TrackResolver()], map_type=OrderedDict)
-
-result = executor.execute(schema.schema, '''${query}''')
+result = __graphene_executor.execute(schema.schema, '''${query}''')
 result_dict = {};
 if result.errors:
   result_dict['errors'] = [format_error(e) for e in result.errors]
