@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"
 
 if [ ! -d pypyjs-release-nojit ] ; then
-	git clone git@github.com:pypyjs/pypyjs-release-nojit.git
+	git clone https://github.com/pypyjs/pypyjs-release-nojit.git
 fi
 
 GRAPHENE_DIR="$(python -c "import os; import graphene; print os.path.dirname(graphene.__file__)")"
@@ -31,4 +31,6 @@ if [ -d ../../../static/playground/lib ] ; then
 	rm ../../../static/playground/lib
 fi
 
-exec ln -s "$lib_dirname/" ../../../static/playground
+mkdir -p ../../../static/playground
+
+exec ln -s "$lib_dirname/" ../../../static/playground/lib

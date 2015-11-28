@@ -26,6 +26,9 @@ install:
     pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django
     pip install --download-cache $HOME/.cache/pip/ -e .[django]
     python setup.py develop
+  elif [ "$TEST_TYPE" = build_website ]; then
+    pip install --download-cache $HOME/.cache/pip/ -e .
+    python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
     pip install --download-cache $HOME/.cache/pip/ flake8
   fi
@@ -39,7 +42,7 @@ script:
       GH_PAGES_DIR="$TRAVIS_BUILD_DIR"/docs/public
       git config --global user.name "Travis CI"
       git config --global user.email "travis@graphene-python.org"
-      git clone --branch gh-pages --depth=50 \
+      git clone --branch gh-pages-seg --depth=50 \
         https://graphql-python-bot@github.com/graphql-python/graphene.git \
         $GH_PAGES_DIR
       cd docs
@@ -47,10 +50,11 @@ script:
       npm run deploy
       cd $GH_PAGES_DIR
       git status
+      git add --intent-to-add .
       if ! git diff-index --quiet HEAD --; then
         git add -A .
         git commit -m "Rebuild website"
-        git push "https://${GITHUB_TOKEN}@github.com/graphql-python/graphene.git" gh-pages
+        git push "https://${GITHUB_TOKEN}@github.com/graphql-python/graphene.git" gh-pages-seg
       fi
       exit
     fi
