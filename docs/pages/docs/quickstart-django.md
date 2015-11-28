@@ -7,7 +7,7 @@ description: A Quick guide to Graphene in Django
 
 In our previous quickstart page we created a very simple schema.
 
-Now we will adapt the schema to map automatically some Django models, 
+Now we will adapt the schema to automatically map some Django models,
 and expose this schema in a `/graphql` API endpoint.
 
 ## Project setup
@@ -49,7 +49,16 @@ Once you've set up a database and initial user created and ready to go, open up 
 
 ## Schema
 
-Right, we'd better write some types then. Open `quickstart/schema.py` and get typing.
+GraphQL presents your objects to the world as a graph structure rather than a more
+heiricarcal structure to which you may be acustomed. In order to create this
+representation, Graphene needs to know about each *type* of object which will appear in
+the graph. Below we define these as the `UserType` and `GroupType` classes.
+
+This graph also has a 'root' through which all access begins. This is the `Query` class below.
+In this example, we provide the ability to list all users via `all_users`, and the
+ability to obtain a single user via `get_user`.
+
+Open `tutorial/quickstart/schema.py` and type the following:
 
 ```python
 import graphene
@@ -57,9 +66,8 @@ from graphene.contrib.django import DjangoObjectType
 
 from django.contrib.auth.models import User, Group
 
-
-# Graphene will map automatically the User model to UserType with
-# the specified fields
+# Graphene will automatically map the User model's fields onto the UserType.
+# This is configured in the UserType's Meta class
 class UserType(DjangoObjectType):
     class Meta:
         model = User
@@ -105,8 +113,12 @@ INSTALLED_APPS = [
 
 ## Creating GraphQL and GraphiQL views
 
-Okay, now let's wire up the GraphQL and GraphiQL urls. On to `tutorial/urls.py`...
+Unlike a RESTful API, there is only a single URL from which a GraphQL is accessed.
+Requests to this URL are handled by Graphene's `GraphQLView` view.
 
+Additionally, and interface for navigating this API will be very useful. Graphene
+includes the [graphiql](https://github.com/graphql/graphiql) in-browser IDE
+which assits and exploring and querying your new API. We'll add a URL for this too.
 
 ```python
 from django.conf.urls import url, include
@@ -115,7 +127,7 @@ from graphene.contrib.django.views import GraphQLView
 from quickstart.schema import schema
 
 
-# Wire up our GraphQL schema in /graphql.
+# Wire up our GraphQL schema to /graphql.
 # Additionally, we include GraphiQL view for querying easily our schema.
 urlpatterns = [
     url(r'^graphql', csrf_exempt(GraphQLView.as_view(schema=schema))),
