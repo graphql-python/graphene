@@ -1,8 +1,6 @@
-// require.ensure([], function(require) {
-//   require.include('../playground/page');
-// });  
-var React = require('react');
-class App extends React.Component {
+import React from 'react';
+
+class PlaygroundWrapper extends React.Component {
   constructor() {
     super();
     this.state = { currentComponent: null };
@@ -19,4 +17,5 @@ class App extends React.Component {
     return Current?<Current />:null;
   }
 }
-module.exports = App;
+
+module.exports = PlaygroundWrapper;
