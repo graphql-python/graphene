@@ -1,0 +1,19 @@
+siteTitle = "Graphene"
+ga = "UA-12613282-7"
+
+[docs.quickstart]
+	name = "Quickstart"
+	pages = [
+	  "/docs/quickstart/",
+	  "/docs/quickstart-django/",
+	]
+
+[docs.walkthrough]
+	name = "Walkthrough"
+	pages = [
+	  "/docs/interfaces/",
+	  "/docs/objecttypes/",
+	  "/docs/mutations/",
+	  "/docs/basic-types/",
+	  "/docs/relay/",
+	]

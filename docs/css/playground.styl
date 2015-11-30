@@ -1,0 +1,148 @@
+@import 'nib'
+@import 'graphiql.css'
+
+.playground
+  position absolute
+  top 106px
+  left 0
+  right 0
+  bottom 0
+  display flex
+  flex-direction row
+  min-width 960px
+  .loading
+    position absolute
+    display block
+    left 0
+    right 0
+    bottom 0
+    top 0
+    z-index 10000
+    background rgba(255,255,255,.6)
+
+.playground-schema
+  min-width 400px
+  width 36%
+  border-right 1px solid #E0E0E0
+  // box-shadow 0 0 8px rgba(0, 0, 0, 0.15)
+  position relative
+  z-index 100
+  display flex
+  flex-direction: column
+
+  .cm-def
+  .cm-variable + .cm-keyword // lambda
+    &:not(.CodeMirror-lint-mark-error)
+      transition all .3s ease-in-out
+      background transparent
+
+  .activeline
+    .cm-def
+    .cm-variable + .cm-keyword // lambda
+      $color = #D7D3F1
+      // $color = rgba(219, 89, 76, .2)
+      background $color
+      border-radius 1px
+      box-shadow 0 0 0 2px $color
+
+.playground-schema-editor
+  flex 1
+  position relative
+  .CodeMirror
+    font-size: 13px;
+    position absolute
+    height 100%
+    width 100%
+    top 0
+    left 0
+    right 0
+    bottom 0
+    font-family: 'Consolas', 'Inconsolata', 'Droid Sans Mono', 'Monaco', monospace;
+    color: #141823;
+  .CodeMirror-lines
+    padding 20px 0
+
+.playground-schema-header
+  // height 48px
+  // font-family 'Raleway', sans-serif
+  // font-weight 300
+  // line-height 48px
+  // padding 0 10px
+  // border-bottom solid 1px #d0d0d0
+  height: 48px;
+  box-sizing border-box
+  font-family: 'Raleway', sans-serif;
+  color: #999;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  line-height: 52px;
+  padding: 0 12px;
+  border-bottom: solid 1px #d0d0d0;
+  background: #F9F9F9;
+
+.playground-graphiql
+  flex 1
+  height 100%
+
+
+.cm-s-graphene
+    
+/* Comment */
+.cm-s-graphene .cm-comment
+  color: #999;
+
+/* Punctuation */
+.cm-s-graphene .cm-punctuation
+  color: #555;
+
+/* Keyword */
+.cm-s-graphene .cm-keyword
+  // color: #B11A04;
+  // color #D2054E
+  color #a71d5d
+
+/* OperationName, FragmentName */
+.cm-s-graphene .cm-def
+  // color: #D2054E;
+  color: #1F61A0;
+
+/* FieldName */
+.cm-s-graphene .cm-property
+  color: #333;
+
+/* FieldAlias */
+.cm-s-graphene .cm-qualifier
+  color: #1C92A9;
+
+/* ArgumentName and ObjectFieldName */
+.cm-s-graphene .cm-attribute
+  color: #8B2BB9;
+
+/* Number */
+.cm-s-graphene .cm-number
+  color: #2882F9;
+
+/* String */
+.cm-s-graphene .cm-string
+  color: #D64292;
+
+/* Boolean */
+.cm-s-graphene .cm-builtin
+  color: #D47509;
+
+/* EnumValue */
+.cm-s-graphene .cm-string-2
+  color: #0B7FC7;
+
+/* Variable */
+.cm-s-graphene .cm-variable
+  color: #333;
+
+/* Directive */
+.cm-s-graphene .cm-meta
+  color: #B33086;
+
+/* Type */
+.cm-s-graphene .cm-atom
+  color: #CA9800;

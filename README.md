@@ -1,7 +1,7 @@
 # ![Graphene Logo](http://graphene-python.org/favicon.png) [Graphene](http://graphene-python.org) [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![PyPI version](https://badge.fury.io/py/graphene.svg)](https://badge.fury.io/py/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
 
 
-Graphene is a Python library for building GraphQL schemas/types fast and easily.
+[Graphene](http://graphene-python.org) is a Python library for building GraphQL schemas/types fast and easily.
 
 - **Easy to use:** Graphene helps you use GraphQL in Python without effort.
 - **Relay:** Graphene has builtin support for Relay
@@ -10,6 +10,7 @@ Graphene is a Python library for building GraphQL schemas/types fast and easily.
 
 *What is supported in this Python version?* **Everything**: Interfaces, ObjectTypes, Scalars, Unions and Relay (Nodes, Connections), in addition to queries, mutations and subscriptions.
 
+**NEW**!: [Try graphene online](http://graphene-python.org/playground/)
 
 ## Installation
 

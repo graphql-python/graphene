@@ -6,13 +6,79 @@ python:
 - 3.4
 - 3.5
 - pypy
-cache: pip
+cache:
+  directories:
+  - .cache/pip/
+  - $HOME/.cache/pip
+  - docs/node_modules/
+  - $HOME/docs/node_modules
+before_install:
+- |
+  if [ "$TEST_TYPE" != build_website ] && \
+    ! git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md$)|(^(docs))/'
+  then
+    echo "Only docs were updated, stopping build process."
+    exit
+  fi
 install:
-- pip install --cache-dir $HOME/.cache/pip pytest pytest-cov coveralls flake8 six blinker pytest-django
-- pip install --cache-dir $HOME/.cache/pip -e .[django]
-- python setup.py develop
+- |
+  if [ "$TEST_TYPE" = build ]; then
+    pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django
+    pip install --download-cache $HOME/.cache/pip/ -e .[django]
+    python setup.py develop
+  elif [ "$TEST_TYPE" = build_website ]; then
+    pip install --download-cache $HOME/.cache/pip/ -e .
+    python setup.py develop
+  elif [ "$TEST_TYPE" = lint ]; then
+    pip install --download-cache $HOME/.cache/pip/ flake8
+  fi
 script:
-- py.test --cov=graphene
-- flake8
+- |
+  if [ "$TEST_TYPE" = build_website ]; then
+    if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
+      echo "Building the web."
+      nvm install 4.0
+
+      GH_PAGES_DIR="$TRAVIS_BUILD_DIR"/docs/public
+      git config --global user.name "Travis CI"
+      git config --global user.email "travis@graphene-python.org"
+      git clone --branch gh-pages --depth=50 \
+        https://graphql-python-bot@github.com/graphql-python/graphene.git \
+        $GH_PAGES_DIR
+      cd docs
+      ./playground/graphene-js/build.sh
+      npm run deploy
+      cd $GH_PAGES_DIR
+      git status
+      git add --intent-to-add .
+      if ! git diff-index --quiet HEAD --; then
+        git add -A .
+        git commit -m "Rebuild website"
+        git push "https://${GITHUB_TOKEN}@github.com/graphql-python/graphene.git" gh-pages
+      fi
+      exit
+    fi
+  elif [ "$TEST_TYPE" = lint ]; then
+    echo "Checking Python code lint."
+    flake8
+    exit
+  elif [ "$TEST_TYPE" = build ]; then
+    py.test --cov=graphene
+  fi
 after_success:
-- coveralls
+- |
+  if [ "$TEST_TYPE" = build ]; then
+      coveralls
+  fi
+env:
+  matrix:
+  - TEST_TYPE=build
+  global:
+    secure: SQC0eCWCWw8bZxbLE8vQn+UjJOp3Z1m779s9SMK3lCLwJxro/VCLBZ7hj4xsrq1MtcFO2U2Kqf068symw4Hr/0amYI3HFTCFiwXAC3PAKXeURca03eNO2heku+FtnQcOjBanExTsIBQRLDXMOaUkf3MIztpLJ4LHqMfUupKmw9YSB0v40jDbSN8khBnndFykmOnVVHznFp8USoN5F0CiPpnfEvHnJkaX76lNf7Kc9XNShBTTtJsnsHMhuYQeInt0vg9HSjoIYC38Tv2hmMj1myNdzyrHF+LgRjI6ceGi50ApAnGepXC/DNRhXROfECKez+LON/ZSqBGdJhUILqC8A4WmWmIjNcwitVFp3JGBqO7LULS0BI96EtSLe8rD1rkkdTbjivajkbykM1Q0Tnmg1adzGwLxRUbTq9tJQlTTkHBCuXIkpKb1mAtb/TY7A6BqfnPi2xTc/++qEawUG7ePhscdTj0IBrUfZsUNUYZqD8E8XbSWKIuS3SHE+cZ+s/kdAsm4q+FFAlpZKOYGxIkwvgyfu4/Plfol4b7X6iAP9J3r1Kv0DgBVFst5CXEwzZs19/g0CgokQbCXf1N+xeNnUELl6/fImaR3RKP22EaABoil4z8vzl4EqxqVoH1nfhE+WlpryXsuSaF/1R+WklR7aQ1FwoCk8V8HxM2zrj4tI8k=
+matrix:
+  fast_finish: true
+  include:
+  - python: '2.7'
+    env: TEST_TYPE=build_website
+  - python: '2.7'
+    env: TEST_TYPE=lint

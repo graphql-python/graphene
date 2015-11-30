@@ -1,8 +1,8 @@
 |Graphene Logo| `Graphene <http://graphene-python.org>`__ |Build Status| |PyPI version| |Coverage Status|
 =========================================================================================================
 
-Graphene is a Python library for building GraphQL schemas/types fast and
-easily.
+`Graphene <http://graphene-python.org>`__ is a Python library for
+building GraphQL schemas/types fast and easily.
 
 -  **Easy to use:** Graphene helps you use GraphQL in Python without
    effort.
@@ -15,6 +15,9 @@ easily.
 *What is supported in this Python version?* **Everything**: Interfaces,
 ObjectTypes, Scalars, Unions and Relay (Nodes, Connections), in addition
 to queries, mutations and subscriptions.
+
+**NEW**!: `Try graphene
+online <http://graphene-python.org/playground/>`__
 
 Installation
 ------------
