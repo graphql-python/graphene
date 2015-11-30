@@ -1,0 +1,8 @@
+query {
+  store {
+    teas(orderBy:"name") {
+      name
+      steepingTime
+    }
+  }
+}
