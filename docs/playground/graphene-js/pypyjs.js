@@ -60,13 +60,6 @@ if (typeof FunctionPromise === "undefined") {
   throw "FunctionPromise object not found";
 }
 
-// Some extra goodies for nodejs.
-if (typeof process !== 'undefined') {
-  if (Object.prototype.toString.call(process) === '[object process]') {
-    var fs = require("fs");
-    var path = require("path");
-  }
-}
 
 // Create functions for handling default stdio streams.
 // These will be shared by all VM instances by default.
