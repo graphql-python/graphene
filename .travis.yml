@@ -35,14 +35,14 @@ install:
 script:
 - |
   if [ "$TEST_TYPE" = build_website ]; then
-    if [ "$TRAVIS_BRANCH" = "docs-playground" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
+    if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
       echo "Building the web."
       nvm install 4.0
 
       GH_PAGES_DIR="$TRAVIS_BUILD_DIR"/docs/public
       git config --global user.name "Travis CI"
       git config --global user.email "travis@graphene-python.org"
-      git clone --branch gh-pages-seg --depth=50 \
+      git clone --branch gh-pages --depth=50 \
         https://graphql-python-bot@github.com/graphql-python/graphene.git \
         $GH_PAGES_DIR
       cd docs
@@ -54,7 +54,7 @@ script:
       if ! git diff-index --quiet HEAD --; then
         git add -A .
         git commit -m "Rebuild website"
-        git push "https://${GITHUB_TOKEN}@github.com/graphql-python/graphene.git" gh-pages-seg
+        git push "https://${GITHUB_TOKEN}@github.com/graphql-python/graphene.git" gh-pages
       fi
       exit
     fi
