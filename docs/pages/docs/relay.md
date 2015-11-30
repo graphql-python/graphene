@@ -5,7 +5,7 @@ description: A Relay implementation in Graphene
 
 # Relay
 
-Graphene have complete support of [Relay](https://facebook.github.io/relay/docs/graphql-relay-specification.html), and it offers some utils for working if from Python easy.
+Graphene has complete support for [Relay](https://facebook.github.io/relay/docs/graphql-relay-specification.html) and offers some utils to make integration from Python easy.
 
 ## Nodes
 
