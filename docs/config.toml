@@ -1,4 +1,5 @@
 siteTitle = "Graphene"
+ga = "UA-12613282-7"
 
 [docs.quickstart]
 	name = "Quickstart"

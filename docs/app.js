@@ -9,3 +9,11 @@ exports.loadContext = function(callback) {
   }
   return callback(context);
 };
+
+exports.onRouteChange = function(state) {
+  if (typeof window !== "undefined" && window.ga) {
+    window.ga('send', 'pageview', {
+      page: state.pathname
+    });
+  }
+}
