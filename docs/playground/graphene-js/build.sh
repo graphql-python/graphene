@@ -19,6 +19,7 @@ eval python tools/module_bundler.py add ./lib/modules "$GRAPHQL_RELAY_DIR"
 eval python tools/module_bundler.py add ./lib/modules "$SIX_DIR"
 
 python ./tools/module_bundler.py preload ./lib/modules graphene
+python ./tools/module_bundler.py preload ./lib/modules graphene.relay
 python ./tools/module_bundler.py preload ./lib/modules graphql
 python ./tools/module_bundler.py preload ./lib/modules graphql_relay
 python ./tools/module_bundler.py preload ./lib/modules six
