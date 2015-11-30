@@ -14,4 +14,5 @@ siteTitle = "Graphene"
 	  "/docs/objecttypes/",
 	  "/docs/mutations/",
 	  "/docs/basic-types/",
+	  "/docs/relay/",
 	]
