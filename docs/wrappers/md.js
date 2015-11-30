@@ -13,7 +13,7 @@ class Markdown extends React.Component {
     return (
       <DocumentTitle title={`${post.title?post.title+' - ':''}${this.props.config.siteTitle}`}>
         <div>
-          {showTitle?<div className="title">
+          {showTitle?<div className="page-title">
             <h1>{post.title}</h1>
           </div>:null}
           <div className="markdown">

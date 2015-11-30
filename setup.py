@@ -24,7 +24,7 @@ class PyTest(TestCommand):
 
 setup(
     name='graphene',
-    version='0.4.1.1',
+    version='0.4.2',
 
     description='Graphene: Python DSL for GraphQL',
     long_description=open('README.rst').read(),
@@ -55,7 +55,6 @@ setup(
 
     install_requires=[
         'six>=1.10.0',
-        'blinker',
         'graphql-core==0.4.9',
         'graphql-relay==0.3.3'
     ],

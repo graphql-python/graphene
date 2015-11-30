@@ -1,0 +1,4 @@
+query {
+  hello
+  ping(to:"Peter")
+}

@@ -1,11 +1,12 @@
 @import 'nib'
 @import 'jeet'
 
-@import 'hljs.css'
-@import 'bm.css'
 @import 'https://fonts.googleapis.com/css?family=Raleway:400,500,600,200,100&.css'
 
 normalize-css()
+
+@import 'hljs.css'
+@import 'bm.css'
 
 $wrapper
   center(960px, pad:20px)
@@ -29,6 +30,9 @@ html, body
   font-size 16px
   color #606060
   line-height 1.5
+  height 100%
+  margin 0
+  width 100%
 
 .header
   clearfix()
@@ -339,7 +343,7 @@ $title
   margin-top 0
   padding-top 0
 
-.title
+.page-title
   background: #F9F9F9;
   padding 48px 0
 
