@@ -116,9 +116,9 @@ INSTALLED_APPS = [
 Unlike a RESTful API, there is only a single URL from which a GraphQL is accessed.
 Requests to this URL are handled by Graphene's `GraphQLView` view.
 
-Additionally, and interface for navigating this API will be very useful. Graphene
+Additionally, an interface for navigating this API will be very useful. Graphene
 includes the [graphiql](https://github.com/graphql/graphiql) in-browser IDE
-which assits and exploring and querying your new API. We'll add a URL for this too.
+which assists in exploring and querying your new API. We’ll add a URL for this too.
 
 ```python
 from django.conf.urls import url, include
