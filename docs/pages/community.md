@@ -24,6 +24,7 @@ Django integration:
 ## Other related projects
 
 - [Flask GraphQL Demo](https://github.com/amitsaha/flask-graphql-demo) by [@echorand](https://twitter.com/echorand)
+- [Example GraphQL application](https://github.com/msoedov/flask-graphql-example) by [@msoedov](https://twitter.com/msoedov) with Flask, pypy/python3 and MongoDB (using Docker containers)
 
 
   [Source Code]: https://github.com/graphql-python/graphql-core
