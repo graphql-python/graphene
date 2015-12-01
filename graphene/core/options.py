@@ -3,7 +3,7 @@ from collections import OrderedDict
 from ..utils import cached_property
 
 DEFAULT_NAMES = ('description', 'name', 'is_interface', 'is_mutation',
-                 'type_name', 'interfaces')
+                 'type_name', 'interfaces', 'abstract')
 
 
 class Options(object):
@@ -14,6 +14,7 @@ class Options(object):
         self.is_interface = False
         self.is_mutation = False
         self.is_union = False
+        self.abstract = False
         self.interfaces = []
         self.parents = []
         self.types = []

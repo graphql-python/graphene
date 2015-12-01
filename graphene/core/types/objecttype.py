@@ -16,6 +16,13 @@ from .base import BaseType
 from .definitions import List, NonNull
 
 
+def is_objecttype(cls):
+    if not issubclass(cls, BaseObjectType):
+        return False
+    _meta = getattr(cls, '_meta', None)
+    return not(_meta and (_meta.abstract or _meta.is_interface))
+
+
 class ObjectTypeMeta(type):
     options_cls = Options
 
@@ -39,19 +46,19 @@ class ObjectTypeMeta(type):
             '__doc__': doc
         })
         attr_meta = attrs.pop('Meta', None)
+        abstract = getattr(attr_meta, 'abstract', False)
         if not attr_meta:
-            meta = None
-            # meta = getattr(new_class, 'Meta', None)
+            meta = getattr(new_class, 'Meta', None)
         else:
             meta = attr_meta
 
-        getattr(new_class, '_meta', None)
+        base_meta = getattr(new_class, '_meta', None)
 
         new_class.add_to_class('_meta', new_class.options_cls(meta))
 
         new_class._meta.is_interface = new_class.is_interface(parents)
-        new_class._meta.is_mutation = new_class.is_mutation(parents)
-        union_types = [p for p in parents if issubclass(p, BaseObjectType)]
+        new_class._meta.is_mutation = new_class.is_mutation(parents) or (base_meta and base_meta.is_mutation)
+        union_types = list(filter(is_objecttype, parents))
 
         new_class._meta.is_union = len(union_types) > 1
         new_class._meta.types = union_types
@@ -65,6 +72,10 @@ class ObjectTypeMeta(type):
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
+
+        if abstract:
+            new_class._prepare()
+            return new_class
 
         if new_class._meta.is_mutation:
             assert hasattr(
@@ -138,8 +149,10 @@ class BaseObjectType(BaseType):
     def __new__(cls, *args, **kwargs):
         if cls._meta.is_interface:
             raise Exception("An interface cannot be initialized")
-        if cls._meta.is_union:
+        elif cls._meta.is_union:
             raise Exception("An union cannot be initialized")
+        elif cls._meta.abstract:
+            raise Exception("An abstract ObjectType cannot be initialized")
         return super(BaseObjectType, cls).__new__(cls)
 
     def __init__(self, *args, **kwargs):
@@ -187,6 +200,9 @@ class BaseObjectType(BaseType):
 
     @classmethod
     def internal_type(cls, schema):
+        if cls._meta.abstract:
+            raise Exception("Abstract ObjectTypes don't have a specific type.")
+
         if cls._meta.is_interface:
             return GraphQLInterfaceType(
                 cls._meta.type_name,

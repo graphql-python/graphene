@@ -5,7 +5,7 @@ from graphql.core.type import (GraphQLInterfaceType, GraphQLObjectType,
 from py.test import raises
 
 from graphene.core.schema import Schema
-from graphene.core.types import Int, Interface, String
+from graphene.core.types import Int, Interface, ObjectType, String
 
 
 class Character(Interface):
@@ -148,3 +148,47 @@ def test_type_has_list():
         name = String()
 
     assert Droid.List.of_type == Droid
+
+
+def test_abstracttype():
+    class MyObject1(ObjectType):
+        class Meta:
+            abstract = True
+        name1 = String()
+
+    class MyObject2(ObjectType):
+        class Meta:
+            abstract = True
+        name2 = String()
+
+    class MyObject(MyObject1, MyObject2):
+        pass
+
+    object_type = schema.T(MyObject)
+
+    assert MyObject._meta.fields_map.keys() == ['name1', 'name2']
+    assert MyObject._meta.fields_map['name1'].object_type == MyObject
+    assert MyObject._meta.fields_map['name2'].object_type == MyObject
+    assert isinstance(object_type, GraphQLObjectType)
+
+
+def test_abstracttype_initialize():
+    class MyAbstractObjectType(ObjectType):
+        class Meta:
+            abstract = True
+
+    with raises(Exception) as excinfo:
+        MyAbstractObjectType()
+
+    assert 'An abstract ObjectType cannot be initialized' == str(excinfo.value)
+
+
+def test_abstracttype_type():
+    class MyAbstractObjectType(ObjectType):
+        class Meta:
+            abstract = True
+
+    with raises(Exception) as excinfo:
+        schema.T(MyAbstractObjectType)
+
+    assert 'Abstract ObjectTypes don\'t have a specific type.' == str(excinfo.value)
