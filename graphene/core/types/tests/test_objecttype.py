@@ -166,7 +166,7 @@ def test_abstracttype():
 
     object_type = schema.T(MyObject)
 
-    assert MyObject._meta.fields_map.keys() == ['name1', 'name2']
+    assert list(MyObject._meta.fields_map.keys()) == ['name1', 'name2']
     assert MyObject._meta.fields_map['name1'].object_type == MyObject
     assert MyObject._meta.fields_map['name2'].object_type == MyObject
     assert isinstance(object_type, GraphQLObjectType)
