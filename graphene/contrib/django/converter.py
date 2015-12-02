@@ -1,14 +1,17 @@
+from django import forms
 from django.db import models
 from singledispatch import singledispatch
 
 from ...core.types.scalars import ID, Boolean, Float, Int, String
-from .fields import ConnectionOrListField, DjangoModelField
 
 try:
-    UUIDField = models.UUIDField
+    UUIDModelField = models.UUIDField
+    UUIDFormField = forms.UUIDField
 except AttributeError:
     # Improved compatibility for Django 1.6
-    class UUIDField(object):
+    class UUIDModelField(object):
+        pass
+    class UUIDFormField(object):
         pass
 
 
@@ -25,7 +28,7 @@ def convert_django_field(field):
 @convert_django_field.register(models.EmailField)
 @convert_django_field.register(models.SlugField)
 @convert_django_field.register(models.URLField)
-@convert_django_field.register(UUIDField)
+@convert_django_field.register(UUIDModelField)
 def convert_field_to_string(field):
     return String(description=field.help_text)
 
@@ -63,6 +66,7 @@ def convert_field_to_float(field):
 @convert_django_field.register(models.ManyToManyField)
 @convert_django_field.register(models.ManyToOneRel)
 def convert_field_to_list_or_connection(field):
+    from .fields import DjangoModelField, ConnectionOrListField
     model_field = DjangoModelField(field.related_model)
     return ConnectionOrListField(model_field)
 
@@ -70,4 +74,7 @@ def convert_field_to_list_or_connection(field):
 @convert_django_field.register(models.OneToOneField)
 @convert_django_field.register(models.ForeignKey)
 def convert_field_to_djangomodel(field):
+    from .fields import DjangoModelField
     return DjangoModelField(field.related_model, description=field.help_text)
+
+
