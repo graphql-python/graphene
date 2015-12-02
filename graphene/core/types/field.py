@@ -11,10 +11,6 @@ from .base import LazyType, MountType, OrderedType
 from .definitions import NonNull
 
 
-class Empty(object):
-    pass
-
-
 class Field(OrderedType):
 
     def __init__(
