@@ -87,4 +87,3 @@ class DjangoFilterConnectionField(DjangoConnectionField):
         # Also add the 'order_by' field
         args[filterset_class.order_by_field] = Argument(String)
         return args
-

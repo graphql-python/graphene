@@ -11,6 +11,7 @@ except AttributeError:
     # Improved compatibility for Django 1.6
     class UUIDModelField(object):
         pass
+
     class UUIDFormField(object):
         pass
 
@@ -76,5 +77,3 @@ def convert_field_to_list_or_connection(field):
 def convert_field_to_djangomodel(field):
     from .fields import DjangoModelField
     return DjangoModelField(field.related_model, description=field.help_text)
-
-
