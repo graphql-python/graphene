@@ -67,4 +67,3 @@ def convert_form_field_to_list_or_connection(field):
 @convert_form_field.register(forms.ModelChoiceField)
 def convert_form_field_to_djangomodel(field):
     return ID()
-    # return DjangoModelField(field.queryset.model, description=field.help_text)
