@@ -1,7 +1,8 @@
-from collections import OrderedDict
-import inspect
-import six
 import copy
+import inspect
+from collections import OrderedDict
+
+import six
 
 from ..exceptions import SkipField
 from .options import Options
@@ -54,6 +55,7 @@ class ClassTypeMeta(type):
 
 
 class ClassType(six.with_metaclass(ClassTypeMeta)):
+
     class Meta:
         abstract = True
 
@@ -63,6 +65,7 @@ class ClassType(six.with_metaclass(ClassTypeMeta)):
 
 
 class FieldsOptions(Options):
+
     def __init__(self, *args, **kwargs):
         super(FieldsOptions, self).__init__(*args, **kwargs)
         self.local_fields = []
@@ -107,7 +110,6 @@ class FieldsClassTypeMeta(ClassTypeMeta):
                 new_field = copy.copy(field)
                 cls.add_to_class(field.attname, new_field)
 
-
     def construct(cls, bases, attrs):
         cls = super(FieldsClassTypeMeta, cls).construct(bases, attrs)
         cls.extend_fields(bases)
@@ -115,6 +117,7 @@ class FieldsClassTypeMeta(ClassTypeMeta):
 
 
 class FieldsClassType(six.with_metaclass(FieldsClassTypeMeta, ClassType)):
+
     class Meta:
         abstract = True
 

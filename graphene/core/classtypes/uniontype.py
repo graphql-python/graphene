@@ -1,11 +1,11 @@
 import six
-
 from graphql.core.type import GraphQLUnionType
 
-from .base import FieldsOptions, FieldsClassType, FieldsClassTypeMeta
+from .base import FieldsClassType, FieldsClassTypeMeta, FieldsOptions
 
 
 class UnionTypeOptions(FieldsOptions):
+
     def __init__(self, *args, **kwargs):
         super(UnionTypeOptions, self).__init__(*args, **kwargs)
         self.types = []
@@ -19,6 +19,7 @@ class UnionTypeMeta(FieldsClassTypeMeta):
 
 
 class UnionType(six.with_metaclass(UnionTypeMeta, FieldsClassType)):
+
     class Meta:
         abstract = True
 

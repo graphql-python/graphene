@@ -1,5 +1,5 @@
 #!/bin/bash
 
-autoflake ./ -r --remove-unused-variables --remove-all-unused-imports --in-place
-autopep8 ./ -r --in-place --experimental --aggressive --max-line-length 120
-isort -rc .
+autoflake ./examples/ ./graphene/ -r --remove-unused-variables --remove-all-unused-imports --in-place
+autopep8 ./examples/ ./graphene/ -r --in-place --experimental --aggressive --max-line-length 120
+isort -rc ./examples/ ./graphene/

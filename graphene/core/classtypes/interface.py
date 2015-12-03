@@ -1,6 +1,6 @@
-import six
 from functools import partial
 
+import six
 from graphql.core.type import GraphQLInterfaceType
 
 from .base import FieldsClassTypeMeta
@@ -8,6 +8,7 @@ from .objecttype import ObjectType, ObjectTypeMeta
 
 
 class InterfaceMeta(ObjectTypeMeta):
+
     def construct(cls, bases, attrs):
         if cls._meta.abstract or Interface in bases:
             # Return Interface type
@@ -26,6 +27,7 @@ class InterfaceMeta(ObjectTypeMeta):
 
 
 class Interface(six.with_metaclass(InterfaceMeta, ObjectType)):
+
     class Meta:
         abstract = True
 

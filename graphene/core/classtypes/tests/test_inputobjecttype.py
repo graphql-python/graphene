@@ -1,9 +1,9 @@
-from py.test import raises
 
 from graphql.core.type import GraphQLInputObjectType
 
 from graphene.core.schema import Schema
 from graphene.core.types import String
+
 from ..inputobjecttype import InputObjectType
 
 

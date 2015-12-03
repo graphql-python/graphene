@@ -1,15 +1,15 @@
 import inspect
-import six
 import warnings
 from collections import Iterable
 from functools import wraps
 
+import six
 from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import to_global_id
 
 from ..core.classtypes import InputObjectType, Interface, Mutation, ObjectType
-from ..core.classtypes.mutation import MutationMeta
 from ..core.classtypes.interface import InterfaceMeta
+from ..core.classtypes.mutation import MutationMeta
 from ..core.types import Boolean, Field, List, String
 from ..core.types.argument import ArgumentsGroup
 from ..core.types.definitions import NonNull
@@ -87,6 +87,7 @@ class Connection(ObjectType):
 
 
 class NodeMeta(InterfaceMeta):
+
     def construct_get_node(cls):
         get_node = getattr(cls, 'get_node', None)
         assert get_node, 'get_node classmethod not found in %s Node' % cls
@@ -145,6 +146,7 @@ class MutationInputType(InputObjectType):
 
 
 class RelayMutationMeta(MutationMeta):
+
     def construct(cls, *args, **kwargs):
         cls = super(RelayMutationMeta, cls).construct(*args, **kwargs)
         if not cls._meta.abstract:

@@ -6,8 +6,8 @@ from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
 from ...utils import to_camel_case
 from ..classtypes.base import FieldsClassType
-from ..classtypes.mutation import Mutation
 from ..classtypes.inputobjecttype import InputObjectType
+from ..classtypes.mutation import Mutation
 from .argument import ArgumentsGroup, snake_case_args
 from .base import LazyType, MountType, OrderedType
 from .definitions import NonNull

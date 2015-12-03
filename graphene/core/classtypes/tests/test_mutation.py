@@ -1,11 +1,11 @@
-from py.test import raises
 
 from graphql.core.type import GraphQLObjectType
 
 from graphene.core.schema import Schema
 from graphene.core.types import String
-from ..mutation import Mutation
+
 from ...types.argument import ArgumentsGroup
+from ..mutation import Mutation
 
 
 def test_mutation():

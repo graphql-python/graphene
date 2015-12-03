@@ -1,10 +1,10 @@
-import six
 import inspect
 
+import six
 from django.db import models
 
-from ...core.classtypes.objecttype import ObjectTypeMeta, ObjectType
-from ...relay.types import Node, NodeMeta, Connection
+from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
+from ...relay.types import Connection, Node, NodeMeta
 from .converter import convert_django_field
 from .options import DjangoOptions
 from .utils import get_reverse_fields, maybe_queryset
@@ -47,6 +47,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
 
 
 class InstanceObjectType(ObjectType):
+
     class Meta:
         abstract = True
 
@@ -75,6 +76,7 @@ class InstanceObjectType(ObjectType):
 
 class DjangoObjectType(six.with_metaclass(
         DjangoObjectTypeMeta, InstanceObjectType)):
+
     class Meta:
         abstract = True
 
@@ -92,12 +94,14 @@ class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
 
 
 class NodeInstance(Node, InstanceObjectType):
+
     class Meta:
         abstract = True
 
 
 class DjangoNode(six.with_metaclass(
         DjangoNodeMeta, NodeInstance)):
+
     class Meta:
         abstract = True
 

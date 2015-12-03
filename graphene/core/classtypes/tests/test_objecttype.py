@@ -1,9 +1,9 @@
+from graphql.core.type import GraphQLObjectType
 from py.test import raises
 
-from graphql.core.type import GraphQLObjectType
-
 from graphene.core.schema import Schema
-from graphene.core.types import Int, String
+from graphene.core.types import String
+
 from ..objecttype import ObjectType
 from ..uniontype import UnionType
 

@@ -1,10 +1,11 @@
-import six
 from functools import partial
 
+import six
 from graphql.core.type import GraphQLObjectType
 
 from graphene import signals
-from .base import FieldsOptions, FieldsClassType, FieldsClassTypeMeta
+
+from .base import FieldsClassType, FieldsClassTypeMeta, FieldsOptions
 from .uniontype import UnionType
 
 
@@ -15,6 +16,7 @@ def is_objecttype(cls):
 
 
 class ObjectTypeOptions(FieldsOptions):
+
     def __init__(self, *args, **kwargs):
         super(ObjectTypeOptions, self).__init__(*args, **kwargs)
         self.interface = False
@@ -22,6 +24,7 @@ class ObjectTypeOptions(FieldsOptions):
 
 
 class ObjectTypeMeta(FieldsClassTypeMeta):
+
     def construct(cls, bases, attrs):
         cls = super(ObjectTypeMeta, cls).construct(bases, attrs)
         if not cls._meta.abstract:
@@ -39,6 +42,7 @@ class ObjectTypeMeta(FieldsClassTypeMeta):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
+
     class Meta:
         abstract = True
 

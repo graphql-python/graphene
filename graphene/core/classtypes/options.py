@@ -1,4 +1,5 @@
 class Options(object):
+
     def __init__(self, meta=None, **defaults):
         self.meta = meta
         self.abstract = False

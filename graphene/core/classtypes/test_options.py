@@ -1,6 +1,5 @@
 from py.test import raises
 
-from graphene.core.fields import Field
 from graphene.core.classtypes import Options
 
 

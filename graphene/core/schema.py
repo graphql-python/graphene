@@ -10,8 +10,8 @@ from graphql.core.utils.schema_printer import print_schema
 
 from graphene import signals
 
-from .types.base import BaseType
 from .classtypes.base import ClassType
+from .types.base import BaseType
 
 
 class GraphQLSchema(_GraphQLSchema):

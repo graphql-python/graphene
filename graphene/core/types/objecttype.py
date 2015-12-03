@@ -1,3 +1,3 @@
-from ..classtypes import ObjectType, Interface, Mutation, InputObjectType
+from ..classtypes import InputObjectType, Interface, Mutation, ObjectType
 
 __all__ = ['ObjectType', 'Interface', 'Mutation', 'InputObjectType']

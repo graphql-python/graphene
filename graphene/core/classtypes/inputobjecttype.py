@@ -6,6 +6,7 @@ from .base import FieldsClassType
 
 
 class InputObjectType(FieldsClassType):
+
     class Meta:
         abstract = True
 

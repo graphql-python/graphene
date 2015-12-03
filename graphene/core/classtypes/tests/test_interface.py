@@ -1,9 +1,9 @@
-from py.test import raises
-
 from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
+from py.test import raises
 
 from graphene.core.schema import Schema
 from graphene.core.types import String
+
 from ..interface import Interface
 from ..objecttype import ObjectType
 
@@ -38,6 +38,7 @@ def test_interface_inheritance_abstract():
         pass
 
     class ShouldBeInterface(Character):
+
         class Meta:
             abstract = True
 

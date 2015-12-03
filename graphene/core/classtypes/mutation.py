@@ -5,6 +5,7 @@ from .objecttype import ObjectType, ObjectTypeMeta
 
 
 class MutationMeta(ObjectTypeMeta):
+
     def construct(cls, bases, attrs):
         input_class = attrs.pop('Input', None)
         if input_class:
@@ -22,6 +23,7 @@ class MutationMeta(ObjectTypeMeta):
 
 
 class Mutation(six.with_metaclass(MutationMeta, ObjectType)):
+
     class Meta:
         abstract = True
 
