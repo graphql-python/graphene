@@ -34,7 +34,7 @@ class UnionType(six.with_metaclass(UnionTypeMeta, FieldsClassType)):
 
         return GraphQLUnionType(
             cls._meta.type_name,
-            types=map(schema.T, cls._meta.types),
+            types=list(map(schema.T, cls._meta.types)),
             resolve_type=cls._resolve_type,
             description=cls._meta.description,
         )
