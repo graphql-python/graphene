@@ -2,7 +2,7 @@ import pytest
 from django.core.exceptions import ImproperlyConfigured
 
 try:
-    import django_filters
+    import django_filters  # noqa
 except ImportError:
     pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
 else:

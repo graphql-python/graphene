@@ -58,5 +58,3 @@ class DjangoModelField(FieldType):
 
     def get_object_type(self, schema):
         return get_type_for_model(schema, self.model)
-
-

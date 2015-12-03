@@ -41,5 +41,3 @@ class SimpleQuerySetConnectionResolver(BaseQuerySetConnectionResolver):
 
     def get_order(self):
         return self.args.get('order', None)
-
-
