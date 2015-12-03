@@ -11,7 +11,6 @@ from graphql.core.utils.schema_printer import print_schema
 from graphene import signals
 
 from .types.base import BaseType
-from .types.objecttype import BaseObjectType
 from .classtypes.base import ClassType
 
 
@@ -49,7 +48,7 @@ class Schema(object):
                 internal_type = object_type.internal_type(self)
                 self._types[object_type] = internal_type
                 is_objecttype = inspect.isclass(
-                    object_type) and issubclass(object_type, BaseObjectType)
+                    object_type) and issubclass(object_type, ClassType)
                 if is_objecttype:
                     self.register(object_type)
             return self._types[object_type]
@@ -91,7 +90,7 @@ class Schema(object):
         if name:
             objecttype = self._types_names.get(name, None)
             if objecttype and inspect.isclass(
-                    objecttype) and issubclass(objecttype, BaseObjectType):
+                    objecttype) and issubclass(objecttype, ClassType):
                 return objecttype
 
     def __str__(self):
