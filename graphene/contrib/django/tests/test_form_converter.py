@@ -103,4 +103,3 @@ def test_should_manytoone_convert_connectionorlist():
     field = forms.ModelChoiceField(Reporter.objects.all())
     graphene_type = convert_form_field(field)
     assert isinstance(graphene_type, graphene.ID)
-

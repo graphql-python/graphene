@@ -21,4 +21,3 @@ class PetFilter(django_filters.FilterSet):
         model = Pet
         fields = ['name']
         order_by = False
-
