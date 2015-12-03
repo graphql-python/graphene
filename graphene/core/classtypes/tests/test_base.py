@@ -25,6 +25,7 @@ def test_classtype_definition_list():
         '''Character description'''
         pass
     assert isinstance(Character.List, List)
+    assert Character.List.of_type == Character
 
 
 def test_classtype_definition_nonnull():
@@ -32,6 +33,7 @@ def test_classtype_definition_nonnull():
         '''Character description'''
         pass
     assert isinstance(Character.NonNull, NonNull)
+    assert Character.NonNull.of_type == Character
 
 
 def test_fieldsclasstype():
@@ -52,3 +54,16 @@ def test_fieldsclasstype_fieldtype():
     schema = Schema(query=Character)
     assert Character.fields_internal_types(schema)['fieldName'] == schema.T(f)
     assert Character._meta.fields_map['field_name'] == f
+
+
+def test_fieldsclasstype_inheritfields():
+    name_field = Field(String())
+    last_name_field = Field(String())
+
+    class Fields1(FieldsClassType):
+        name = name_field
+
+    class Fields2(Fields1):
+        last_name = last_name_field
+
+    assert list(Fields2._meta.fields_map.keys()) == ['name', 'last_name']

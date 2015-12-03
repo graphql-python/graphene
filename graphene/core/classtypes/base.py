@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import inspect
 import six
+import copy
 
 from ..exceptions import SkipField
 from .options import Options
@@ -81,6 +82,38 @@ class FieldsOptions(Options):
 class FieldsClassTypeMeta(ClassTypeMeta):
     options_class = FieldsOptions
 
+    def extend_fields(cls, bases):
+        new_fields = cls._meta.local_fields
+        field_names = {f.name: f for f in new_fields}
+
+        for base in bases:
+            if not issubclass(base, FieldsClassType):
+                continue
+
+            parent_fields = base._meta.local_fields
+            for field in parent_fields:
+                if field.name in field_names and field.type.__class__ != field_names[
+                        field.name].type.__class__:
+                    raise Exception(
+                        'Local field %r in class %r (%r) clashes '
+                        'with field with similar name from '
+                        'Interface %s (%r)' % (
+                            field.name,
+                            cls.__name__,
+                            field.__class__,
+                            base.__name__,
+                            field_names[field.name].__class__)
+                    )
+                new_field = copy.copy(field)
+                cls.add_to_class(field.attname, new_field)
+
+
+    def construct(cls, bases, attrs):
+        cls = super(FieldsClassTypeMeta, cls).construct(bases, attrs)
+        if not cls._meta.abstract:
+            cls.extend_fields(bases)
+        return cls
+
 
 class FieldsClassType(six.with_metaclass(FieldsClassTypeMeta, ClassType)):
     class Meta:
@@ -96,26 +129,3 @@ class FieldsClassType(six.with_metaclass(FieldsClassTypeMeta, ClassType)):
                 continue
 
         return OrderedDict(fields)
-
-# class NamedClassType(ClassType):
-#     pass
-
-
-# class UnionType(NamedClassType):
-#     class Meta:
-#         abstract = True
-
-
-# class ObjectType(NamedClassType):
-#     class Meta:
-#         abstract = True
-
-
-# class InputObjectType(NamedClassType):
-#     class Meta:
-#         abstract = True
-
-
-# class Mutation(ObjectType):
-#     class Meta:
-#         abstract = True

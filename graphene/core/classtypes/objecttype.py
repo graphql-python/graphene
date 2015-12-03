@@ -89,7 +89,7 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
         return GraphQLObjectType(
             cls._meta.type_name,
             description=cls._meta.description,
-            interfaces=[schema.T(i) for i in cls._meta.interfaces],
+            interfaces=map(schema.T, cls._meta.interfaces),
             fields=partial(cls.fields_internal_types, schema),
             is_type_of=getattr(cls, 'is_type_of', None)
         )

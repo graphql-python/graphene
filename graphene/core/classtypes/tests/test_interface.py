@@ -71,10 +71,10 @@ def test_interface_inheritance():
 
 
 def test_interface_inheritance_non_objects():
-    class ComonClass(object):
+    class CommonClass(object):
         common_attr = True
 
-    class Character(ComonClass, Interface):
+    class Character(CommonClass, Interface):
         pass
 
     class ShouldBeObjectType(Character):
