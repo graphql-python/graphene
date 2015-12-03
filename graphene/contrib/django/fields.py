@@ -1,19 +1,14 @@
 import warnings
 
-import six
-
-from graphene.contrib.django.filterset import setup_filterset
+from graphene.contrib.django.utils import get_filtering_args_from_filterset
+from .resolvers import FilterConnectionResolver
+from .utils import get_type_for_model
 from ...core.exceptions import SkipField
 from ...core.fields import Field
-from ...core.types import Argument, String
 from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
-from .form_converter import convert_form_field
-from .resolvers import FilterConnectionResolver
-from .utils import get_type_for_model
-from .filterset import custom_filterset_factory
 
 
 class DjangoConnectionField(ConnectionField):
@@ -69,39 +64,21 @@ class DjangoModelField(FieldType):
 
 class DjangoFilterConnectionField(DjangoConnectionField):
 
-    def __init__(self, type, filterset_class=None, resolver=None, on=None,
-                 fields=None, order_by=None, extra_filter_meta=None,
+    def __init__(self, type, on=None, fields=None, order_by=None,
+                 extra_filter_meta=None, filterset_class=None, resolver=None,
                  *args, **kwargs):
 
-        if not filterset_class:
-            # If no filter class is specified then create one given the
-            # information provided
-            meta = dict(
-                model=type._meta.model,
+        if not resolver:
+            resolver = FilterConnectionResolver(
+                node=type,
+                on=on,
+                filterset_class=filterset_class,
                 fields=fields,
                 order_by=order_by,
+                extra_filter_meta=extra_filter_meta,
             )
-            if extra_filter_meta:
-                meta.update(extra_filter_meta)
-            filterset_class = custom_filterset_factory(**meta)
-        else:
-            filterset_class = setup_filterset(filterset_class)
 
-        if not resolver:
-            resolver = FilterConnectionResolver(type, on, filterset_class)
-
+        filtering_args = get_filtering_args_from_filterset(resolver.get_filterset_class(), type)
         kwargs.setdefault('args', {})
-        kwargs['args'].update(**self.get_filtering_args(type, filterset_class))
+        kwargs['args'].update(**filtering_args)
         super(DjangoFilterConnectionField, self).__init__(type, resolver, *args, **kwargs)
-
-    def get_filtering_args(self, type, filterset_class):
-        args = {}
-        for name, filter_field in six.iteritems(filterset_class.base_filters):
-            field_type = Argument(convert_form_field(filter_field.field))
-            # Is this correct? I don't quite grok the 'parent' system yet
-            field_type.mount(type)
-            args[name] = field_type
-
-        # Also add the 'order_by' field
-        args[filterset_class.order_by_field] = Argument(String)
-        return args

@@ -98,7 +98,7 @@ def test_filter_shortcut_filterset_extra_meta():
 
 def test_global_id_field_implicit():
     field = DjangoFilterConnectionField(ArticleNode, fields=['id'])
-    filterset_class = field.resolver_fn.filterset_class
+    filterset_class = field.resolver_fn.get_filterset_class()
     id_filter = filterset_class.base_filters['id']
     assert isinstance(id_filter, GlobalIDFilter)
     assert id_filter.field_class == GlobalIDFormField
@@ -111,7 +111,7 @@ def test_global_id_field_explicit():
             fields = ['id']
 
     field = DjangoFilterConnectionField(ArticleNode, filterset_class=ArticleIdFilter)
-    filterset_class = field.resolver_fn.filterset_class
+    filterset_class = field.resolver_fn.get_filterset_class()
     id_filter = filterset_class.base_filters['id']
     assert isinstance(id_filter, GlobalIDFilter)
     assert id_filter.field_class == GlobalIDFormField
@@ -119,7 +119,7 @@ def test_global_id_field_explicit():
 
 def test_global_id_field_relation():
     field = DjangoFilterConnectionField(ArticleNode, fields=['reporter'])
-    filterset_class = field.resolver_fn.filterset_class
+    filterset_class = field.resolver_fn.get_filterset_class()
     id_filter = filterset_class.base_filters['reporter']
     assert isinstance(id_filter, GlobalIDFilter)
     assert id_filter.field_class == GlobalIDFormField

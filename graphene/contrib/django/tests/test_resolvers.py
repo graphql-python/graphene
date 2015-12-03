@@ -66,7 +66,7 @@ def test_filter_get_filterset_class_explicit():
     resolver = FilterConnectionResolver(ReporterNode,
                                         filterset_class=ReporterFilter)
     resolver(inst=reporter, args={}, info=None)
-    assert resolver.get_filterset_class() == ReporterFilter, \
+    assert issubclass(resolver.get_filterset_class(), ReporterFilter), \
         'ReporterFilter not returned'
 
 
@@ -83,7 +83,7 @@ def test_filter_get_filterset_class_error():
     resolver.model = None
     with raises(ImproperlyConfigured) as excinfo:
         resolver(inst=reporter, args={}, info=None)
-    assert "must define 'filterset_class' or 'model'" in str(excinfo.value)
+    assert "Neither 'filterset_class' or 'model' available" in str(excinfo.value)
 
 
 def test_filter_filter():
