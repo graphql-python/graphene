@@ -64,8 +64,7 @@ def test_filter_order():
     resolver = FilterConnectionResolver(ArticleNode,
                                         filterset_class=ArticleFilter)
     resolved = resolver(inst=article, args={
-        # TODO: This should be 'order', not 'o'
-        'o': 'headline'
+        'order': 'headline'
     }, info=None)
     assert 'WHERE' not in str(resolved.query)
     assert 'ORDER BY' in str(resolved.query)
@@ -77,8 +76,7 @@ def test_filter_order_not_available():
     resolver = FilterConnectionResolver(ReporterNode,
                                         filterset_class=ReporterFilter)
     resolved = resolver(inst=reporter, args={
-        # TODO: This should be 'order', not 'o'
-        'o': 'last_name'
+        'order': 'last_name'
     }, info=None)
     assert 'WHERE' not in str(resolved.query)
     assert 'ORDER BY' not in str(resolved.query)

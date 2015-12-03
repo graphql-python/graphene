@@ -24,27 +24,27 @@ class PetNode(DjangoNode):
 
 
 def assert_arguments(field, *arguments):
-    ignore = ('after', 'before', 'first', 'last', 'o')
+    ignore = ('after', 'before', 'first', 'last', 'order')
     actual = [
         name
         for name in field.arguments.arguments.keys()
         if name not in ignore and not name.startswith('_')
     ]
     assert set(arguments) == set(actual), \
-        'Expected arguments ({}) did not match actual ({])'.format(
+        'Expected arguments ({}) did not match actual ({})'.format(
             arguments,
             actual
         )
 
 
 def assert_orderable(field):
-    assert 'o' in field.arguments.arguments.keys(), \
+    assert 'order' in field.arguments.arguments.keys(), \
         'Field cannot be ordered'
 
 
 def assert_not_orderable(field):
-    assert 'o' in field.arguments.arguments.keys(), \
-        'Field cannot be ordered'
+    assert 'order' in field.arguments.arguments.keys(), \
+        'Field can be ordered'
 
 
 def test_filter_explicit_filterset_arguments():

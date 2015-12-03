@@ -1,4 +1,5 @@
 import six
+from django.conf import settings
 from django.db import models
 from django_filters import Filter
 from django_filters.filterset import FilterSetMetaclass, FilterSet
@@ -13,6 +14,9 @@ class GlobalIDFilter(Filter):
     def filter(self, qs, value):
         gid = from_global_id(value)
         return super(GlobalIDFilter, self).filter(qs, gid.id)
+
+
+ORDER_BY_FIELD = getattr(settings, 'GRAPHENE_ORDER_BY_FIELD', 'order')
 
 
 GRAPHENE_FILTER_SET_OVERRIDES = {
@@ -45,7 +49,7 @@ class GrapheneFilterSet(six.with_metaclass(GrapheneFilterSetMetaclass, FilterSet
     DjangoFilterConnectionField will wrap FilterSets with this class as
     necessary
     """
-    pass
+    order_by_field = ORDER_BY_FIELD
 
 
 def setup_filterset(filterset_class):
@@ -54,7 +58,9 @@ def setup_filterset(filterset_class):
     return type(
         'Graphene{}'.format(filterset_class.__name__),
         (six.with_metaclass(GrapheneFilterSetMetaclass, filterset_class),),
-        {},
+        {
+            'order_by_field': ORDER_BY_FIELD
+        },
     )
 
 
@@ -66,6 +72,11 @@ def custom_filterset_factory(model, filterset_base_class=GrapheneFilterSet,
         'model': model,
     })
     meta_class = type(str('Meta'), (object,), meta)
-    filterset = type(str('%sFilterSet' % model._meta.object_name),
-                     (filterset_base_class,), {'Meta': meta_class})
+    filterset = type(
+        str('%sFilterSet' % model._meta.object_name),
+        (filterset_base_class,),
+        {
+            'Meta': meta_class
+        }
+    )
     return filterset
