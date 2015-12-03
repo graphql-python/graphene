@@ -40,9 +40,6 @@ class Interface(six.with_metaclass(InterfaceMeta, ObjectType)):
 
     @classmethod
     def internal_type(cls, schema):
-        if cls._meta.abstract:
-            raise Exception("Abstract Interfaces don't have a specific type.")
-
         if not cls._meta.interface:
             return super(Interface, cls).internal_type(schema)
 
