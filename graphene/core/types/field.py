@@ -5,6 +5,8 @@ import six
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
 from ...utils import to_camel_case
+from ..classtypes.base import FieldsClassType
+from ..classtypes.inputobjecttype import InputObjectType as NewInputObjectType
 from ..types import BaseObjectType, InputObjectType
 from .argument import ArgumentsGroup, snake_case_args
 from .base import LazyType, MountType, OrderedType
@@ -32,7 +34,7 @@ class Field(OrderedType):
 
     def contribute_to_class(self, cls, attname):
         assert issubclass(
-            cls, BaseObjectType), 'Field {} cannot be mounted in {}'.format(
+            cls, (BaseObjectType, FieldsClassType)), 'Field {} cannot be mounted in {}'.format(
             self, cls)
         if not self.name:
             self.name = to_camel_case(attname)
@@ -126,7 +128,7 @@ class InputField(OrderedType):
 
     def contribute_to_class(self, cls, attname):
         assert issubclass(
-            cls, InputObjectType), 'InputField {} cannot be mounted in {}'.format(
+            cls, (InputObjectType, NewInputObjectType)), 'InputField {} cannot be mounted in {}'.format(
             self, cls)
         if not self.name:
             self.name = to_camel_case(attname)

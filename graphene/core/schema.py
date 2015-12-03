@@ -12,6 +12,7 @@ from graphene import signals
 
 from .types.base import BaseType
 from .types.objecttype import BaseObjectType
+from .classtypes.base import ClassType
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -42,7 +43,7 @@ class Schema(object):
         if not object_type:
             return
         if inspect.isclass(object_type) and issubclass(
-                object_type, BaseType) or isinstance(
+                object_type, (BaseType, ClassType)) or isinstance(
                 object_type, BaseType):
             if object_type not in self._types:
                 internal_type = object_type.internal_type(self)

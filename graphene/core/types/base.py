@@ -2,6 +2,9 @@ from functools import total_ordering
 
 import six
 
+from ..classtypes.base import FieldsClassType
+from ..classtypes.inputobjecttype import InputObjectType as NewInputObjectType
+
 
 class BaseType(object):
 
@@ -105,10 +108,10 @@ class FieldType(MirroredType):
 
     def contribute_to_class(self, cls, name):
         from ..types import BaseObjectType, InputObjectType
-        if issubclass(cls, InputObjectType):
+        if issubclass(cls, (InputObjectType, NewInputObjectType)):
             inputfield = self.as_inputfield()
             return inputfield.contribute_to_class(cls, name)
-        elif issubclass(cls, BaseObjectType):
+        elif issubclass(cls, (BaseObjectType, FieldsClassType)):
             field = self.as_field()
             return field.contribute_to_class(cls, name)
 
