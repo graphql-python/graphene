@@ -1,11 +1,12 @@
 import six
 from django.conf import settings
 from django.db import models
-from django_filters import Filter
+from django.utils.text import capfirst
+from django_filters import Filter, MultipleChoiceFilter
 from django_filters.filterset import FilterSetMetaclass, FilterSet
 from graphql_relay.node.node import from_global_id
 
-from graphene.contrib.django.forms import GlobalIDFormField
+from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
 
 
 class GlobalIDFilter(Filter):
@@ -14,6 +15,14 @@ class GlobalIDFilter(Filter):
     def filter(self, qs, value):
         gid = from_global_id(value)
         return super(GlobalIDFilter, self).filter(qs, gid.id)
+
+
+class GlobalIDMultipleChoiceFilter(MultipleChoiceFilter):
+    field_class = GlobalIDMultipleChoiceField
+
+    def filter(self, qs, value):
+        gids = [from_global_id(v).id for v in value]
+        return super(GlobalIDMultipleChoiceFilter, self).filter(qs, gids)
 
 
 ORDER_BY_FIELD = getattr(settings, 'GRAPHENE_ORDER_BY_FIELD', 'order')
@@ -28,8 +37,10 @@ GRAPHENE_FILTER_SET_OVERRIDES = {
     },
     models.ForeignKey: {
         'filter_class': GlobalIDFilter,
+    },
+    models.ManyToManyField: {
+        'filter_class': GlobalIDMultipleChoiceFilter,
     }
-    # TODO: Support ManyToManyFields. GlobalIDFilterList?
 }
 
 
@@ -42,14 +53,30 @@ class GrapheneFilterSetMetaclass(FilterSetMetaclass):
         return new_class
 
 
-class GrapheneFilterSet(six.with_metaclass(GrapheneFilterSetMetaclass, FilterSet)):
+class GrapheneFilterSetMixin(object):
+    order_by_field = ORDER_BY_FIELD
+
+    @classmethod
+    def filter_for_reverse_field(cls, f, name):
+        rel = f.field.rel
+        default = {
+            'name': name,
+            'label': capfirst(rel.related_name)
+        }
+        if rel.multiple:
+            return GlobalIDMultipleChoiceFilter(**default)
+        else:
+            return GlobalIDFilter(**default)
+
+
+class GrapheneFilterSet(six.with_metaclass(GrapheneFilterSetMetaclass, GrapheneFilterSetMixin, FilterSet)):
     """ Base class for FilterSets used by Graphene
 
     You shouldn't usually need to use this class. The
     DjangoFilterConnectionField will wrap FilterSets with this class as
     necessary
     """
-    order_by_field = ORDER_BY_FIELD
+    pass
 
 
 def setup_filterset(filterset_class):
@@ -57,10 +84,8 @@ def setup_filterset(filterset_class):
     """
     return type(
         'Graphene{}'.format(filterset_class.__name__),
-        (six.with_metaclass(GrapheneFilterSetMetaclass, filterset_class),),
-        {
-            'order_by_field': ORDER_BY_FIELD
-        },
+        (six.with_metaclass(GrapheneFilterSetMetaclass, GrapheneFilterSetMixin, filterset_class),),
+        {},
     )
 
 

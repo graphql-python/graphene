@@ -1,10 +1,10 @@
 from django import forms
+from graphene.core.types import List, ID
 from py.test import raises
 
 import graphene
 from graphene.contrib.django.form_converter import convert_form_field
-from graphene.contrib.django.fields import (ConnectionOrListField,
-                                            DjangoModelField)
+
 
 from .models import Reporter
 
@@ -94,9 +94,8 @@ def test_should_decimal_convert_float():
 def test_should_multiple_choice_convert_connectionorlist():
     field = forms.ModelMultipleChoiceField(Reporter.objects.all())
     graphene_type = convert_form_field(field)
-    assert isinstance(graphene_type, ConnectionOrListField)
-    assert isinstance(graphene_type.type, DjangoModelField)
-    assert graphene_type.type.model == Reporter
+    assert isinstance(graphene_type, List)
+    assert isinstance(graphene_type.of_type, ID)
 
 
 def test_should_manytoone_convert_connectionorlist():

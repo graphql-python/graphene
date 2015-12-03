@@ -1,7 +1,7 @@
 import binascii
 
 from django.core.exceptions import ValidationError
-from django.forms import Field, IntegerField, CharField
+from django.forms import Field, IntegerField, CharField, MultipleChoiceField
 from django.utils.translation import ugettext_lazy as _
 
 from graphql_relay import from_global_id
@@ -28,3 +28,15 @@ class GlobalIDFormField(Field):
             raise ValidationError(self.error_messages['invalid'])
 
         return value
+
+
+class GlobalIDMultipleChoiceField(MultipleChoiceField):
+    default_error_messages = {
+        'invalid_choice': _('One of the specified IDs was invalid (%(value)s).'),
+        'invalid_list': _('Enter a list of values.'),
+    }
+
+    def valid_value(self, value):
+        # Clean will raise a validation error if there is a problem
+        GlobalIDFormField().clean(value)
+        return True

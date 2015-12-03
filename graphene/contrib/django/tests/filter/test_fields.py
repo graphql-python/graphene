@@ -5,17 +5,23 @@ try:
 except ImportError:
     pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
 else:
-    from graphene.contrib.django.filter import GlobalIDFilter, DjangoFilterConnectionField
+    from graphene.contrib.django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
+                                                GlobalIDMultipleChoiceFilter)
     from graphene.contrib.django.tests.filter.filters import ArticleFilter, PetFilter
 
 from graphene.contrib.django import DjangoNode
-from graphene.contrib.django.forms import GlobalIDFormField
-from graphene.contrib.django.tests.models import Article, Pet
+from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
+from graphene.contrib.django.tests.models import Article, Pet, Reporter
 
 
 class ArticleNode(DjangoNode):
     class Meta:
         model = Article
+
+
+class ReporterNode(DjangoNode):
+    class Meta:
+        model = Reporter
 
 
 class PetNode(DjangoNode):
@@ -129,3 +135,51 @@ def test_global_id_field_relation():
     id_filter = filterset_class.base_filters['reporter']
     assert isinstance(id_filter, GlobalIDFilter)
     assert id_filter.field_class == GlobalIDFormField
+
+
+def test_global_id_multiple_field_implicit():
+    field = DjangoFilterConnectionField(ReporterNode, fields=['pets'])
+    filterset_class = field.resolver_fn.get_filterset_class()
+    multiple_filter = filterset_class.base_filters['pets']
+    assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
+    assert multiple_filter.field_class == GlobalIDMultipleChoiceField
+
+
+def test_global_id_multiple_field_explicit():
+    class ReporterPetsFilter(django_filters.FilterSet):
+        class Meta:
+            model = Reporter
+            fields = ['pets']
+
+    field = DjangoFilterConnectionField(ReporterNode, filterset_class=ReporterPetsFilter)
+    filterset_class = field.resolver_fn.get_filterset_class()
+    multiple_filter = filterset_class.base_filters['pets']
+    assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
+    assert multiple_filter.field_class == GlobalIDMultipleChoiceField
+
+
+@pytest.mark.skipif(True, reason="Trying to test GrapheneFilterSetMixin.filter_for_reverse_field"
+                                 "but django has not loaded the models, so the test fails as "
+                                 "reverse relations are not ready yet")
+def test_global_id_multiple_field_implicit_reverse():
+    field = DjangoFilterConnectionField(ReporterNode, fields=['articles'])
+    filterset_class = field.resolver_fn.get_filterset_class()
+    multiple_filter = filterset_class.base_filters['articles']
+    assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
+    assert multiple_filter.field_class == GlobalIDMultipleChoiceField
+
+
+@pytest.mark.skipif(True, reason="Trying to test GrapheneFilterSetMixin.filter_for_reverse_field"
+                                 "but django has not loaded the models, so the test fails as "
+                                 "reverse relations are not ready yet")
+def test_global_id_multiple_field_explicit_reverse():
+    class ReporterPetsFilter(django_filters.FilterSet):
+        class Meta:
+            model = Reporter
+            fields = ['articles']
+
+    field = DjangoFilterConnectionField(ReporterNode, filterset_class=ReporterPetsFilter)
+    filterset_class = field.resolver_fn.get_filterset_class()
+    multiple_filter = filterset_class.base_filters['articles']
+    assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
+    assert multiple_filter.field_class == GlobalIDMultipleChoiceField

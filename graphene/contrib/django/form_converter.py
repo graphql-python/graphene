@@ -3,6 +3,8 @@ from django.forms.fields import BaseTemporalField
 from singledispatch import singledispatch
 
 from graphene import String, Int, Boolean, Float, ID
+from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
+from graphene.core.types.definitions import List
 
 try:
     UUIDField = forms.UUIDField
@@ -57,13 +59,12 @@ def convert_form_field_to_float(field):
 
 
 @convert_form_field.register(forms.ModelMultipleChoiceField)
+@convert_form_field.register(GlobalIDMultipleChoiceField)
 def convert_form_field_to_list_or_connection(field):
-    # TODO: Consider how filtering on a many-to-many should work
-    from .fields import DjangoModelField, ConnectionOrListField
-    model_field = DjangoModelField(field.queryset.model)
-    return ConnectionOrListField(model_field)
+    return List(ID())
 
 
 @convert_form_field.register(forms.ModelChoiceField)
+@convert_form_field.register(GlobalIDFormField)
 def convert_form_field_to_djangomodel(field):
     return ID()
