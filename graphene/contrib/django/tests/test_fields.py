@@ -1,21 +1,14 @@
-from graphene import Schema
 from graphene.contrib.django import DjangoFilterConnectionField, DjangoNode
 from graphene.contrib.django.tests.filters import ArticleFilter, PetFilter
 from graphene.contrib.django.tests.models import Article, Pet
 
-schema = Schema()
 
-
-@schema.register
 class ArticleNode(DjangoNode):
-
     class Meta:
         model = Article
 
 
-@schema.register
 class PetNode(DjangoNode):
-
     class Meta:
         model = Pet
 
