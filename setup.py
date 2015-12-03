@@ -57,10 +57,9 @@ setup(
         'six>=1.10.0',
         'graphql-core==0.4.9',
         'graphql-relay==0.3.3',
-        'django_filter>=0.10.0',
     ],
     tests_require=[
-        'django-filter>=0.11.0',
+        'django-filter>=0.10.0',
         'pytest>=2.7.2',
         'pytest-django',
         'mock',

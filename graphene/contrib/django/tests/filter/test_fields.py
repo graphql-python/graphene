@@ -1,9 +1,15 @@
-import django_filters
+import pytest
 
-from graphene.contrib.django import DjangoFilterConnectionField, DjangoNode
-from graphene.contrib.django.filterset import GlobalIDFilter
+try:
+    import django_filters
+except ImportError:
+    pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
+else:
+    from graphene.contrib.django.filter import GlobalIDFilter, DjangoFilterConnectionField
+    from graphene.contrib.django.tests.filter.filters import ArticleFilter, PetFilter
+
+from graphene.contrib.django import DjangoNode
 from graphene.contrib.django.forms import GlobalIDFormField
-from graphene.contrib.django.tests.filters import ArticleFilter, PetFilter
 from graphene.contrib.django.tests.models import Article, Pet
 
 

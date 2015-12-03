@@ -5,10 +5,8 @@ from graphene.contrib.django.types import (
 )
 from graphene.contrib.django.fields import (
     DjangoConnectionField,
-    DjangoModelField,
-    DjangoFilterConnectionField
+    DjangoModelField
 )
 
 __all__ = ['DjangoObjectType', 'DjangoNode', 'DjangoConnection',
-           'DjangoConnectionField', 'DjangoModelField',
-           'DjangoFilterConnectionField']
+           'DjangoModelField']
