@@ -87,7 +87,7 @@ class FieldsClassTypeMeta(ClassTypeMeta):
         field_names = {f.name: f for f in new_fields}
 
         for base in bases:
-            if not issubclass(base, FieldsClassType):
+            if not isinstance(base, FieldsClassTypeMeta):
                 continue
 
             parent_fields = base._meta.local_fields
@@ -110,8 +110,7 @@ class FieldsClassTypeMeta(ClassTypeMeta):
 
     def construct(cls, bases, attrs):
         cls = super(FieldsClassTypeMeta, cls).construct(bases, attrs)
-        if not cls._meta.abstract:
-            cls.extend_fields(bases)
+        cls.extend_fields(bases)
         return cls
 
 
