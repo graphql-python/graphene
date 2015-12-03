@@ -5,14 +5,10 @@ from singledispatch import singledispatch
 from ...core.types.scalars import ID, Boolean, Float, Int, String
 
 try:
-    UUIDModelField = models.UUIDField
-    UUIDFormField = forms.UUIDField
+    UUIDField = models.UUIDField
 except AttributeError:
     # Improved compatibility for Django 1.6
-    class UUIDModelField(object):
-        pass
-
-    class UUIDFormField(object):
+    class UUIDField(object):
         pass
 
 
@@ -29,7 +25,7 @@ def convert_django_field(field):
 @convert_django_field.register(models.EmailField)
 @convert_django_field.register(models.SlugField)
 @convert_django_field.register(models.URLField)
-@convert_django_field.register(UUIDModelField)
+@convert_django_field.register(UUIDField)
 def convert_field_to_string(field):
     return String(description=field.help_text)
 

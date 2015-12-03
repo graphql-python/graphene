@@ -3,8 +3,12 @@ from django.forms.fields import BaseTemporalField
 from singledispatch import singledispatch
 
 from graphene import String, Int, Boolean, Float, ID
-from .converter import UUIDFormField
 
+try:
+    UUIDField = forms.UUIDField
+except AttributeError:
+    class UUIDField(object):
+        pass
 
 @singledispatch
 def convert_form_field(field):
@@ -23,7 +27,7 @@ def convert_form_field(field):
 @convert_form_field.register(forms.ChoiceField)
 @convert_form_field.register(forms.RegexField)
 @convert_form_field.register(forms.Field)
-@convert_form_field.register(UUIDFormField)
+@convert_form_field.register(UUIDField)
 def convert_form_field_to_string(field):
     return String(description=field.help_text)
 
