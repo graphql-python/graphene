@@ -1,7 +1,7 @@
 import warnings
 
 import six
-
+from django_filters import FilterSet
 
 from ...core.exceptions import SkipField
 from ...core.fields import Field
@@ -66,11 +66,35 @@ class DjangoModelField(FieldType):
         return get_type_for_model(schema, self.model)
 
 
+def custom_filterset_factory(model, filter_base_class=FilterSet, **meta):
+    meta.update({
+        'model': model,
+    })
+    meta_class = type(str('Meta'), (object,), meta)
+    filterset = type(str('%sFilterSet' % model._meta.object_name),
+                     (filter_base_class,), {'Meta': meta_class})
+    return filterset
+
+
 class DjangoFilterConnectionField(DjangoConnectionField):
 
-    def __init__(self, type, filterset_class, resolver=None, on=None, *args, **kwargs):
+    def __init__(self, type, filterset_class=None, resolver=None, on=None,
+                 fields=None, order_by=None, extra_filter_meta=None,
+                 *args, **kwargs):
         if not resolver:
             resolver = FilterConnectionResolver(type, on, filterset_class)
+
+        if not filterset_class:
+            # If no filter class is specified then create one given the
+            # information provided
+            meta = dict(
+                model=type._meta.model,
+                fields=fields,
+                order_by=order_by,
+            )
+            if extra_filter_meta:
+                meta.update(extra_filter_meta)
+            filterset_class = custom_filterset_factory(**meta)
 
         kwargs.setdefault('args', {})
         kwargs['args'].update(**self.get_filtering_args(type, filterset_class))
