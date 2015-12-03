@@ -21,6 +21,7 @@ def convert_form_field(field):
 @convert_form_field.register(forms.SlugField)
 @convert_form_field.register(forms.URLField)
 @convert_form_field.register(forms.ChoiceField)
+@convert_form_field.register(forms.RegexField)
 @convert_form_field.register(forms.Field)
 @convert_form_field.register(UUIDFormField)
 def convert_form_field_to_string(field):
@@ -52,8 +53,9 @@ def convert_form_field_to_float(field):
 
 @convert_form_field.register(forms.ModelMultipleChoiceField)
 def convert_form_field_to_list_or_connection(field):
+    # TODO: Consider how filtering on a many-to-many should work
     from .fields import DjangoModelField, ConnectionOrListField
-    model_field = DjangoModelField(field.related_model)
+    model_field = DjangoModelField(field.queryset.model)
     return ConnectionOrListField(model_field)
 
 
