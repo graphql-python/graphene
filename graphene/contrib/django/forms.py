@@ -18,7 +18,7 @@ class GlobalIDFormField(Field):
 
         try:
             gid = from_global_id(value)
-        except (UnicodeDecodeError, TypeError, binascii.Error):
+        except (TypeError, ValueError, UnicodeDecodeError, binascii.Error):
             raise ValidationError(self.error_messages['invalid'])
 
         try:
