@@ -1,5 +1,5 @@
 from ..base import ClassType, FieldsClassType
-from ...types import Field, String
+from ...types import Field, String, List, NonNull
 from ...schema import Schema
 
 
@@ -18,6 +18,20 @@ def test_classtype_advanced():
             description = 'OtherCharacter description'
     assert Character._meta.type_name == 'OtherCharacter'
     assert Character._meta.description == 'OtherCharacter description'
+
+
+def test_classtype_definition_list():
+    class Character(ClassType):
+        '''Character description'''
+        pass
+    assert isinstance(Character.List, List)
+
+
+def test_classtype_definition_nonnull():
+    class Character(ClassType):
+        '''Character description'''
+        pass
+    assert isinstance(Character.NonNull, NonNull)
 
 
 def test_fieldsclasstype():

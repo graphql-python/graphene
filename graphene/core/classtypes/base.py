@@ -43,10 +43,19 @@ class ClassTypeMeta(type):
         # Add all attributes to the class.
         for obj_name, obj in attrs.items():
             cls.add_to_class(obj_name, obj)
+
+        if not cls._meta.abstract:
+            from ..types import List, NonNull
+            setattr(cls, 'NonNull', NonNull(cls))
+            setattr(cls, 'List', List(cls))
+
         return cls
 
 
 class ClassType(six.with_metaclass(ClassTypeMeta)):
+    class Meta:
+        abstract = True
+
     @classmethod
     def internal_type(cls, schema):
         raise NotImplementedError("Function internal_type not implemented in type {}".format(cls))
@@ -74,6 +83,9 @@ class FieldsClassTypeMeta(ClassTypeMeta):
 
 
 class FieldsClassType(six.with_metaclass(FieldsClassTypeMeta, ClassType)):
+    class Meta:
+        abstract = True
+
     @classmethod
     def fields_internal_types(cls, schema):
         fields = []
