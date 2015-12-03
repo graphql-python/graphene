@@ -73,18 +73,8 @@ class FilterConnectionResolver(BaseQuerySetConnectionResolver):
         return filterset_class(**kwargs)
 
     def get_filterset_kwargs(self, filterset_class):
-        kwargs = {'data': self.args or None}
-        try:
-            kwargs.update({
-                'queryset': self.get_manager(),
-            })
-        except ImproperlyConfigured:
-            # ignore the error here if the filterset has a model defined
-            # to acquire a queryset from
-            if filterset_class._meta.model is None:
-                msg = ("'%s' does not define a 'model' and the resolver '%s' "
-                       "does not return a valid queryset from 'get_queryset'. "
-                       "You must fix one of them.")
-                args = (filterset_class.__name__, self.__class__.__name__)
-                raise ImproperlyConfigured(msg % args)
+        kwargs = {
+            'data': self.args or None,
+            'queryset': self.get_manager()
+        }
         return kwargs
