@@ -90,11 +90,5 @@ class GlobalIDField(Field):
     def __init__(self, *args, **kwargs):
         super(GlobalIDField, self).__init__(NonNull(ID()), *args, **kwargs)
 
-    def contribute_to_class(self, cls, name):
-        from graphene.relay.utils import is_node, is_node_type
-        in_node = is_node(cls) or is_node_type(cls)
-        assert in_node, 'GlobalIDField could only be inside a Node, but got %r' % cls
-        super(GlobalIDField, self).contribute_to_class(cls, name)
-
     def resolver(self, instance, args, info):
         return instance.to_global_id()

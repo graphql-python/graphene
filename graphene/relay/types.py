@@ -3,11 +3,14 @@ import warnings
 from collections import Iterable
 from functools import wraps
 
+import six
 from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import to_global_id
 
-from ..core.types import (Boolean, Field, InputObjectType, Interface, List,
-                          Mutation, ObjectType, String)
+from ..core.classtypes import InputObjectType, Interface, Mutation, ObjectType
+from ..core.classtypes.interface import InterfaceMeta
+from ..core.classtypes.mutation import MutationMeta
+from ..core.types import Boolean, Field, List, String
 from ..core.types.argument import ArgumentsGroup
 from ..core.types.definitions import NonNull
 from ..utils import memoize
@@ -83,33 +86,44 @@ class Connection(ObjectType):
         return self._connection_data
 
 
-class BaseNode(object):
+class NodeMeta(InterfaceMeta):
 
-    @classmethod
-    def _prepare_class(cls):
-        from graphene.relay.utils import is_node
-        if is_node(cls):
-            get_node = getattr(cls, 'get_node')
-            assert get_node, 'get_node classmethod not found in %s Node' % cls
-            assert callable(get_node), 'get_node have to be callable'
-            args = 3
-            if isinstance(get_node, staticmethod):
-                args -= 1
+    def construct_get_node(cls):
+        get_node = getattr(cls, 'get_node', None)
+        assert get_node, 'get_node classmethod not found in %s Node' % cls
+        assert callable(get_node), 'get_node have to be callable'
+        args = 3
+        if isinstance(get_node, staticmethod):
+            args -= 1
 
-            get_node_num_args = len(inspect.getargspec(get_node).args)
-            if get_node_num_args < args:
-                warnings.warn("get_node will receive also the info arg"
-                              " in future versions of graphene".format(cls.__name__),
-                              FutureWarning)
+        get_node_num_args = len(inspect.getargspec(get_node).args)
+        if get_node_num_args < args:
+            warnings.warn("get_node will receive also the info arg"
+                          " in future versions of graphene".format(cls.__name__),
+                          FutureWarning)
 
-                @staticmethod
-                @wraps(get_node)
-                def wrapped_node(*node_args):
-                    if len(node_args) < args:
-                        node_args += (None, )
-                    return get_node(*node_args[:-1])
+            @staticmethod
+            @wraps(get_node)
+            def wrapped_node(*node_args):
+                if len(node_args) < args:
+                    node_args += (None, )
+                return get_node(*node_args[:-1])
 
-                setattr(cls, 'get_node', wrapped_node)
+            setattr(cls, 'get_node', wrapped_node)
+
+    def construct(cls, *args, **kwargs):
+        cls = super(NodeMeta, cls).construct(*args, **kwargs)
+        if not cls._meta.abstract:
+            cls.construct_get_node()
+        return cls
+
+
+class Node(six.with_metaclass(NodeMeta, Interface)):
+    '''An object with an ID'''
+    id = GlobalIDField()
+
+    class Meta:
+        abstract = True
 
     def to_global_id(self):
         type_name = self._meta.type_name
@@ -127,26 +141,31 @@ class BaseNode(object):
         return cls.edge_type
 
 
-class Node(BaseNode, Interface):
-    '''An object with an ID'''
-    id = GlobalIDField()
-
-
 class MutationInputType(InputObjectType):
     client_mutation_id = String(required=True)
 
 
-class ClientIDMutation(Mutation):
-    client_mutation_id = String(required=True)
+class RelayMutationMeta(MutationMeta):
 
-    @classmethod
-    def _construct_arguments(cls, items):
-        assert hasattr(
-            cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
+    def construct(cls, *args, **kwargs):
+        cls = super(RelayMutationMeta, cls).construct(*args, **kwargs)
+        if not cls._meta.abstract:
+            assert hasattr(
+                cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
+        return cls
+
+    def construct_arguments(cls, items):
         new_input_type = type('{}Input'.format(
             cls._meta.type_name), (MutationInputType, ), items)
         cls.add_to_class('input_type', new_input_type)
         return ArgumentsGroup(input=NonNull(new_input_type))
+
+
+class ClientIDMutation(six.with_metaclass(RelayMutationMeta, Mutation)):
+    client_mutation_id = String(required=True)
+
+    class Meta:
+        abstract = True
 
     @classmethod
     def mutate(cls, instance, args, info):

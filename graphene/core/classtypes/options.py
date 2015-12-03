@@ -1,24 +1,11 @@
-from collections import OrderedDict
-
-from ..utils import cached_property
-
-DEFAULT_NAMES = ('description', 'name', 'is_interface', 'is_mutation',
-                 'type_name', 'interfaces', 'abstract')
-
-
 class Options(object):
 
-    def __init__(self, meta=None):
+    def __init__(self, meta=None, **defaults):
         self.meta = meta
-        self.local_fields = []
-        self.is_interface = False
-        self.is_mutation = False
-        self.is_union = False
         self.abstract = False
-        self.interfaces = []
-        self.parents = []
-        self.types = []
-        self.valid_attrs = DEFAULT_NAMES
+        for name, value in defaults.items():
+            setattr(self, name, value)
+        self.valid_attrs = list(defaults.keys()) + ['type_name', 'description', 'abstract']
 
     def contribute_to_class(self, cls, name):
         cls._meta = self
@@ -59,14 +46,3 @@ class Options(object):
                         meta_attrs.keys()))
 
         del self.meta
-
-    def add_field(self, field):
-        self.local_fields.append(field)
-
-    @cached_property
-    def fields(self):
-        return sorted(self.local_fields)
-
-    @cached_property
-    def fields_map(self):
-        return OrderedDict([(f.attname, f) for f in self.fields])

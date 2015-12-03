@@ -1,10 +1,11 @@
-from .types import BaseNode
+from .types import Node
 
 
 def is_node(object_type):
     return object_type and issubclass(
-        object_type, BaseNode) and not is_node_type(object_type)
+        object_type, Node) and not object_type._meta.abstract
 
 
 def is_node_type(object_type):
-    return BaseNode in object_type.__bases__
+    return object_type and issubclass(
+        object_type, Node) and object_type._meta.abstract
