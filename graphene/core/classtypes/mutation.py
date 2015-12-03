@@ -1,6 +1,5 @@
 import six
 
-from ..types.argument import ArgumentsGroup
 from .objecttype import ObjectType, ObjectTypeMeta
 
 
@@ -19,6 +18,7 @@ class MutationMeta(ObjectTypeMeta):
         return cls
 
     def construct_arguments(cls, items):
+        from ..types.argument import ArgumentsGroup
         return ArgumentsGroup(**items)
 
 
