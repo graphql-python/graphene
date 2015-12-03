@@ -1,4 +1,8 @@
+import django_filters
+
 from graphene.contrib.django import DjangoFilterConnectionField, DjangoNode
+from graphene.contrib.django.filterset import GlobalIDFilter
+from graphene.contrib.django.forms import GlobalIDFormField
 from graphene.contrib.django.tests.filters import ArticleFilter, PetFilter
 from graphene.contrib.django.tests.models import Article, Pet
 
@@ -56,9 +60,9 @@ def test_filter_shortcut_filterset_arguments_list():
 
 def test_filter_shortcut_filterset_arguments_dict():
     field = DjangoFilterConnectionField(ArticleNode, fields={
-            'headline': ['exact', 'icontains'],
-            'reporter': ['exact'],
-        })
+        'headline': ['exact', 'icontains'],
+        'reporter': ['exact'],
+    })
     assert_arguments(field,
                      'headline', 'headlineIcontains',
                      'reporter',
@@ -90,3 +94,32 @@ def test_filter_shortcut_filterset_extra_meta():
         'ordering': True
     })
     assert_orderable(field)
+
+
+def test_global_id_field_implicit():
+    field = DjangoFilterConnectionField(ArticleNode, fields=['id'])
+    filterset_class = field.resolver_fn.filterset_class
+    id_filter = filterset_class.base_filters['id']
+    assert isinstance(id_filter, GlobalIDFilter)
+    assert id_filter.field_class == GlobalIDFormField
+
+
+def test_global_id_field_explicit():
+    class ArticleIdFilter(django_filters.FilterSet):
+        class Meta:
+            model = Article
+            fields = ['id']
+
+    field = DjangoFilterConnectionField(ArticleNode, filterset_class=ArticleIdFilter)
+    filterset_class = field.resolver_fn.filterset_class
+    id_filter = filterset_class.base_filters['id']
+    assert isinstance(id_filter, GlobalIDFilter)
+    assert id_filter.field_class == GlobalIDFormField
+
+
+def test_global_id_field_relation():
+    field = DjangoFilterConnectionField(ArticleNode, fields=['reporter'])
+    filterset_class = field.resolver_fn.filterset_class
+    id_filter = filterset_class.base_filters['reporter']
+    assert isinstance(id_filter, GlobalIDFilter)
+    assert id_filter.field_class == GlobalIDFormField

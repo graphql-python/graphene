@@ -10,6 +10,7 @@ except AttributeError:
     class UUIDField(object):
         pass
 
+
 @singledispatch
 def convert_form_field(field):
     raise Exception(

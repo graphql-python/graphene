@@ -1,4 +1,3 @@
-from django import forms
 from django.db import models
 from singledispatch import singledispatch
 

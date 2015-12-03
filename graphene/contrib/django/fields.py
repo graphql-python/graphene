@@ -1,8 +1,8 @@
 import warnings
 
 import six
-from django_filters import FilterSet
 
+from graphene.contrib.django.filterset import setup_filterset
 from ...core.exceptions import SkipField
 from ...core.fields import Field
 from ...core.types import Argument, String
@@ -13,6 +13,7 @@ from ...relay.utils import is_node
 from .form_converter import convert_form_field
 from .resolvers import FilterConnectionResolver
 from .utils import get_type_for_model
+from .filterset import custom_filterset_factory
 
 
 class DjangoConnectionField(ConnectionField):
@@ -66,23 +67,11 @@ class DjangoModelField(FieldType):
         return get_type_for_model(schema, self.model)
 
 
-def custom_filterset_factory(model, filter_base_class=FilterSet, **meta):
-    meta.update({
-        'model': model,
-    })
-    meta_class = type(str('Meta'), (object,), meta)
-    filterset = type(str('%sFilterSet' % model._meta.object_name),
-                     (filter_base_class,), {'Meta': meta_class})
-    return filterset
-
-
 class DjangoFilterConnectionField(DjangoConnectionField):
 
     def __init__(self, type, filterset_class=None, resolver=None, on=None,
                  fields=None, order_by=None, extra_filter_meta=None,
                  *args, **kwargs):
-        if not resolver:
-            resolver = FilterConnectionResolver(type, on, filterset_class)
 
         if not filterset_class:
             # If no filter class is specified then create one given the
@@ -95,6 +84,11 @@ class DjangoFilterConnectionField(DjangoConnectionField):
             if extra_filter_meta:
                 meta.update(extra_filter_meta)
             filterset_class = custom_filterset_factory(**meta)
+        else:
+            filterset_class = setup_filterset(filterset_class)
+
+        if not resolver:
+            resolver = FilterConnectionResolver(type, on, filterset_class)
 
         kwargs.setdefault('args', {})
         kwargs['args'].update(**self.get_filtering_args(type, filterset_class))
