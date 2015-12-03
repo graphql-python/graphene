@@ -1,5 +1,6 @@
 import django_filters
 
+from graphene.contrib.django.tests.models import Reporter
 from .models import Article, Pet
 
 
@@ -13,6 +14,14 @@ class ArticleFilter(django_filters.FilterSet):
             'reporter': ['exact'],
         }
         order_by = True
+
+
+class ReporterFilter(django_filters.FilterSet):
+
+    class Meta:
+        model = Reporter
+        fields = ['first_name', 'last_name', 'email', 'pets']
+        order_by = False
 
 
 class PetFilter(django_filters.FilterSet):
