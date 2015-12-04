@@ -1,7 +1,9 @@
 from django.db import models
-from singledispatch import singledispatch
 
+from .utils import import_single_dispatch
 from ...core.types.scalars import ID, Boolean, Float, Int, String
+
+singledispatch = import_single_dispatch()
 
 try:
     UUIDField = models.UUIDField
