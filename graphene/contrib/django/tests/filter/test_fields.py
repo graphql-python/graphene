@@ -17,9 +17,6 @@ from graphene.contrib.django import DjangoNode
 from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
 from graphene.contrib.django.tests.models import Article, Pet, Reporter
 
-# settings.INSTALLED_APPS.append('graphene.contrib.django.tests')
-# apps.set_installed_apps(settings.INSTALLED_APPS)
-
 pytestmark.append(pytest.mark.django_db)
 
 
