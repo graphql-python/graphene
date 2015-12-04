@@ -26,6 +26,7 @@ install:
   if [ "$TEST_TYPE" = build ]; then
     pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter
     pip install --download-cache $HOME/.cache/pip/ -e .[django]
+    pip install --download-cache django==$DJANGO_VERSION
     python setup.py develop
   elif [ "$TEST_TYPE" = build_website ]; then
     pip install --download-cache $HOME/.cache/pip/ -e .
@@ -73,7 +74,10 @@ after_success:
   fi
 env:
   matrix:
-  - TEST_TYPE=build
+  - TEST_TYPE=build DJANGO_VERSION=1.6
+  - TEST_TYPE=build DJANGO_VERSION=1.7
+  - TEST_TYPE=build DJANGO_VERSION=1.8
+  - TEST_TYPE=build DJANGO_VERSION=1.9
   global:
     secure: SQC0eCWCWw8bZxbLE8vQn+UjJOp3Z1m779s9SMK3lCLwJxro/VCLBZ7hj4xsrq1MtcFO2U2Kqf068symw4Hr/0amYI3HFTCFiwXAC3PAKXeURca03eNO2heku+FtnQcOjBanExTsIBQRLDXMOaUkf3MIztpLJ4LHqMfUupKmw9YSB0v40jDbSN8khBnndFykmOnVVHznFp8USoN5F0CiPpnfEvHnJkaX76lNf7Kc9XNShBTTtJsnsHMhuYQeInt0vg9HSjoIYC38Tv2hmMj1myNdzyrHF+LgRjI6ceGi50ApAnGepXC/DNRhXROfECKez+LON/ZSqBGdJhUILqC8A4WmWmIjNcwitVFp3JGBqO7LULS0BI96EtSLe8rD1rkkdTbjivajkbykM1Q0Tnmg1adzGwLxRUbTq9tJQlTTkHBCuXIkpKb1mAtb/TY7A6BqfnPi2xTc/++qEawUG7ePhscdTj0IBrUfZsUNUYZqD8E8XbSWKIuS3SHE+cZ+s/kdAsm4q+FFAlpZKOYGxIkwvgyfu4/Plfol4b7X6iAP9J3r1Kv0DgBVFst5CXEwzZs19/g0CgokQbCXf1N+xeNnUELl6/fImaR3RKP22EaABoil4z8vzl4EqxqVoH1nfhE+WlpryXsuSaF/1R+WklR7aQ1FwoCk8V8HxM2zrj4tI8k=
 matrix:
