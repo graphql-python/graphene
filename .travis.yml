@@ -27,7 +27,6 @@ install:
     pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter
     pip install --download-cache $HOME/.cache/pip/ -e .[django]
     pip install django==$DJANGO_VERSION
-    echo "DJANGO_VERSION: $DJANGO_VERSION"
     python setup.py develop
   elif [ "$TEST_TYPE" = build_website ]; then
     pip install --download-cache $HOME/.cache/pip/ -e .
