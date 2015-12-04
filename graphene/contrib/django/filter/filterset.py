@@ -58,14 +58,22 @@ class GrapheneFilterSetMixin(object):
 
     @classmethod
     def filter_for_reverse_field(cls, f, name):
+        """Handles retrieving filters for reverse relationships
+
+        We override the default implementation so that we can handle
+        Global IDs (the default implementation expects database
+        primary keys)
+        """
         rel = f.field.rel
         default = {
             'name': name,
             'label': capfirst(rel.related_name)
         }
         if rel.multiple:
+            # For to-many relationships
             return GlobalIDMultipleChoiceFilter(**default)
         else:
+            # For to-one relationships
             return GlobalIDFilter(**default)
 
 
