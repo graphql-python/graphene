@@ -171,7 +171,6 @@ def test_global_id_multiple_field_implicit_reverse():
 
 
 def test_global_id_multiple_field_explicit_reverse():
-    Reporter._meta.get_field("articles")
     class ReporterPetsFilter(django_filters.FilterSet):
         class Meta:
             model = Reporter
