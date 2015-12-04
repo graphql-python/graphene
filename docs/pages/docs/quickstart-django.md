@@ -5,47 +5,31 @@ description: A Quick guide to Graphene in Django
 
 # Django Tutorial
 
-In our previous quickstart page we created a very simple schema.
+Graphene has a number of additional features that are designed to make
+working with Django simple.
 
-Now we will adapt the schema to automatically map some Django models,
-and expose this schema in a `/graphql` API endpoint.
+If you need help getting started with django then head over to
+Django's getting started page.
 
-## Project setup
+First let's create a few simple models
 
-```bash
-# Create the project directory
-mkdir tutorial
-cd tutorial
+## Some models
 
-# Create a virtualenv to isolate our package dependencies locally
-virtualenv env
-source env/bin/activate  # On Windows use `env\Scripts\activate`
+Let's get started with these models **in an app called ingredients**:
 
-# Install Django and Graphene with Django support
-pip install django
-pip install graphene[django]
-pip install django-graphiql
+```python
+# cookbook/ingredients/models.py
+from django.db import models
 
-# Set up a new project with a single application
-django-admin.py startproject tutorial .  # Note the trailing '.' character
-django-admin.py startapp quickstart
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+
+class Ingredient(models.Model):
+    name = models.CharField(max_length=100)
+    category = models.ForeignKey(Category)
 ```
-
-Now sync your database for the first time:
-
-```bash
-python manage.py migrate
-```
-
-We'll also create an initial user named `admin` with a password of `password`.
-
-```bash
-python manage.py createsuperuser
-```
-
-Once you've set up a database and initial user created and ready to go, open up the app's directory and we'll get coding...
-
-
 
 ## Schema
 
@@ -81,20 +65,10 @@ class GroupType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    all_users = graphene.List(UserType)
     get_user = graphene.Field(UserType,
                               id=graphene.String().NonNull)
     get_group = graphene.Field(GroupType,
                                id=graphene.String().NonNull)
-
-    def resolve_all_users(self, args, info):
-        return User.objects.all()
-
-    def resolve_get_user(self, args, info):
-        return User.objects.get(id=args.get('id'))
-
-    def resolve_get_group(self, args, info):
-        return Group.objects.get(id=args.get('id'))
 
 schema = graphene.Schema(query=Query)
 ```
