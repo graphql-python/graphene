@@ -2,7 +2,6 @@ language: python
 sudo: false
 python:
 - 2.7
-- 3.3
 - 3.4
 - 3.5
 - pypy
@@ -85,8 +84,3 @@ matrix:
     env: TEST_TYPE=build_website
   - python: '2.7'
     env: TEST_TYPE=lint
-  exclude:
-  - python: '3.3'
-    env: DJANGO_VERSION=1.8
-  - python: '3.3'
-    env: DJANGO_VERSION=1.9
