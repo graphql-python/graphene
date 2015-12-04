@@ -20,7 +20,7 @@ def get_reverse_fields(model):
     for name, attr in model.__dict__.items():
         # Django =>1.9 uses 'rel', django <1.9 uses 'related'
         related = getattr(attr, 'rel', None) or \
-                  getattr(attr, 'related', None)
+            getattr(attr, 'related', None)
         if isinstance(related, models.ManyToOneRel):
             yield related
 

@@ -96,7 +96,7 @@ def test_should_manytomany_convert_connectionorlist():
 def test_should_manytoone_convert_connectionorlist():
     # Django 1.9 uses 'rel', <1.9 uses 'related
     related = getattr(Reporter.articles, 'rel', None) or \
-              getattr(Reporter.articles, 'related')
+        getattr(Reporter.articles, 'related')
     graphene_type = convert_django_field(related)
     assert isinstance(graphene_type, ConnectionOrListField)
     assert isinstance(graphene_type.type, DjangoModelField)
