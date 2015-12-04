@@ -60,11 +60,11 @@ def convert_form_field_to_float(field):
 
 @convert_form_field.register(forms.ModelMultipleChoiceField)
 @convert_form_field.register(GlobalIDMultipleChoiceField)
-def convert_form_field_to_list_or_connection(field):
+def convert_form_field_to_list(field):
     return List(ID())
 
 
 @convert_form_field.register(forms.ModelChoiceField)
 @convert_form_field.register(GlobalIDFormField)
-def convert_form_field_to_djangomodel(field):
+def convert_form_field_to_id(field):
     return ID()
