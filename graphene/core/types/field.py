@@ -63,6 +63,9 @@ class Field(OrderedType):
             return NonNull(self.type)
         return self.type
 
+    def decorate_resolver(self, resolver):
+        return snake_case_args(resolver)
+
     def internal_type(self, schema):
         resolver = self.resolver
         description = self.description
@@ -85,9 +88,9 @@ class Field(OrderedType):
                 return my_resolver(instance, args, info)
             resolver = wrapped_func
 
-        resolver = snake_case_args(resolver)
         assert type, 'Internal type for field %s is None' % str(self)
-        return GraphQLField(type, args=schema.T(arguments), resolver=resolver,
+        return GraphQLField(type, args=schema.T(arguments),
+                            resolver=self.decorate_resolver(resolver),
                             description=description,)
 
     def __repr__(self):

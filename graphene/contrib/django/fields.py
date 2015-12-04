@@ -27,7 +27,7 @@ class ConnectionOrListField(Field):
         if not field_object_type:
             raise SkipField()
         if is_node(field_object_type):
-            field = DjangoConnectionField(field_object_type)
+            field = ConnectionField(field_object_type)
         else:
             field = Field(List(field_object_type))
         field.contribute_to_class(self.object_type, self.attname)
