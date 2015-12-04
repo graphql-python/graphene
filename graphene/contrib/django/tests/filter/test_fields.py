@@ -34,7 +34,7 @@ class PetNode(DjangoNode):
 
 
 def assert_arguments(field, *arguments):
-    ignore = ('after', 'before', 'first', 'last', 'order')
+    ignore = ('after', 'before', 'first', 'last', 'orderBy')
     actual = [
         name
         for name in field.arguments.arguments.keys()
@@ -48,12 +48,12 @@ def assert_arguments(field, *arguments):
 
 
 def assert_orderable(field):
-    assert 'order' in field.arguments.arguments.keys(), \
+    assert 'orderBy' in field.arguments.arguments.keys(), \
         'Field cannot be ordered'
 
 
 def assert_not_orderable(field):
-    assert 'order' in field.arguments.arguments.keys(), \
+    assert 'orderBy' not in field.arguments.arguments.keys(), \
         'Field can be ordered'
 
 
@@ -107,7 +107,7 @@ def test_filter_explicit_filterset_not_orderable():
 
 def test_filter_shortcut_filterset_extra_meta():
     field = DjangoFilterConnectionField(ArticleNode, extra_filter_meta={
-        'ordering': True
+        'order_by': True
     })
     assert_orderable(field)
 

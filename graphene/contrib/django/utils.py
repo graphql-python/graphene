@@ -45,7 +45,8 @@ def get_filtering_args_from_filterset(filterset_class, type):
         args[name] = field_type
 
     # Also add the 'order_by' field
-    args[filterset_class.order_by_field] = Argument(String)
+    if filterset_class._meta.order_by:
+        args[filterset_class.order_by_field] = Argument(String)
     return args
 
 

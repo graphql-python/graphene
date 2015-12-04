@@ -36,8 +36,8 @@ class SimpleQuerySetConnectionResolver(BaseQuerySetConnectionResolver):
         return query
 
     def get_filter_kwargs(self):
-        ignore = ['first', 'last', 'before', 'after', 'order']
+        ignore = ['first', 'last', 'before', 'after', 'order_by']
         return {k: v for k, v in self.args.items() if k not in ignore}
 
     def get_order(self):
-        return self.args.get('order', None)
+        return self.args.get('order_by', None)

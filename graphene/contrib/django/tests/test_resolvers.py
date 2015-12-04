@@ -51,7 +51,7 @@ def test_simple_order():
     reporter = Reporter(id=1, first_name='Cookie Monster')
     resolver = SimpleQuerySetConnectionResolver(ReporterNode)
     resolved = resolver(inst=reporter, args={
-        'order': 'last_name'
+        'order_by': 'last_name'
     }, info=None)
     assert 'WHERE' not in str(resolved.query)
     assert 'ORDER BY' in str(resolved.query)

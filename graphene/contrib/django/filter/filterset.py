@@ -25,7 +25,7 @@ class GlobalIDMultipleChoiceFilter(MultipleChoiceFilter):
         return super(GlobalIDMultipleChoiceFilter, self).filter(qs, gids)
 
 
-ORDER_BY_FIELD = getattr(settings, 'GRAPHENE_ORDER_BY_FIELD', 'order')
+ORDER_BY_FIELD = getattr(settings, 'GRAPHENE_ORDER_BY_FIELD', 'order_by')
 
 
 GRAPHENE_FILTER_SET_OVERRIDES = {
