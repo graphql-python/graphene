@@ -66,7 +66,7 @@ setup(
     ],
     extras_require={
         'django': [
-            'Django>=1.6.0',
+            'Django>=1.8.0',
             'singledispatch>=3.4.0.3',
             'graphql-django-view>=1.0.0',
         ],

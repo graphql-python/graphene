@@ -74,8 +74,6 @@ after_success:
   fi
 env:
   matrix:
-  - TEST_TYPE=build DJANGO_VERSION=1.6
-  - TEST_TYPE=build DJANGO_VERSION=1.7
   - TEST_TYPE=build DJANGO_VERSION=1.8
   - TEST_TYPE=build DJANGO_VERSION=1.9
   global:
@@ -88,9 +86,5 @@ matrix:
   - python: '2.7'
     env: TEST_TYPE=lint
   exclude:
-  - python: '3.3'
-    env: DJANGO_VERSION=1.6
-  - python: '3.3'
-    env: DJANGO_VERSION=1.7
   - python: '3.3'
     env: DJANGO_VERSION=1.8
