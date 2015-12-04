@@ -35,7 +35,10 @@ class WrapRoot(object):
 
 
 def debug_objecttype(objecttype):
-    return type('Debug{}'.format(objecttype._meta.type_name), (WrapRoot, objecttype), {'debug': Field(DjangoDebug, name='__debug')})
+    return type(
+        'Debug{}'.format(objecttype._meta.type_name),
+        (WrapRoot, objecttype),
+        {'debug': Field(DjangoDebug, name='__debug')})
 
 
 class DebugSchema(Schema):
