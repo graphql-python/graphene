@@ -89,8 +89,8 @@ matrix:
     env: TEST_TYPE=lint
   exclude:
   - python: '3.3'
-    env: TEST_TYPE=build DJANGO_VERSION=1.6
+    env: DJANGO_VERSION=1.6
   - python: '3.3'
-    env: TEST_TYPE=build DJANGO_VERSION=1.7
+    env: DJANGO_VERSION=1.7
   - python: '3.3'
-    env: TEST_TYPE=build DJANGO_VERSION=1.8
+    env: DJANGO_VERSION=1.8
