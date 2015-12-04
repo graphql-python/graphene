@@ -112,6 +112,18 @@ def test_filter_shortcut_filterset_extra_meta():
     assert_orderable(field)
 
 
+def test_filter_filterset_information_on_meta():
+    class ReporterFilterNode(DjangoNode):
+        class Meta:
+            model = Reporter
+            filter_fields = ['first_name', 'articles']
+            filter_order_by = True
+
+    field = DjangoFilterConnectionField(ReporterFilterNode)
+    assert_arguments(field, 'firstName', 'articles')
+    assert_orderable(field)
+
+
 def test_global_id_field_implicit():
     field = DjangoFilterConnectionField(ArticleNode, fields=['id'])
     filterset_class = field.resolver_fn.get_filterset_class()
