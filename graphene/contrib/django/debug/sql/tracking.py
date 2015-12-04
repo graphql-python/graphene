@@ -100,7 +100,7 @@ class NormalCursorWrapper(object):
             return method(sql, params)
         finally:
             stop_time = time()
-            duration = (stop_time - start_time) * 1000
+            duration = (stop_time - start_time)
             _params = ''
             try:
                 _params = json.dumps(list(map(self._decode, params)))

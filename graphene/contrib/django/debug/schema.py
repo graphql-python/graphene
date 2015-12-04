@@ -42,13 +42,11 @@ class DebugSchema(Schema):
 
     @property
     def query(self):
-        if not self._query:
-            return
-        return debug_objecttype(self._query)
+        return self._query
 
     @query.setter
     def query(self, value):
-        self._query = value
+        self._query = value and debug_objecttype(value)
 
     def enable_instrumentation(self, wrapped_root):
         # This is thread-safe because database connections are thread-local.
@@ -59,10 +57,9 @@ class DebugSchema(Schema):
         for connection in connections.all():
             unwrap_cursor(connection)
 
-    def execute(self, *args, **kwargs):
-        root = kwargs.pop('root', object())
+    def execute(self, query, root=None, *args, **kwargs):
         wrapped_root = WrappedRoot(root=root)
         self.enable_instrumentation(wrapped_root)
-        result = super(DebugSchema, self).execute(root=wrapped_root, *args, **kwargs)
+        result = super(DebugSchema, self).execute(query, wrapped_root, *args, **kwargs)
         self.disable_instrumentation()
         return result
