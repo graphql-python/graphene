@@ -26,7 +26,8 @@ install:
   if [ "$TEST_TYPE" = build ]; then
     pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter
     pip install --download-cache $HOME/.cache/pip/ -e .[django]
-    pip install --download-cache django==$DJANGO_VERSION
+    pip install django==$DJANGO_VERSION
+    echo "DJANGO_VERSION: $DJANGO_VERSION"
     python setup.py develop
   elif [ "$TEST_TYPE" = build_website ]; then
     pip install --download-cache $HOME/.cache/pip/ -e .
@@ -87,3 +88,10 @@ matrix:
     env: TEST_TYPE=build_website
   - python: '2.7'
     env: TEST_TYPE=lint
+  exclude:
+  - python: '3.3'
+    env: TEST_TYPE=build DJANGO_VERSION=1.6
+  - python: '3.3'
+    env: TEST_TYPE=build DJANGO_VERSION=1.7
+  - python: '3.3'
+    env: TEST_TYPE=build DJANGO_VERSION=1.8
