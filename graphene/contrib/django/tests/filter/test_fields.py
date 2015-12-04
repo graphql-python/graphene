@@ -1,9 +1,13 @@
 import pytest
+from django.apps import apps
+from django.conf import settings
+
+pytestmark = []
 
 try:
     import django_filters
 except ImportError:
-    pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
+    pytestmark.append(pytest.mark.skipif(True, reason='django_filters not installed'))
 else:
     from graphene.contrib.django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
                                                 GlobalIDMultipleChoiceFilter)
@@ -12,6 +16,11 @@ else:
 from graphene.contrib.django import DjangoNode
 from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
 from graphene.contrib.django.tests.models import Article, Pet, Reporter
+
+# settings.INSTALLED_APPS.append('graphene.contrib.django.tests')
+# apps.set_installed_apps(settings.INSTALLED_APPS)
+
+pytestmark.append(pytest.mark.django_db)
 
 
 class ArticleNode(DjangoNode):
@@ -158,9 +167,6 @@ def test_global_id_multiple_field_explicit():
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
 
 
-@pytest.mark.skipif(True, reason="Trying to test GrapheneFilterSetMixin.filter_for_reverse_field"
-                                 "but django has not loaded the models, so the test fails as "
-                                 "reverse relations are not ready yet")
 def test_global_id_multiple_field_implicit_reverse():
     field = DjangoFilterConnectionField(ReporterNode, fields=['articles'])
     filterset_class = field.resolver_fn.get_filterset_class()
@@ -169,10 +175,8 @@ def test_global_id_multiple_field_implicit_reverse():
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
 
 
-@pytest.mark.skipif(True, reason="Trying to test GrapheneFilterSetMixin.filter_for_reverse_field"
-                                 "but django has not loaded the models, so the test fails as "
-                                 "reverse relations are not ready yet")
 def test_global_id_multiple_field_explicit_reverse():
+    Reporter._meta.get_field("articles")
     class ReporterPetsFilter(django_filters.FilterSet):
         class Meta:
             model = Reporter
