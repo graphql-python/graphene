@@ -1,5 +1,6 @@
 import copy
 import inspect
+from functools import partial
 from collections import OrderedDict
 
 import six
@@ -48,8 +49,8 @@ class ClassTypeMeta(type):
 
         if not cls._meta.abstract:
             from ..types import List, NonNull
-            setattr(cls, 'NonNull', NonNull(cls))
-            setattr(cls, 'List', List(cls))
+            setattr(cls, 'NonNull', partial(NonNull, cls))
+            setattr(cls, 'List', partial(List, cls))
 
         return cls
 

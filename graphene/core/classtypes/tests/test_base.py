@@ -23,15 +23,26 @@ def test_classtype_advanced():
 def test_classtype_definition_list():
     class Character(ClassType):
         '''Character description'''
-    assert isinstance(Character.List, List)
-    assert Character.List.of_type == Character
+    assert isinstance(Character.List(), List)
+    assert Character.List().of_type == Character
 
 
 def test_classtype_definition_nonnull():
     class Character(ClassType):
         '''Character description'''
-    assert isinstance(Character.NonNull, NonNull)
-    assert Character.NonNull.of_type == Character
+    assert isinstance(Character.NonNull(), NonNull)
+    assert Character.NonNull().of_type == Character
+
+
+def test_fieldsclasstype_definition_order():
+    class Character(ClassType):
+        '''Character description'''
+
+    class Query(FieldsClassType):
+        name = String()
+        char = Character.NonNull()
+
+    assert list(Query._meta.fields_map.keys()) == ['name', 'char']
 
 
 def test_fieldsclasstype():
