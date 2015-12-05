@@ -50,7 +50,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         return cls
 
 
-class DjangoFilterObjectTypeMeta():
+class DjangoFilterObjectTypeMeta(ObjectTypeMeta):
 
     def convert_django_field(cls, field):
         from graphene.contrib.django.filter import DjangoFilterConnectionField
