@@ -1,5 +1,8 @@
 from django.db import models
 from django.db.models.manager import Manager
+from django.db.models.query import QuerySet
+
+from graphene.utils import LazyList
 
 
 def get_type_for_model(schema, model):
@@ -19,7 +22,18 @@ def get_reverse_fields(model):
             yield related
 
 
+class WrappedQueryset(LazyList):
+
+    def __len__(self):
+        # Dont calculate the length using len(queryset), as this will
+        # evaluate the whole queryset and return it's length.
+        # Use .count() instead
+        return self._origin.count()
+
+
 def maybe_queryset(value):
     if isinstance(value, Manager):
         value = value.get_queryset()
+    if isinstance(value, QuerySet):
+        return WrappedQueryset(value)
     return value
