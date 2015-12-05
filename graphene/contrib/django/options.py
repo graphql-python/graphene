@@ -1,9 +1,12 @@
+from .utils import DJANGO_FILTER_INSTALLED
 from ...core.classtypes.objecttype import ObjectTypeOptions
 from ...relay.types import Node
 from ...relay.utils import is_node
 
-VALID_ATTRS = ('model', 'only_fields', 'exclude_fields',
-               'filter_fields', 'filter_order_by')
+VALID_ATTRS = ('model', 'only_fields', 'exclude_fields')
+
+if DJANGO_FILTER_INSTALLED:
+    VALID_ATTRS += ('filter_fields', 'filter_order_by')
 
 
 class DjangoOptions(ObjectTypeOptions):

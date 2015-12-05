@@ -1,13 +1,13 @@
 import pytest
 from django.core.exceptions import ImproperlyConfigured
 
-try:
-    import django_filters  # noqa
-except ImportError:
-    pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
-else:
+from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
+
+if DJANGO_FILTER_INSTALLED:
     from graphene.contrib.django.filter.resolvers import FilterConnectionResolver
     from graphene.contrib.django.tests.filter.filters import ReporterFilter, ArticleFilter
+else:
+    pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
 
 from graphene.contrib.django.tests.models import Reporter, Article
 from graphene.contrib.django.tests.test_resolvers import ReporterNode, ArticleNode

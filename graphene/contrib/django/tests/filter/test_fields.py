@@ -1,19 +1,22 @@
 import pytest
 
-pytestmark = []
+from graphene import ObjectType, Schema
+from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
+from graphene.relay import NodeField
 
-try:
-    import django_filters
-except ImportError:
-    pytestmark.append(pytest.mark.skipif(True, reason='django_filters not installed'))
-else:
-    from graphene.contrib.django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
-                                                GlobalIDMultipleChoiceFilter)
-    from graphene.contrib.django.tests.filter.filters import ArticleFilter, PetFilter
 
 from graphene.contrib.django import DjangoNode
 from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
 from graphene.contrib.django.tests.models import Article, Pet, Reporter
+
+pytestmark = []
+if DJANGO_FILTER_INSTALLED:
+    import django_filters
+    from graphene.contrib.django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
+                                                GlobalIDMultipleChoiceFilter)
+    from graphene.contrib.django.tests.filter.filters import ArticleFilter, PetFilter
+else:
+    pytestmark.append(pytest.mark.skipif(True, reason='django_filters not installed'))
 
 pytestmark.append(pytest.mark.django_db)
 
@@ -122,6 +125,32 @@ def test_filter_filterset_information_on_meta():
     field = DjangoFilterConnectionField(ReporterFilterNode)
     assert_arguments(field, 'firstName', 'articles')
     assert_orderable(field)
+
+
+def test_filter_filterset_information_on_meta_related():
+    class ReporterFilterNode(DjangoNode):
+        class Meta:
+            model = Reporter
+            filter_fields = ['first_name', 'articles']
+            filter_order_by = True
+
+    class ArticleFilterNode(DjangoNode):
+        class Meta:
+            model = Article
+            filter_fields = ['headline', 'reporter']
+            filter_order_by = True
+
+    class Query(ObjectType):
+        all_reporters = DjangoFilterConnectionField(ReporterFilterNode)
+        all_articles = DjangoFilterConnectionField(ArticleFilterNode)
+        reporter = NodeField(ReporterFilterNode)
+        article = NodeField(ArticleFilterNode)
+
+    schema = Schema(query=Query)
+    schema.schema  # Trigger the schema loading
+    articles_field = schema.get_type('ReporterFilterNode')._meta.fields_map['articles']
+    assert_arguments(articles_field, 'headline', 'reporter')
+    assert_orderable(articles_field)
 
 
 def test_global_id_field_implicit():
