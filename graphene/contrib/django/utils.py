@@ -51,16 +51,16 @@ def get_filtering_args_from_filterset(filterset_class, type):
 
 
 def import_single_dispatch():
-    singledispatch = None
     try:
         from functools import singledispatch
     except ImportError:
-        pass
+        singledispatch = None
 
-    try:
-        from singledispatch import singledispatch
-    except ImportError:
-        pass
+    if not singledispatch:
+        try:
+            from singledispatch import singledispatch
+        except ImportError:
+            pass
 
     if not singledispatch:
         raise Exception(
