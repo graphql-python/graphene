@@ -1,5 +1,5 @@
 try:
-    import django_filters
+    import django_filters  # noqa
 except:
     raise Exception(
         "Use of django filtering requires the django-filter package "
