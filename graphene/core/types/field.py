@@ -9,7 +9,7 @@ from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
 from ..exceptions import SkipField
 from .argument import ArgumentsGroup, snake_case_args
-from .base import LazyType, NamedType, MountType, OrderedType, GroupNamedType
+from .base import GroupNamedType, LazyType, MountType, NamedType, OrderedType
 from .definitions import NonNull
 
 
@@ -145,6 +145,7 @@ class InputField(NamedType, OrderedType):
 
 
 class FieldsGroupType(GroupNamedType):
+
     def iter_types(self, schema):
         for field in sorted(self.types):
             try:

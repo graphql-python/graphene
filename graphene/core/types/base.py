@@ -1,9 +1,7 @@
 from collections import OrderedDict
-from functools import total_ordering, partial
+from functools import partial, total_ordering
 
 import six
-
-from ...utils import to_camel_case
 
 
 class BaseType(object):
@@ -136,6 +134,7 @@ class NamedType(BaseType):
 
 
 class GroupNamedType(BaseType):
+
     def __init__(self, *types):
         self.types = types
 

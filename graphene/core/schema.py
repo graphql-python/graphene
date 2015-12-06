@@ -10,9 +10,9 @@ from graphql.core.utils.schema_printer import print_schema
 
 from graphene import signals
 
+from ..plugins import CamelCase, Plugin
 from .classtypes.base import ClassType
 from .types.base import BaseType
-from ..plugins import Plugin, CamelCase
 
 
 class GraphQLSchema(_GraphQLSchema):

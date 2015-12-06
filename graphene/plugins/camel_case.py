@@ -1,7 +1,6 @@
-from .base import Plugin
-
 from ..core.types.base import GroupNamedType
 from ..utils import memoize, to_camel_case
+from .base import Plugin
 
 
 def camelcase_named_type(schema, type):
@@ -10,6 +9,7 @@ def camelcase_named_type(schema, type):
 
 
 class CamelCase(Plugin):
+
     @memoize
     def transform_group(self, _type):
         new_type = _type.__class__(*_type.types)
