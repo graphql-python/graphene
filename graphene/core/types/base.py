@@ -5,9 +5,8 @@ import six
 
 class InstanceType(object):
 
-    @classmethod
-    def internal_type(cls, schema):
-        return getattr(cls, 'T', None)
+    def internal_type(self, schema):
+        raise NotImplementedError("internal_type for type {} is not implemented".format(self.__class__.__name__))
 
 
 class MountType(InstanceType):

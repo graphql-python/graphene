@@ -4,21 +4,26 @@ from graphql.core.type import (GraphQLBoolean, GraphQLFloat, GraphQLID,
 from .base import MountedType
 
 
-class String(MountedType):
-    T = GraphQLString
+class ScalarType(MountedType):
+    def internal_type(self, schema):
+        return self._internal_type
 
 
-class Int(MountedType):
-    T = GraphQLInt
+class String(ScalarType):
+    _internal_type = GraphQLString
 
 
-class Boolean(MountedType):
-    T = GraphQLBoolean
+class Int(ScalarType):
+    _internal_type = GraphQLInt
 
 
-class ID(MountedType):
-    T = GraphQLID
+class Boolean(ScalarType):
+    _internal_type = GraphQLBoolean
 
 
-class Float(MountedType):
-    T = GraphQLFloat
+class ID(ScalarType):
+    _internal_type = GraphQLID
+
+
+class Float(ScalarType):
+    _internal_type = GraphQLFloat
