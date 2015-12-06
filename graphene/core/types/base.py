@@ -3,6 +3,8 @@ from functools import total_ordering, partial
 
 import six
 
+from ...utils import to_camel_case
+
 
 class BaseType(object):
 
@@ -138,7 +140,8 @@ class GroupNamedType(BaseType):
         self.types = types
 
     def get_named_type(self, schema, type):
-        return type.name or type.attname, schema.T(type)
+        name = type.name or to_camel_case(type.attname)
+        return name, schema.T(type)
 
     def internal_type(self, schema):
         return OrderedDict(map(partial(self.get_named_type, schema), self.types))

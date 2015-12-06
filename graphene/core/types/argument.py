@@ -1,10 +1,9 @@
-from collections import OrderedDict
 from functools import wraps
 from itertools import chain
 
 from graphql.core.type import GraphQLArgument
 
-from ...utils import ProxySnakeDict, to_camel_case
+from ...utils import ProxySnakeDict
 from .base import ArgumentType, GroupNamedType, NamedType, OrderedType
 
 
@@ -14,6 +13,7 @@ class Argument(NamedType, OrderedType):
                  name=None, _creation_counter=None):
         super(Argument, self).__init__(_creation_counter=_creation_counter)
         self.name = name
+        self.attname = None
         self.type = type
         self.description = description
         self.default = default
@@ -38,20 +38,21 @@ def to_arguments(*args, **kwargs):
     arguments = {}
     iter_arguments = chain(kwargs.items(), [(None, a) for a in args])
 
-    for name, arg in iter_arguments:
+    for attname, arg in iter_arguments:
         if isinstance(arg, Argument):
             argument = arg
         elif isinstance(arg, ArgumentType):
             argument = arg.as_argument()
         else:
-            raise ValueError('Unknown argument %s=%r' % (name, arg))
+            raise ValueError('Unknown argument %s=%r' % (attname, arg))
 
-        if name:
-            argument.name = to_camel_case(name)
-        assert argument.name, 'Argument in field must have a name'
-        assert argument.name not in arguments, 'Found more than one Argument with same name {}'.format(
-            argument.name)
-        arguments[argument.name] = argument
+        if attname:
+            argument.attname = attname
+
+        name = argument.name or argument.attname
+        assert name, 'Argument in field must have a name'
+        assert name not in arguments, 'Found more than one Argument with same name {}'.format(name)
+        arguments[name] = argument
 
     return sorted(arguments.values())
 

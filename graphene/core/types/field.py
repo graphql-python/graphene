@@ -4,7 +4,6 @@ from functools import wraps
 import six
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
-from ...utils import to_camel_case
 from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
@@ -37,8 +36,6 @@ class Field(NamedType, OrderedType):
         assert issubclass(
             cls, (FieldsClassType)), 'Field {} cannot be mounted in {}'.format(
             self, cls)
-        if not self.name:
-            self.name = to_camel_case(attname)
         self.attname = attname
         self.object_type = cls
         self.mount(cls)
@@ -134,8 +131,6 @@ class InputField(NamedType, OrderedType):
         assert issubclass(
             cls, (InputObjectType)), 'InputField {} cannot be mounted in {}'.format(
             self, cls)
-        if not self.name:
-            self.name = to_camel_case(attname)
         self.attname = attname
         self.object_type = cls
         self.mount(cls)

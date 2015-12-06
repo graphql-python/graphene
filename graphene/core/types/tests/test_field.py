@@ -20,7 +20,7 @@ def test_field_internal_type():
     schema = Schema(query=Query)
 
     type = schema.T(field)
-    assert field.name == 'myField'
+    assert field.name is None
     assert field.attname == 'my_field'
     assert isinstance(type, GraphQLField)
     assert type.description == 'My argument'
@@ -116,7 +116,7 @@ def test_inputfield_internal_type():
     schema = Schema(query=MyObjectType)
 
     type = schema.T(field)
-    assert field.name == 'myField'
+    assert field.name is None
     assert field.attname == 'my_field'
     assert isinstance(type, GraphQLInputObjectField)
     assert type.description == 'My input field'

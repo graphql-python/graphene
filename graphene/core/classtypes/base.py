@@ -92,7 +92,7 @@ class FieldsClassTypeMeta(ClassTypeMeta):
 
     def extend_fields(cls, bases):
         new_fields = cls._meta.local_fields
-        field_names = {f.name: f for f in new_fields}
+        field_names = {f.attname: f for f in new_fields}
 
         for base in bases:
             if not isinstance(base, FieldsClassTypeMeta):
@@ -100,17 +100,17 @@ class FieldsClassTypeMeta(ClassTypeMeta):
 
             parent_fields = base._meta.local_fields
             for field in parent_fields:
-                if field.name in field_names and field.type.__class__ != field_names[
-                        field.name].type.__class__:
+                if field.attname in field_names and field.type.__class__ != field_names[
+                        field.attname].type.__class__:
                     raise Exception(
                         'Local field %r in class %r (%r) clashes '
                         'with field with similar name from '
                         'Interface %s (%r)' % (
-                            field.name,
+                            field.attname,
                             cls.__name__,
                             field.__class__,
                             base.__name__,
-                            field_names[field.name].__class__)
+                            field_names[field.attname].__class__)
                     )
                 new_field = copy.copy(field)
                 cls.add_to_class(field.attname, new_field)
