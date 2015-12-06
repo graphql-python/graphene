@@ -140,7 +140,7 @@ class GroupNamedType(BaseType):
         self.types = types
 
     def get_named_type(self, schema, type):
-        name = type.name or to_camel_case(type.attname)
+        name = type.name or type.attname
         return name, schema.T(type)
 
     def internal_type(self, schema):
