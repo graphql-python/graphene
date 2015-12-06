@@ -11,7 +11,7 @@ from graphql.core.utils.schema_printer import print_schema
 from graphene import signals
 
 from .classtypes.base import ClassType
-from .types.base import BaseType
+from .types.base import InstanceType
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -42,7 +42,7 @@ class Schema(object):
         if not _type:
             return
         is_classtype = inspect.isclass(_type) and issubclass(_type, ClassType)
-        is_instancetype = isinstance(_type, BaseType)
+        is_instancetype = isinstance(_type, InstanceType)
         if is_classtype or is_instancetype:
             if _type not in self._types:
                 internal_type = _type.internal_type(self)

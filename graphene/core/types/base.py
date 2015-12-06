@@ -3,14 +3,14 @@ from functools import total_ordering
 import six
 
 
-class BaseType(object):
+class InstanceType(object):
 
     @classmethod
     def internal_type(cls, schema):
         return getattr(cls, 'T', None)
 
 
-class MountType(BaseType):
+class MountType(InstanceType):
     parent = None
 
     def mount(self, cls):

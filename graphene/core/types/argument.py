@@ -5,7 +5,7 @@ from itertools import chain
 from graphql.core.type import GraphQLArgument
 
 from ...utils import ProxySnakeDict, to_camel_case
-from .base import ArgumentType, BaseType, OrderedType
+from .base import ArgumentType, InstanceType, OrderedType
 
 
 class Argument(OrderedType):
@@ -27,7 +27,7 @@ class Argument(OrderedType):
         return self.name
 
 
-class ArgumentsGroup(BaseType):
+class ArgumentsGroup(InstanceType):
 
     def __init__(self, *args, **kwargs):
         arguments = to_arguments(*args, **kwargs)
