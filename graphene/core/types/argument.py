@@ -5,10 +5,10 @@ from itertools import chain
 from graphql.core.type import GraphQLArgument
 
 from ...utils import ProxySnakeDict, to_camel_case
-from .base import ArgumentType, BaseType, OrderedType
+from .base import ArgumentType, GroupNamedType, NamedType, OrderedType
 
 
-class Argument(OrderedType):
+class Argument(NamedType, OrderedType):
 
     def __init__(self, type, description=None, default=None,
                  name=None, _creation_counter=None):
@@ -27,27 +27,11 @@ class Argument(OrderedType):
         return self.name
 
 
-class ArgumentsGroup(BaseType):
+class ArgumentsGroup(GroupNamedType):
 
     def __init__(self, *args, **kwargs):
         arguments = to_arguments(*args, **kwargs)
-        self.arguments = OrderedDict([(arg.name, arg) for arg in arguments])
-
-    def internal_type(self, schema):
-        return OrderedDict([(arg.name, schema.T(arg))
-                            for arg in self.arguments.values()])
-
-    def __len__(self):
-        return len(self.arguments)
-
-    def __iter__(self):
-        return iter(self.arguments)
-
-    def __contains__(self, *args):
-        return self.arguments.__contains__(*args)
-
-    def __getitem__(self, *args):
-        return self.arguments.__getitem__(*args)
+        super(ArgumentsGroup, self).__init__(*arguments)
 
 
 def to_arguments(*args, **kwargs):

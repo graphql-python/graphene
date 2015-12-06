@@ -9,11 +9,11 @@ from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
 from .argument import ArgumentsGroup, snake_case_args
-from .base import LazyType, MountType, OrderedType
+from .base import LazyType, NamedType, MountType, OrderedType
 from .definitions import NonNull
 
 
-class Field(OrderedType):
+class Field(NamedType, OrderedType):
 
     def __init__(
             self, type, description=None, args=None, name=None, resolver=None,
@@ -117,7 +117,7 @@ class Field(OrderedType):
         return hash((self.creation_counter, self.object_type))
 
 
-class InputField(OrderedType):
+class InputField(NamedType, OrderedType):
 
     def __init__(self, type, description=None, default=None,
                  name=None, _creation_counter=None, required=False):

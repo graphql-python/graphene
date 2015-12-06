@@ -98,9 +98,10 @@ def test_field_string_reference():
 
 def test_field_custom_arguments():
     field = Field(None, name='my_customName', p=String())
+    schema = Schema()
 
     args = field.arguments
-    assert 'p' in args
+    assert 'p' in schema.T(args)
 
 
 def test_inputfield_internal_type():

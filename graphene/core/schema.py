@@ -38,6 +38,9 @@ class Schema(object):
     def __repr__(self):
         return '<Schema: %s (%s)>' % (str(self.name), hash(self))
 
+    def get_internal_type(self, objecttype):
+        return objecttype.internal_type(self)
+
     def T(self, object_type):
         if not object_type:
             return
@@ -45,7 +48,7 @@ class Schema(object):
                 object_type, (BaseType, ClassType)) or isinstance(
                 object_type, BaseType):
             if object_type not in self._types:
-                internal_type = object_type.internal_type(self)
+                internal_type = self.get_internal_type(object_type)
                 self._types[object_type] = internal_type
                 is_objecttype = inspect.isclass(
                     object_type) and issubclass(object_type, ClassType)
