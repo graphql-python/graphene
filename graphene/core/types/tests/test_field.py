@@ -13,7 +13,7 @@ from ..scalars import String
 def test_field_internal_type():
     resolver = lambda *args: 'RESOLVED'
 
-    field = Field(String, description='My argument', resolver=resolver)
+    field = Field(String(), description='My argument', resolver=resolver)
 
     class Query(ObjectType):
         my_field = field

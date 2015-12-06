@@ -55,22 +55,20 @@ class Schema(object):
             objecttype = plugin.transform_type(objecttype)
         return objecttype.internal_type(self)
 
-    def T(self, object_type):
-        if not object_type:
+    def T(self, _type):
+        if not _type:
             return
-        if inspect.isclass(object_type) and issubclass(
-                object_type, (BaseType, ClassType)) or isinstance(
-                object_type, BaseType):
-            if object_type not in self._types:
-                internal_type = self.get_internal_type(object_type)
-                self._types[object_type] = internal_type
-                is_objecttype = inspect.isclass(
-                    object_type) and issubclass(object_type, ClassType)
-                if is_objecttype:
-                    self.register(object_type)
-            return self._types[object_type]
+        is_classtype = inspect.isclass(_type) and issubclass(_type, ClassType)
+        is_instancetype = isinstance(_type, BaseType)
+        if is_classtype or is_instancetype:
+            if _type not in self._types:
+                internal_type = self.get_internal_type(_type)
+                self._types[_type] = internal_type
+                if is_classtype:
+                    self.register(_type)
+            return self._types[_type]
         else:
-            return object_type
+            return _type
 
     @property
     def executor(self):
