@@ -12,6 +12,7 @@ from graphene import signals
 
 from .classtypes.base import ClassType
 from .types.base import BaseType
+from ..plugins import Plugin, CamelCase
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -25,7 +26,7 @@ class Schema(object):
     _executor = None
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 name='Schema', executor=None):
+                 name='Schema', executor=None, plugins=None, auto_camelcase=True):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
@@ -33,10 +34,26 @@ class Schema(object):
         self.subscription = subscription
         self.name = name
         self.executor = executor
+        self.plugins = []
+        plugins = plugins or []
+        if auto_camelcase:
+            plugins.append(CamelCase())
+        for plugin in plugins:
+            self.add_plugin(plugin)
         signals.init_schema.send(self)
 
     def __repr__(self):
         return '<Schema: %s (%s)>' % (str(self.name), hash(self))
+
+    def add_plugin(self, plugin):
+        assert isinstance(plugin, Plugin), 'A plugin need to subclass graphene.Plugin and be instantiated'
+        plugin.contribute_to_schema(self)
+        self.plugins.append(plugin)
+
+    def get_internal_type(self, objecttype):
+        for plugin in self.plugins:
+            objecttype = plugin.transform_type(objecttype)
+        return objecttype.internal_type(self)
 
     def T(self, object_type):
         if not object_type:
@@ -45,7 +62,7 @@ class Schema(object):
                 object_type, (BaseType, ClassType)) or isinstance(
                 object_type, BaseType):
             if object_type not in self._types:
-                internal_type = object_type.internal_type(self)
+                internal_type = self.get_internal_type(object_type)
                 self._types[object_type] = internal_type
                 is_objecttype = inspect.isclass(
                     object_type) and issubclass(object_type, ClassType)

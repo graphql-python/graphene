@@ -24,4 +24,4 @@ def test_mutation():
     assert list(object_type.get_fields().keys()) == ['name']
     assert MyMutation._meta.fields_map['name'].object_type == MyMutation
     assert isinstance(MyMutation.arguments, ArgumentsGroup)
-    assert 'argName' in MyMutation.arguments
+    assert 'argName' in schema.T(MyMutation.arguments)

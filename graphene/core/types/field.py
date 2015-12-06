@@ -4,16 +4,16 @@ from functools import wraps
 import six
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
-from ...utils import to_camel_case
 from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
+from ..exceptions import SkipField
 from .argument import ArgumentsGroup, snake_case_args
-from .base import LazyType, MountType, OrderedType
+from .base import LazyType, NamedType, MountType, OrderedType, GroupNamedType
 from .definitions import NonNull
 
 
-class Field(OrderedType):
+class Field(NamedType, OrderedType):
 
     def __init__(
             self, type, description=None, args=None, name=None, resolver=None,
@@ -36,8 +36,6 @@ class Field(OrderedType):
         assert issubclass(
             cls, (FieldsClassType)), 'Field {} cannot be mounted in {}'.format(
             self, cls)
-        if not self.name:
-            self.name = to_camel_case(attname)
         self.attname = attname
         self.object_type = cls
         self.mount(cls)
@@ -63,6 +61,9 @@ class Field(OrderedType):
             return NonNull(self.type)
         return self.type
 
+    def decorate_resolver(self, resolver):
+        return snake_case_args(resolver)
+
     def internal_type(self, schema):
         resolver = self.resolver
         description = self.description
@@ -85,9 +86,9 @@ class Field(OrderedType):
                 return my_resolver(instance, args, info)
             resolver = wrapped_func
 
-        resolver = snake_case_args(resolver)
         assert type, 'Internal type for field %s is None' % str(self)
-        return GraphQLField(type, args=schema.T(arguments), resolver=resolver,
+        return GraphQLField(type, args=schema.T(arguments),
+                            resolver=self.decorate_resolver(resolver),
                             description=description,)
 
     def __repr__(self):
@@ -114,7 +115,7 @@ class Field(OrderedType):
         return hash((self.creation_counter, self.object_type))
 
 
-class InputField(OrderedType):
+class InputField(NamedType, OrderedType):
 
     def __init__(self, type, description=None, default=None,
                  name=None, _creation_counter=None, required=False):
@@ -130,8 +131,6 @@ class InputField(OrderedType):
         assert issubclass(
             cls, (InputObjectType)), 'InputField {} cannot be mounted in {}'.format(
             self, cls)
-        if not self.name:
-            self.name = to_camel_case(attname)
         self.attname = attname
         self.object_type = cls
         self.mount(cls)
@@ -143,3 +142,14 @@ class InputField(OrderedType):
         return GraphQLInputObjectField(
             schema.T(self.type),
             default_value=self.default, description=self.description)
+
+
+class FieldsGroupType(GroupNamedType):
+    def internal_type(self, schema):
+        fields = []
+        for field in sorted(self.types):
+            try:
+                fields.append(self.get_named_type(schema, field))
+            except SkipField:
+                continue
+        return OrderedDict(fields)
