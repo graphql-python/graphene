@@ -4,4 +4,4 @@ from .sql.types import DjangoDebugSQL
 
 
 class DjangoDebug(ObjectType):
-    sql = Field(DjangoDebugSQL.List)
+    sql = Field(DjangoDebugSQL.List())

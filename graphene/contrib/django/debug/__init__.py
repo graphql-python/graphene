@@ -1,4 +1,4 @@
-from .schema import DebugSchema
+from .plugin import DjangoDebugPlugin
 from .types import DjangoDebug
 
-__all__ = ['DebugSchema', 'DjangoDebug']
+__all__ = ['DjangoDebugPlugin', 'DjangoDebug']

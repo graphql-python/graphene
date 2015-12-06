@@ -4,7 +4,7 @@ import graphene
 from graphene.contrib.django import DjangoObjectType
 
 from ...tests.models import Reporter
-from ..schema import DebugSchema
+from ..plugin import DjangoDebugPlugin
 
 # from examples.starwars_django.models import Character
 
@@ -24,7 +24,7 @@ def test_should_query_well():
 
     class Query(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
-        all_reporters = ReporterType.List
+        all_reporters = ReporterType.List()
 
         def resolve_all_reporters(self, *args, **kwargs):
             return Reporter.objects.all()
@@ -64,7 +64,7 @@ def test_should_query_well():
             }]
         }
     }
-    schema = DebugSchema(query=Query)
+    schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected

@@ -1,5 +1,7 @@
+from contextlib import contextmanager
 from django.db import connections
 
+from ....plugins import Plugin
 from ....core.schema import Schema
 from ....core.types import Field
 from .sql.tracking import unwrap_cursor, wrap_cursor
@@ -41,15 +43,11 @@ def debug_objecttype(objecttype):
         {'debug': Field(DjangoDebug, name='__debug')})
 
 
-class DebugSchema(Schema):
-
-    @property
-    def query(self):
-        return self._query
-
-    @query.setter
-    def query(self, value):
-        self._query = value and debug_objecttype(value)
+class DjangoDebugPlugin(Plugin):
+    def transform_type(self, _type):
+        if _type == self.schema.query:
+            return debug_objecttype(_type)
+        return _type
 
     def enable_instrumentation(self, wrapped_root):
         # This is thread-safe because database connections are thread-local.
@@ -60,9 +58,9 @@ class DebugSchema(Schema):
         for connection in connections.all():
             unwrap_cursor(connection)
 
-    def execute(self, query, root=None, *args, **kwargs):
-        wrapped_root = WrappedRoot(root=root)
-        self.enable_instrumentation(wrapped_root)
-        result = super(DebugSchema, self).execute(query, wrapped_root, *args, **kwargs)
+    @contextmanager
+    def context_execution(self, executor):
+        executor['root'] = WrappedRoot(root=executor['root'])
+        self.enable_instrumentation(executor['root'])
+        yield executor
         self.disable_instrumentation()
-        return result
