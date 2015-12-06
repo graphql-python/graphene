@@ -1,10 +1,9 @@
-from graphene.contrib.django import settings
+from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 
-if not settings.GRAPHENE_ENABLE_FILTERING:
+if not DJANGO_FILTER_INSTALLED:
     raise Exception(
-        "To make use of filtering you configure "
-        "GRAPHENE_ENABLE_FILTERING=True. This will also require "
-        "django-filter be installed"
+        "Use of django filtering requires the django-filter package "
+        "be installed. You can do so using `pip install django-filter`"
     )
 
 from .fields import DjangoFilterConnectionField

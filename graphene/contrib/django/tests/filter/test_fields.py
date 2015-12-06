@@ -1,7 +1,7 @@
 import pytest
 
 from graphene import ObjectType, Schema
-from graphene.contrib.django import settings
+from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 from graphene.relay import NodeField
 
 
@@ -10,7 +10,7 @@ from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleCho
 from graphene.contrib.django.tests.models import Article, Pet, Reporter
 
 pytestmark = []
-if settings.GRAPHENE_ENABLE_FILTERING:
+if DJANGO_FILTER_INSTALLED:
     import django_filters
     from graphene.contrib.django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
                                                 GlobalIDMultipleChoiceFilter)

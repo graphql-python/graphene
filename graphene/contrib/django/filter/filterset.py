@@ -1,11 +1,11 @@
 import six
+from django.conf import settings
 from django.db import models
 from django.utils.text import capfirst
 from django_filters import Filter, MultipleChoiceFilter
 from django_filters.filterset import FilterSetMetaclass, FilterSet
 from graphql_relay.node.node import from_global_id
 
-from graphene.contrib.django import settings
 from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
 
 
@@ -23,6 +23,9 @@ class GlobalIDMultipleChoiceFilter(MultipleChoiceFilter):
     def filter(self, qs, value):
         gids = [from_global_id(v).id for v in value]
         return super(GlobalIDMultipleChoiceFilter, self).filter(qs, gids)
+
+
+ORDER_BY_FIELD = getattr(settings, 'GRAPHENE_ORDER_BY_FIELD', 'order_by')
 
 
 GRAPHENE_FILTER_SET_OVERRIDES = {
@@ -51,7 +54,7 @@ class GrapheneFilterSetMetaclass(FilterSetMetaclass):
 
 
 class GrapheneFilterSetMixin(object):
-    order_by_field = settings.GRAPHENE_ORDER_BY_FIELD
+    order_by_field = ORDER_BY_FIELD
 
     @classmethod
     def filter_for_reverse_field(cls, f, name):

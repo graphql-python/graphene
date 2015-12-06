@@ -7,6 +7,12 @@ from graphene.utils import LazyList
 
 from graphene import Argument, String
 
+try:
+    import django_filters  # noqa
+    DJANGO_FILTER_INSTALLED = True
+except ImportError:
+    DJANGO_FILTER_INSTALLED = False
+
 
 def get_type_for_model(schema, model):
     schema = schema

@@ -1,11 +1,11 @@
-from graphene.contrib.django import settings
+from .utils import DJANGO_FILTER_INSTALLED
 from ...core.classtypes.objecttype import ObjectTypeOptions
 from ...relay.types import Node
 from ...relay.utils import is_node
 
 VALID_ATTRS = ('model', 'only_fields', 'exclude_fields')
 
-if settings.GRAPHENE_ENABLE_FILTERING:
+if DJANGO_FILTER_INSTALLED:
     VALID_ATTRS += ('filter_fields', 'filter_order_by')
 
 
