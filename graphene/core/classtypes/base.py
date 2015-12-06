@@ -1,7 +1,7 @@
 import copy
 import inspect
-from functools import partial
 from collections import OrderedDict
+from functools import partial
 
 import six
 

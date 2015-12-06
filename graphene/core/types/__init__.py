@@ -4,7 +4,7 @@ from .definitions import List, NonNull
 # Compatibility import
 from .objecttype import Interface, ObjectType, Mutation, InputObjectType
 
-from .scalars import String, ID, Boolean, Int, Float, Scalar
+from .scalars import String, ID, Boolean, Int, Float
 from .field import Field, InputField
 
 __all__ = [
@@ -26,5 +26,4 @@ __all__ = [
     'ID',
     'Boolean',
     'Int',
-    'Float',
-    'Scalar']
+    'Float']
