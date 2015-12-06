@@ -143,8 +143,11 @@ class GroupNamedType(BaseType):
         name = type.name or type.attname
         return name, schema.T(type)
 
+    def iter_types(self, schema):
+        return map(partial(self.get_named_type, schema), self.types)
+
     def internal_type(self, schema):
-        return OrderedDict(map(partial(self.get_named_type, schema), self.types))
+        return OrderedDict(self.iter_types(schema))
 
     def __len__(self):
         return len(self.types)

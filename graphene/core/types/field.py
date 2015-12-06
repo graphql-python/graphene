@@ -145,11 +145,9 @@ class InputField(NamedType, OrderedType):
 
 
 class FieldsGroupType(GroupNamedType):
-    def internal_type(self, schema):
-        fields = []
+    def iter_types(self, schema):
         for field in sorted(self.types):
             try:
-                fields.append(self.get_named_type(schema, field))
+                yield self.get_named_type(schema, field)
             except SkipField:
                 continue
-        return OrderedDict(fields)
