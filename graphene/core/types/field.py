@@ -8,8 +8,9 @@ from ...utils import to_camel_case
 from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
+from ..exceptions import SkipField
 from .argument import ArgumentsGroup, snake_case_args
-from .base import LazyType, NamedType, MountType, OrderedType
+from .base import LazyType, NamedType, MountType, OrderedType, GroupNamedType
 from .definitions import NonNull
 
 
@@ -146,3 +147,14 @@ class InputField(NamedType, OrderedType):
         return GraphQLInputObjectField(
             schema.T(self.type),
             default_value=self.default, description=self.description)
+
+
+class FieldsGroupType(GroupNamedType):
+    def internal_type(self, schema):
+        fields = []
+        for field in sorted(self.types):
+            try:
+                fields.append(self.get_named_type(schema, field))
+            except SkipField:
+                continue
+        return OrderedDict(fields)

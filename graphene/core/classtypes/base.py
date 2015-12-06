@@ -5,7 +5,6 @@ from collections import OrderedDict
 
 import six
 
-from ..exceptions import SkipField
 from .options import Options
 
 
@@ -82,6 +81,11 @@ class FieldsOptions(Options):
     def fields_map(self):
         return OrderedDict([(f.attname, f) for f in self.fields])
 
+    @property
+    def fields_group_type(self):
+        from ..types.field import FieldsGroupType
+        return FieldsGroupType(*self.local_fields)
+
 
 class FieldsClassTypeMeta(ClassTypeMeta):
     options_class = FieldsOptions
@@ -124,11 +128,4 @@ class FieldsClassType(six.with_metaclass(FieldsClassTypeMeta, ClassType)):
 
     @classmethod
     def fields_internal_types(cls, schema):
-        fields = []
-        for field in cls._meta.fields:
-            try:
-                fields.append((field.name, schema.T(field)))
-            except SkipField:
-                continue
-
-        return OrderedDict(fields)
+        return schema.T(cls._meta.fields_group_type)
