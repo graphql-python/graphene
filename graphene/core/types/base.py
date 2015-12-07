@@ -4,14 +4,13 @@ from functools import partial, total_ordering
 import six
 
 
-class BaseType(object):
+class InstanceType(object):
 
-    @classmethod
-    def internal_type(cls, schema):
-        return getattr(cls, 'T', None)
+    def internal_type(self, schema):
+        raise NotImplementedError("internal_type for type {} is not implemented".format(self.__class__.__name__))
 
 
-class MountType(BaseType):
+class MountType(InstanceType):
     parent = None
 
     def mount(self, cls):
@@ -129,11 +128,11 @@ class MountedType(FieldType, ArgumentType):
     pass
 
 
-class NamedType(BaseType):
+class NamedType(InstanceType):
     pass
 
 
-class GroupNamedType(BaseType):
+class GroupNamedType(InstanceType):
 
     def __init__(self, *types):
         self.types = types
