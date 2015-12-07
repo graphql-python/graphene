@@ -129,7 +129,10 @@ class MountedType(FieldType, ArgumentType):
 
 
 class NamedType(InstanceType):
-    pass
+    def __init__(self, name=None, default_name=None, *args, **kwargs):
+        self.name = name
+        self.default_name = None
+        super(NamedType, self).__init__(*args, **kwargs)
 
 
 class GroupNamedType(InstanceType):
@@ -138,7 +141,7 @@ class GroupNamedType(InstanceType):
         self.types = types
 
     def get_named_type(self, schema, type):
-        name = type.name or type.attname
+        name = type.name or schema.get_default_namedtype_name(type.default_name)
         return name, schema.T(type)
 
     def iter_types(self, schema):

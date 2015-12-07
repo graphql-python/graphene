@@ -50,10 +50,12 @@ class Schema(object):
         plugin.contribute_to_schema(self)
         self.plugins.append(plugin)
 
-    def get_internal_type(self, objecttype):
+    def get_default_namedtype_name(self, value):
         for plugin in self.plugins:
-            objecttype = plugin.transform_type(objecttype)
-        return objecttype.internal_type(self)
+            if not hasattr(plugin, 'get_default_namedtype_name'):
+                continue
+            value = plugin.get_default_namedtype_name(value)
+        return value
 
     def T(self, _type):
         if not _type:
@@ -62,7 +64,7 @@ class Schema(object):
         is_instancetype = isinstance(_type, InstanceType)
         if is_classtype or is_instancetype:
             if _type not in self._types:
-                internal_type = self.get_internal_type(_type)
+                internal_type = _type.internal_type(self)
                 self._types[_type] = internal_type
                 if is_classtype:
                     self.register(_type)
