@@ -11,9 +11,7 @@ class Argument(NamedType, OrderedType):
 
     def __init__(self, type, description=None, default=None,
                  name=None, _creation_counter=None):
-        super(Argument, self).__init__(_creation_counter=_creation_counter)
-        self.name = name
-        self.attname = None
+        super(Argument, self).__init__(name=name, _creation_counter=_creation_counter)
         self.type = type
         self.description = description
         self.default = default
@@ -38,18 +36,18 @@ def to_arguments(*args, **kwargs):
     arguments = {}
     iter_arguments = chain(kwargs.items(), [(None, a) for a in args])
 
-    for attname, arg in iter_arguments:
+    for default_name, arg in iter_arguments:
         if isinstance(arg, Argument):
             argument = arg
         elif isinstance(arg, ArgumentType):
             argument = arg.as_argument()
         else:
-            raise ValueError('Unknown argument %s=%r' % (attname, arg))
+            raise ValueError('Unknown argument %s=%r' % (default_name, arg))
 
-        if attname:
-            argument.attname = attname
+        if default_name:
+            argument.default_name = default_name
 
-        name = argument.name or argument.attname
+        name = argument.name or argument.default_name
         assert name, 'Argument in field must have a name'
         assert name not in arguments, 'Found more than one Argument with same name {}'.format(name)
         arguments[name] = argument

@@ -9,7 +9,7 @@ from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
 from ..exceptions import SkipField
 from .argument import ArgumentsGroup, snake_case_args
-from .base import LazyType, NamedType, MountType, OrderedType, GroupNamedType
+from .base import GroupNamedType, LazyType, MountType, NamedType, OrderedType
 from .definitions import NonNull
 
 
@@ -19,8 +19,7 @@ class Field(NamedType, OrderedType):
             self, type, description=None, args=None, name=None, resolver=None,
             required=False, default=None, *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
-        super(Field, self).__init__(_creation_counter=_creation_counter)
-        self.name = name
+        super(Field, self).__init__(name=name, _creation_counter=_creation_counter)
         if isinstance(type, six.string_types):
             type = LazyType(type)
         self.required = required
@@ -37,6 +36,7 @@ class Field(NamedType, OrderedType):
             cls, (FieldsClassType)), 'Field {} cannot be mounted in {}'.format(
             self, cls)
         self.attname = attname
+        self.default_name = attname
         self.object_type = cls
         self.mount(cls)
         if isinstance(self.type, MountType):
@@ -120,7 +120,6 @@ class InputField(NamedType, OrderedType):
     def __init__(self, type, description=None, default=None,
                  name=None, _creation_counter=None, required=False):
         super(InputField, self).__init__(_creation_counter=_creation_counter)
-        self.name = name
         if required:
             type = NonNull(type)
         self.type = type
@@ -132,6 +131,7 @@ class InputField(NamedType, OrderedType):
             cls, (InputObjectType)), 'InputField {} cannot be mounted in {}'.format(
             self, cls)
         self.attname = attname
+        self.default_name = attname
         self.object_type = cls
         self.mount(cls)
         if isinstance(self.type, MountType):
@@ -145,11 +145,10 @@ class InputField(NamedType, OrderedType):
 
 
 class FieldsGroupType(GroupNamedType):
-    def internal_type(self, schema):
-        fields = []
+
+    def iter_types(self, schema):
         for field in sorted(self.types):
             try:
-                fields.append(self.get_named_type(schema, field))
+                yield self.get_named_type(schema, field)
             except SkipField:
                 continue
-        return OrderedDict(fields)

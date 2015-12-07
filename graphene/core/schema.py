@@ -10,9 +10,9 @@ from graphql.core.utils.schema_printer import print_schema
 
 from graphene import signals
 
+from ..plugins import CamelCase, Plugin
 from .classtypes.base import ClassType
-from .types.base import BaseType
-from ..plugins import Plugin, CamelCase
+from .types.base import InstanceType
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -50,27 +50,27 @@ class Schema(object):
         plugin.contribute_to_schema(self)
         self.plugins.append(plugin)
 
-    def get_internal_type(self, objecttype):
+    def get_default_namedtype_name(self, value):
         for plugin in self.plugins:
-            objecttype = plugin.transform_type(objecttype)
-        return objecttype.internal_type(self)
+            if not hasattr(plugin, 'get_default_namedtype_name'):
+                continue
+            value = plugin.get_default_namedtype_name(value)
+        return value
 
-    def T(self, object_type):
-        if not object_type:
+    def T(self, _type):
+        if not _type:
             return
-        if inspect.isclass(object_type) and issubclass(
-                object_type, (BaseType, ClassType)) or isinstance(
-                object_type, BaseType):
-            if object_type not in self._types:
-                internal_type = self.get_internal_type(object_type)
-                self._types[object_type] = internal_type
-                is_objecttype = inspect.isclass(
-                    object_type) and issubclass(object_type, ClassType)
-                if is_objecttype:
-                    self.register(object_type)
-            return self._types[object_type]
+        is_classtype = inspect.isclass(_type) and issubclass(_type, ClassType)
+        is_instancetype = isinstance(_type, InstanceType)
+        if is_classtype or is_instancetype:
+            if _type not in self._types:
+                internal_type = _type.internal_type(self)
+                self._types[_type] = internal_type
+                if is_classtype:
+                    self.register(_type)
+            return self._types[_type]
         else:
-            return object_type
+            return _type
 
     @property
     def executor(self):

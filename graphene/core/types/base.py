@@ -1,19 +1,16 @@
 from collections import OrderedDict
-from functools import total_ordering, partial
+from functools import partial, total_ordering
 
 import six
 
-from ...utils import to_camel_case
+
+class InstanceType(object):
+
+    def internal_type(self, schema):
+        raise NotImplementedError("internal_type for type {} is not implemented".format(self.__class__.__name__))
 
 
-class BaseType(object):
-
-    @classmethod
-    def internal_type(cls, schema):
-        return getattr(cls, 'T', None)
-
-
-class MountType(BaseType):
+class MountType(InstanceType):
     parent = None
 
     def mount(self, cls):
@@ -131,20 +128,27 @@ class MountedType(FieldType, ArgumentType):
     pass
 
 
-class NamedType(BaseType):
-    pass
+class NamedType(InstanceType):
+    def __init__(self, name=None, default_name=None, *args, **kwargs):
+        self.name = name
+        self.default_name = None
+        super(NamedType, self).__init__(*args, **kwargs)
 
 
-class GroupNamedType(BaseType):
+class GroupNamedType(InstanceType):
+
     def __init__(self, *types):
         self.types = types
 
     def get_named_type(self, schema, type):
-        name = type.name or type.attname
+        name = type.name or schema.get_default_namedtype_name(type.default_name)
         return name, schema.T(type)
 
+    def iter_types(self, schema):
+        return map(partial(self.get_named_type, schema), self.types)
+
     def internal_type(self, schema):
-        return OrderedDict(map(partial(self.get_named_type, schema), self.types))
+        return OrderedDict(self.iter_types(schema))
 
     def __len__(self):
         return len(self.types)
