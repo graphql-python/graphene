@@ -129,6 +129,7 @@ class MountedType(FieldType, ArgumentType):
 
 
 class NamedType(InstanceType):
+
     def __init__(self, name=None, default_name=None, *args, **kwargs):
         self.name = name
         self.default_name = None

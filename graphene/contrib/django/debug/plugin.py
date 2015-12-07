@@ -1,9 +1,9 @@
 from contextlib import contextmanager
+
 from django.db import connections
 
-from ....plugins import Plugin
-from ....core.schema import Schema
 from ....core.types import Field
+from ....plugins import Plugin
 from .sql.tracking import unwrap_cursor, wrap_cursor
 from .sql.types import DjangoDebugSQL
 from .types import DjangoDebug
@@ -44,9 +44,10 @@ def debug_objecttype(objecttype):
 
 
 class DjangoDebugPlugin(Plugin):
+
     def transform_type(self, _type):
         if _type == self.schema.query:
-            return debug_objecttype(_type)
+            return
         return _type
 
     def enable_instrumentation(self, wrapped_root):
@@ -58,9 +59,19 @@ class DjangoDebugPlugin(Plugin):
         for connection in connections.all():
             unwrap_cursor(connection)
 
+    def wrap_schema(self, schema_type):
+        query = schema_type._query
+        if query:
+            class_type = self.schema.objecttype(schema_type._query)
+            assert class_type, 'The query in schema is not constructed with graphene'
+            _type = debug_objecttype(class_type)
+            schema_type._query = self.schema.T(_type)
+        return schema_type
+
     @contextmanager
     def context_execution(self, executor):
         executor['root'] = WrappedRoot(root=executor['root'])
+        executor['schema'] = self.wrap_schema(executor['schema'])
         self.enable_instrumentation(executor['root'])
         yield executor
         self.disable_instrumentation()

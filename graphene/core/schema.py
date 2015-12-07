@@ -131,6 +131,8 @@ class Schema(object):
         executor = kwargs
         executor['root'] = root
         executor['args'] = args
+        executor['schema'] = self.schema
+        executor['request'] = request
         contexts = []
         for plugin in self.plugins:
             if not hasattr(plugin, 'context_execution'):
@@ -139,8 +141,6 @@ class Schema(object):
             executor = context.__enter__()
             contexts.append((context, executor))
         result = self.executor.execute(
-            self.schema,
-            request,
             **executor
         )
         for context, value in contexts[::-1]:
