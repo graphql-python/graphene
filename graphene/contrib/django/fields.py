@@ -9,7 +9,18 @@ from ...relay.utils import is_node
 from .utils import get_type_for_model
 
 
-class DjangoConnectionField(ConnectionField):
+class DjangoField(Field):
+    def decorate_resolver(self, resolver):
+        f = super(DjangoField, self).decorate_resolver(resolver)
+        setattr(f, 'django_fetch_field', self.field.name)
+        return f
+
+    def __init__(self, *args, **kwargs):
+        self.field = kwargs.pop('_field')
+        return super(DjangoField, self).__init__(*args, **kwargs)
+
+
+class DjangoConnectionField(DjangoField, ConnectionField):
 
     def __init__(self, *args, **kwargs):
         cls = self.__class__
@@ -19,7 +30,7 @@ class DjangoConnectionField(ConnectionField):
         return super(DjangoConnectionField, self).__init__(*args, **kwargs)
 
 
-class ConnectionOrListField(Field):
+class ConnectionOrListField(DjangoField):
 
     def internal_type(self, schema):
         model_field = self.type
@@ -27,9 +38,9 @@ class ConnectionOrListField(Field):
         if not field_object_type:
             raise SkipField()
         if is_node(field_object_type):
-            field = ConnectionField(field_object_type)
+            field = DjangoConnectionField(field_object_type, _field=self.field)
         else:
-            field = Field(List(field_object_type))
+            field = DjangoField(List(field_object_type), _field=self.field)
         field.contribute_to_class(self.object_type, self.attname)
         return schema.T(field)
 
