@@ -118,17 +118,10 @@ class Schema(object):
     def types(self):
         return self._types_names
 
-    def execute(self, request='', root=None, vars=None,
-                operation_name=None, **kwargs):
-        root = root or object()
-        return self.executor.execute(
-            self.schema,
-            request,
-            root=root,
-            args=vars,
-            operation_name=operation_name,
-            **kwargs
-        )
+    def execute(self, request='', root=None, args=None, **kwargs):
+        kwargs = dict(kwargs, request=request, root=root, args=args, schema=self.schema)
+        with self.plugins.context_execution(**kwargs) as execute_kwargs:
+            return self.executor.execute(**execute_kwargs)
 
     def introspect(self):
         return self.execute(introspection_query).data
