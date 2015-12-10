@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from functools import partial, reduce
 
 
@@ -38,3 +39,15 @@ class PluginManager(object):
 
     def __contains__(self, name):
         return name in self.PLUGIN_FUNCTIONS
+
+    @contextmanager
+    def context_execution(self, **executor):
+        contexts = []
+        functions = self.get_plugin_functions('context_execution')
+        for f in functions:
+            context = f(executor)
+            executor = context.__enter__()
+            contexts.append((context, executor))
+        yield executor
+        for context, value in contexts[::-1]:
+            context.__exit__(None, None, None)

@@ -119,24 +119,9 @@ class Schema(object):
         return self._types_names
 
     def execute(self, request='', root=None, args=None, **kwargs):
-        executor = kwargs
-        executor['root'] = root
-        executor['args'] = args
-        executor['schema'] = self.schema
-        executor['request'] = request
-        contexts = []
-        for plugin in self.plugins:
-            if not hasattr(plugin, 'context_execution'):
-                continue
-            context = plugin.context_execution(executor)
-            executor = context.__enter__()
-            contexts.append((context, executor))
-        result = self.executor.execute(
-            **executor
-        )
-        for context, value in contexts[::-1]:
-            context.__exit__(None, None, None)
-        return result
+        kwargs = dict(kwargs, request=request, root=root, args=args, schema=self.schema)
+        with self.plugins.context_execution(**kwargs) as execute_kwargs:
+            return self.executor.execute(**execute_kwargs)
 
     def introspect(self):
         return self.execute(introspection_query).data
