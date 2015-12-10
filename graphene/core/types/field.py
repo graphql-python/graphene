@@ -4,23 +4,22 @@ from functools import wraps
 import six
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
-from ...utils import to_camel_case
 from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
+from ..exceptions import SkipField
 from .argument import ArgumentsGroup, snake_case_args
-from .base import LazyType, MountType, OrderedType
+from .base import GroupNamedType, LazyType, MountType, NamedType, OrderedType
 from .definitions import NonNull
 
 
-class Field(OrderedType):
+class Field(NamedType, OrderedType):
 
     def __init__(
             self, type, description=None, args=None, name=None, resolver=None,
             required=False, default=None, *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
-        super(Field, self).__init__(_creation_counter=_creation_counter)
-        self.name = name
+        super(Field, self).__init__(name=name, _creation_counter=_creation_counter)
         if isinstance(type, six.string_types):
             type = LazyType(type)
         self.required = required
@@ -36,9 +35,8 @@ class Field(OrderedType):
         assert issubclass(
             cls, (FieldsClassType)), 'Field {} cannot be mounted in {}'.format(
             self, cls)
-        if not self.name:
-            self.name = to_camel_case(attname)
         self.attname = attname
+        self.default_name = attname
         self.object_type = cls
         self.mount(cls)
         if isinstance(self.type, MountType):
@@ -117,12 +115,11 @@ class Field(OrderedType):
         return hash((self.creation_counter, self.object_type))
 
 
-class InputField(OrderedType):
+class InputField(NamedType, OrderedType):
 
     def __init__(self, type, description=None, default=None,
                  name=None, _creation_counter=None, required=False):
         super(InputField, self).__init__(_creation_counter=_creation_counter)
-        self.name = name
         if required:
             type = NonNull(type)
         self.type = type
@@ -133,9 +130,8 @@ class InputField(OrderedType):
         assert issubclass(
             cls, (InputObjectType)), 'InputField {} cannot be mounted in {}'.format(
             self, cls)
-        if not self.name:
-            self.name = to_camel_case(attname)
         self.attname = attname
+        self.default_name = attname
         self.object_type = cls
         self.mount(cls)
         if isinstance(self.type, MountType):
@@ -146,3 +142,13 @@ class InputField(OrderedType):
         return GraphQLInputObjectField(
             schema.T(self.type),
             default_value=self.default, description=self.description)
+
+
+class FieldsGroupType(GroupNamedType):
+
+    def iter_types(self, schema):
+        for field in sorted(self.types):
+            try:
+                yield self.get_named_type(schema, field)
+            except SkipField:
+                continue

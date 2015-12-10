@@ -5,6 +5,7 @@ from .base import MountedType
 
 
 class ScalarType(MountedType):
+
     def internal_type(self, schema):
         return self._internal_type
 

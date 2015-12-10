@@ -1,4 +1,5 @@
-from functools import total_ordering
+from collections import OrderedDict
+from functools import partial, total_ordering
 
 import six
 
@@ -125,3 +126,39 @@ class FieldType(MirroredType):
 
 class MountedType(FieldType, ArgumentType):
     pass
+
+
+class NamedType(InstanceType):
+
+    def __init__(self, name=None, default_name=None, *args, **kwargs):
+        self.name = name
+        self.default_name = None
+        super(NamedType, self).__init__(*args, **kwargs)
+
+
+class GroupNamedType(InstanceType):
+
+    def __init__(self, *types):
+        self.types = types
+
+    def get_named_type(self, schema, type):
+        name = type.name or schema.get_default_namedtype_name(type.default_name)
+        return name, schema.T(type)
+
+    def iter_types(self, schema):
+        return map(partial(self.get_named_type, schema), self.types)
+
+    def internal_type(self, schema):
+        return OrderedDict(self.iter_types(schema))
+
+    def __len__(self):
+        return len(self.types)
+
+    def __iter__(self):
+        return iter(self.types)
+
+    def __contains__(self, *args):
+        return self.types.__contains__(*args)
+
+    def __getitem__(self, *args):
+        return self.types.__getitem__(*args)

@@ -10,6 +10,7 @@ from graphql.core.utils.schema_printer import print_schema
 
 from graphene import signals
 
+from ..plugins import CamelCase, PluginManager
 from .classtypes.base import ClassType
 from .types.base import InstanceType
 
@@ -25,7 +26,7 @@ class Schema(object):
     _executor = None
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 name='Schema', executor=None):
+                 name='Schema', executor=None, plugins=None, auto_camelcase=True):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
@@ -33,10 +34,19 @@ class Schema(object):
         self.subscription = subscription
         self.name = name
         self.executor = executor
+        plugins = plugins or []
+        if auto_camelcase:
+            plugins.append(CamelCase())
+        self.plugins = PluginManager(self, plugins)
         signals.init_schema.send(self)
 
     def __repr__(self):
         return '<Schema: %s (%s)>' % (str(self.name), hash(self))
+
+    def __getattr__(self, name):
+        if name in self.plugins:
+            return getattr(self.plugins, name)
+        return super(Schema, self).__getattr__(name)
 
     def T(self, _type):
         if not _type:
@@ -108,17 +118,10 @@ class Schema(object):
     def types(self):
         return self._types_names
 
-    def execute(self, request='', root=None, vars=None,
-                operation_name=None, **kwargs):
-        root = root or object()
-        return self.executor.execute(
-            self.schema,
-            request,
-            root=root,
-            args=vars,
-            operation_name=operation_name,
-            **kwargs
-        )
+    def execute(self, request='', root=None, args=None, **kwargs):
+        kwargs = dict(kwargs, request=request, root=root, args=args, schema=self.schema)
+        with self.plugins.context_execution(**kwargs) as execute_kwargs:
+            return self.executor.execute(**execute_kwargs)
 
     def introspect(self):
         return self.execute(introspection_query).data
