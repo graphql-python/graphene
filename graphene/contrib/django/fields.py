@@ -12,7 +12,7 @@ from .utils import get_type_for_model
 class DjangoField(Field):
     def decorate_resolver(self, resolver):
         f = super(DjangoField, self).decorate_resolver(resolver)
-        setattr(f, 'django_fetch_field', self.field.name)
+        setattr(f, 'django_fetch_field', self.field)
         return f
 
     def __init__(self, *args, **kwargs):
