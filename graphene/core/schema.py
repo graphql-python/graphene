@@ -10,7 +10,7 @@ from graphql.core.utils.schema_printer import print_schema
 
 from graphene import signals
 
-from ..plugins import CamelCase, Plugin
+from ..plugins import CamelCase, PluginManager
 from .classtypes.base import ClassType
 from .types.base import InstanceType
 
@@ -34,28 +34,19 @@ class Schema(object):
         self.subscription = subscription
         self.name = name
         self.executor = executor
-        self.plugins = []
         plugins = plugins or []
         if auto_camelcase:
             plugins.append(CamelCase())
-        for plugin in plugins:
-            self.add_plugin(plugin)
+        self.plugins = PluginManager(self, plugins)
         signals.init_schema.send(self)
 
     def __repr__(self):
         return '<Schema: %s (%s)>' % (str(self.name), hash(self))
 
-    def add_plugin(self, plugin):
-        assert isinstance(plugin, Plugin), 'A plugin need to subclass graphene.Plugin and be instantiated'
-        plugin.contribute_to_schema(self)
-        self.plugins.append(plugin)
-
-    def get_default_namedtype_name(self, value):
-        for plugin in self.plugins:
-            if not hasattr(plugin, 'get_default_namedtype_name'):
-                continue
-            value = plugin.get_default_namedtype_name(value)
-        return value
+    def __getattr__(self, name):
+        if name in self.plugins:
+            return getattr(self.plugins, name)
+        return super(Schema, self).__getattr__(name)
 
     def T(self, _type):
         if not _type:
