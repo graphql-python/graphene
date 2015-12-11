@@ -35,12 +35,13 @@ class PetNode(DjangoNode):
     class Meta:
         model = Pet
 
+schema = Schema()
 
 def assert_arguments(field, *arguments):
     ignore = ('after', 'before', 'first', 'last', 'orderBy')
     actual = [
         name
-        for name in field.arguments.arguments.keys()
+        for name in schema.T(field.arguments)
         if name not in ignore and not name.startswith('_')
     ]
     assert set(arguments) == set(actual), \
@@ -51,12 +52,12 @@ def assert_arguments(field, *arguments):
 
 
 def assert_orderable(field):
-    assert 'orderBy' in field.arguments.arguments.keys(), \
+    assert 'orderBy' in schema.T(field.arguments), \
         'Field cannot be ordered'
 
 
 def assert_not_orderable(field):
-    assert 'orderBy' not in field.arguments.arguments.keys(), \
+    assert 'orderBy' not in schema.T(field.arguments), \
         'Field can be ordered'
 
 
