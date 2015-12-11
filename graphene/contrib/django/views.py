@@ -12,5 +12,5 @@ class GraphQLView(BaseGraphQLView):
             **kwargs
         )
 
-    def get_root_value(self, request):
-        return self.graphene_schema.query(super(GraphQLView, self).get_root_value(request))
+    def execute(self, *args, **kwargs):
+        return self.graphene_schema.execute(*args, **kwargs)

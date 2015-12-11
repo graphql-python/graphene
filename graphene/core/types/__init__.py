@@ -1,14 +1,14 @@
-from .base import BaseType, LazyType, OrderedType
+from .base import InstanceType, LazyType, OrderedType
 from .argument import Argument, ArgumentsGroup, to_arguments
 from .definitions import List, NonNull
 # Compatibility import
 from .objecttype import Interface, ObjectType, Mutation, InputObjectType
 
-from .scalars import String, ID, Boolean, Int, Float, Scalar
+from .scalars import String, ID, Boolean, Int, Float
 from .field import Field, InputField
 
 __all__ = [
-    'BaseType',
+    'InstanceType',
     'LazyType',
     'OrderedType',
     'Argument',
@@ -26,5 +26,4 @@ __all__ = [
     'ID',
     'Boolean',
     'Int',
-    'Float',
-    'Scalar']
+    'Float']

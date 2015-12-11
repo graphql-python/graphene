@@ -27,8 +27,8 @@ def test_to_arguments():
         other_kwarg=String(),
     )
 
-    assert [a.name for a in arguments] == [
-        'myArg', 'otherArg', 'myKwarg', 'otherKwarg']
+    assert [a.name or a.default_name for a in arguments] == [
+        'myArg', 'otherArg', 'my_kwarg', 'other_kwarg']
 
 
 def test_to_arguments_no_name():
