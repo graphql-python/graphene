@@ -24,9 +24,9 @@ class PyTest(TestCommand):
 
 setup(
     name='graphene',
-    version='0.4.3',
+    version='0.5.0',
 
-    description='Graphene: Python DSL for GraphQL',
+    description='GraphQL Framework for Python',
     long_description=open('README.rst').read(),
 
     url='https://github.com/graphql-python/graphene',
