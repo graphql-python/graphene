@@ -102,13 +102,13 @@ class DjangoConnection(Connection):
         return super(DjangoConnection, cls).from_list(iterable, *args, **kwargs)
 
 
-django_node_meta_bases = (DjangoObjectTypeMeta, NodeMeta)
+django_filter_metabase = type
 # Only include filter functionality if available
 if DJANGO_FILTER_INSTALLED:
-    django_node_meta_bases = (DjangoFilterObjectTypeMeta,) + django_node_meta_bases
+    django_filter_metabase = DjangoFilterObjectTypeMeta
 
 
-class DjangoNodeMeta(*django_node_meta_bases):
+class DjangoNodeMeta(django_filter_metabase, DjangoObjectTypeMeta, NodeMeta):
     pass
 
 
