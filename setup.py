@@ -67,7 +67,7 @@ setup(
         'django': [
             'Django>=1.6.0,<1.9',
             'singledispatch>=3.4.0.3',
-            'graphql-django-view>=1.0.0',
+            'graphql-django-view>=1.1.0',
         ],
     },
 
