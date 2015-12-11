@@ -104,6 +104,14 @@ def test_field_custom_arguments():
     assert 'p' in schema.T(args)
 
 
+def test_field_name_as_argument():
+    field = Field(None, name=String())
+    schema = Schema()
+
+    args = field.arguments
+    assert 'name' in schema.T(args)
+
+
 def test_inputfield_internal_type():
     field = InputField(String, description='My input field', default='3')
 
