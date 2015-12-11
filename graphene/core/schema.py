@@ -84,9 +84,9 @@ class Schema(object):
             mutation=self.T(self.mutation),
             subscription=self.T(self.subscription))
 
-    def register(self, object_type):
+    def register(self, object_type, force=False):
         type_name = object_type._meta.type_name
-        registered_object_type = self._types_names.get(type_name, None)
+        registered_object_type = not force and self._types_names.get(type_name, None)
         if registered_object_type:
             assert registered_object_type == object_type, 'Type {} already registered with other object type'.format(
                 type_name)

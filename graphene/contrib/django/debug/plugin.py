@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from django.db import connections
 
 from ....core.types import Field
+from ....core.schema import GraphQLSchema
 from ....plugins import Plugin
 from .sql.tracking import unwrap_cursor, wrap_cursor
 from .sql.types import DjangoDebugSQL
@@ -45,11 +46,6 @@ def debug_objecttype(objecttype):
 
 class DjangoDebugPlugin(Plugin):
 
-    def transform_type(self, _type):
-        if _type == self.schema.query:
-            return
-        return _type
-
     def enable_instrumentation(self, wrapped_root):
         # This is thread-safe because database connections are thread-local.
         for connection in connections.all():
@@ -62,10 +58,16 @@ class DjangoDebugPlugin(Plugin):
     def wrap_schema(self, schema_type):
         query = schema_type._query
         if query:
-            class_type = self.schema.objecttype(schema_type._query)
+            class_type = self.schema.objecttype(schema_type.get_query_type())
             assert class_type, 'The query in schema is not constructed with graphene'
             _type = debug_objecttype(class_type)
-            schema_type._query = self.schema.T(_type)
+            self.schema.register(_type, force=True)
+            return GraphQLSchema(
+                self.schema,
+                self.schema.T(_type),
+                schema_type.get_mutation_type(),
+                schema_type.get_subscription_type()
+            )
         return schema_type
 
     @contextmanager

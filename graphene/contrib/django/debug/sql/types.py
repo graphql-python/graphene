@@ -1,4 +1,4 @@
-from .....core import Float, ObjectType, String
+from .....core import Float, ObjectType, String, Boolean
 
 
 class DjangoDebugSQL(ObjectType):
@@ -10,8 +10,8 @@ class DjangoDebugSQL(ObjectType):
     params = String()
     start_time = Float()
     stop_time = Float()
-    is_slow = String()
-    is_select = String()
+    is_slow = Boolean()
+    is_select = Boolean()
 
     trans_id = String()
     trans_status = String()

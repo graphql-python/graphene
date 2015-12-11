@@ -29,7 +29,15 @@ class Human(DjangoNode):
     def get_node(self, id):
         pass
 
-schema = Schema(query=Human)
+
+class Query(graphene.ObjectType):
+    human = graphene.Field(Human)
+
+    def resolve_human(self, args, info):
+        return Human()
+
+
+schema = Schema(query=Query)
 
 
 urlpatterns = [
