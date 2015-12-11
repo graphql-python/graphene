@@ -129,3 +129,38 @@ def test_inputfield_internal_type():
     assert isinstance(type, GraphQLInputObjectField)
     assert type.description == 'My input field'
     assert type.default_value == '3'
+
+
+def test_field_resolve_argument():
+    resolver = lambda instance, args, info: args.get('first_name')
+
+    field = Field(String(), first_name=String(), description='My argument', resolver=resolver)
+
+    class Query(ObjectType):
+        my_field = field
+    schema = Schema(query=Query)
+
+    type = schema.T(field)
+    assert type.resolver(None, {'firstName': 'Peter'}, None) == 'Peter'
+
+
+def test_field_resolve_vars():
+    class Query(ObjectType):
+        hello = String(first_name=String())
+
+        def resolve_hello(self, args, info):
+            return 'Hello ' + args.get('first_name')
+
+    schema = Schema(query=Query)
+
+    result = schema.execute("""
+    query foo($firstName:String)
+    {
+            hello(firstName:$firstName)
+    }
+    """, args={"firstName": "Serkan"})
+
+    expected = {
+        'hello': 'Hello Serkan'
+    }
+    assert result.data == expected
