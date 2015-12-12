@@ -13,7 +13,7 @@ if DJANGO_FILTER_INSTALLED:
     import django_filters
     from graphene.contrib.django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
                                                 GlobalIDMultipleChoiceFilter)
-    from graphene.contrib.django.tests.filter.filters import ArticleFilter, PetFilter
+    from graphene.contrib.django.filter.tests.filters import ArticleFilter, PetFilter
 else:
     pytestmark.append(pytest.mark.skipif(True, reason='django_filters not installed'))
 

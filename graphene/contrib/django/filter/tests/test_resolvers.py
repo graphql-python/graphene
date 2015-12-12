@@ -8,7 +8,7 @@ from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 
 if DJANGO_FILTER_INSTALLED:
     from graphene.contrib.django.filter.resolvers import FilterConnectionResolver
-    from graphene.contrib.django.tests.filter.filters import ReporterFilter, ArticleFilter
+    from graphene.contrib.django.filter.tests.filters import ArticleFilter, ReporterFilter
 else:
     pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
 
