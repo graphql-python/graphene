@@ -11,7 +11,7 @@ from .classtypes import (
 )
 
 from .types import (
-    BaseType,
+    InstanceType,
     LazyType,
     Argument,
     Field,
@@ -35,7 +35,7 @@ __all__ = [
     'List',
     'NonNull',
     'Schema',
-    'BaseType',
+    'InstanceType',
     'LazyType',
     'ObjectType',
     'InputObjectType',

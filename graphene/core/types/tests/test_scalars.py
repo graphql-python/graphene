@@ -1,9 +1,9 @@
 from graphql.core.type import (GraphQLBoolean, GraphQLFloat, GraphQLID,
-                               GraphQLInt, GraphQLScalarType, GraphQLString)
+                               GraphQLInt, GraphQLString)
 
 from graphene.core.schema import Schema
 
-from ..scalars import ID, Boolean, Float, Int, Scalar, String
+from ..scalars import ID, Boolean, Float, Int, String
 
 schema = Schema()
 
@@ -26,29 +26,3 @@ def test_id_scalar():
 
 def test_float_scalar():
     assert schema.T(Float()) == GraphQLFloat
-
-
-def test_custom_scalar():
-    import datetime
-    from graphql.core.language import ast
-
-    class DateTimeScalar(Scalar):
-        '''DateTimeScalar Documentation'''
-        @staticmethod
-        def serialize(dt):
-            return dt.isoformat()
-
-        @staticmethod
-        def parse_literal(node):
-            if isinstance(node, ast.StringValue):
-                return datetime.datetime.strptime(
-                    node.value, "%Y-%m-%dT%H:%M:%S.%f")
-
-        @staticmethod
-        def parse_value(value):
-            return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-
-    scalar_type = schema.T(DateTimeScalar)
-    assert isinstance(scalar_type, GraphQLScalarType)
-    assert scalar_type.name == 'DateTimeScalar'
-    assert scalar_type.description == 'DateTimeScalar Documentation'

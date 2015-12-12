@@ -34,8 +34,7 @@ schema = Schema(query=Query, mutation=MyResultMutation)
 
 def test_mutation_arguments():
     assert ChangeNumber.arguments
-    assert list(ChangeNumber.arguments) == ['input']
-    assert 'input' in ChangeNumber.arguments
+    assert 'input' in schema.T(ChangeNumber.arguments)
     inner_type = ChangeNumber.input_type
     client_mutation_id_field = inner_type._meta.fields_map[
         'client_mutation_id']

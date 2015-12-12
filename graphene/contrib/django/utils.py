@@ -3,9 +3,10 @@ from django.db import models
 from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
 
+from graphene import Argument, String
 from graphene.utils import LazyList
 
-from graphene import Argument, String
+from .compat import RelatedObject
 
 try:
     import django_filters  # noqa
@@ -29,7 +30,12 @@ def get_reverse_fields(model):
         # Django =>1.9 uses 'rel', django <1.9 uses 'related'
         related = getattr(attr, 'rel', None) or \
             getattr(attr, 'related', None)
-        if isinstance(related, models.ManyToOneRel):
+        if isinstance(related, RelatedObject):
+            # Hack for making it compatible with Django 1.6
+            new_related = RelatedObject(related.parent_model, related.model, related.field)
+            new_related.name = name
+            yield new_related
+        elif isinstance(related, models.ManyToOneRel):
             yield related
 
 
@@ -66,8 +72,15 @@ def get_filtering_args_from_filterset(filterset_class, type):
 
     # Also add the 'order_by' field
     if filterset_class._meta.order_by:
-        args[filterset_class.order_by_field] = Argument(String)
+        args[filterset_class.order_by_field] = Argument(String())
     return args
+
+
+def get_related_model(field):
+    if hasattr(field, 'rel'):
+        # Django 1.6, 1.7
+        return field.rel.to
+    return field.related_model
 
 
 def import_single_dispatch():

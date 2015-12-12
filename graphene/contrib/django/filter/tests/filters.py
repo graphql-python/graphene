@@ -1,7 +1,5 @@
 import django_filters
-
-from graphene.contrib.django.tests.models import Reporter
-from graphene.contrib.django.tests.models import Article, Pet
+from graphene.contrib.django.tests.models import Article, Pet, Reporter
 
 
 class ArticleFilter(django_filters.FilterSet):

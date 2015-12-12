@@ -1,6 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from graphene.contrib.django.filter.filterset import setup_filterset, custom_filterset_factory
+from graphene.contrib.django.filter.filterset import (custom_filterset_factory,
+                                                      setup_filterset)
 from graphene.contrib.django.resolvers import BaseQuerySetConnectionResolver
 
 

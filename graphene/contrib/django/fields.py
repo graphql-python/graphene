@@ -1,12 +1,13 @@
 import warnings
 
-from .utils import get_type_for_model
 from ...core.exceptions import SkipField
 from ...core.fields import Field
 from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
+from .filter.fields import DjangoFilterConnectionField
+from .utils import get_type_for_model
 
 
 class DjangoConnectionField(ConnectionField):
@@ -20,7 +21,6 @@ class DjangoConnectionField(ConnectionField):
 
 
 class ConnectionOrListField(Field):
-    connection_field_class = ConnectionField
 
     def internal_type(self, schema):
         model_field = self.type
@@ -28,7 +28,10 @@ class ConnectionOrListField(Field):
         if not field_object_type:
             raise SkipField()
         if is_node(field_object_type):
-            field = self.connection_field_class(field_object_type)
+            if field_object_type._meta.filter_fields:
+                field = DjangoFilterConnectionField(field_object_type)
+            else:
+                field = ConnectionField(field_object_type)
         else:
             field = Field(List(field_object_type))
         field.contribute_to_class(self.object_type, self.attname)

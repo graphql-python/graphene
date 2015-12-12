@@ -5,7 +5,6 @@ from django.db import models
 
 from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
 from ...relay.types import Connection, Node, NodeMeta
-from .utils import DJANGO_FILTER_INSTALLED
 from .converter import convert_django_field
 from .options import DjangoOptions
 from .utils import get_reverse_fields, maybe_queryset
@@ -30,11 +29,8 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we exclude this field in exclude_fields
                 continue
-            converted_field = cls.convert_django_field(field)
+            converted_field = convert_django_field(field)
             cls.add_to_class(field.name, converted_field)
-
-    def convert_django_field(cls, field):
-        return convert_django_field(field)
 
     def construct(cls, *args, **kwargs):
         cls = super(DjangoObjectTypeMeta, cls).construct(*args, **kwargs)
@@ -48,15 +44,6 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
 
             cls.construct_fields()
         return cls
-
-
-class DjangoFilterObjectTypeMeta(ObjectTypeMeta):
-
-    def convert_django_field(cls, field):
-        from graphene.contrib.django.filter import DjangoFilterConnectionField
-        field = super(DjangoFilterObjectTypeMeta, cls).convert_django_field(field)
-        field.connection_field_class = DjangoFilterConnectionField
-        return field
 
 
 class InstanceObjectType(ObjectType):
@@ -102,13 +89,7 @@ class DjangoConnection(Connection):
         return super(DjangoConnection, cls).from_list(iterable, *args, **kwargs)
 
 
-django_node_meta_bases = (DjangoObjectTypeMeta, NodeMeta)
-# Only include filter functionality if available
-if DJANGO_FILTER_INSTALLED:
-    django_node_meta_bases = (DjangoFilterObjectTypeMeta,) + django_node_meta_bases
-
-
-class DjangoNodeMeta(*django_node_meta_bases):
+class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
     pass
 
 

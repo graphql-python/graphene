@@ -1,3 +1,4 @@
+import pytest
 from py.test import raises
 
 import graphene
@@ -5,6 +6,8 @@ from graphene import relay
 from graphene.contrib.django import DjangoNode, DjangoObjectType
 
 from .models import Article, Reporter
+
+pytestmark = pytest.mark.django_db
 
 
 def test_should_query_only_fields():
