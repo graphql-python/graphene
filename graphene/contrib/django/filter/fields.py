@@ -1,6 +1,6 @@
-from graphene.relay import ConnectionField
 from graphene.contrib.django.filter.resolvers import FilterConnectionResolver
 from graphene.contrib.django.utils import get_filtering_args_from_filterset
+from graphene.relay import ConnectionField
 
 
 class DjangoFilterConnectionField(ConnectionField):

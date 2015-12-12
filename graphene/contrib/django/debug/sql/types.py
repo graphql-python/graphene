@@ -1,4 +1,4 @@
-from .....core import Float, ObjectType, String, Boolean
+from .....core import Boolean, Float, ObjectType, String
 
 
 class DjangoDebugSQL(ObjectType):

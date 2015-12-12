@@ -1,7 +1,7 @@
-from .utils import DJANGO_FILTER_INSTALLED
 from ...core.classtypes.objecttype import ObjectTypeOptions
 from ...relay.types import Node
 from ...relay.utils import is_node
+from .utils import DJANGO_FILTER_INSTALLED
 
 VALID_ATTRS = ('model', 'only_fields', 'exclude_fields')
 

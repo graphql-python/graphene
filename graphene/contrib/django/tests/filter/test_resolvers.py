@@ -1,6 +1,9 @@
 import pytest
 from django.core.exceptions import ImproperlyConfigured
 
+from graphene.contrib.django.tests.models import Article, Reporter
+from graphene.contrib.django.tests.test_resolvers import (ArticleNode,
+                                                          ReporterNode)
 from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 
 if DJANGO_FILTER_INSTALLED:
@@ -8,9 +11,6 @@ if DJANGO_FILTER_INSTALLED:
     from graphene.contrib.django.tests.filter.filters import ReporterFilter, ArticleFilter
 else:
     pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
-
-from graphene.contrib.django.tests.models import Reporter, Article
-from graphene.contrib.django.tests.test_resolvers import ReporterNode, ArticleNode
 
 
 def test_filter_get_filterset_class_explicit():

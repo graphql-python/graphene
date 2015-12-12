@@ -5,7 +5,6 @@ from django.db import models
 
 from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
 from ...relay.types import Connection, Node, NodeMeta
-from .utils import DJANGO_FILTER_INSTALLED
 from .converter import convert_django_field
 from .options import DjangoOptions
 from .utils import get_reverse_fields, maybe_queryset

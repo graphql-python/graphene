@@ -1,7 +1,7 @@
 import binascii
 
 from django.core.exceptions import ValidationError
-from django.forms import Field, IntegerField, CharField, MultipleChoiceField
+from django.forms import CharField, Field, IntegerField, MultipleChoiceField
 from django.utils.translation import ugettext_lazy as _
 
 from graphql_relay import from_global_id

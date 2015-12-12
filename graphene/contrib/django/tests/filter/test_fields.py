@@ -1,13 +1,12 @@
 import pytest
 
 from graphene import ObjectType, Schema
+from graphene.contrib.django import DjangoNode
+from graphene.contrib.django.forms import (GlobalIDFormField,
+                                           GlobalIDMultipleChoiceField)
+from graphene.contrib.django.tests.models import Article, Pet, Reporter
 from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 from graphene.relay import NodeField
-
-
-from graphene.contrib.django import DjangoNode
-from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
-from graphene.contrib.django.tests.models import Article, Pet, Reporter
 
 pytestmark = []
 if DJANGO_FILTER_INSTALLED:
@@ -22,20 +21,24 @@ pytestmark.append(pytest.mark.django_db)
 
 
 class ArticleNode(DjangoNode):
+
     class Meta:
         model = Article
 
 
 class ReporterNode(DjangoNode):
+
     class Meta:
         model = Reporter
 
 
 class PetNode(DjangoNode):
+
     class Meta:
         model = Pet
 
 schema = Schema()
+
 
 def assert_arguments(field, *arguments):
     ignore = ('after', 'before', 'first', 'last', 'orderBy')
@@ -48,7 +51,7 @@ def assert_arguments(field, *arguments):
         'Expected arguments ({}) did not match actual ({})'.format(
             arguments,
             actual
-        )
+    )
 
 
 def assert_orderable(field):
@@ -118,6 +121,7 @@ def test_filter_shortcut_filterset_extra_meta():
 
 def test_filter_filterset_information_on_meta():
     class ReporterFilterNode(DjangoNode):
+
         class Meta:
             model = Reporter
             filter_fields = ['first_name', 'articles']
@@ -130,12 +134,14 @@ def test_filter_filterset_information_on_meta():
 
 def test_filter_filterset_information_on_meta_related():
     class ReporterFilterNode(DjangoNode):
+
         class Meta:
             model = Reporter
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
     class ArticleFilterNode(DjangoNode):
+
         class Meta:
             model = Article
             filter_fields = ['headline', 'reporter']
@@ -164,6 +170,7 @@ def test_global_id_field_implicit():
 
 def test_global_id_field_explicit():
     class ArticleIdFilter(django_filters.FilterSet):
+
         class Meta:
             model = Article
             fields = ['id']
@@ -193,6 +200,7 @@ def test_global_id_multiple_field_implicit():
 
 def test_global_id_multiple_field_explicit():
     class ReporterPetsFilter(django_filters.FilterSet):
+
         class Meta:
             model = Reporter
             fields = ['pets']
@@ -214,6 +222,7 @@ def test_global_id_multiple_field_implicit_reverse():
 
 def test_global_id_multiple_field_explicit_reverse():
     class ReporterPetsFilter(django_filters.FilterSet):
+
         class Meta:
             model = Reporter
             fields = ['articles']

@@ -1,10 +1,9 @@
 from django import forms
-from graphene.core.types import List, ID
 from py.test import raises
 
 import graphene
 from graphene.contrib.django.form_converter import convert_form_field
-
+from graphene.core.types import ID, List
 
 from .models import Reporter
 

@@ -1,16 +1,10 @@
 from django.db import models
 
-from .utils import import_single_dispatch
 from ...core.types.scalars import ID, Boolean, Float, Int, String
+from .compat import RelatedObject, UUIDField
+from .utils import get_related_model, import_single_dispatch
 
 singledispatch = import_single_dispatch()
-
-try:
-    UUIDField = models.UUIDField
-except AttributeError:
-    # Improved compatibility for Django 1.6
-    class UUIDField(object):
-        pass
 
 
 @singledispatch
@@ -65,7 +59,15 @@ def convert_field_to_float(field):
 @convert_django_field.register(models.ManyToOneRel)
 def convert_field_to_list_or_connection(field):
     from .fields import DjangoModelField, ConnectionOrListField
-    model_field = DjangoModelField(field.related_model)
+    model_field = DjangoModelField(get_related_model(field))
+    return ConnectionOrListField(model_field)
+
+
+# For Django 1.6
+@convert_django_field.register(RelatedObject)
+def convert_relatedfield_to_djangomodel(field):
+    from .fields import DjangoModelField, ConnectionOrListField
+    model_field = DjangoModelField(field.model)
     return ConnectionOrListField(model_field)
 
 
@@ -73,4 +75,4 @@ def convert_field_to_list_or_connection(field):
 @convert_django_field.register(models.ForeignKey)
 def convert_field_to_djangomodel(field):
     from .fields import DjangoModelField
-    return DjangoModelField(field.related_model, description=field.help_text)
+    return DjangoModelField(get_related_model(field), description=field.help_text)

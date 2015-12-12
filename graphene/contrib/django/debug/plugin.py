@@ -2,8 +2,8 @@ from contextlib import contextmanager
 
 from django.db import connections
 
-from ....core.types import Field
 from ....core.schema import GraphQLSchema
+from ....core.types import Field
 from ....plugins import Plugin
 from .sql.tracking import unwrap_cursor, wrap_cursor
 from .sql.types import DjangoDebugSQL

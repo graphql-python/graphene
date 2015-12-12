@@ -7,7 +7,6 @@ from graphene.contrib.django import DjangoNode, DjangoObjectType
 
 from .models import Article, Reporter
 
-
 pytestmark = pytest.mark.django_db
 
 

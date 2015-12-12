@@ -1,13 +1,13 @@
 import warnings
 
-from .utils import get_type_for_model, DJANGO_FILTER_INSTALLED
-from .filter.fields import DjangoFilterConnectionField
 from ...core.exceptions import SkipField
 from ...core.fields import Field
 from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
+from .filter.fields import DjangoFilterConnectionField
+from .utils import get_type_for_model
 
 
 class DjangoConnectionField(ConnectionField):
