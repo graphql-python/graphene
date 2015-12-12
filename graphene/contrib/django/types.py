@@ -30,11 +30,8 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we exclude this field in exclude_fields
                 continue
-            converted_field = cls.convert_django_field(field)
+            converted_field = convert_django_field(field)
             cls.add_to_class(field.name, converted_field)
-
-    def convert_django_field(cls, field):
-        return convert_django_field(field)
 
     def construct(cls, *args, **kwargs):
         cls = super(DjangoObjectTypeMeta, cls).construct(*args, **kwargs)
@@ -48,15 +45,6 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
 
             cls.construct_fields()
         return cls
-
-
-class DjangoFilterObjectTypeMeta(ObjectTypeMeta):
-
-    def convert_django_field(cls, field):
-        from graphene.contrib.django.filter import DjangoFilterConnectionField
-        field = super(DjangoFilterObjectTypeMeta, cls).convert_django_field(field)
-        field.connection_field_class = DjangoFilterConnectionField
-        return field
 
 
 class InstanceObjectType(ObjectType):
@@ -102,13 +90,7 @@ class DjangoConnection(Connection):
         return super(DjangoConnection, cls).from_list(iterable, *args, **kwargs)
 
 
-django_filter_metabase = type
-# Only include filter functionality if available
-if DJANGO_FILTER_INSTALLED:
-    django_filter_metabase = DjangoFilterObjectTypeMeta
-
-
-class DjangoNodeMeta(django_filter_metabase, DjangoObjectTypeMeta, NodeMeta):
+class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
     pass
 
 
