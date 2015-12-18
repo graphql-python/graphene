@@ -3,21 +3,23 @@ from graphql.core.utils.get_field_def import get_field_def
 from graphql.core.type.definition import GraphQLList, GraphQLNonNull
 
 
-def get_fields(info):
+def get_resolvers(info):
     field_asts = info.field_asts[0].selection_set.selections
-    only_args = []
     _type = info.return_type
     if isinstance(_type, (GraphQLList, GraphQLNonNull)):
         _type = _type.of_type
 
     for field in field_asts:
         field_def = get_field_def(info.schema, _type, field)
-        f = field_def.resolver
-        fetch_field = getattr(f, 'django_fetch_field', None)
+        yield field_def.resolver
+
+
+def get_fields(info):
+    for resolver in get_resolvers(info):
+        fetch_field = getattr(resolver, 'django_fetch_field', None)
         if not fetch_field:
             continue
-        only_args.append(fetch_field.attname)
-    return only_args
+        yield fetch_field.attname
 
 
 def fetch_only_required(f):
