@@ -11,11 +11,16 @@ working with Django simple.
 If you need help getting started with django then head over to
 Django's getting started page.
 
-First let's create a few simple models
+First let's create a few simple models...
 
-## Some models
+## Defining our models
 
-Let's get started with these models **in an app called ingredients**:
+Before continuing, create the following:
+
+* A Django project called `cookbook`
+* An app within `cookbook` called `ingredients`
+
+Let's get started with these models:
 
 ```python
 # cookbook/ingredients/models.py
@@ -34,24 +39,25 @@ class Ingredient(models.Model):
 ## Schema
 
 GraphQL presents your objects to the world as a graph structure rather than a more
-heiricarcal structure to which you may be acustomed. In order to create this
+hierarchical structure to which you may be accustomed. In order to create this
 representation, Graphene needs to know about each *type* of object which will appear in
 the graph. Below we define these as the `UserType` and `GroupType` classes.
 
 This graph also has a 'root' through which all access begins. This is the `Query` class below.
 In this example, we provide the ability to list all users via `all_users`, and the
-ability to obtain a single user via `get_user`.
+ability to obtain a specific user via `get_user`.
 
-Open `tutorial/quickstart/schema.py` and type the following:
+Create `cookbook/ingredients/schema.py` and type the following:
 
 ```python
+# cookbook/ingredients/schema.py
 import graphene
 from graphene.contrib.django import DjangoObjectType
 
 from django.contrib.auth.models import User, Group
 
 # Graphene will automatically map the User model's fields onto the UserType.
-# This is configured in the UserType's Meta class
+# This is configured in the UserType's Meta class (as you can see below)
 class UserType(DjangoObjectType):
     class Meta:
         model = User
