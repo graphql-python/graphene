@@ -2,7 +2,6 @@ language: python
 sudo: false
 python:
 - 2.7
-- 3.3
 - 3.4
 - 3.5
 - pypy
@@ -14,8 +13,9 @@ cache:
   - $HOME/docs/node_modules
 before_install:
 - |
-  if [ "$TEST_TYPE" != build_website ] && \
-    ! git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md$)|(^(docs))/'
+  git_diff=$(git diff --name-only $TRAVIS_COMMIT_RANGE)
+  if [ "$?" == 0 ] && [ "$TEST_TYPE" != build_website ] && \
+    ! echo "$git_diff" | grep -qvE '(\.md$)|(^(docs))/'
   then
     echo "Only docs were updated, stopping build process."
     exit
@@ -25,6 +25,7 @@ install:
   if [ "$TEST_TYPE" = build ]; then
     pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter
     pip install --download-cache $HOME/.cache/pip/ -e .[django]
+    pip install django==$DJANGO_VERSION
     python setup.py develop
   elif [ "$TEST_TYPE" = build_website ]; then
     pip install --download-cache $HOME/.cache/pip/ -e .
@@ -78,6 +79,14 @@ env:
 matrix:
   fast_finish: true
   include:
+  - python: '2.7'
+    env: DJANGO_VERSION=1.6
+  - python: '2.7'
+    env: DJANGO_VERSION=1.7
+  - python: '2.7'
+    env: DJANGO_VERSION=1.8
+  - python: '2.7'
+    env: DJANGO_VERSION=1.9
   - python: '2.7'
     env: TEST_TYPE=build_website
   - python: '2.7'

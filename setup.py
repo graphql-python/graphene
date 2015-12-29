@@ -24,9 +24,9 @@ class PyTest(TestCommand):
 
 setup(
     name='graphene',
-    version='0.4.2',
+    version='0.5.0',
 
-    description='Graphene: Python DSL for GraphQL',
+    description='GraphQL Framework for Python',
     long_description=open('README.rst').read(),
 
     url='https://github.com/graphql-python/graphene',
@@ -66,9 +66,9 @@ setup(
     ],
     extras_require={
         'django': [
-            'Django>=1.6.0,<1.9',
+            'Django>=1.6.0',
             'singledispatch>=3.4.0.3',
-            'graphql-django-view>=1.0.0',
+            'graphql-django-view>=1.1.0',
         ],
     },
 

@@ -1,55 +1,66 @@
 import pytest
 
-try:
+from graphene import ObjectType, Schema
+from graphene.contrib.django import DjangoNode
+from graphene.contrib.django.forms import (GlobalIDFormField,
+                                           GlobalIDMultipleChoiceField)
+from graphene.contrib.django.tests.models import Article, Pet, Reporter
+from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
+from graphene.relay import NodeField
+
+pytestmark = []
+if DJANGO_FILTER_INSTALLED:
     import django_filters
-except ImportError:
-    pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
-else:
     from graphene.contrib.django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
                                                 GlobalIDMultipleChoiceFilter)
-    from graphene.contrib.django.tests.filter.filters import ArticleFilter, PetFilter
+    from graphene.contrib.django.filter.tests.filters import ArticleFilter, PetFilter
+else:
+    pytestmark.append(pytest.mark.skipif(True, reason='django_filters not installed'))
 
-from graphene.contrib.django import DjangoNode
-from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
-from graphene.contrib.django.tests.models import Article, Pet, Reporter
+pytestmark.append(pytest.mark.django_db)
 
 
 class ArticleNode(DjangoNode):
+
     class Meta:
         model = Article
 
 
 class ReporterNode(DjangoNode):
+
     class Meta:
         model = Reporter
 
 
 class PetNode(DjangoNode):
+
     class Meta:
         model = Pet
 
+schema = Schema()
+
 
 def assert_arguments(field, *arguments):
-    ignore = ('after', 'before', 'first', 'last', 'order')
+    ignore = ('after', 'before', 'first', 'last', 'orderBy')
     actual = [
         name
-        for name in field.arguments.arguments.keys()
+        for name in schema.T(field.arguments)
         if name not in ignore and not name.startswith('_')
     ]
     assert set(arguments) == set(actual), \
         'Expected arguments ({}) did not match actual ({})'.format(
             arguments,
             actual
-        )
+    )
 
 
 def assert_orderable(field):
-    assert 'order' in field.arguments.arguments.keys(), \
+    assert 'orderBy' in schema.T(field.arguments), \
         'Field cannot be ordered'
 
 
 def assert_not_orderable(field):
-    assert 'order' in field.arguments.arguments.keys(), \
+    assert 'orderBy' not in schema.T(field.arguments), \
         'Field can be ordered'
 
 
@@ -103,9 +114,50 @@ def test_filter_explicit_filterset_not_orderable():
 
 def test_filter_shortcut_filterset_extra_meta():
     field = DjangoFilterConnectionField(ArticleNode, extra_filter_meta={
-        'ordering': True
+        'order_by': True
     })
     assert_orderable(field)
+
+
+def test_filter_filterset_information_on_meta():
+    class ReporterFilterNode(DjangoNode):
+
+        class Meta:
+            model = Reporter
+            filter_fields = ['first_name', 'articles']
+            filter_order_by = True
+
+    field = DjangoFilterConnectionField(ReporterFilterNode)
+    assert_arguments(field, 'firstName', 'articles')
+    assert_orderable(field)
+
+
+def test_filter_filterset_information_on_meta_related():
+    class ReporterFilterNode(DjangoNode):
+
+        class Meta:
+            model = Reporter
+            filter_fields = ['first_name', 'articles']
+            filter_order_by = True
+
+    class ArticleFilterNode(DjangoNode):
+
+        class Meta:
+            model = Article
+            filter_fields = ['headline', 'reporter']
+            filter_order_by = True
+
+    class Query(ObjectType):
+        all_reporters = DjangoFilterConnectionField(ReporterFilterNode)
+        all_articles = DjangoFilterConnectionField(ArticleFilterNode)
+        reporter = NodeField(ReporterFilterNode)
+        article = NodeField(ArticleFilterNode)
+
+    schema = Schema(query=Query)
+    schema.schema  # Trigger the schema loading
+    articles_field = schema.get_type('ReporterFilterNode')._meta.fields_map['articles']
+    assert_arguments(articles_field, 'headline', 'reporter')
+    assert_orderable(articles_field)
 
 
 def test_global_id_field_implicit():
@@ -118,6 +170,7 @@ def test_global_id_field_implicit():
 
 def test_global_id_field_explicit():
     class ArticleIdFilter(django_filters.FilterSet):
+
         class Meta:
             model = Article
             fields = ['id']
@@ -147,6 +200,7 @@ def test_global_id_multiple_field_implicit():
 
 def test_global_id_multiple_field_explicit():
     class ReporterPetsFilter(django_filters.FilterSet):
+
         class Meta:
             model = Reporter
             fields = ['pets']
@@ -158,9 +212,6 @@ def test_global_id_multiple_field_explicit():
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
 
 
-@pytest.mark.skipif(True, reason="Trying to test GrapheneFilterSetMixin.filter_for_reverse_field"
-                                 "but django has not loaded the models, so the test fails as "
-                                 "reverse relations are not ready yet")
 def test_global_id_multiple_field_implicit_reverse():
     field = DjangoFilterConnectionField(ReporterNode, fields=['articles'])
     filterset_class = field.resolver_fn.get_filterset_class()
@@ -169,11 +220,9 @@ def test_global_id_multiple_field_implicit_reverse():
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
 
 
-@pytest.mark.skipif(True, reason="Trying to test GrapheneFilterSetMixin.filter_for_reverse_field"
-                                 "but django has not loaded the models, so the test fails as "
-                                 "reverse relations are not ready yet")
 def test_global_id_multiple_field_explicit_reverse():
     class ReporterPetsFilter(django_filters.FilterSet):
+
         class Meta:
             model = Reporter
             fields = ['articles']

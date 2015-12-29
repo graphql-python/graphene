@@ -1,10 +1,13 @@
 from django import forms
 from django.forms.fields import BaseTemporalField
-from singledispatch import singledispatch
 
-from graphene import String, Int, Boolean, Float, ID
-from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
+from graphene import ID, Boolean, Float, Int, String
+from graphene.contrib.django.forms import (GlobalIDFormField,
+                                           GlobalIDMultipleChoiceField)
+from graphene.contrib.django.utils import import_single_dispatch
 from graphene.core.types.definitions import List
+
+singledispatch = import_single_dispatch()
 
 try:
     UUIDField = forms.UUIDField
@@ -60,11 +63,11 @@ def convert_form_field_to_float(field):
 
 @convert_form_field.register(forms.ModelMultipleChoiceField)
 @convert_form_field.register(GlobalIDMultipleChoiceField)
-def convert_form_field_to_list_or_connection(field):
+def convert_form_field_to_list(field):
     return List(ID())
 
 
 @convert_form_field.register(forms.ModelChoiceField)
 @convert_form_field.register(GlobalIDFormField)
-def convert_form_field_to_djangomodel(field):
+def convert_form_field_to_id(field):
     return ID()

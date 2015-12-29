@@ -2,11 +2,12 @@ import six
 from django.conf import settings
 from django.db import models
 from django.utils.text import capfirst
-from django_filters import Filter, MultipleChoiceFilter
-from django_filters.filterset import FilterSetMetaclass, FilterSet
-from graphql_relay.node.node import from_global_id
 
-from graphene.contrib.django.forms import GlobalIDFormField, GlobalIDMultipleChoiceField
+from django_filters import Filter, MultipleChoiceFilter
+from django_filters.filterset import FilterSet, FilterSetMetaclass
+from graphene.contrib.django.forms import (GlobalIDFormField,
+                                           GlobalIDMultipleChoiceField)
+from graphql_relay.node.node import from_global_id
 
 
 class GlobalIDFilter(Filter):
@@ -25,7 +26,7 @@ class GlobalIDMultipleChoiceFilter(MultipleChoiceFilter):
         return super(GlobalIDMultipleChoiceFilter, self).filter(qs, gids)
 
 
-ORDER_BY_FIELD = getattr(settings, 'GRAPHENE_ORDER_BY_FIELD', 'order')
+ORDER_BY_FIELD = getattr(settings, 'GRAPHENE_ORDER_BY_FIELD', 'order_by')
 
 
 GRAPHENE_FILTER_SET_OVERRIDES = {
@@ -45,6 +46,7 @@ GRAPHENE_FILTER_SET_OVERRIDES = {
 
 
 class GrapheneFilterSetMetaclass(FilterSetMetaclass):
+
     def __new__(cls, name, bases, attrs):
         new_class = super(GrapheneFilterSetMetaclass, cls).__new__(cls, name, bases, attrs)
         # Customise the filter_overrides for Graphene
@@ -84,7 +86,6 @@ class GrapheneFilterSet(six.with_metaclass(GrapheneFilterSetMetaclass, GrapheneF
     DjangoFilterConnectionField will wrap FilterSets with this class as
     necessary
     """
-    pass
 
 
 def setup_filterset(filterset_class):

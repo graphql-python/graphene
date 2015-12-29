@@ -1,6 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from graphene.contrib.django.filter.filterset import setup_filterset, custom_filterset_factory
+from graphene.contrib.django.filter.filterset import (custom_filterset_factory,
+                                                      setup_filterset)
 from graphene.contrib.django.resolvers import BaseQuerySetConnectionResolver
 
 
@@ -10,8 +11,8 @@ class FilterConnectionResolver(BaseQuerySetConnectionResolver):
     def __init__(self, node, on=None, filterset_class=None,
                  fields=None, order_by=None, extra_filter_meta=None):
         self.filterset_class = filterset_class
-        self.fields = fields
-        self.order_by = order_by
+        self.fields = fields or node._meta.filter_fields
+        self.order_by = order_by or node._meta.filter_order_by
         self.extra_filter_meta = extra_filter_meta or {}
         self._filterset_class = None
         super(FilterConnectionResolver, self).__init__(node, on)

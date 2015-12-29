@@ -1,16 +1,16 @@
 import pytest
 from django.core.exceptions import ImproperlyConfigured
 
-try:
-    import django_filters  # noqa
-except ImportError:
-    pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
-else:
-    from graphene.contrib.django.filter.resolvers import FilterConnectionResolver
-    from graphene.contrib.django.tests.filter.filters import ReporterFilter, ArticleFilter
+from graphene.contrib.django.tests.models import Article, Reporter
+from graphene.contrib.django.tests.test_resolvers import (ArticleNode,
+                                                          ReporterNode)
+from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 
-from graphene.contrib.django.tests.models import Reporter, Article
-from graphene.contrib.django.tests.test_resolvers import ReporterNode, ArticleNode
+if DJANGO_FILTER_INSTALLED:
+    from graphene.contrib.django.filter.resolvers import FilterConnectionResolver
+    from graphene.contrib.django.filter.tests.filters import ArticleFilter, ReporterFilter
+else:
+    pytestmark = pytest.mark.skipif(True, reason='django_filters not installed')
 
 
 def test_filter_get_filterset_class_explicit():
@@ -64,7 +64,7 @@ def test_filter_order():
     resolver = FilterConnectionResolver(ArticleNode,
                                         filterset_class=ArticleFilter)
     resolved = resolver(inst=article, args={
-        'order': 'headline'
+        'order_by': 'headline'
     }, info=None)
     assert 'WHERE' not in str(resolved.query)
     assert 'ORDER BY' in str(resolved.query)
@@ -76,7 +76,7 @@ def test_filter_order_not_available():
     resolver = FilterConnectionResolver(ReporterNode,
                                         filterset_class=ReporterFilter)
     resolved = resolver(inst=reporter, args={
-        'order': 'last_name'
+        'order_by': 'last_name'
     }, info=None)
     assert 'WHERE' not in str(resolved.query)
     assert 'ORDER BY' not in str(resolved.query)

@@ -10,8 +10,9 @@ from graphql.core.utils.schema_printer import print_schema
 
 from graphene import signals
 
+from ..plugins import CamelCase, PluginManager
 from .classtypes.base import ClassType
-from .types.base import BaseType
+from .types.base import InstanceType
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -25,7 +26,7 @@ class Schema(object):
     _executor = None
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 name='Schema', executor=None):
+                 name='Schema', executor=None, plugins=None, auto_camelcase=True):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
@@ -33,27 +34,34 @@ class Schema(object):
         self.subscription = subscription
         self.name = name
         self.executor = executor
+        plugins = plugins or []
+        if auto_camelcase:
+            plugins.append(CamelCase())
+        self.plugins = PluginManager(self, plugins)
         signals.init_schema.send(self)
 
     def __repr__(self):
         return '<Schema: %s (%s)>' % (str(self.name), hash(self))
 
-    def T(self, object_type):
-        if not object_type:
+    def __getattr__(self, name):
+        if name in self.plugins:
+            return getattr(self.plugins, name)
+        return super(Schema, self).__getattr__(name)
+
+    def T(self, _type):
+        if not _type:
             return
-        if inspect.isclass(object_type) and issubclass(
-                object_type, (BaseType, ClassType)) or isinstance(
-                object_type, BaseType):
-            if object_type not in self._types:
-                internal_type = object_type.internal_type(self)
-                self._types[object_type] = internal_type
-                is_objecttype = inspect.isclass(
-                    object_type) and issubclass(object_type, ClassType)
-                if is_objecttype:
-                    self.register(object_type)
-            return self._types[object_type]
+        is_classtype = inspect.isclass(_type) and issubclass(_type, ClassType)
+        is_instancetype = isinstance(_type, InstanceType)
+        if is_classtype or is_instancetype:
+            if _type not in self._types:
+                internal_type = _type.internal_type(self)
+                self._types[_type] = internal_type
+                if is_classtype:
+                    self.register(_type)
+            return self._types[_type]
         else:
-            return object_type
+            return _type
 
     @property
     def executor(self):
@@ -76,9 +84,9 @@ class Schema(object):
             mutation=self.T(self.mutation),
             subscription=self.T(self.subscription))
 
-    def register(self, object_type):
+    def register(self, object_type, force=False):
         type_name = object_type._meta.type_name
-        registered_object_type = self._types_names.get(type_name, None)
+        registered_object_type = not force and self._types_names.get(type_name, None)
         if registered_object_type:
             assert registered_object_type == object_type, 'Type {} already registered with other object type'.format(
                 type_name)
@@ -110,17 +118,10 @@ class Schema(object):
     def types(self):
         return self._types_names
 
-    def execute(self, request='', root=None, vars=None,
-                operation_name=None, **kwargs):
-        root = root or object()
-        return self.executor.execute(
-            self.schema,
-            request,
-            root=root,
-            args=vars,
-            operation_name=operation_name,
-            **kwargs
-        )
+    def execute(self, request='', root=None, args=None, **kwargs):
+        kwargs = dict(kwargs, request=request, root=root, args=args, schema=self.schema)
+        with self.plugins.context_execution(**kwargs) as execute_kwargs:
+            return self.executor.execute(**execute_kwargs)
 
     def introspect(self):
         return self.execute(introspection_query).data

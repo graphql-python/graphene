@@ -3,15 +3,17 @@ from django.db.models.query import QuerySet
 
 from graphene.contrib.django import DjangoNode
 from graphene.contrib.django.resolvers import SimpleQuerySetConnectionResolver
-from graphene.contrib.django.tests.models import Reporter, Article
+from graphene.contrib.django.tests.models import Article, Reporter
 
 
 class ReporterNode(DjangoNode):
+
     class Meta:
         model = Reporter
 
 
 class ArticleNode(DjangoNode):
+
     class Meta:
         model = Article
 
@@ -34,7 +36,7 @@ def test_simple_get_manager_all():
     reporter = Reporter(id=1, first_name='Cookie Monster')
     resolver = SimpleQuerySetConnectionResolver(ReporterNode)
     resolver(inst=reporter, args={}, info=None)
-    assert type(resolver.get_manager()) == Manager, 'Resolver did not return a Manager'
+    assert isinstance(resolver.get_manager(), Manager), 'Resolver did not return a Manager'
 
 
 def test_simple_filter():
@@ -51,7 +53,7 @@ def test_simple_order():
     reporter = Reporter(id=1, first_name='Cookie Monster')
     resolver = SimpleQuerySetConnectionResolver(ReporterNode)
     resolved = resolver(inst=reporter, args={
-        'order': 'last_name'
+        'order_by': 'last_name'
     }, info=None)
     assert 'WHERE' not in str(resolved.query)
     assert 'ORDER BY' in str(resolved.query)
