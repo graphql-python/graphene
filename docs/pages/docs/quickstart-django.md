@@ -1,5 +1,5 @@
 ---
-title: Django Tutorial
+title: Django Quickstart
 description: A Quick guide to Graphene in Django
 ---
 
@@ -71,12 +71,20 @@ class CategoryNode(DjangoNode):
     class Meta:
         model = Category
         filter_fields = ['name', 'ingredients']
+        filter_order_by = ['name']
 
 
 class IngredientNode(DjangoNode):
     class Meta:
         model = Ingredient
-        filter_fields = ['name', 'notes', 'category']
+        # Allow for some more advanced filtering here
+        filter_fields = {
+            'name': ['exact', 'icontains', 'istartswith'],
+            'notes': ['exact', 'icontains'],
+            'category': ['exact'],
+            'category__name': ['exact'],
+        }
+        filter_order_by = ['name', 'category__name']
 
 
 class Query(ObjectType):
@@ -89,6 +97,11 @@ class Query(ObjectType):
     class Meta:
         abstract = True
 ```
+
+The filtering functionality is provided by
+[django-filter](https://django-filter.readthedocs.org). See the
+[usage documentation](https://django-filter.readthedocs.org/en/latest/usage.html#the-filter)
+for details on the format for `filter_fields`.
 
 Note that the above `Query` class is marked as 'abstract'. This is because we
 want will now create a project-level query which will combine all our app-level
@@ -225,12 +238,17 @@ query {
           edges {
             node {
               name
-            }
-          }
-        }
+}}}}}}}
+```
 
-      }
-    }
-  }
-}
+Or you can get only 'meat' ingredients containing the letter 'e':
+
+```graphql
+query {
+  # You can also use `category: "CATEGORY GLOBAL ID"`
+  allIngredients(nameIcontains: "e", categoryName: "Meat") {
+    edges {
+      node {
+        name
+}}}}
 ```

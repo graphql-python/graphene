@@ -16,4 +16,5 @@ ga = "UA-12613282-7"
 	  "/docs/mutations/",
 	  "/docs/basic-types/",
 	  "/docs/relay/",
+	  "/docs/filtering/",
 	]
