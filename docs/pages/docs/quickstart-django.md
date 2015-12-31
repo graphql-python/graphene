@@ -13,6 +13,9 @@ Django's getting started page.
 
 First let's create a few simple models...
 
+**Note: The code in this quickstart is pulled from the
+[cookbook example app](https://github.com/graphql-python/graphene/tree/feature/django/examples/cookbook)**.
+
 ## Defining our models
 
 Before continuing, create the following:

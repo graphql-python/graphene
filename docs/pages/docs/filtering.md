@@ -10,15 +10,18 @@ to provide filtering of results. See the
 [usage documentation](https://django-filter.readthedocs.org/en/latest/usage.html#the-filter)
 for details on the format for `filter_fields`.
 
-**Note 1:** This filtering is only available when using the Django integrations
-(i.e. nodes which extend `DjangoNode`)
-
-**Note 2:** `django-filter` is an optional dependency of Graphene. You will need to
+This filtering is only available when using the Django integrations
+(i.e. nodes which extend `DjangoNode`). Additionally `django-filter`
+is an optional dependency of Graphene. You will need to
 install it manually, which can be done as follows:
 
 ```bash
+# You'll need to django-filter
 pip install django-filter
 ```
+
+**Note: The techniques below are demoed in the
+[cookbook example app](https://github.com/graphql-python/graphene/tree/feature/django/examples/cookbook).**
 
 ## Filterable fields
 
