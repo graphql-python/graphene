@@ -1,0 +1,5 @@
+-e git+https://github.com/adamcharnock/graphene.git@feature/django#egg=graphene
+graphql-core==0.4.12
+django==1.9
+django_graphiql==0.4.2
+django-filter==0.11.0
