@@ -168,10 +168,9 @@ urlpatterns = [
 
 ## Load some test data
 
-**TODO:** Insert link to fixture
-
-Now is a good time to load up some test data. The easiest option will be to download
-the ingredients.json fixture and place it in
+Now is a good time to load up some test data. The easiest option will be to
+[download the ingredients.json](https://raw.githubusercontent.com/graphql-python/graphene/feature/django/examples/cookbook/cookbook/ingredients/fixtures/ingredients.json)
+fixture and place it in
 `cookbook/ingredients/fixtures/ingredients.json`. You can then run the following:
 
 ```
