@@ -185,8 +185,8 @@ def test_filter_filterset_related_results():
 
     r1 = Reporter.objects.create(first_name='r1', last_name='r1', email='r1@test.com')
     r2 = Reporter.objects.create(first_name='r2', last_name='r2', email='r2@test.com')
-    a1 = Article.objects.create(headline='a1', pub_date=datetime.now(), reporter=r1)
-    a2 = Article.objects.create(headline='a2', pub_date=datetime.now(), reporter=r2)
+    Article.objects.create(headline='a1', pub_date=datetime.now(), reporter=r1)
+    Article.objects.create(headline='a2', pub_date=datetime.now(), reporter=r2)
 
     query = '''
     query {
