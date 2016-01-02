@@ -9,7 +9,7 @@ from graphene.contrib.django.forms import (GlobalIDFormField,
                                            GlobalIDMultipleChoiceField)
 from graphene.contrib.django.tests.models import Article, Pet, Reporter
 from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
-from graphene.relay import NodeField
+from graphene.relay import NodeField, ConnectionField
 from graphene.utils import ProxySnakeDict
 
 pytestmark = []
@@ -217,7 +217,7 @@ def test_filter_filterset_related_results():
 
 def test_global_id_field_implicit():
     field = DjangoFilterConnectionField(ArticleNode, fields=['id'])
-    filterset_class = field.resolver_fn.get_filterset_class()
+    filterset_class = field.filterset_class
     id_filter = filterset_class.base_filters['id']
     assert isinstance(id_filter, GlobalIDFilter)
     assert id_filter.field_class == GlobalIDFormField
@@ -231,7 +231,7 @@ def test_global_id_field_explicit():
             fields = ['id']
 
     field = DjangoFilterConnectionField(ArticleNode, filterset_class=ArticleIdFilter)
-    filterset_class = field.resolver_fn.get_filterset_class()
+    filterset_class = field.filterset_class
     id_filter = filterset_class.base_filters['id']
     assert isinstance(id_filter, GlobalIDFilter)
     assert id_filter.field_class == GlobalIDFormField
@@ -239,7 +239,7 @@ def test_global_id_field_explicit():
 
 def test_global_id_field_relation():
     field = DjangoFilterConnectionField(ArticleNode, fields=['reporter'])
-    filterset_class = field.resolver_fn.get_filterset_class()
+    filterset_class = field.filterset_class
     id_filter = filterset_class.base_filters['reporter']
     assert isinstance(id_filter, GlobalIDFilter)
     assert id_filter.field_class == GlobalIDFormField
@@ -247,7 +247,7 @@ def test_global_id_field_relation():
 
 def test_global_id_multiple_field_implicit():
     field = DjangoFilterConnectionField(ReporterNode, fields=['pets'])
-    filterset_class = field.resolver_fn.get_filterset_class()
+    filterset_class = field.filterset_class
     multiple_filter = filterset_class.base_filters['pets']
     assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
@@ -261,7 +261,7 @@ def test_global_id_multiple_field_explicit():
             fields = ['pets']
 
     field = DjangoFilterConnectionField(ReporterNode, filterset_class=ReporterPetsFilter)
-    filterset_class = field.resolver_fn.get_filterset_class()
+    filterset_class = field.filterset_class
     multiple_filter = filterset_class.base_filters['pets']
     assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
@@ -269,7 +269,7 @@ def test_global_id_multiple_field_explicit():
 
 def test_global_id_multiple_field_implicit_reverse():
     field = DjangoFilterConnectionField(ReporterNode, fields=['articles'])
-    filterset_class = field.resolver_fn.get_filterset_class()
+    filterset_class = field.filterset_class
     multiple_filter = filterset_class.base_filters['articles']
     assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
@@ -283,7 +283,7 @@ def test_global_id_multiple_field_explicit_reverse():
             fields = ['articles']
 
     field = DjangoFilterConnectionField(ReporterNode, filterset_class=ReporterPetsFilter)
-    filterset_class = field.resolver_fn.get_filterset_class()
+    filterset_class = field.filterset_class
     multiple_filter = filterset_class.base_filters['articles']
     assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
