@@ -1,10 +1,9 @@
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 
-from graphene.contrib.django.views import GraphQLView
-
 from cookbook.schema import schema
+from graphene.contrib.django.views import GraphQLView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

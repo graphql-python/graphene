@@ -1,7 +1,7 @@
-from django.core.management.base import BaseCommand, CommandError
-
 import importlib
 import json
+
+from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):

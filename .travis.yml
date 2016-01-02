@@ -80,13 +80,13 @@ matrix:
   fast_finish: true
   include:
   - python: '2.7'
-    env: DJANGO_VERSION=1.6
+    env: TEST_TYPE=build DJANGO_VERSION=1.6
   - python: '2.7'
-    env: DJANGO_VERSION=1.7
+    env: TEST_TYPE=build DJANGO_VERSION=1.7
   - python: '2.7'
-    env: DJANGO_VERSION=1.8
+    env: TEST_TYPE=build DJANGO_VERSION=1.8
   - python: '2.7'
-    env: DJANGO_VERSION=1.9
+    env: TEST_TYPE=build DJANGO_VERSION=1.9
   - python: '2.7'
     env: TEST_TYPE=build_website
   - python: '2.7'
