@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytest
-from graphql.core.execution.base import ResolveInfo, ExecutionContext
 
 from graphene import ObjectType, Schema
 from graphene.contrib.django import DjangoNode
@@ -9,8 +8,7 @@ from graphene.contrib.django.forms import (GlobalIDFormField,
                                            GlobalIDMultipleChoiceField)
 from graphene.contrib.django.tests.models import Article, Pet, Reporter
 from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
-from graphene.relay import NodeField, ConnectionField
-from graphene.utils import ProxySnakeDict
+from graphene.relay import NodeField
 
 pytestmark = []
 if DJANGO_FILTER_INSTALLED:

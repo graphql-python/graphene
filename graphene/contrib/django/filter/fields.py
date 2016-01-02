@@ -1,5 +1,5 @@
-from .utils import get_filterset_class, get_filtering_args_from_filterset
 from ..fields import DjangoConnectionField
+from .utils import get_filtering_args_from_filterset, get_filterset_class
 
 
 class DjangoFilterConnectionField(DjangoConnectionField):

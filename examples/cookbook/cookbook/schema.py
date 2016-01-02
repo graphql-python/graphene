@@ -1,6 +1,5 @@
-import graphene
-
 import cookbook.ingredients.schema
+import graphene
 
 
 class Query(cookbook.ingredients.schema.Query):
