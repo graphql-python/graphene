@@ -23,15 +23,15 @@ class ConnectionField(Field):
         self.connection_type = connection_type
         self.edge_type = edge_type
 
-    def wrap_resolved(self, value, instance, args, info):
-        return value
-
     def resolver(self, instance, args, info):
         schema = info.schema.graphene_schema
         connection_type = self.get_type(schema)
         resolved = super(ConnectionField, self).resolver(instance, args, info)
         if isinstance(resolved, connection_type):
             return resolved
+        return self.from_list(connection_type, resolved, args, info)
+
+    def from_list(self, connection_type, resolved, args, info):
         return connection_type.from_list(resolved, args, info)
 
     def get_connection_type(self, node):
