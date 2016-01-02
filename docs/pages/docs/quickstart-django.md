@@ -142,6 +142,9 @@ Add `django_graphiql` to `INSTALLED_APPS` in `cookbook/settings.py`:
 INSTALLED_APPS = [
     ...
     'django_graphiql',
+
+    # This will also make the `graphql_schema` management command available
+    'graphene.contrib.django',
 ]
 ```
 
