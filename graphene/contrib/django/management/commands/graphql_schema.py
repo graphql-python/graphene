@@ -1,5 +1,6 @@
 import importlib
 import json
+from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -7,6 +8,23 @@ from django.core.management.base import BaseCommand, CommandError
 class Command(BaseCommand):
     help = 'Dump Graphene schema JSON to file'
     can_import_settings = True
+
+    option_list = BaseCommand.option_list + (
+        make_option(
+            '--schema',
+            type=str,
+            dest='schema',
+            default='',
+            help='Django app containing schema to dump, e.g. myproject.core.schema',
+        ),
+        make_option(
+            '--out',
+            type=str,
+            dest='out',
+            default='',
+            help='Output file (default: schema.json)'
+        ),
+    )
 
     def add_arguments(self, parser):
         from django.conf import settings
@@ -24,15 +42,23 @@ class Command(BaseCommand):
             default=getattr(settings, 'GRAPHENE_SCHEMA_OUTPUT', 'schema.json'),
             help='Output file (default: schema.json)')
 
-    def handle(self, *args, **options):
-        schema_module = options['schema']
-        if schema_module == '':
-            raise CommandError('Specify schema on GRAPHENE_SCHEMA setting or by using --schema')
-        i = importlib.import_module(schema_module)
-
-        schema_dict = {'data': i.schema.introspect()}
-
-        with open(options['out'], 'w') as outfile:
+    def save_file(self, out, schema_dict):
+        with open(out, 'w') as outfile:
             json.dump(schema_dict, outfile)
 
-        self.stdout.write(self.style.SUCCESS('Successfully dumped GraphQL schema to %s' % options['out']))
+    def handle(self, *args, **options):
+        from django.conf import settings
+        schema = options.get('schema') or getattr(settings, 'GRAPHENE_SCHEMA', '')
+        out = options.get('out') or getattr(settings, 'GRAPHENE_SCHEMA_OUTPUT', 'schema.json')
+
+        if schema == '':
+            raise CommandError('Specify schema on GRAPHENE_SCHEMA setting or by using --schema')
+        i = importlib.import_module(schema)
+
+        schema_dict = {'data': i.schema.introspect()}
+        self.save_file(out, schema_dict)
+
+        style = getattr(self, 'style', None)
+        SUCCESS = getattr(style, 'SUCCESS', lambda x: x)
+
+        self.stdout.write(SUCCESS('Successfully dumped GraphQL schema to %s' % out))
