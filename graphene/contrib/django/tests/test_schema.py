@@ -29,7 +29,7 @@ def test_should_map_fields_correctly():
             model = Reporter
     assert_equal_lists(
         ReporterType2._meta.fields_map.keys(),
-        ['articles', 'first_name', 'last_name', 'email', 'pets', 'id']
+        ['articles', 'first_name', 'last_name', 'email', 'pets', 'id', 'films']
     )
 
 

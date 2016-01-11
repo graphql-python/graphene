@@ -35,6 +35,8 @@ def get_reverse_fields(model):
             yield new_related
         elif isinstance(related, models.ManyToOneRel):
             yield related
+        elif isinstance(related, models.ManyToManyRel) and not related.symmetrical:
+            yield related
 
 
 class WrappedQueryset(LazyList):
