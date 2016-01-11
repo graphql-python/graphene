@@ -69,8 +69,8 @@ def assert_not_orderable(field):
 def test_filter_explicit_filterset_arguments():
     field = DjangoFilterConnectionField(ArticleNode, filterset_class=ArticleFilter)
     assert_arguments(field,
-                     'headline', 'headlineIcontains',
-                     'pubDate', 'pubDateGt', 'pubDateLt',
+                     'headline', 'headline_Icontains',
+                     'pubDate', 'pubDate_Gt', 'pubDate_Lt',
                      'reporter',
                      )
 
@@ -89,7 +89,7 @@ def test_filter_shortcut_filterset_arguments_dict():
         'reporter': ['exact'],
     })
     assert_arguments(field,
-                     'headline', 'headlineIcontains',
+                     'headline', 'headline_Icontains',
                      'reporter',
                      )
 
