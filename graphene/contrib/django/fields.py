@@ -4,7 +4,7 @@ from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
-from .utils import get_type_for_model, maybe_queryset
+from .utils import DJANGO_FILTER_INSTALLED, get_type_for_model, maybe_queryset
 
 
 class DjangoConnectionField(ConnectionField):
@@ -37,7 +37,8 @@ class DjangoConnectionField(ConnectionField):
 class ConnectionOrListField(Field):
 
     def internal_type(self, schema):
-        from .filter.fields import DjangoFilterConnectionField
+        if DJANGO_FILTER_INSTALLED:
+            from .filter.fields import DjangoFilterConnectionField
 
         model_field = self.type
         field_object_type = model_field.get_object_type(schema)

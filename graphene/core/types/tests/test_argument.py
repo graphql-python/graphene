@@ -48,6 +48,7 @@ def test_to_arguments_wrong_type():
 
 
 def test_snake_case_args():
-    resolver = lambda instance, args, info: args['my_arg']['inner_arg']
+    def resolver(instance, args, info):
+        return args['my_arg']['inner_arg']
     r = snake_case_args(resolver)
     assert r(None, {'myArg': {'innerArg': 3}}, None) == 3

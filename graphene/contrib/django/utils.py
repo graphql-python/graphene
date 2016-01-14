@@ -9,7 +9,8 @@ from .compat import RelatedObject
 try:
     import django_filters  # noqa
     DJANGO_FILTER_INSTALLED = True
-except ImportError:
+except (ImportError, AttributeError):
+    # AtributeError raised if DjangoFilters installed with a incompatible Django Version
     DJANGO_FILTER_INSTALLED = False
 
 
@@ -34,6 +35,8 @@ def get_reverse_fields(model):
             new_related.name = name
             yield new_related
         elif isinstance(related, models.ManyToOneRel):
+            yield related
+        elif isinstance(related, models.ManyToManyRel) and not related.symmetrical:
             yield related
 
 

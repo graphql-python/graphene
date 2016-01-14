@@ -58,6 +58,7 @@ def convert_field_to_float(field):
 
 @convert_django_field.register(models.ManyToManyField)
 @convert_django_field.register(models.ManyToOneRel)
+@convert_django_field.register(models.ManyToManyRel)
 def convert_field_to_list_or_connection(field):
     from .fields import DjangoModelField, ConnectionOrListField
     model_field = DjangoModelField(get_related_model(field))

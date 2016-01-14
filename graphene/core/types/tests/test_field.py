@@ -11,7 +11,8 @@ from ..scalars import String
 
 
 def test_field_internal_type():
-    resolver = lambda *args: 'RESOLVED'
+    def resolver(*args):
+        return 'RESOLVED'
 
     field = Field(String(), description='My argument', resolver=resolver)
 
@@ -132,7 +133,8 @@ def test_inputfield_internal_type():
 
 
 def test_field_resolve_argument():
-    resolver = lambda instance, args, info: args.get('first_name')
+    def resolver(instance, args, info):
+        return args.get('first_name')
 
     field = Field(String(), first_name=String(), description='My argument', resolver=resolver)
 
