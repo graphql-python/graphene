@@ -1,27 +1,53 @@
 ---
-title: Django Quickstart
+title: Quickstart
 description: A Quick guide to Graphene in Django
 ---
 
 # Django Tutorial
 
 Graphene has a number of additional features that are designed to make
-working with Django simple.
-
-If you need help getting started with django then head over to
-Django's getting started page.
-
-First let's create a few simple models...
+working with Django *really simple*.
 
 **Note: The code in this quickstart is pulled from the
-[cookbook example app](https://github.com/graphql-python/graphene/tree/feature/django/examples/cookbook)**.
+[cookbook example app](https://github.com/graphql-python/graphene/tree/master/examples/cookbook_django)**.
 
-## Defining our models
 
-Before continuing, create the following:
+## Setup the Django project
+
+We will setup the project, create the following:
 
 * A Django project called `cookbook`
 * An app within `cookbook` called `ingredients`
+
+```bash
+# Create the project directory
+mkdir cookbook
+cd cookbook
+
+# Create a virtualenv to isolate our package dependencies locally
+virtualenv env
+source env/bin/activate  # On Windows use `env\Scripts\activate`
+
+# Install Django and Graphene with Django support
+pip install django
+pip install graphene[django]
+pip install django-graphiql
+
+# Set up a new project with a single application
+django-admin.py startproject cookbook .  # Note the trailing '.' character
+django-admin.py startapp ingredients
+```
+
+Now sync your database for the first time:
+
+```bash
+python manage.py migrate
+```
+
+Let's create a few simple models...
+
+
+## Defining our models
 
 Let's get started with these models:
 
@@ -51,9 +77,9 @@ class Ingredient(models.Model):
 GraphQL presents your objects to the world as a graph structure rather than a more
 hierarchical structure to which you may be accustomed. In order to create this
 representation, Graphene needs to know about each *type* of object which will appear in
-the graph. Below we define these as the `UserType` and `GroupType` classes.
+the graph.
 
-This graph also has a 'root' through which all access begins. This is the `Query` class below.
+This graph also has a *root type* through which all access begins. This is the `Query` class below.
 In this example, we provide the ability to list all users via `all_users`, and the
 ability to obtain a specific user via `get_user`.
 
@@ -186,7 +212,7 @@ Installed 6 object(s) from 1 fixture(s)
 ```
 
 Alternatively you can use the Django admin interface to create some data youself.
-You'll need to run the development server (see below), and probably create a login
+You'll need to run the development server (see below), and create a login
 for yourself too (`./manage.py createsuperuser`).
 
 ## Testing our GraphQL schema
@@ -238,12 +264,17 @@ query {
     edges {
       node {
         name,
-
         ingredients {
           edges {
             node {
               name
-}}}}}}}
+            }
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
 Or you can get only 'meat' ingredients containing the letter 'e':
@@ -251,9 +282,12 @@ Or you can get only 'meat' ingredients containing the letter 'e':
 ```graphql
 query {
   # You can also use `category: "CATEGORY GLOBAL ID"`
-  allIngredients(nameIcontains: "e", categoryName: "Meat") {
+  allIngredients(name_Icontains: "e", categoryName: "Meat") {
     edges {
       node {
         name
-}}}}
+      }
+    }
+  }
+}
 ```

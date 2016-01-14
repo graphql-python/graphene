@@ -1,9 +1,9 @@
 ---
-title: Filtering (Django)
-description: Details of how to perform filtering
+title: Filtering
+description: Details of how to perform filtering in Graphene Django
 ---
 
-# Filtering (Django)
+# Filtering
 
 Graphene integrates with [django-filter](https://django-filter.readthedocs.org)
 to provide filtering of results. See the
@@ -21,7 +21,7 @@ pip install django-filter
 ```
 
 **Note: The techniques below are demoed in the
-[cookbook example app](https://github.com/graphql-python/graphene/tree/feature/django/examples/cookbook).**
+[cookbook example app](https://github.com/graphql-python/graphene/tree/master/examples/cookbook_django).**
 
 ## Filterable fields
 
@@ -54,7 +54,10 @@ query {
       node {
         id,
         name
-}}}}
+      }
+    }
+  }
+}
 ```
 
 You can also make more complex lookup types available:
@@ -76,12 +79,15 @@ Which you could query as follows:
 ```graphql
 query {
   # Note that fields names become camelcased
-  allAnimals(nameIcontains: "lion") {
+  allAnimals(name_Icontains: "lion") {
     edges {
       node {
         id,
         name
-}}}}
+      }
+    }
+  }
+}
 ```
 
 ## Orderable fields
@@ -112,7 +118,10 @@ query {
       node {
         id,
         name
-}}}}
+      }
+    }
+  }
+}
 ```
 
 ## Custom Filtersets
