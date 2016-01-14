@@ -1,7 +1,7 @@
 import importlib
 import json
-from optparse import make_option
 from distutils.version import StrictVersion
+from optparse import make_option
 
 from django import get_version as get_django_version
 from django.core.management.base import BaseCommand, CommandError
@@ -28,6 +28,7 @@ if LT_DJANGO_1_8:
         )
 else:
     class CommandArguments(BaseCommand):
+
         def add_arguments(self, parser):
             from django.conf import settings
             parser.add_argument(

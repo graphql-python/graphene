@@ -1,12 +1,12 @@
 from graphql.core.type import GraphQLObjectType
 from mock import patch
-from tests.utils import assert_equal_lists
 
 from graphene import Schema
 from graphene.contrib.django.types import DjangoNode, DjangoObjectType
 from graphene.core.fields import Field
 from graphene.core.types.scalars import Int
 from graphene.relay.fields import GlobalIDField
+from tests.utils import assert_equal_lists
 
 from .models import Article, Reporter
 

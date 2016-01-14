@@ -1,7 +1,7 @@
 from py.test import raises
-from tests.utils import assert_equal_lists
 
 from graphene.contrib.django import DjangoObjectType
+from tests.utils import assert_equal_lists
 
 from .models import Reporter
 

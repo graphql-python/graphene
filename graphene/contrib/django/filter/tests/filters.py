@@ -1,5 +1,4 @@
 import django_filters
-
 from graphene.contrib.django.tests.models import Article, Pet, Reporter
 
 

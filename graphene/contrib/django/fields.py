@@ -4,7 +4,7 @@ from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
-from .utils import get_type_for_model, maybe_queryset, DJANGO_FILTER_INSTALLED
+from .utils import DJANGO_FILTER_INSTALLED, get_type_for_model, maybe_queryset
 
 
 class DjangoConnectionField(ConnectionField):
