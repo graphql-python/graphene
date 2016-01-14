@@ -1,46 +1,53 @@
 import importlib
 import json
 from optparse import make_option
+from distutils.version import StrictVersion
 
+from django import get_version as get_django_version
 from django.core.management.base import BaseCommand, CommandError
 
+LT_DJANGO_1_8 = StrictVersion(get_django_version()) < StrictVersion('1.8')
 
-class Command(BaseCommand):
+if LT_DJANGO_1_8:
+    class CommandArguments(BaseCommand):
+        option_list = BaseCommand.option_list + (
+            make_option(
+                '--schema',
+                type=str,
+                dest='schema',
+                default='',
+                help='Django app containing schema to dump, e.g. myproject.core.schema',
+            ),
+            make_option(
+                '--out',
+                type=str,
+                dest='out',
+                default='',
+                help='Output file (default: schema.json)'
+            ),
+        )
+else:
+    class CommandArguments(BaseCommand):
+        def add_arguments(self, parser):
+            from django.conf import settings
+            parser.add_argument(
+                '--schema',
+                type=str,
+                dest='schema',
+                default=getattr(settings, 'GRAPHENE_SCHEMA', ''),
+                help='Django app containing schema to dump, e.g. myproject.core.schema')
+
+            parser.add_argument(
+                '--out',
+                type=str,
+                dest='out',
+                default=getattr(settings, 'GRAPHENE_SCHEMA_OUTPUT', 'schema.json'),
+                help='Output file (default: schema.json)')
+
+
+class Command(CommandArguments):
     help = 'Dump Graphene schema JSON to file'
     can_import_settings = True
-
-    option_list = BaseCommand.option_list + (
-        make_option(
-            '--schema',
-            type=str,
-            dest='schema',
-            default='',
-            help='Django app containing schema to dump, e.g. myproject.core.schema',
-        ),
-        make_option(
-            '--out',
-            type=str,
-            dest='out',
-            default='',
-            help='Output file (default: schema.json)'
-        ),
-    )
-
-    def add_arguments(self, parser):
-        from django.conf import settings
-        parser.add_argument(
-            '--schema',
-            type=str,
-            dest='schema',
-            default=getattr(settings, 'GRAPHENE_SCHEMA', ''),
-            help='Django app containing schema to dump, e.g. myproject.core.schema')
-
-        parser.add_argument(
-            '--out',
-            type=str,
-            dest='out',
-            default=getattr(settings, 'GRAPHENE_SCHEMA_OUTPUT', 'schema.json'),
-            help='Output file (default: schema.json)')
 
     def save_file(self, out, schema_dict):
         with open(out, 'w') as outfile:

@@ -9,7 +9,8 @@ from .compat import RelatedObject
 try:
     import django_filters  # noqa
     DJANGO_FILTER_INSTALLED = True
-except ImportError:
+except (ImportError, AttributeError):
+    # AtributeError raised if DjangoFilters installed with a incompatible Django Version
     DJANGO_FILTER_INSTALLED = False
 
 
