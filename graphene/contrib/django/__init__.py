@@ -9,4 +9,4 @@ from graphene.contrib.django.fields import (
 )
 
 __all__ = ['DjangoObjectType', 'DjangoNode', 'DjangoConnection',
-           'DjangoConnectionField', 'DjangoModelField']
+           'DjangoModelField', 'DjangoConnectionField']

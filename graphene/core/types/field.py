@@ -9,7 +9,8 @@ from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
 from ..exceptions import SkipField
 from .argument import Argument, ArgumentsGroup, snake_case_args
-from .base import GroupNamedType, LazyType, MountType, NamedType, ArgumentType, OrderedType
+from .base import (ArgumentType, GroupNamedType, LazyType, MountType,
+                   NamedType, OrderedType)
 from .definitions import NonNull
 
 
@@ -49,6 +50,16 @@ class Field(NamedType, OrderedType):
     @property
     def resolver(self):
         return self.resolver_fn or self.get_resolver_fn()
+
+    @property
+    def default(self):
+        if callable(self._default):
+            return self._default()
+        return self._default
+
+    @default.setter
+    def default(self, value):
+        self._default = value
 
     def get_resolver_fn(self):
         resolve_fn_name = 'resolve_%s' % self.attname
