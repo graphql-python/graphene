@@ -1,3 +1,4 @@
+import six
 from graphql_relay.node.node import from_global_id
 
 from ..core.fields import Field
@@ -73,8 +74,11 @@ class NodeField(Field):
             return None
         _type, _id = resolved_global_id.type, resolved_global_id.id
         object_type = schema.get_type(_type)
-        if not is_node(object_type) or (self.field_object_type and
-                                        object_type != self.field_object_type):
+        if isinstance(self.field_object_type, six.string_types):
+            field_object_type = schema.get_type(self.field_object_type)
+        else:
+            field_object_type = self.field_object_type
+        if not is_node(object_type) or (self.field_object_type and object_type != field_object_type):
             return
 
         return object_type.get_node(_id, info)
