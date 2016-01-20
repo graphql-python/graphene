@@ -72,3 +72,9 @@ target/
 /docs/static/playground/lib
 
 /docs/static/playground
+
+# PyCharm
+.idea
+
+# Databases
+*.sqlite3

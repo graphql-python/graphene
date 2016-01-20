@@ -5,7 +5,6 @@ ga = "UA-12613282-7"
 	name = "Quickstart"
 	pages = [
 	  "/docs/quickstart/",
-	  "/docs/quickstart-django/",
 	]
 
 [docs.walkthrough]
@@ -16,4 +15,11 @@ ga = "UA-12613282-7"
 	  "/docs/mutations/",
 	  "/docs/basic-types/",
 	  "/docs/relay/",
+	]
+
+[docs.django]
+	name = "Django"
+	pages = [
+	  "/docs/django/tutorial/",
+	  "/docs/django/filtering/",
 	]

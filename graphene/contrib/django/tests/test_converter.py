@@ -9,8 +9,8 @@ from graphene.contrib.django.fields import (ConnectionOrListField,
 from .models import Article, Reporter
 
 
-def assert_conversion(django_field, graphene_field, *args):
-    field = django_field(*args, help_text='Custom Help Text')
+def assert_conversion(django_field, graphene_field, *args, **kwargs):
+    field = django_field(help_text='Custom Help Text', *args, **kwargs)
     field = convert_django_field(field)
     graphene_type = field.type
     assert isinstance(graphene_type, graphene_field)
@@ -48,8 +48,12 @@ def test_should_url_convert_string():
     assert_conversion(models.URLField, graphene.String)
 
 
+def test_should_ipaddress_convert_string():
+    assert_conversion(models.GenericIPAddressField, graphene.String)
+
+
 def test_should_auto_convert_id():
-    assert_conversion(models.AutoField, graphene.ID)
+    assert_conversion(models.AutoField, graphene.ID, primary_key=True)
 
 
 def test_should_positive_integer_convert_int():
@@ -94,7 +98,10 @@ def test_should_manytomany_convert_connectionorlist():
 
 
 def test_should_manytoone_convert_connectionorlist():
-    graphene_type = convert_django_field(Reporter.articles.related)
+    # Django 1.9 uses 'rel', <1.9 uses 'related
+    related = getattr(Reporter.articles, 'rel', None) or \
+        getattr(Reporter.articles, 'related')
+    graphene_type = convert_django_field(related)
     assert isinstance(graphene_type, ConnectionOrListField)
     assert isinstance(graphene_type.type, DjangoModelField)
     assert graphene_type.type.model == Article

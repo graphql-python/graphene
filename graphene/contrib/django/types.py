@@ -7,7 +7,7 @@ from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
 from ...relay.types import Connection, Node, NodeMeta
 from .converter import convert_django_field
 from .options import DjangoOptions
-from .utils import get_reverse_fields, maybe_queryset
+from .utils import get_reverse_fields
 
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
@@ -82,11 +82,7 @@ class DjangoObjectType(six.with_metaclass(
 
 
 class DjangoConnection(Connection):
-
-    @classmethod
-    def from_list(cls, iterable, *args, **kwargs):
-        iterable = maybe_queryset(iterable)
-        return super(DjangoConnection, cls).from_list(iterable, *args, **kwargs)
+    pass
 
 
 class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
@@ -112,5 +108,3 @@ class DjangoNode(six.with_metaclass(
             return cls(instance)
         except cls._meta.model.DoesNotExist:
             return None
-
-    connection_type = DjangoConnection

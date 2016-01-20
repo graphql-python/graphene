@@ -1,0 +1,5 @@
+graphene[django]
+django_graphiql
+graphql-core
+django==1.9
+django-filter==0.11.0

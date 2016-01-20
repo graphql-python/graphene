@@ -24,7 +24,7 @@ class PyTest(TestCommand):
 
 setup(
     name='graphene',
-    version='0.5.0',
+    version='0.6.0',
 
     description='GraphQL Framework for Python',
     long_description=open('README.rst').read(),
@@ -55,17 +55,18 @@ setup(
 
     install_requires=[
         'six>=1.10.0',
-        'graphql-core==0.4.9',
-        'graphql-relay==0.3.3'
+        'graphql-core>=0.4.9',
+        'graphql-relay==0.3.3',
     ],
     tests_require=[
+        'django-filter>=0.10.0',
         'pytest>=2.7.2',
         'pytest-django',
         'mock',
     ],
     extras_require={
         'django': [
-            'Django>=1.6.0,<1.9',
+            'Django>=1.6.0',
             'singledispatch>=3.4.0.3',
             'graphql-django-view>=1.1.0',
         ],

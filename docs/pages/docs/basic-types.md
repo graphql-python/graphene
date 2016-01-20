@@ -82,3 +82,21 @@ graphene.Field(graphene.String(), to=graphene.String())
 # Is equivalent to:
 graphene.Field(graphene.String(), to=graphene.Argument(graphene.String()))
 ```
+
+
+## Using custom object types as argument
+
+To use a custom object type as an argument, you need to inherit `graphene.InputObjectType`, not `graphene.ObjectType`.
+
+```python
+class CustomArgumentObjectType(graphene.InputObjectType):
+    field1 = graphene.String()
+    field2 = graphene.String()
+
+```
+
+Then, when defining this in an argument, you need to wrap it in an `Argument` object.
+
+```python
+graphene.Field(graphene.String(), to=graphene.Argument(CustomArgumentObjectType))
+```

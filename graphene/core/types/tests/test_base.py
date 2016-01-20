@@ -25,7 +25,9 @@ def test_orderedtype_different():
 
 @patch('graphene.core.types.field.Field')
 def test_type_as_field_called(Field):
-    resolver = lambda x: x
+    def resolver(x):
+        return x
+
     a = MountedType(2, description='A', resolver=resolver)
     a.as_field()
     Field.assert_called_with(
@@ -45,7 +47,8 @@ def test_type_as_argument_called(Argument):
 
 
 def test_type_as_field():
-    resolver = lambda x: x
+    def resolver(x):
+        return x
 
     class MyObjectType(ObjectType):
         t = MountedType(description='A', resolver=resolver)

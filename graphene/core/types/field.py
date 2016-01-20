@@ -8,8 +8,9 @@ from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
 from ..exceptions import SkipField
-from .argument import ArgumentsGroup, snake_case_args
-from .base import GroupNamedType, LazyType, MountType, NamedType, OrderedType
+from .argument import Argument, ArgumentsGroup, snake_case_args
+from .base import (ArgumentType, GroupNamedType, LazyType, MountType,
+                   NamedType, OrderedType)
 from .definitions import NonNull
 
 
@@ -19,6 +20,9 @@ class Field(NamedType, OrderedType):
             self, type, description=None, args=None, name=None, resolver=None,
             required=False, default=None, *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
+        if isinstance(name, (Argument, ArgumentType)):
+            kwargs['name'] = name
+            name = None
         super(Field, self).__init__(name=name, _creation_counter=_creation_counter)
         if isinstance(type, six.string_types):
             type = LazyType(type)
@@ -46,6 +50,16 @@ class Field(NamedType, OrderedType):
     @property
     def resolver(self):
         return self.resolver_fn or self.get_resolver_fn()
+
+    @property
+    def default(self):
+        if callable(self._default):
+            return self._default()
+        return self._default
+
+    @default.setter
+    def default(self, value):
+        self._default = value
 
     def get_resolver_fn(self):
         resolve_fn_name = 'resolve_%s' % self.attname
