@@ -49,10 +49,12 @@ class WrappedQueryset(LazyList):
         return self._origin.count()
 
 
-def maybe_queryset(value):
+def maybe_queryset(value, only=[]):
     if isinstance(value, Manager):
         value = value.get_queryset()
     if isinstance(value, QuerySet):
+        if only:
+            value = value.only(*only)
         return WrappedQueryset(value)
     return value
 

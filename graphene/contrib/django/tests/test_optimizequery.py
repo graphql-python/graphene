@@ -1,11 +1,12 @@
 import pytest
 
 import graphene
-from graphene.contrib.django import DjangoObjectType
+from graphene.contrib.django import DjangoNode
 
 from ..tests.models import Reporter
 from ..debug.plugin import DjangoDebugPlugin
 from ..fetcher import fetch_only_required, get_fields
+from ..fields import DjangoConnectionField
 
 # from examples.starwars_django.models import Character
 
@@ -18,7 +19,7 @@ def test_should_query_well():
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoObjectType):
+    class ReporterType(DjangoNode):
 
         class Meta:
             model = Reporter
@@ -26,6 +27,7 @@ def test_should_query_well():
     class Query(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
         all_reporters = ReporterType.List()
+        all_reporters_connection = DjangoConnectionField(ReporterType)
 
         @fetch_only_required
         def resolve_all_reporters(self, args, info):
@@ -39,6 +41,14 @@ def test_should_query_well():
           allReporters {
             lastName
             email
+          }
+          allReportersConnection(first:1) {
+            edges {
+              node {
+                lastName
+                email
+              }
+            }
           }
           reporter {
             email
@@ -58,12 +68,24 @@ def test_should_query_well():
             'lastName': 'Griffin',
             'email': '',
         }],
+        'allReportersConnection': {
+            'edges': [{
+                'node': {
+                    'lastName': 'ABA',
+                    'email': '',
+                }
+            }]
+        },
         'reporter': {
             'email': ''
         },
         '__debug': {
             'sql': [{
                 'rawSql': str(Reporter.objects.all().only('last_name', 'email').query)
+            }, {
+                'rawSql': 'SELECT COUNT(*) AS "__count" FROM "tests_reporter"'
+            }, {
+                'rawSql': str(Reporter.objects.all()[:1].query)
             }, {
                 'rawSql': str(Reporter.objects.only('email').order_by('pk')[:1].query)
             }]

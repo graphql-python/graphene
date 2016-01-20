@@ -4,6 +4,7 @@ from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
+from .fetcher import get_fields
 from .utils import DJANGO_FILTER_INSTALLED, get_type_for_model, maybe_queryset
 
 
@@ -37,10 +38,14 @@ class DjangoConnectionField(DjangoField, ConnectionField):
     def get_queryset(self, resolved_qs, args, info):
         return resolved_qs
 
+    def get_fetch_fields(self, info):
+        return get_fields(info)
+
     def from_list(self, connection_type, resolved, args, info):
         if not resolved:
             resolved = self.get_manager()
-        resolved_qs = maybe_queryset(resolved)
+        only = self.get_fetch_fields(info)
+        resolved_qs = maybe_queryset(resolved, only)
         qs = self.get_queryset(resolved_qs, args, info)
         return super(DjangoConnectionField, self).from_list(connection_type, qs, args, info)
 
