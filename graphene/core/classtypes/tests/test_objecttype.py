@@ -87,3 +87,30 @@ def test_object_type_union():
     assert Thing._meta.type_name == 'Thing'
     assert Thing._meta.description == 'Thing union description'
     assert Thing.my_attr
+
+
+def test_object_type_not_union_if_abstract():
+    schema = Schema()
+
+    class Query1(ObjectType):
+        field1 = String()
+
+        class Meta:
+            abstract = True
+
+    class Query2(ObjectType):
+        field2 = String()
+
+        class Meta:
+            abstract = True
+
+    class Query(Query1, Query2):
+        '''Query description'''
+        my_attr = True
+
+    object_type = schema.T(Query)
+    assert issubclass(Query, ObjectType)
+    assert Query._meta.type_name == 'Query'
+    assert Query._meta.description == 'Query description'
+    assert isinstance(object_type, GraphQLObjectType)
+    assert list(Query._meta.fields_map.keys()) == ['field1', 'field2']

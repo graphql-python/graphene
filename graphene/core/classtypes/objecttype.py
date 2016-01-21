@@ -12,7 +12,7 @@ from .uniontype import UnionType
 def is_objecttype(cls):
     if not issubclass(cls, ObjectType):
         return False
-    return not cls._meta.interface
+    return not(cls._meta.abstract or cls._meta.interface)
 
 
 class ObjectTypeOptions(FieldsOptions):
