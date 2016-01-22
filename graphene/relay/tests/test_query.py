@@ -31,6 +31,7 @@ class SpecialNode(relay.Node):
 
 class Query(graphene.ObjectType):
     my_node = relay.NodeField(MyNode)
+    my_node_lazy = relay.NodeField('MyNode')
     special_node = relay.NodeField(SpecialNode)
     all_my_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection, customArg=graphene.String())
@@ -117,3 +118,23 @@ def test_nodeidfield():
     id_field_type = schema.T(id_field)
     assert isinstance(id_field_type.type, GraphQLNonNull)
     assert id_field_type.type.of_type == GraphQLID
+
+
+def test_nodefield_lazy_query():
+    query = '''
+    query RebelsShipsQuery {
+      myNode(id:"TXlOb2RlOjE=") {
+        id
+        name
+      },
+      myNodeLazy(id:"TXlOb2RlOjE=") {
+        id
+        name
+      },
+
+    }
+    '''
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data['myNode'] == result.data['myNodeLazy'], \
+        "NodeField with object_type direct reference and with object_type string name should not differ."

@@ -1,16 +1,16 @@
-from functools import total_ordering
+from collections import OrderedDict
+from functools import partial, total_ordering
 
 import six
 
 
-class BaseType(object):
+class InstanceType(object):
 
-    @classmethod
-    def internal_type(cls, schema):
-        return getattr(cls, 'T', None)
+    def internal_type(self, schema):
+        raise NotImplementedError("internal_type for type {} is not implemented".format(self.__class__.__name__))
 
 
-class MountType(BaseType):
+class MountType(InstanceType):
     parent = None
 
     def mount(self, cls):
@@ -104,11 +104,12 @@ class ArgumentType(MirroredType):
 class FieldType(MirroredType):
 
     def contribute_to_class(self, cls, name):
-        from ..types import BaseObjectType, InputObjectType
-        if issubclass(cls, InputObjectType):
+        from ..classtypes.base import FieldsClassType
+        from ..classtypes.inputobjecttype import InputObjectType
+        if issubclass(cls, (InputObjectType)):
             inputfield = self.as_inputfield()
             return inputfield.contribute_to_class(cls, name)
-        elif issubclass(cls, BaseObjectType):
+        elif issubclass(cls, (FieldsClassType)):
             field = self.as_field()
             return field.contribute_to_class(cls, name)
 
@@ -125,3 +126,39 @@ class FieldType(MirroredType):
 
 class MountedType(FieldType, ArgumentType):
     pass
+
+
+class NamedType(InstanceType):
+
+    def __init__(self, name=None, default_name=None, *args, **kwargs):
+        self.name = name
+        self.default_name = None
+        super(NamedType, self).__init__(*args, **kwargs)
+
+
+class GroupNamedType(InstanceType):
+
+    def __init__(self, *types):
+        self.types = types
+
+    def get_named_type(self, schema, type):
+        name = type.name or schema.get_default_namedtype_name(type.default_name)
+        return name, schema.T(type)
+
+    def iter_types(self, schema):
+        return map(partial(self.get_named_type, schema), self.types)
+
+    def internal_type(self, schema):
+        return OrderedDict(self.iter_types(schema))
+
+    def __len__(self):
+        return len(self.types)
+
+    def __iter__(self):
+        return iter(self.types)
+
+    def __contains__(self, *args):
+        return self.types.__contains__(*args)
+
+    def __getitem__(self, *args):
+        return self.types.__getitem__(*args)

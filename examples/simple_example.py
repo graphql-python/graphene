@@ -21,7 +21,7 @@ query = '''
         id
         name
       }
-}
+    }
 '''
 result = schema.execute(query)
 print(result.data['patron'])

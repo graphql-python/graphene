@@ -4,16 +4,14 @@ from graphql.core.type import (
 
 from graphene import signals
 
-from graphene.core.schema import (
-    Schema
-)
-
-from graphene.core.types import (
+from .core import (
+    Schema,
     ObjectType,
     InputObjectType,
     Interface,
     Mutation,
-    BaseType,
+    Scalar,
+    InstanceType,
     LazyType,
     Argument,
     Field,
@@ -53,12 +51,13 @@ __all__ = [
     'NonNull',
     'signals',
     'Schema',
-    'BaseType',
+    'InstanceType',
     'LazyType',
     'ObjectType',
     'InputObjectType',
     'Interface',
     'Mutation',
+    'Scalar',
     'Field',
     'InputField',
     'StringField',

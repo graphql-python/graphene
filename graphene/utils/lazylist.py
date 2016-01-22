@@ -1,11 +1,10 @@
-class LazyMap(object):
+class LazyList(object):
 
-    def __init__(self, origin, _map, state=None):
+    def __init__(self, origin, state=None):
         self._origin = origin
-        self._origin_iter = origin.__iter__()
         self._state = state or []
+        self._origin_iter = None
         self._finished = False
-        self._map = _map
 
     def __iter__(self):
         return self if not self._finished else iter(self._state)
@@ -18,8 +17,9 @@ class LazyMap(object):
 
     def __next__(self):
         try:
+            if not self._origin_iter:
+                self._origin_iter = self._origin.__iter__()
             n = next(self._origin_iter)
-            n = self._map(n)
         except StopIteration as e:
             self._finished = True
             raise e
@@ -33,11 +33,11 @@ class LazyMap(object):
     def __getitem__(self, key):
         item = self._origin[key]
         if isinstance(key, slice):
-            return LazyMap(item, self._map)
-        return self._map(item)
+            return self.__class__(item)
+        return item
 
     def __getattr__(self, name):
         return getattr(self._origin, name)
 
     def __repr__(self):
-        return "<LazyMap %s>" % repr(self._origin)
+        return "<{} {}>".format(self.__class__.__name__, repr(self._origin))

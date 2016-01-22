@@ -1,29 +1,14 @@
 from py.test import raises
 
-from graphene.core.fields import Field
-from graphene.core.options import Options
+from graphene.core.classtypes import Options
 
 
 class Meta:
-    is_interface = True
     type_name = 'Character'
 
 
 class InvalidMeta:
     other_value = True
-
-
-def test_field_added_in_meta():
-    opt = Options(Meta)
-
-    class ObjectType(object):
-        pass
-
-    opt.contribute_to_class(ObjectType, '_meta')
-    f = Field(None)
-    f.attname = 'string_field'
-    opt.add_field(f)
-    assert f in opt.fields
 
 
 def test_options_contribute():

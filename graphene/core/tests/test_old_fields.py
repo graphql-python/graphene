@@ -34,10 +34,11 @@ def test_field_type():
     assert schema.T(f).type == GraphQLString
 
 
-def test_field_name_automatic_camelcase():
+def test_field_name():
     f = Field(GraphQLString)
     f.contribute_to_class(MyOt, 'field_name')
-    assert f.name == 'fieldName'
+    assert f.name is None
+    assert f.attname == 'field_name'
 
 
 def test_field_name_use_name_if_exists():

@@ -4,36 +4,53 @@ from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
-from .utils import get_type_for_model, lazy_map
+from .utils import DJANGO_FILTER_INSTALLED, get_type_for_model, maybe_queryset
 
 
 class DjangoConnectionField(ConnectionField):
 
-    def wrap_resolved(self, value, instance, args, info):
-        return lazy_map(value, self.type)
+    def __init__(self, *args, **kwargs):
+        self.on = kwargs.pop('on', False)
+        return super(DjangoConnectionField, self).__init__(*args, **kwargs)
 
+    @property
+    def model(self):
+        return self.type._meta.model
 
-class LazyListField(Field):
+    def get_manager(self):
+        if self.on:
+            return getattr(self.model, self.on)
+        else:
+            return self.model._default_manager
 
-    def get_type(self, schema):
-        return List(self.type)
+    def get_queryset(self, resolved_qs, args, info):
+        return resolved_qs
 
-    def resolver(self, instance, args, info):
-        resolved = super(LazyListField, self).resolver(instance, args, info)
-        return lazy_map(resolved, self.type)
+    def from_list(self, connection_type, resolved, args, info):
+        if not resolved:
+            resolved = self.get_manager()
+        resolved_qs = maybe_queryset(resolved)
+        qs = self.get_queryset(resolved_qs, args, info)
+        return super(DjangoConnectionField, self).from_list(connection_type, qs, args, info)
 
 
 class ConnectionOrListField(Field):
 
     def internal_type(self, schema):
+        if DJANGO_FILTER_INSTALLED:
+            from .filter.fields import DjangoFilterConnectionField
+
         model_field = self.type
         field_object_type = model_field.get_object_type(schema)
         if not field_object_type:
             raise SkipField()
         if is_node(field_object_type):
-            field = DjangoConnectionField(field_object_type)
+            if field_object_type._meta.filter_fields:
+                field = DjangoFilterConnectionField(field_object_type)
+            else:
+                field = DjangoConnectionField(field_object_type)
         else:
-            field = LazyListField(field_object_type)
+            field = Field(List(field_object_type))
         field.contribute_to_class(self.object_type, self.attname)
         return schema.T(field)
 

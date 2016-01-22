@@ -1,6 +1,4 @@
-from collections import Iterable
-
-from graphql_relay.connection.arrayconnection import connection_from_list
+import six
 from graphql_relay.node.node import from_global_id
 
 from ..core.fields import Field
@@ -26,28 +24,16 @@ class ConnectionField(Field):
         self.connection_type = connection_type
         self.edge_type = edge_type
 
-    def wrap_resolved(self, value, instance, args, info):
-        return value
-
     def resolver(self, instance, args, info):
-        from graphene.relay.types import PageInfo
         schema = info.schema.graphene_schema
-
+        connection_type = self.get_type(schema)
         resolved = super(ConnectionField, self).resolver(instance, args, info)
-        if resolved:
-            resolved = self.wrap_resolved(resolved, instance, args, info)
-            assert isinstance(
-                resolved, Iterable), 'Resolved value from the connection field have to be iterable'
-            type = schema.T(self.type)
-            node = schema.objecttype(type)
-            connection_type = self.get_connection_type(node)
-            edge_type = self.get_edge_type(node)
+        if isinstance(resolved, connection_type):
+            return resolved
+        return self.from_list(connection_type, resolved, args, info)
 
-            connection = connection_from_list(
-                resolved, args, connection_type=connection_type,
-                edge_type=edge_type, pageinfo_type=PageInfo)
-            connection.set_connection_data(resolved)
-            return connection
+    def from_list(self, connection_type, resolved, args, info):
+        return connection_type.from_list(resolved, args, info)
 
     def get_connection_type(self, node):
         connection_type = self.connection_type or node.get_connection_type()
@@ -88,8 +74,11 @@ class NodeField(Field):
             return None
         _type, _id = resolved_global_id.type, resolved_global_id.id
         object_type = schema.get_type(_type)
-        if not is_node(object_type) or (self.field_object_type and
-                                        object_type != self.field_object_type):
+        if isinstance(self.field_object_type, six.string_types):
+            field_object_type = schema.get_type(self.field_object_type)
+        else:
+            field_object_type = self.field_object_type
+        if not is_node(object_type) or (self.field_object_type and object_type != field_object_type):
             return
 
         return object_type.get_node(_id, info)
@@ -104,12 +93,6 @@ class GlobalIDField(Field):
 
     def __init__(self, *args, **kwargs):
         super(GlobalIDField, self).__init__(NonNull(ID()), *args, **kwargs)
-
-    def contribute_to_class(self, cls, name):
-        from graphene.relay.utils import is_node, is_node_type
-        in_node = is_node(cls) or is_node_type(cls)
-        assert in_node, 'GlobalIDField could only be inside a Node, but got %r' % cls
-        super(GlobalIDField, self).contribute_to_class(cls, name)
 
     def resolver(self, instance, args, info):
         return instance.to_global_id()

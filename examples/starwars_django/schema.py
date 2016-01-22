@@ -63,15 +63,15 @@ class Query(graphene.ObjectType):
 
     @resolve_only_args
     def resolve_ships(self):
-        return [Ship(s) for s in get_ships()]
+        return get_ships()
 
     @resolve_only_args
     def resolve_rebels(self):
-        return Faction(get_rebels())
+        return get_rebels()
 
     @resolve_only_args
     def resolve_empire(self):
-        return Faction(get_empire())
+        return get_empire()
 
 
 class Mutation(graphene.ObjectType):

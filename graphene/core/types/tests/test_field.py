@@ -11,16 +11,17 @@ from ..scalars import String
 
 
 def test_field_internal_type():
-    resolver = lambda *args: 'RESOLVED'
+    def resolver(*args):
+        return 'RESOLVED'
 
-    field = Field(String, description='My argument', resolver=resolver)
+    field = Field(String(), description='My argument', resolver=resolver)
 
     class Query(ObjectType):
         my_field = field
     schema = Schema(query=Query)
 
     type = schema.T(field)
-    assert field.name == 'myField'
+    assert field.name is None
     assert field.attname == 'my_field'
     assert isinstance(type, GraphQLField)
     assert type.description == 'My argument'
@@ -98,9 +99,18 @@ def test_field_string_reference():
 
 def test_field_custom_arguments():
     field = Field(None, name='my_customName', p=String())
+    schema = Schema()
 
     args = field.arguments
-    assert 'p' in args
+    assert 'p' in schema.T(args)
+
+
+def test_field_name_as_argument():
+    field = Field(None, name=String())
+    schema = Schema()
+
+    args = field.arguments
+    assert 'name' in schema.T(args)
 
 
 def test_inputfield_internal_type():
@@ -115,8 +125,44 @@ def test_inputfield_internal_type():
     schema = Schema(query=MyObjectType)
 
     type = schema.T(field)
-    assert field.name == 'myField'
+    assert field.name is None
     assert field.attname == 'my_field'
     assert isinstance(type, GraphQLInputObjectField)
     assert type.description == 'My input field'
     assert type.default_value == '3'
+
+
+def test_field_resolve_argument():
+    def resolver(instance, args, info):
+        return args.get('first_name')
+
+    field = Field(String(), first_name=String(), description='My argument', resolver=resolver)
+
+    class Query(ObjectType):
+        my_field = field
+    schema = Schema(query=Query)
+
+    type = schema.T(field)
+    assert type.resolver(None, {'firstName': 'Peter'}, None) == 'Peter'
+
+
+def test_field_resolve_vars():
+    class Query(ObjectType):
+        hello = String(first_name=String())
+
+        def resolve_hello(self, args, info):
+            return 'Hello ' + args.get('first_name')
+
+    schema = Schema(query=Query)
+
+    result = schema.execute("""
+    query foo($firstName:String)
+    {
+            hello(firstName:$firstName)
+    }
+    """, args={"firstName": "Serkan"})
+
+    expected = {
+        'hello': 'Hello Serkan'
+    }
+    assert result.data == expected

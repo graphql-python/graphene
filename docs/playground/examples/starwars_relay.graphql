@@ -1,0 +1,20 @@
+query {
+  empire {
+    id
+    name
+    ships(first:2) {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+  node(id:"U2hpcDo4") {
+    id
+    ... on Ship {
+      name
+    }
+  }
+}
