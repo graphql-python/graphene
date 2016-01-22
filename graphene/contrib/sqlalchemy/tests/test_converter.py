@@ -1,11 +1,13 @@
-from sqlalchemy import types, Column
 from py.test import raises
 
 import graphene
-from graphene.contrib.sqlalchemy.converter import convert_sqlalchemy_column, convert_sqlalchemy_relationship
-from graphene.contrib.sqlalchemy.fields import ConnectionOrListField, SQLAlchemyModelField
+from graphene.contrib.sqlalchemy.converter import (convert_sqlalchemy_column,
+                                                   convert_sqlalchemy_relationship)
+from graphene.contrib.sqlalchemy.fields import (ConnectionOrListField,
+                                                SQLAlchemyModelField)
+from sqlalchemy import Column, types
 
-from .models import Article, Reporter, Pet
+from .models import Article, Pet, Reporter
 
 
 def assert_column_conversion(sqlalchemy_type, graphene_field, **kwargs):
@@ -72,7 +74,7 @@ def test_should_integer_convert_id():
 
 
 def test_should_boolean_convert_boolean():
-    field = assert_column_conversion(types.Boolean(), graphene.Boolean)
+    assert_column_conversion(types.Boolean(), graphene.Boolean)
 
 
 def test_should_float_convert_float():

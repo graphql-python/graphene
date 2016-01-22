@@ -1,6 +1,5 @@
 from graphene.contrib.sqlalchemy.types import (
     SQLAlchemyObjectType,
-    SQLAlchemyInterface,
     SQLAlchemyNode
 )
 from graphene.contrib.sqlalchemy.fields import (
@@ -8,5 +7,5 @@ from graphene.contrib.sqlalchemy.fields import (
     SQLAlchemyModelField
 )
 
-__all__ = ['SQLAlchemyObjectType', 'SQLAlchemyInterface', 'SQLAlchemyNode',
+__all__ = ['SQLAlchemyObjectType', 'SQLAlchemyNode',
            'SQLAlchemyConnectionField', 'SQLAlchemyModelField']

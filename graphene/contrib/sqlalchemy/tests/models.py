@@ -1,15 +1,14 @@
 from __future__ import absolute_import
 
-from sqlalchemy import Table, Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Date, ForeignKey, Integer, String, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
 
 Base = declarative_base()
 
 association_table = Table('association', Base.metadata,
-    Column('pet_id', Integer, ForeignKey('pets.id')),
-    Column('reporter_id', Integer, ForeignKey('reporters.id')))
+                          Column('pet_id', Integer, ForeignKey('pets.id')),
+                          Column('reporter_id', Integer, ForeignKey('reporters.id')))
 
 
 class Pet(Base):

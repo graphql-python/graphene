@@ -1,26 +1,25 @@
-import six
-from sqlalchemy.inspection import inspect
+import inspect
 
-from ...core.types import BaseObjectType, ObjectTypeMeta
-from ...relay.fields import GlobalIDField
-from ...relay.types import BaseNode
-from .converter import convert_sqlalchemy_column, convert_sqlalchemy_relationship
+import six
+
+from sqlalchemy.inspection import inspect as sqlalchemyinspect
+
+from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
+from ...relay.types import Connection, Node, NodeMeta
+from .converter import (convert_sqlalchemy_column,
+                        convert_sqlalchemy_relationship)
 from .options import SQLAlchemyOptions
+from .utils import is_mapped
 
 
 class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
-    options_cls = SQLAlchemyOptions
+    options_class = SQLAlchemyOptions
 
-    def is_interface(cls, parents):
-        return SQLAlchemyInterface in parents
-
-    def add_extra_fields(cls):
-        if not cls._meta.model:
-            return
+    def construct_fields(cls):
         only_fields = cls._meta.only_fields
         exclude_fields = cls._meta.exclude_fields
         already_created_fields = {f.attname for f in cls._meta.local_fields}
-        inspected_model = inspect(cls._meta.model)
+        inspected_model = sqlalchemyinspect(cls._meta.model)
 
         # Get all the columns for the relationships on the model
         for relationship in inspected_model.relationships:
@@ -45,8 +44,24 @@ class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
             converted_column = convert_sqlalchemy_column(column)
             cls.add_to_class(column.name, converted_column)
 
+    def construct(cls, *args, **kwargs):
+        cls = super(SQLAlchemyObjectTypeMeta, cls).construct(*args, **kwargs)
+        if not cls._meta.abstract:
+            if not cls._meta.model:
+                raise Exception(
+                    'SQLAlchemy ObjectType %s must have a model in the Meta class attr' %
+                    cls)
+            elif not inspect.isclass(cls._meta.model) or not is_mapped(cls._meta.model):
+                raise Exception('Provided model in %s is not a SQLAlchemy model' % cls)
 
-class InstanceObjectType(BaseObjectType):
+            cls.construct_fields()
+        return cls
+
+
+class InstanceObjectType(ObjectType):
+
+    class Meta:
+        abstract = True
 
     def __init__(self, _root=None):
         if _root:
@@ -71,16 +86,32 @@ class InstanceObjectType(BaseObjectType):
         return getattr(self._root, attr)
 
 
-class SQLAlchemyObjectType(six.with_metaclass(SQLAlchemyObjectTypeMeta, InstanceObjectType)):
+class SQLAlchemyObjectType(six.with_metaclass(
+        SQLAlchemyObjectTypeMeta, InstanceObjectType)):
+
+    class Meta:
+        abstract = True
+
+
+class SQLAlchemyConnection(Connection):
     pass
 
 
-class SQLAlchemyInterface(six.with_metaclass(SQLAlchemyObjectTypeMeta, InstanceObjectType)):
+class SQLAlchemyNodeMeta(SQLAlchemyObjectTypeMeta, NodeMeta):
     pass
 
 
-class SQLAlchemyNode(BaseNode, SQLAlchemyInterface):
-    id = GlobalIDField()
+class NodeInstance(Node, InstanceObjectType):
+
+    class Meta:
+        abstract = True
+
+
+class SQLAlchemyNode(six.with_metaclass(
+        SQLAlchemyNodeMeta, NodeInstance)):
+
+    class Meta:
+        abstract = True
 
     @classmethod
     def get_node(cls, id, info=None):

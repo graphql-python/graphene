@@ -1,8 +1,9 @@
-from sqlalchemy import types
-from sqlalchemy.orm import interfaces
 from singledispatch import singledispatch
 
-from ...core.types.scalars import Boolean, Float, ID, Int, String
+from sqlalchemy import types
+from sqlalchemy.orm import interfaces
+
+from ...core.types.scalars import ID, Boolean, Float, Int, String
 from .fields import ConnectionOrListField, SQLAlchemyModelField
 
 

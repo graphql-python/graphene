@@ -1,8 +1,9 @@
-from graphql.core.type import GraphQLInterfaceType, GraphQLObjectType
+from graphql.core.type import GraphQLObjectType
 from pytest import raises
 
 from graphene import Schema
-from graphene.contrib.sqlalchemy.types import SQLAlchemyInterface, SQLAlchemyNode
+from graphene.contrib.sqlalchemy.types import (SQLAlchemyNode,
+                                               SQLAlchemyObjectType)
 from graphene.core.fields import Field
 from graphene.core.types.scalars import Int
 from graphene.relay.fields import GlobalIDField
@@ -13,7 +14,7 @@ from .models import Article, Reporter
 schema = Schema()
 
 
-class Character(SQLAlchemyInterface):
+class Character(SQLAlchemyObjectType):
     '''Character description'''
     class Meta:
         model = Reporter
@@ -31,23 +32,23 @@ class Human(SQLAlchemyNode):
 
 
 def test_sqlalchemy_interface():
-    assert SQLAlchemyNode._meta.is_interface is True
+    assert SQLAlchemyNode._meta.interface is True
 
 
-def test_sqlalchemy_get_node(get):
-    human = Human.get_node(1, None)
-    get.assert_called_with(id=1)
-    assert human.id == 1
+# @patch('graphene.contrib.sqlalchemy.tests.models.Article.filter', return_value=Article(id=1))
+# def test_sqlalchemy_get_node(get):
+#     human = Human.get_node(1, None)
+#     get.assert_called_with(id=1)
+#     assert human.id == 1
 
 
-def test_pseudo_interface_registered():
+def test_objecttype_registered():
     object_type = schema.T(Character)
-    assert Character._meta.is_interface is True
-    assert isinstance(object_type, GraphQLInterfaceType)
+    assert isinstance(object_type, GraphQLObjectType)
     assert Character._meta.model == Reporter
     assert_equal_lists(
         object_type.get_fields().keys(),
-        ['articles', 'firstName', 'lastName', 'email', 'pets', 'id']
+        ['articles', 'firstName', 'lastName', 'email', 'id']
     )
 
 
@@ -65,11 +66,6 @@ def test_node_replacedfield():
     idfield = Human._meta.fields_map['pub_date']
     assert isinstance(idfield, Field)
     assert schema.T(idfield).type == schema.T(Int())
-
-
-def test_interface_resolve_type():
-    resolve_type = Character.resolve_type(schema, Human())
-    assert isinstance(resolve_type, GraphQLObjectType)
 
 
 def test_interface_objecttype_init_none():
@@ -92,7 +88,7 @@ def test_interface_objecttype_init_unexpected():
 def test_object_type():
     object_type = schema.T(Human)
     Human._meta.fields_map
-    assert Human._meta.is_interface is False
+    assert Human._meta.interface is False
     assert isinstance(object_type, GraphQLObjectType)
     assert_equal_lists(
         object_type.get_fields().keys(),
@@ -102,5 +98,5 @@ def test_object_type():
 
 
 def test_node_notinterface():
-    assert Human._meta.is_interface is False
+    assert Human._meta.interface is False
     assert SQLAlchemyNode in Human._meta.interfaces

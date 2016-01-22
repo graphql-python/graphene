@@ -62,6 +62,7 @@ setup(
         'django-filter>=0.10.0',
         'pytest>=2.7.2',
         'pytest-django',
+        'sqlalchemy',
         'mock',
     ],
     extras_require={
@@ -71,7 +72,7 @@ setup(
             'graphql-django-view>=1.1.0',
         ],
         'sqlalchemy': [
-            'SQLAlchemy'
+            'sqlalchemy'
         ]
     },
 

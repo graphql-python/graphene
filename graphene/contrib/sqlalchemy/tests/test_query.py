@@ -1,30 +1,44 @@
-from py.test import raises
+import pytest
 
 import graphene
-from graphene import relay
-from graphene.contrib.sqlalchemy import SQLAlchemyNode, SQLAlchemyObjectType
-from .models import Article, Reporter
+from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+
+from .models import Base, Reporter
+
+db = create_engine('sqlite:///test_sqlalchemy.sqlite3')
 
 
-def test_should_query_only_fields():
-    with raises(Exception):
-        class ReporterType(SQLAlchemyObjectType):
+@pytest.yield_fixture(scope='function')
+def session():
+    connection = db.engine.connect()
+    transaction = connection.begin()
+    Base.metadata.create_all(connection)
 
-            class Meta:
-                model = Reporter
-                only_fields = ('articles', )
+    # options = dict(bind=connection, binds={})
+    session_factory = sessionmaker(bind=connection)
+    session = scoped_session(session_factory)
 
-        schema = graphene.Schema(query=ReporterType)
-        query = '''
-            query ReporterQuery {
-              articles
-            }
-        '''
-        result = schema.execute(query)
-        assert not result.errors
+    yield session
+
+    # Finalize test here
+    transaction.rollback()
+    connection.close()
+    session.remove()
 
 
-def test_should_query_well():
+def setup_fixtures(session):
+    reporter = Reporter(first_name='ABA', last_name='X')
+    session.add(reporter)
+    reporter2 = Reporter(first_name='ABO', last_name='Y')
+    session.add(reporter2)
+    session.commit()
+
+
+def test_should_query_well(session):
+    setup_fixtures(session)
+
     class ReporterType(SQLAlchemyObjectType):
 
         class Meta:
@@ -32,9 +46,13 @@ def test_should_query_well():
 
     class Query(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
+        reporters = ReporterType.List()
 
         def resolve_reporter(self, *args, **kwargs):
-            return ReporterType(Reporter(first_name='ABA', last_name='X'))
+            return session.query(Reporter).first()
+
+        def resolve_reporters(self, *args, **kwargs):
+            return session.query(Reporter)
 
     query = '''
         query ReporterQuery {
@@ -42,6 +60,9 @@ def test_should_query_well():
             firstName,
             lastName,
             email
+          }
+          reporters {
+            firstName
           }
         }
     '''
@@ -50,90 +71,12 @@ def test_should_query_well():
             'firstName': 'ABA',
             'lastName': 'X',
             'email': None
-        }
-    }
-    schema = graphene.Schema(query=Query)
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
-
-
-def test_should_node():
-    class ReporterNode(SQLAlchemyNode):
-
-        class Meta:
-            model = Reporter
-            exclude_fields = ('id', )
-
-        @classmethod
-        def get_node(cls, id, info):
-            return ReporterNode(Reporter(id=2, first_name='Cookie Monster'))
-
-        def resolve_articles(self, *args, **kwargs):
-            return [ArticleNode(Article(headline='Hi!'))]
-
-    class ArticleNode(SQLAlchemyNode):
-
-        class Meta:
-            model = Article
-            exclude_fields = ('id', )
-
-        @classmethod
-        def get_node(cls, id, info):
-            return ArticleNode(Article(id=1, headline='Article node'))
-
-    class Query(graphene.ObjectType):
-        node = relay.NodeField()
-        reporter = graphene.Field(ReporterNode)
-        article = graphene.Field(ArticleNode)
-
-        def resolve_reporter(self, *args, **kwargs):
-            return ReporterNode(Reporter(id=1, first_name='ABA', last_name='X'))
-
-    query = '''
-        query ReporterQuery {
-          reporter {
-            id,
-            firstName,
-            articles {
-              edges {
-                node {
-                  headline
-                }
-              }
-            }
-            lastName,
-            email
-          }
-          myArticle: node(id:"QXJ0aWNsZU5vZGU6MQ==") {
-            id
-            ... on ReporterNode {
-                firstName
-            }
-            ... on ArticleNode {
-                headline
-            }
-          }
-        }
-    '''
-    expected = {
-        'reporter': {
-            'id': 'UmVwb3J0ZXJOb2RlOjE=',
-            'firstName': 'ABA',
-            'lastName': 'X',
-            'email': None,
-            'articles': {
-                'edges': [{
-                  'node': {
-                      'headline': 'Hi!'
-                  }
-                }]
-            },
         },
-        'myArticle': {
-            'id': 'QXJ0aWNsZU5vZGU6MQ==',
-            'headline': 'Article node'
-        }
+        'reporters': [{
+            'firstName': 'ABA',
+        }, {
+            'firstName': 'ABO',
+        }]
     }
     schema = graphene.Schema(query=Query)
     result = schema.execute(query)

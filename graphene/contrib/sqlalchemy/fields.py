@@ -1,31 +1,32 @@
-from sqlalchemy.orm import Query
 from ...core.exceptions import SkipField
 from ...core.fields import Field
 from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
-from ...utils import LazyMap
-
 from .utils import get_type_for_model
 
 
 class SQLAlchemyConnectionField(ConnectionField):
 
-    def wrap_resolved(self, value, instance, args, info):
-        if isinstance(value, Query):
-            return LazyMap(value, self.type)
-        return value
+    def __init__(self, *args, **kwargs):
+        self.session = kwargs.pop('session', None)
+        return super(SQLAlchemyConnectionField, self).__init__(*args, **kwargs)
 
+    @property
+    def model(self):
+        return self.type._meta.model
 
-class LazyListField(Field):
+    def get_session(self, args, info):
+        return self.session
 
-    def get_type(self, schema):
-        return List(self.type)
+    def get_query(self, resolved_query, args, info):
+        self.get_session(args, info)
+        return resolved_query
 
-    def resolver(self, instance, args, info):
-        resolved = super(LazyListField, self).resolver(instance, args, info)
-        return LazyMap(resolved, self.type)
+    def from_list(self, connection_type, resolved, args, info):
+        qs = self.get_query(resolved, args, info)
+        return super(SQLAlchemyConnectionField, self).from_list(connection_type, qs, args, info)
 
 
 class ConnectionOrListField(Field):
@@ -38,7 +39,7 @@ class ConnectionOrListField(Field):
         if is_node(field_object_type):
             field = SQLAlchemyConnectionField(field_object_type)
         else:
-            field = LazyListField(field_object_type)
+            field = Field(List(field_object_type))
         field.contribute_to_class(self.object_type, self.attname)
         return schema.T(field)
 
