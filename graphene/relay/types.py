@@ -142,7 +142,7 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
 
 
 class MutationInputType(InputObjectType):
-    client_mutation_id = String(required=True)
+    clientMutationId = String(required=True)
 
 
 class RelayMutationMeta(MutationMeta):
@@ -162,7 +162,7 @@ class RelayMutationMeta(MutationMeta):
 
 
 class ClientIDMutation(six.with_metaclass(RelayMutationMeta, Mutation)):
-    client_mutation_id = String(required=True)
+    clientMutationId = String(required=True)
 
     class Meta:
         abstract = True
@@ -171,6 +171,6 @@ class ClientIDMutation(six.with_metaclass(RelayMutationMeta, Mutation)):
     def mutate(cls, instance, args, info):
         input = args.get('input')
         payload = cls.mutate_and_get_payload(input, info)
-        client_mutation_id = input.get('client_mutation_id')
-        setattr(payload, 'client_mutation_id', client_mutation_id)
+        client_mutation_id = input.get('clientMutationId') or input.get('client_mutation_id')
+        setattr(payload, 'clientMutationId', client_mutation_id)
         return payload

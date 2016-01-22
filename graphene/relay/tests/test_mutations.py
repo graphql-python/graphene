@@ -37,7 +37,7 @@ def test_mutation_arguments():
     assert 'input' in schema.T(ChangeNumber.arguments)
     inner_type = ChangeNumber.input_type
     client_mutation_id_field = inner_type._meta.fields_map[
-        'client_mutation_id']
+        'clientMutationId']
     assert issubclass(inner_type, graphene.InputObjectType)
     assert isinstance(client_mutation_id_field.type, graphene.NonNull)
     assert isinstance(client_mutation_id_field.type.of_type, graphene.String)
