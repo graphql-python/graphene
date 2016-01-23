@@ -18,10 +18,16 @@ def init_db():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
-    department = Department(name='Informatics')
-    db_session.add(department)
+    # Create the fixtures
+    engineering = Department(name='Engineering')
+    db_session.add(engineering)
+    hr = Department(name='Human Resources')
+    db_session.add(hr)
 
-    db_session.add(department)
-    employee = Employee(name='Peter', department=department)
-    db_session.add(employee)
+    peter = Employee(name='Peter', department=engineering)
+    db_session.add(peter)
+    roy = Employee(name='Roy', department=engineering)
+    db_session.add(roy)
+    tracy = Employee(name='Tracy', department=hr)
+    db_session.add(tracy)
     db_session.commit()

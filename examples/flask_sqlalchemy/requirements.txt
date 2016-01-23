@@ -1,4 +1,4 @@
 graphene[sqlalchemy]
-graphql_flask==1.0.0
+graphql_flask==1.1.0
 SQLAlchemy==1.0.11
 Flask==0.10.1
