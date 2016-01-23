@@ -125,9 +125,13 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
     class Meta:
         abstract = True
 
+    @classmethod
+    def global_id(cls, id):
+        type_name = cls._meta.type_name
+        return to_global_id(type_name, id)
+
     def to_global_id(self):
-        type_name = self._meta.type_name
-        return to_global_id(type_name, self.id)
+        return self.global_id(self.id)
 
     connection_type = Connection
     edge_type = Edge
