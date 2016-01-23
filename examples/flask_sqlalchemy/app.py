@@ -9,17 +9,18 @@ app.debug = True
 
 default_query = '''
 {
-  node(id:"%s") {
-    name
-    employees {
-      edges {
-        node {
+  allEmployees {
+    edges {
+      node {
+        id
+        name
+        department {
           name
         }
       }
     }
   }
-}'''.strip() % Department.global_id(1)
+}'''.strip()
 
 GraphQL(app, schema=schema, default_query=default_query)
 
