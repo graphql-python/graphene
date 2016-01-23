@@ -1,8 +1,7 @@
 from sqlalchemy.ext.declarative.api import DeclarativeMeta
+from sqlalchemy.orm.query import Query
 
-
-# from sqlalchemy.orm.base import object_mapper
-# from sqlalchemy.orm.exc import UnmappedInstanceError
+from graphene.utils import LazyList
 
 
 def get_type_for_model(schema, model):
@@ -20,10 +19,27 @@ def get_session(info):
     return schema.options.get('session')
 
 
+def get_query(model, info):
+    query = getattr(model, 'query')
+    if not query:
+        query = get_session(info).query(model)
+    return query
+
+
+class WrappedQuery(LazyList):
+
+    def __len__(self):
+        # Dont calculate the length using len(query), as this will
+        # evaluate the whole queryset and return it's length.
+        # Use .count() instead
+        return self._origin.count()
+
+
+def maybe_query(value):
+    if isinstance(value, Query):
+        return WrappedQuery(value)
+    return value
+
+
 def is_mapped(obj):
     return isinstance(obj, DeclarativeMeta)
-    # try:
-    #     object_mapper(obj)
-    # except UnmappedInstanceError:
-    #     return False
-    # return True

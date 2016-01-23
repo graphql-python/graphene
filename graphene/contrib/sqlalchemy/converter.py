@@ -19,16 +19,13 @@ def convert_sqlalchemy_relationship(relationship):
 
 
 def convert_sqlalchemy_column(column):
-    try:
-        return convert_sqlalchemy_type(column.type, column)
-    except Exception:
-        raise Exception(
-            "Don't know how to convert the SQLAlchemy field %s (%s)" % (column, column.__class__))
+    return convert_sqlalchemy_type(getattr(column, 'type', None), column)
 
 
 @singledispatch
 def convert_sqlalchemy_type(type, column):
-    raise Exception()
+    raise Exception(
+        "Don't know how to convert the SQLAlchemy field %s (%s)" % (column, column.__class__))
 
 
 @convert_sqlalchemy_type.register(types.Date)
