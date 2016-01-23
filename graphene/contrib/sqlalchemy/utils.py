@@ -20,9 +20,13 @@ def get_session(info):
 
 
 def get_query(model, info):
-    query = getattr(model, 'query')
+    query = getattr(model, 'query', None)
     if not query:
-        query = get_session(info).query(model)
+        session = get_session(info)
+        if not session:
+            raise Exception('A query in the model Base or a session in the schema is required for querying.\n'
+                            'Read more http://graphene-python.org/docs/sqlalchemy/tips/#querying')
+        query = session.query(model)
     return query
 
 

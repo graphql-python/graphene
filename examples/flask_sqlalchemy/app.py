@@ -1,7 +1,7 @@
 from flask import Flask
 from database import db_session, init_db
 
-from schema import schema, Department
+from schema import schema
 from graphql_flask import GraphQL
 
 app = Flask(__name__)

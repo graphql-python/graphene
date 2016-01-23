@@ -10,7 +10,7 @@ from ...relay.types import Connection, Node, NodeMeta
 from .converter import (convert_sqlalchemy_column,
                         convert_sqlalchemy_relationship)
 from .options import SQLAlchemyOptions
-from .utils import is_mapped, get_session
+from .utils import is_mapped, get_query
 
 
 class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
@@ -118,8 +118,8 @@ class SQLAlchemyNode(six.with_metaclass(
     def get_node(cls, id, info=None):
         try:
             model = cls._meta.model
-            session = get_session(info)
-            instance = session.query(model).filter(model.id == id).one()
+            query = get_query(model, info)
+            instance = query.filter(model.id == id).one()
             return cls(instance)
         except NoResultFound:
             return None

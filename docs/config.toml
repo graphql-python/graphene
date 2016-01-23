@@ -23,3 +23,10 @@ ga = "UA-12613282-7"
 	  "/docs/django/tutorial/",
 	  "/docs/django/filtering/",
 	]
+
+[docs.sqlalchemy]
+	name = "SQLAlchemy"
+	pages = [
+	  "/docs/sqlalchemy/tutorial/",
+	  "/docs/sqlalchemy/tips/",
+	]

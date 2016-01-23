@@ -72,7 +72,8 @@ setup(
             'graphql-django-view>=1.1.0',
         ],
         'sqlalchemy': [
-            'sqlalchemy'
+            'sqlalchemy',
+            'singledispatch>=3.4.0.3',
         ]
     },
 
