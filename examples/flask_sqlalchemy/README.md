@@ -1,5 +1,5 @@
-Cookbook Example Django Project
-===============================
+Example Flask+SQLAlchemy Project
+================================
 
 This example project demos integration between Graphene, Flask and SQLAlchemy.
 The project contains two models, one named `Department` and another
