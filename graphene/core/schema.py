@@ -26,7 +26,7 @@ class Schema(object):
     _executor = None
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 name='Schema', executor=None, plugins=None, auto_camelcase=True):
+                 name='Schema', executor=None, plugins=None, auto_camelcase=True, **options):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
@@ -38,6 +38,7 @@ class Schema(object):
         if auto_camelcase:
             plugins.append(CamelCase())
         self.plugins = PluginManager(self, plugins)
+        self.options = options
         signals.init_schema.send(self)
 
     def __repr__(self):

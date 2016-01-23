@@ -1,11 +1,12 @@
 import pytest
 
 import graphene
-from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
+from graphene import relay
+from graphene.contrib.sqlalchemy import SQLAlchemyObjectType, SQLAlchemyNode
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from .models import Base, Reporter
+from .models import Base, Reporter, Article
 
 db = create_engine('sqlite:///test_sqlalchemy.sqlite3')
 
@@ -33,6 +34,8 @@ def setup_fixtures(session):
     session.add(reporter)
     reporter2 = Reporter(first_name='ABO', last_name='Y')
     session.add(reporter2)
+    article = Article(headline='Hi!')
+    session.add(article)
     session.commit()
 
 
@@ -79,6 +82,92 @@ def test_should_query_well(session):
         }]
     }
     schema = graphene.Schema(query=Query)
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected
+
+
+def test_should_node(session):
+    setup_fixtures(session)
+
+    class ReporterNode(SQLAlchemyNode):
+
+        class Meta:
+            model = Reporter
+
+        @classmethod
+        def get_node(cls, id, info):
+            return Reporter(id=2, first_name='Cookie Monster')
+
+        def resolve_articles(self, *args, **kwargs):
+            return [Article(headline='Hi!')]
+
+    class ArticleNode(SQLAlchemyNode):
+
+        class Meta:
+            model = Article
+
+        # @classmethod
+        # def get_node(cls, id, info):
+        #     return Article(id=1, headline='Article node')
+
+    class Query(graphene.ObjectType):
+        node = relay.NodeField()
+        reporter = graphene.Field(ReporterNode)
+        article = graphene.Field(ArticleNode)
+
+        def resolve_reporter(self, *args, **kwargs):
+            return Reporter(id=1, first_name='ABA', last_name='X')
+
+        def resolve_article(self, *args, **kwargs):
+            return Article(id=1, headline='Article node')
+
+    query = '''
+        query ReporterQuery {
+          reporter {
+            id,
+            firstName,
+            articles {
+              edges {
+                node {
+                  headline
+                }
+              }
+            }
+            lastName,
+            email
+          }
+          myArticle: node(id:"QXJ0aWNsZU5vZGU6MQ==") {
+            id
+            ... on ReporterNode {
+                firstName
+            }
+            ... on ArticleNode {
+                headline
+            }
+          }
+        }
+    '''
+    expected = {
+        'reporter': {
+            'id': 'UmVwb3J0ZXJOb2RlOjE=',
+            'firstName': 'ABA',
+            'lastName': 'X',
+            'email': None,
+            'articles': {
+                'edges': [{
+                  'node': {
+                      'headline': 'Hi!'
+                  }
+                }]
+            },
+        },
+        'myArticle': {
+            'id': 'QXJ0aWNsZU5vZGU6MQ==',
+            'headline': 'Hi!'
+        }
+    }
+    schema = graphene.Schema(query=Query, session=session)
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected

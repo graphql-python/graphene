@@ -15,6 +15,11 @@ def get_type_for_model(schema, model):
             return _type
 
 
+def get_session(info):
+    schema = info.schema.graphene_schema
+    return schema.options.get('session')
+
+
 def is_mapped(obj):
     return isinstance(obj, DeclarativeMeta)
     # try:

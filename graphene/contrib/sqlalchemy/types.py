@@ -3,13 +3,14 @@ import inspect
 import six
 
 from sqlalchemy.inspection import inspect as sqlalchemyinspect
+from sqlalchemy.orm.exc import NoResultFound
 
 from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
 from ...relay.types import Connection, Node, NodeMeta
 from .converter import (convert_sqlalchemy_column,
                         convert_sqlalchemy_relationship)
 from .options import SQLAlchemyOptions
-from .utils import is_mapped
+from .utils import is_mapped, get_session
 
 
 class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
@@ -116,7 +117,9 @@ class SQLAlchemyNode(six.with_metaclass(
     @classmethod
     def get_node(cls, id, info=None):
         try:
-            instance = cls._meta.model.filter(id=id).one()
+            model = cls._meta.model
+            session = get_session(info)
+            instance = session.query(model).filter(model.id == id).one()
             return cls(instance)
-        except cls._meta.model.DoesNotExist:
+        except NoResultFound:
             return None
