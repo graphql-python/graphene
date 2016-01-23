@@ -7,6 +7,7 @@
 - **Relay:** Graphene has builtin support for Relay
 - **Django:** Automatic *Django model* mapping to Graphene Types. Check a fully working [Django](http://github.com/graphql-python/swapi-graphene) implementation
 
+Graphene also supports *SQLAlchemy*!
 
 *What is supported in this Python version?* **Everything**: Interfaces, ObjectTypes, Scalars, Unions and Relay (Nodes, Connections), in addition to queries, mutations and subscriptions.
 
@@ -18,8 +19,10 @@ For instaling graphene, just run this command in your shell
 
 ```bash
 pip install graphene
-# Or in case of need Django model support
+# In case of need Django model support
 pip install graphene[django]
+# Or in case of need SQLAlchemy support
+pip install graphene[sqlalchemy]
 ```
 
 
@@ -59,6 +62,7 @@ If you want to learn even more, you can also check the following [examples](exam
 * **Basic Schema**: [Starwars example](examples/starwars)
 * **Relay Schema**: [Starwars Relay example](examples/starwars_relay)
 * **Django model mapping**: [Starwars Django example](examples/starwars_django)
+* **SQLAlchemy model mapping**: [Flask SQLAlchemy example](examples/flask_sqlalchemy)
 
 
 ## Contributing
