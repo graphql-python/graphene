@@ -14,7 +14,7 @@ whole Graphene repository:
 ```bash
 # Get the example project code
 git clone https://github.com/graphql-python/graphene.git
-cd graphene/examples/cookbook
+cd graphene/examples/flask_sqlalchemy
 ```
 
 It is good idea (but not required) to create a virtual environment
@@ -46,5 +46,5 @@ Now the following command will setup the database, and start the server:
 
 
 Now head on over to
-[http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+[http://127.0.0.1:5000/graphiql](http://127.0.0.1:5000/graphiql)
 and run some queries!

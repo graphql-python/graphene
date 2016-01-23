@@ -1,16 +1,27 @@
-import json
 from flask import Flask
 from database import db_session, init_db
 
 from schema import schema, Department
+from graphql_flask import GraphQL
 
 app = Flask(__name__)
+app.debug = True
 
+default_query = '''
+{
+  node(id:"%s") {
+    name
+    employees {
+      edges {
+        node {
+          name
+        }
+      }
+    }
+  }
+}'''.strip() % Department.global_id(1)
 
-@app.route('/')
-def hello_world():
-    query = '{node(id:"%s"){name, employees { edges { node {name} } } } }' % Department.global_id(1)
-    return json.dumps(schema.execute(query).data)
+GraphQL(app, schema=schema, default_query=default_query)
 
 
 @app.teardown_appcontext
