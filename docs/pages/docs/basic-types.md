@@ -16,9 +16,9 @@ Also the following Types are available:
 - `graphene.List`
 - `graphene.NonNull`
 
-## Shorcuts
+## Shortcuts
 
-There are some shorcuts for code easier.
+There are some shortcuts for building schemas more easily.
 The following are equivalent
 
 ```python
