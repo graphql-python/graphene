@@ -62,6 +62,7 @@ setup(
         'django-filter>=0.10.0',
         'pytest>=2.7.2',
         'pytest-django',
+        'sqlalchemy',
         'mock',
     ],
     extras_require={
@@ -70,6 +71,10 @@ setup(
             'singledispatch>=3.4.0.3',
             'graphql-django-view>=1.1.0',
         ],
+        'sqlalchemy': [
+            'sqlalchemy',
+            'singledispatch>=3.4.0.3',
+        ]
     },
 
     cmdclass={'test': PyTest},

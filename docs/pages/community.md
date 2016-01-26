@@ -21,6 +21,9 @@ Django integration:
 -   **graphql-django-view**: [Source Code][5] - [PyPI package][6]
 -   **django-graphiql**: [Source Code][7] - [PyPI package][8]
 
+Flask integration:
+-   **graphql-flask**: [Source Code][9] - [PyPI package][10]
+
 ## Other related projects
 
 - [Flask GraphQL Demo](https://github.com/amitsaha/flask-graphql-demo) by [@echorand](https://twitter.com/echorand)
@@ -37,3 +40,5 @@ Django integration:
   [6]: https://pypi.python.org/pypi/graphql-django-view
   [7]: https://github.com/graphql-python/django-graphiql
   [8]: https://pypi.python.org/pypi/django-graphiql
+  [9]: https://github.com/graphql-python/graphql-flask
+  [10]: https://pypi.python.org/pypi/graphql-flask

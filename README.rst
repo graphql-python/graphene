@@ -12,6 +12,8 @@ building GraphQL schemas/types fast and easily.
    `Django <http://github.com/graphql-python/swapi-graphene>`__
    implementation
 
+Graphene also supports *SQLAlchemy*!
+
 *What is supported in this Python version?* **Everything**: Interfaces,
 ObjectTypes, Scalars, Unions and Relay (Nodes, Connections), in addition
 to queries, mutations and subscriptions.
@@ -27,8 +29,10 @@ For instaling graphene, just run this command in your shell
 .. code:: bash
 
     pip install graphene
-    # Or in case of need Django model support
+    # In case of need Django model support
     pip install graphene[django]
+    # Or in case of need SQLAlchemy support
+    pip install graphene[sqlalchemy]
 
 Examples
 --------
@@ -70,6 +74,8 @@ If you want to learn even more, you can also check the following
    example <examples/starwars_relay>`__
 -  **Django model mapping**: `Starwars Django
    example <examples/starwars_django>`__
+-  **SQLAlchemy model mapping**: `Flask SQLAlchemy
+   example <examples/flask_sqlalchemy>`__
 
 Contributing
 ------------

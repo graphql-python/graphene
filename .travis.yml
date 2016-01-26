@@ -25,6 +25,7 @@ install:
   if [ "$TEST_TYPE" = build ]; then
     pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter
     pip install --download-cache $HOME/.cache/pip/ -e .[django]
+    pip install --download-cache $HOME/.cache/pip/ -e .[sqlalchemy]
     pip install django==$DJANGO_VERSION
     python setup.py develop
   elif [ "$TEST_TYPE" = build_website ]; then
