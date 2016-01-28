@@ -2,7 +2,7 @@ from flask import Flask
 from database import db_session, init_db
 
 from schema import schema
-from graphql_flask import GraphQL
+from flask_graphql import GraphQL
 
 app = Flask(__name__)
 app.debug = True

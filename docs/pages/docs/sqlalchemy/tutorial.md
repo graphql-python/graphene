@@ -30,7 +30,7 @@ pip install graphene[sqlalchemy]
 
 # Install Flask and GraphQL Flask for exposing the schema through HTTP
 pip install Flask
-pip install graphql-flask
+pip install Flask-GraphQL
 ```
 
 ## Defining our models
@@ -121,12 +121,12 @@ Unlike a RESTful API, there is only a single URL from which GraphQL is accessed.
 
 We are going to use Flask to create a server that expose the GraphQL schema under `/graphql` and a interface for querying it easily: GraphiQL under `/graphiql`.
 
-Afortunately for us, the library `graphql-flask` that we installed previously is making the task quite easy.
+Afortunately for us, the library `Flask-GraphQL` that we installed previously is making the task quite easy.
 
 ```python
 # flask_sqlalchemy/app.py
 from flask import Flask
-from graphql_flask import GraphQL
+from flask_graphql import GraphQL
 
 from models import db_session
 from schema import schema, Department
