@@ -166,3 +166,17 @@ def test_field_resolve_vars():
         'hello': 'Hello Serkan'
     }
     assert result.data == expected
+
+
+def test_field_internal_type_deprecated():
+    deprecation_reason = 'No more used'
+    field = Field(String(), description='My argument',
+                  deprecation_reason=deprecation_reason)
+
+    class Query(ObjectType):
+        my_field = field
+    schema = Schema(query=Query)
+
+    type = schema.T(field)
+    assert isinstance(type, GraphQLField)
+    assert type.deprecation_reason == deprecation_reason

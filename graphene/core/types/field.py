@@ -18,7 +18,7 @@ class Field(NamedType, OrderedType):
 
     def __init__(
             self, type, description=None, args=None, name=None, resolver=None,
-            required=False, default=None, *args_list, **kwargs):
+            required=False, default=None, deprecation_reason=None, *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
         if isinstance(name, (Argument, ArgumentType)):
             kwargs['name'] = name
@@ -29,6 +29,7 @@ class Field(NamedType, OrderedType):
         self.required = required
         self.type = type
         self.description = description
+        self.deprecation_reason = deprecation_reason
         args = OrderedDict(args or {}, **kwargs)
         self.arguments = ArgumentsGroup(*args_list, **args)
         self.object_type = None
@@ -103,6 +104,7 @@ class Field(NamedType, OrderedType):
         assert type, 'Internal type for field %s is None' % str(self)
         return GraphQLField(type, args=schema.T(arguments),
                             resolver=self.decorate_resolver(resolver),
+                            deprecation_reason=self.deprecation_reason,
                             description=description,)
 
     def __repr__(self):
