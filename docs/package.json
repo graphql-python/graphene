@@ -25,7 +25,7 @@
     "nib": "^1.1.0",
     "react": "^0.14.6",
     "radium": "0.14.2",
-    "react-burger-menu": "^1.4.12",
+    "react-burger-menu": "1.4.12",
     "react-document-title": "^2.0.1",
     "react-dom": "^0.14.6",
     "react-router": "^0.13.5",
