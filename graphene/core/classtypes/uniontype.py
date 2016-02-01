@@ -1,3 +1,5 @@
+from functools import partial
+
 import six
 from graphql.core.type import GraphQLUnionType
 
@@ -35,6 +37,6 @@ class UnionType(six.with_metaclass(UnionTypeMeta, FieldsClassType)):
         return GraphQLUnionType(
             cls._meta.type_name,
             types=list(map(schema.T, cls._meta.types)),
-            resolve_type=cls._resolve_type,
+            resolve_type=partial(cls._resolve_type, schema),
             description=cls._meta.description,
         )
