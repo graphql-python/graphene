@@ -5,7 +5,9 @@ from graphene.contrib.sqlalchemy.converter import (convert_sqlalchemy_column,
                                                    convert_sqlalchemy_relationship)
 from graphene.contrib.sqlalchemy.fields import (ConnectionOrListField,
                                                 SQLAlchemyModelField)
-from sqlalchemy import Column, types
+from sqlalchemy import Table, Column, types
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_utils.types.choice import ChoiceType
 
 from .models import Article, Pet, Reporter
 
@@ -83,6 +85,23 @@ def test_should_float_convert_float():
 
 def test_should_numeric_convert_float():
     assert_column_conversion(types.Numeric(), graphene.Float)
+
+
+def test_should_choice_convert_enum():
+    TYPES = [
+        (u'es', u'Spanish'),
+        (u'en', u'English')
+    ]
+    column = Column(ChoiceType(TYPES), doc='Language', name='language')
+    Base = declarative_base()
+
+    Table('translatedmodel', Base.metadata, column)
+    graphene_type = convert_sqlalchemy_column(column)
+    assert issubclass(graphene_type, graphene.Enum)
+    assert graphene_type._meta.type_name == 'TRANSLATEDMODEL_LANGUAGE'
+    assert graphene_type._meta.description == 'Language'
+    assert graphene_type.__enum__.__members__['es'].value == 'Spanish'
+    assert graphene_type.__enum__.__members__['en'].value == 'English'
 
 
 def test_should_manytomany_convert_connectionorlist():
