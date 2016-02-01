@@ -4,6 +4,7 @@ from .mutation import Mutation
 from .objecttype import ObjectType
 from .options import Options
 from .scalar import Scalar
+from .enum import Enum
 from .uniontype import UnionType
 
 __all__ = [
@@ -13,4 +14,5 @@ __all__ = [
     'ObjectType',
     'Options',
     'Scalar',
+    'Enum',
     'UnionType']
