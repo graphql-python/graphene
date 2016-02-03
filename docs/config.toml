@@ -14,6 +14,7 @@ ga = "UA-12613282-7"
 	  "/docs/objecttypes/",
 	  "/docs/mutations/",
 	  "/docs/basic-types/",
+	  "/docs/enums/",
 	  "/docs/relay/",
 	]
 
