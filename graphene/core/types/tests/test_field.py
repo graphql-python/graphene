@@ -180,3 +180,41 @@ def test_field_internal_type_deprecated():
     type = schema.T(field)
     assert isinstance(type, GraphQLField)
     assert type.deprecation_reason == deprecation_reason
+
+
+def test_field_resolve_object():
+    class Root(object):
+        att = True
+
+        @staticmethod
+        def att_func():
+            return True
+
+    field = Field(String(), description='My argument')
+    field_func = Field(String(), description='My argument')
+
+    class Query(ObjectType):
+        att = field
+        att_func = field_func
+
+    assert field.resolver(Root, {}, None) is True
+    assert field.resolver(Root, {}, None) is True
+
+
+def test_field_resolve_source_object():
+    class Root(object):
+        att_source = True
+
+        @staticmethod
+        def att_func_source():
+            return True
+
+    field = Field(String(), source='att_source', description='My argument')
+    field_func = Field(String(), source='att_source', description='My argument')
+
+    class Query(ObjectType):
+        att = field
+        att_func = field_func
+
+    assert field.resolver(Root, {}, None) is True
+    assert field.resolver(Root, {}, None) is True
