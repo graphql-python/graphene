@@ -210,7 +210,7 @@ def test_field_resolve_source_object():
             return True
 
     field = Field(String(), source='att_source', description='My argument')
-    field_func = Field(String(), source='att_source', description='My argument')
+    field_func = Field(String(), source='att_func_source', description='My argument')
 
     class Query(ObjectType):
         att = field
