@@ -23,7 +23,7 @@ before_install:
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
-    pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter
+    pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter sqlalchemy_utils
     pip install --download-cache $HOME/.cache/pip/ -e .[django]
     pip install --download-cache $HOME/.cache/pip/ -e .[sqlalchemy]
     pip install django==$DJANGO_VERSION

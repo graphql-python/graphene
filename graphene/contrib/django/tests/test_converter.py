@@ -2,7 +2,8 @@ from django.db import models
 from py.test import raises
 
 import graphene
-from graphene.contrib.django.converter import convert_django_field
+from graphene.contrib.django.converter import (
+    convert_django_field, convert_django_field_with_choices)
 from graphene.contrib.django.fields import (ConnectionOrListField,
                                             DjangoModelField)
 
@@ -84,6 +85,26 @@ def test_should_boolean_convert_boolean():
 def test_should_nullboolean_convert_boolean():
     field = assert_conversion(models.NullBooleanField, graphene.Boolean)
     assert field.required is False
+
+
+def test_field_with_choices_convert_enum():
+    field = models.CharField(help_text='Language', choices=(
+        ('es', 'Spanish'),
+        ('en', 'English')
+    ))
+
+    class TranslatedModel(models.Model):
+        language = field
+
+        class Meta:
+            app_label = 'test'
+
+    graphene_type = convert_django_field_with_choices(field)
+    assert issubclass(graphene_type, graphene.Enum)
+    assert graphene_type._meta.type_name == 'TEST_TRANSLATEDMODEL_LANGUAGE'
+    assert graphene_type._meta.description == 'Language'
+    assert graphene_type.__enum__.__members__['es'].value == 'Spanish'
+    assert graphene_type.__enum__.__members__['en'].value == 'English'
 
 
 def test_should_float_convert_float():

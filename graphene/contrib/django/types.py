@@ -5,7 +5,7 @@ from django.db import models
 
 from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
 from ...relay.types import Connection, Node, NodeMeta
-from .converter import convert_django_field
+from .converter import convert_django_field_with_choices
 from .options import DjangoOptions
 from .utils import get_reverse_fields
 
@@ -29,7 +29,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we exclude this field in exclude_fields
                 continue
-            converted_field = convert_django_field(field)
+            converted_field = convert_django_field_with_choices(field)
             cls.add_to_class(field.name, converted_field)
 
     def construct(cls, *args, **kwargs):

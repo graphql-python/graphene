@@ -1,7 +1,3 @@
-from graphql.core.type import (
-    GraphQLEnumType as Enum
-)
-
 from graphene import signals
 
 from .core import (
@@ -11,6 +7,7 @@ from .core import (
     Interface,
     Mutation,
     Scalar,
+    Enum,
     InstanceType,
     LazyType,
     Argument,
@@ -58,6 +55,7 @@ __all__ = [
     'Interface',
     'Mutation',
     'Scalar',
+    'Enum',
     'Field',
     'InputField',
     'StringField',

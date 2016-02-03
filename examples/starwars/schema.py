@@ -1,15 +1,13 @@
-from graphql.core.type import GraphQLEnumValue
-
 import graphene
 from graphene import resolve_only_args
 
 from .data import get_character, get_droid, get_hero, get_human
 
-Episode = graphene.Enum('Episode', dict(
-    NEWHOPE=GraphQLEnumValue(4),
-    EMPIRE=GraphQLEnumValue(5),
-    JEDI=GraphQLEnumValue(6)
-))
+
+class Episode(graphene.Enum):
+    NEWHOPE = 4
+    EMPIRE = 5
+    JEDI = 6
 
 
 class Character(graphene.Interface):

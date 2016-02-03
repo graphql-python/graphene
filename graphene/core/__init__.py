@@ -7,7 +7,8 @@ from .classtypes import (
     InputObjectType,
     Interface,
     Mutation,
-    Scalar
+    Scalar,
+    Enum
 )
 
 from .types import (
@@ -42,5 +43,6 @@ __all__ = [
     'Interface',
     'Mutation',
     'Scalar',
+    'Enum',
     'Field',
     'InputField']

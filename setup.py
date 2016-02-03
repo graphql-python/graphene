@@ -63,6 +63,7 @@ setup(
         'pytest>=2.7.2',
         'pytest-django',
         'sqlalchemy',
+        'sqlalchemy_utils',
         'mock',
     ],
     extras_require={
