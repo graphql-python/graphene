@@ -46,6 +46,9 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
     class Meta:
         abstract = True
 
+    def __getattr__(self, name):
+        return self._root and getattr(self._root, name)
+
     def __init__(self, *args, **kwargs):
         signals.pre_init.send(self.__class__, args=args, kwargs=kwargs)
         self._root = kwargs.pop('_root', None)

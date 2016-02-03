@@ -4,6 +4,7 @@ from functools import wraps
 import six
 from graphql.core.type import GraphQLField, GraphQLInputObjectField
 
+from ...utils import maybe_func
 from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
@@ -18,7 +19,8 @@ class Field(NamedType, OrderedType):
 
     def __init__(
             self, type, description=None, args=None, name=None, resolver=None,
-            required=False, default=None, deprecation_reason=None, *args_list, **kwargs):
+            source=None, required=False, default=None, deprecation_reason=None,
+            *args_list, **kwargs):
         _creation_counter = kwargs.pop('_creation_counter', None)
         if isinstance(name, (Argument, ArgumentType)):
             kwargs['name'] = name
@@ -33,7 +35,12 @@ class Field(NamedType, OrderedType):
         args = OrderedDict(args or {}, **kwargs)
         self.arguments = ArgumentsGroup(*args_list, **args)
         self.object_type = None
+        self.attname = None
+        self.default_name = None
         self.resolver_fn = resolver
+        self.source = source
+        assert not (self.source and self.resolver_fn), ('You cannot have a source'
+                                                        ' and a resolver at the same time')
         self.default = default
 
     def contribute_to_class(self, cls, attname):
@@ -68,7 +75,8 @@ class Field(NamedType, OrderedType):
             return getattr(self.object_type, resolve_fn_name)
 
         def default_getter(instance, args, info):
-            return getattr(instance, self.attname, self.default)
+            value = getattr(instance, self.source or self.attname, self.default)
+            return maybe_func(value)
         return default_getter
 
     def get_type(self, schema):
@@ -80,6 +88,8 @@ class Field(NamedType, OrderedType):
         return snake_case_args(resolver)
 
     def internal_type(self, schema):
+        if not self.object_type:
+            raise Exception('The field is not mounted in any ClassType')
         resolver = self.resolver
         description = self.description
         arguments = self.arguments
