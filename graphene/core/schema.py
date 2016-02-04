@@ -52,6 +52,8 @@ class Schema(object):
     def T(self, _type):
         if not _type:
             return
+        if isinstance(_type, ClassType):
+            _type = type(_type)
         is_classtype = inspect.isclass(_type) and issubclass(_type, ClassType)
         is_instancetype = isinstance(_type, InstanceType)
         if is_classtype or is_instancetype:
