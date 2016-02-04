@@ -39,6 +39,7 @@ If you want to create a DateTime Scalar Type just type:
 
 ```python
 import datetime
+from graphene.core.classtypes import Scalar
 from graphql.core.language import ast
 
 class DateTime(Scalar):
@@ -56,6 +57,16 @@ class DateTime(Scalar):
     @staticmethod
     def parse_value(value):
         return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+```
+
+Unlike the other basic types, custom `Scalar` types should not be instantiated
+when used.
+
+```python
+import graphene
+
+class Post(graphene.ObjectType):
+    created = graphene.Field(DateTime)
 ```
 
 ## Mounting in ClassTypes
