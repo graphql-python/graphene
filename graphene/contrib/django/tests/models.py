@@ -26,6 +26,10 @@ class Article(models.Model):
     headline = models.CharField(max_length=100)
     pub_date = models.DateField()
     reporter = models.ForeignKey(Reporter, related_name='articles')
+    lang = models.CharField(max_length=2, help_text='Language', choices=[
+        ('es', 'Spanish'),
+        ('en', 'English')
+    ], default='es')
 
     def __str__(self):              # __unicode__ on Python 2
         return self.headline
