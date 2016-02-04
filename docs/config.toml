@@ -22,8 +22,9 @@ ga = "UA-12613282-7"
 	name = "Django"
 	pages = [
 	  "/docs/django/tutorial/",
-	  "/docs/django/authorization/",
 	  "/docs/django/filtering/",
+	  "/docs/django/authorization/",
+	  "/docs/django/debug/",
 	]
 
 [docs.sqlalchemy]
