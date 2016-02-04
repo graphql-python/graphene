@@ -59,16 +59,6 @@ class DateTime(Scalar):
         return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
 ```
 
-Unlike the other basic types, custom `Scalar` types should not be instantiated
-when used.
-
-```python
-import graphene
-
-class Post(graphene.ObjectType):
-    created = graphene.Field(DateTime)
-```
-
 ## Mounting in ClassTypes
 
 This types if are mounted in a `ObjectType`, `Interface` or `Mutation`,
