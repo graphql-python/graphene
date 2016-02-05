@@ -80,9 +80,10 @@ class Field(NamedType, OrderedType):
         return default_getter
 
     def get_type(self, schema):
+        _type = self._get_true_type(self.type)
         if self.required:
-            return NonNull(self.type)
-        return self.type
+            return NonNull(_type)
+        return _type
 
     def decorate_resolver(self, resolver):
         return snake_case_args(resolver)

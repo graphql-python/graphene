@@ -12,13 +12,16 @@ class OfType(MountedType):
         self.of_type = of_type
         super(OfType, self).__init__(*args, **kwargs)
 
+    def get_type(self):
+        return self._get_true_type(self.of_type)
+
     def internal_type(self, schema):
-        return self.T(schema.T(self.of_type))
+        return self.T(schema.T(self.get_type()))
 
     def mount(self, cls):
         self.parent = cls
         if isinstance(self.of_type, MountType):
-            self.of_type.mount(cls)
+            self.get_type().mount(cls)
 
 
 class List(OfType):
