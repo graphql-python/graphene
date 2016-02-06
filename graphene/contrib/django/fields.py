@@ -27,7 +27,7 @@ class DjangoConnectionField(ConnectionField):
         return resolved_qs
 
     def from_list(self, connection_type, resolved, args, info):
-        if not resolved:
+        if resolved is None:
             resolved = self.get_manager()
         resolved_qs = maybe_queryset(resolved)
         qs = self.get_queryset(resolved_qs, args, info)

@@ -57,7 +57,8 @@ class Field(NamedType, OrderedType):
 
     @property
     def resolver(self):
-        return self.resolver_fn or self.get_resolver_fn()
+        resolver = self.get_resolver_fn()
+        return resolver
 
     @property
     def default(self):
@@ -70,6 +71,9 @@ class Field(NamedType, OrderedType):
         self._default = value
 
     def get_resolver_fn(self):
+        if self.resolver_fn:
+            return self.resolver_fn
+
         resolve_fn_name = 'resolve_%s' % self.attname
         if hasattr(self.object_type, resolve_fn_name):
             return getattr(self.object_type, resolve_fn_name)

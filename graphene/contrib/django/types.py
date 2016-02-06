@@ -52,15 +52,14 @@ class InstanceObjectType(ObjectType):
         abstract = True
 
     def __init__(self, _root=None):
-        if _root:
-            assert isinstance(_root, self._meta.model), (
-                '{} received a non-compatible instance ({}) '
-                'when expecting {}'.format(
-                    self.__class__.__name__,
-                    _root.__class__.__name__,
-                    self._meta.model.__name__
-                ))
         super(InstanceObjectType, self).__init__(_root=_root)
+        assert not self._root or isinstance(self._root, self._meta.model), (
+            '{} received a non-compatible instance ({}) '
+            'when expecting {}'.format(
+                self.__class__.__name__,
+                self._root.__class__.__name__,
+                self._meta.model.__name__
+            ))
 
     @property
     def instance(self):
@@ -69,9 +68,6 @@ class InstanceObjectType(ObjectType):
     @instance.setter
     def instance(self, value):
         self._root = value
-
-    def __getattr__(self, attr):
-        return getattr(self._root, attr)
 
 
 class DjangoObjectType(six.with_metaclass(
