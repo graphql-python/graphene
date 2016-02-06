@@ -2,24 +2,14 @@ import pytest
 
 import graphene
 from graphene.contrib.django import DjangoNode, DjangoConnectionField
-from graphene.contrib.django.filter import DjangoFilterConnectionField
+from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 
 from ...tests.models import Reporter
 from ..plugin import DjangoDebugPlugin
 
 # from examples.starwars_django.models import Character
 
-from django.db.models import Count
-
 pytestmark = pytest.mark.django_db
-
-
-def count(qs):
-    query = qs.query
-    query.add_annotation(Count('*'), alias='__count', is_summary=True)
-    query.select = []
-    query.default_cols = False
-    return query
 
 
 def test_should_query_field():
@@ -154,21 +144,21 @@ def test_should_query_connection():
                 }
             }]
         },
-        '__debug': {
-            'sql': [{
-                'rawSql': str(count(Reporter.objects.all()))
-            }, {
-                'rawSql': str(Reporter.objects.all()[:1].query)
-            }]
-        }
     }
     schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
     result = schema.execute(query)
     assert not result.errors
-    assert result.data == expected
+    assert result.data['allReporters'] == expected['allReporters']
+    assert 'COUNT' in result.data['__debug']['sql'][0]['rawSql']
+    query = str(Reporter.objects.all()[:1].query)
+    assert result.data['__debug']['sql'][1]['rawSql'] == query
 
 
+@pytest.mark.skipif(not DJANGO_FILTER_INSTALLED,
+                    reason="requires django-filter")
 def test_should_query_connectionfilter():
+    from graphene.contrib.django.filter import DjangoFilterConnectionField
+
     r1 = Reporter(last_name='ABA')
     r1.save()
     r2 = Reporter(last_name='Griffin')
@@ -209,15 +199,11 @@ def test_should_query_connectionfilter():
                 }
             }]
         },
-        '__debug': {
-            'sql': [{
-                'rawSql': str(count(Reporter.objects.all()))
-            }, {
-                'rawSql': str(Reporter.objects.all()[:1].query)
-            }]
-        }
     }
     schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
     result = schema.execute(query)
     assert not result.errors
-    assert result.data == expected
+    assert result.data['allReporters'] == expected['allReporters']
+    assert 'COUNT' in result.data['__debug']['sql'][0]['rawSql']
+    query = str(Reporter.objects.all()[:1].query)
+    assert result.data['__debug']['sql'][1]['rawSql'] == query
