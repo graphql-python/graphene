@@ -125,14 +125,14 @@ def test_should_query_connection():
             model = Reporter
 
     class Query(graphene.ObjectType):
-        all_reporters_connection = DjangoConnectionField(ReporterType)
+        all_reporters = DjangoConnectionField(ReporterType)
 
         def resolve_all_reporters_connection(self, *args, **kwargs):
             return Reporter.objects.all()
 
     query = '''
         query ReporterQuery {
-          allReportersConnection(first:1) {
+          allReporters(first:1) {
             edges {
               node {
                 lastName
@@ -147,7 +147,7 @@ def test_should_query_connection():
         }
     '''
     expected = {
-        'allReportersConnection': {
+        'allReporters': {
             'edges': [{
                 'node': {
                     'lastName': 'ABA',
@@ -180,23 +180,14 @@ def test_should_query_connectionfilter():
             model = Reporter
 
     class Query(graphene.ObjectType):
-        all_reporters_connection_filter = DjangoFilterConnectionField(ReporterType)
+        all_reporters = DjangoFilterConnectionField(ReporterType)
 
         def resolve_all_reporters_connection_filter(self, *args, **kwargs):
             return Reporter.objects.all()
 
-        def resolve_all_reporters_connection(self, *args, **kwargs):
-            return Reporter.objects.all()
-
-        def resolve_all_reporters(self, *args, **kwargs):
-            return Reporter.objects.all()
-
-        def resolve_reporter(self, *args, **kwargs):
-            return Reporter.objects.first()
-
     query = '''
         query ReporterQuery {
-          allReportersConnectionFilter(first:1) {
+          allReporters(first:1) {
             edges {
               node {
                 lastName
@@ -211,7 +202,7 @@ def test_should_query_connectionfilter():
         }
     '''
     expected = {
-        'allReportersConnectionFilter': {
+        'allReporters': {
             'edges': [{
                 'node': {
                     'lastName': 'ABA',

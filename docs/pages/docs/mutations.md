@@ -18,7 +18,7 @@ class CreatePerson(graphene.Mutation):
     class Input:
         name = graphene.String()
 
-    ok = graphene.String()
+    ok = graphene.Boolean()
     person = graphene.Field('Person')
 
     @classmethod
