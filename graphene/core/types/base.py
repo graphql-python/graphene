@@ -5,6 +5,8 @@ import six
 
 
 class InstanceType(object):
+    def _get_true_type(self, _type):
+        return _type() if ('function' in str(type(_type))) else _type
 
     def internal_type(self, schema):
         raise NotImplementedError("internal_type for type {} is not implemented".format(self.__class__.__name__))
