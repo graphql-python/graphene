@@ -121,7 +121,7 @@ Unlike a RESTful API, there is only a single URL from which GraphQL is accessed.
 
 We are going to use Flask to create a server that expose the GraphQL schema under `/graphql` and a interface for querying it easily: GraphiQL under `/graphiql`.
 
-Afortunately for us, the library `Flask-GraphQL` that we installed previously is making the task quite easy.
+Fortunately for us, the library `Flask-GraphQL` that we previously installed makes this task quite easy.
 
 ```python
 # flask_sqlalchemy/app.py
