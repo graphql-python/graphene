@@ -5,7 +5,7 @@ description: Walkthrough Mutations
 
 # Mutations
 
-A Mutation is a special ObjectType that define also an Input.
+A Mutation is a special ObjectType that also defines an Input.
 
 ## Quick example
 
