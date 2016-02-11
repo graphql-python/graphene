@@ -133,7 +133,7 @@ The filtering functionality is provided by
 for details on the format for `filter_fields`.
 
 Note that the above `Query` class is marked as 'abstract'. This is because we
-want will now create a project-level query which will combine all our app-level
+will now create a project-level query which will combine all our app-level
 queries.
 
 Create the parent project-level `cookbook/schema.py`:
