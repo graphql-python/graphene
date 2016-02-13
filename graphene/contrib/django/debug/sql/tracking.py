@@ -117,7 +117,7 @@ class NormalCursorWrapper(object):
                 'sql': self.db.ops.last_executed_query(
                     self.cursor, sql, self._quote_params(params)),
                 'duration': duration,
-                'raw_sql': sql % params,
+                'raw_sql': sql,
                 'params': _params,
                 'start_time': start_time,
                 'stop_time': stop_time,
