@@ -47,8 +47,9 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
         abstract = True
 
     def __getattr__(self, name):
-        if name != '_root' and self._root:
-            return getattr(self._root, name)
+        if name == '_root':
+            return
+        return getattr(self._root, name)
 
     def __init__(self, *args, **kwargs):
         signals.pre_init.send(self.__class__, args=args, kwargs=kwargs)

@@ -11,6 +11,7 @@ class DjangoConnectionField(ConnectionField):
 
     def __init__(self, *args, **kwargs):
         self.on = kwargs.pop('on', False)
+        kwargs['default'] = kwargs.pop('default', self.get_manager)
         return super(DjangoConnectionField, self).__init__(*args, **kwargs)
 
     @property
@@ -27,8 +28,6 @@ class DjangoConnectionField(ConnectionField):
         return resolved_qs
 
     def from_list(self, connection_type, resolved, args, info):
-        if resolved is None:
-            resolved = self.get_manager()
         resolved_qs = maybe_queryset(resolved)
         qs = self.get_queryset(resolved_qs, args, info)
         return super(DjangoConnectionField, self).from_list(connection_type, qs, args, info)
