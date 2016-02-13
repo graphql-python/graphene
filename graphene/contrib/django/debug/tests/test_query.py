@@ -117,7 +117,7 @@ def test_should_query_connection():
     class Query(graphene.ObjectType):
         all_reporters = DjangoConnectionField(ReporterType)
 
-        def resolve_all_reporters_connection(self, *args, **kwargs):
+        def resolve_all_reporters(self, *args, **kwargs):
             return Reporter.objects.all()
 
     query = '''
@@ -172,7 +172,7 @@ def test_should_query_connectionfilter():
     class Query(graphene.ObjectType):
         all_reporters = DjangoFilterConnectionField(ReporterType)
 
-        def resolve_all_reporters_connection_filter(self, *args, **kwargs):
+        def resolve_all_reporters(self, *args, **kwargs):
             return Reporter.objects.all()
 
     query = '''
