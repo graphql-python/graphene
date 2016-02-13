@@ -42,17 +42,18 @@ class ObjectTypeMeta(FieldsClassTypeMeta):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
+    _root = None
 
     class Meta:
         abstract = True
 
     def __getattr__(self, name):
-        if name != '_root' and self._root:
-            return getattr(self._root, name)
+        print self._root
+        return getattr(self._root, name)
 
     def __init__(self, *args, **kwargs):
-        signals.pre_init.send(self.__class__, args=args, kwargs=kwargs)
         self._root = kwargs.pop('_root', None)
+        signals.pre_init.send(self.__class__, args=args, kwargs=kwargs)
         args_len = len(args)
         fields = self._meta.fields
         if args_len > len(fields):
