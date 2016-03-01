@@ -18,15 +18,23 @@ from .fields import GlobalIDField
 
 
 class PageInfo(ObjectType):
-    has_next_page = Boolean(
+
+    def __init__(self, start_cursor="", end_cursor="",
+                 has_previous_page=False, has_next_page=False):
+        self.startCursor = start_cursor
+        self.endCursor = end_cursor
+        self.hasPreviousPage = has_previous_page
+        self.hasNextPage = has_next_page
+
+    hasNextPage = Boolean(
         required=True,
         description='When paginating forwards, are there more items?')
-    has_previous_page = Boolean(
+    hasPreviousPage = Boolean(
         required=True,
         description='When paginating backwards, are there more items?')
-    start_cursor = String(
+    startCursor = String(
         description='When paginating backwards, the cursor to continue.')
-    end_cursor = String(
+    endCursor = String(
         description='When paginating forwards, the cursor to continue.')
 
 
@@ -49,11 +57,16 @@ class Edge(ObjectType):
 
 class Connection(ObjectType):
     '''A connection to a list of items.'''
+
+    def __init__(self, edges, page_info):
+        self.edges = edges
+        self.pageInfo = page_info
+
     class Meta:
         type_name = 'DefaultConnection'
 
-    page_info = Field(PageInfo, required=True,
-                      description='The Information to aid in pagination')
+    pageInfo = Field(PageInfo, required=True,
+                     description='The Information to aid in pagination')
 
     _connection_data = None
 
