@@ -17,7 +17,7 @@ class SQLAlchemyConnectionField(ConnectionField):
         return self.type._meta.model
 
     def get_query(self, resolved_query, args, info):
-        return resolved_query or get_query(self.model, info)
+        return resolved_query if resolved_query is not None else get_query(self.model, info)
 
     def from_list(self, connection_type, resolved, args, info):
         query = self.get_query(resolved, args, info)
