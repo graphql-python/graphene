@@ -130,7 +130,11 @@ class Query(ObjectType):
 The filtering functionality is provided by
 [django-filter](https://django-filter.readthedocs.org). See the
 [usage documentation](https://django-filter.readthedocs.org/en/latest/usage.html#the-filter)
-for details on the format for `filter_fields`.
+for details on the format for `filter_fields`. While optional, this tutorial makes use of this functionality so you will need to install `django-filter` for this tutorial to work:
+
+````bash
+pip install django-filter
+```
 
 Note that the above `Query` class is marked as 'abstract'. This is because we
 will now create a project-level query which will combine all our app-level
@@ -156,13 +160,15 @@ schema.query = Query
 You can think of this as being something like your top-level `urls.py`
 file (although it currently lacks any namespacing).
 
-## Adding GraphiQL
+## Update `INSTALLED_APPS`
 
-GraphiQL is a web-based integrated development environment to assist in the
-writing and executing of GraphQL queries. It will provide us with a simple
-and easy way of testing our cookbook project.
+Next, install your app and GraphiQL in your Django project. GraphiQL is
+a web-based integrated development environment to assist in the writing and
+executing of GraphQL queries. It will provide us with a simple and easy way
+of testing our cookbook project.
 
-Add `django_graphiql` to `INSTALLED_APPS` in `cookbook/settings.py`:
+Add `ingredients`, `graphene.contrib.django` and `django_graphiql` to
+`INSTALLED_APPS` in `cookbook/settings.py`:
 
 ```python
 INSTALLED_APPS = [
@@ -171,8 +177,12 @@ INSTALLED_APPS = [
 
     # This will also make the `graphql_schema` management command available
     'graphene.contrib.django',
+
+    # Install the ingredients app
+    'ingredients',
 ]
 ```
+
 
 ## Creating GraphQL and GraphiQL views
 
@@ -198,10 +208,19 @@ urlpatterns = [
 ]
 ```
 
+## Apply model changes to database
+
+Tell Django that we've added models and update the database schema to reflect these additions.
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
 ## Load some test data
 
 Now is a good time to load up some test data. The easiest option will be to
-[download the ingredients.json](https://raw.githubusercontent.com/graphql-python/graphene/feature/django/examples/cookbook/cookbook/ingredients/fixtures/ingredients.json)
+[download the ingredients.json](https://raw.githubusercontent.com/graphql-python/graphene/master/examples/cookbook_django/cookbook/ingredients/fixtures/ingredients.json)
 fixture and place it in
 `cookbook/ingredients/fixtures/ingredients.json`. You can then run the following:
 
@@ -211,7 +230,7 @@ $ python ./manage.py loaddata ingredients
 Installed 6 object(s) from 1 fixture(s)
 ```
 
-Alternatively you can use the Django admin interface to create some data youself.
+Alternatively you can use the Django admin interface to create some data yourself.
 You'll need to run the development server (see below), and create a login
 for yourself too (`./manage.py createsuperuser`).
 
@@ -282,7 +301,7 @@ Or you can get only 'meat' ingredients containing the letter 'e':
 ```graphql
 query {
   # You can also use `category: "CATEGORY GLOBAL ID"`
-  allIngredients(name_Icontains: "e", categoryName: "Meat") {
+  allIngredients(name_Icontains: "e", category_Name: "Meat") {
     edges {
       node {
         name
