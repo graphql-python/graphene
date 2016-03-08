@@ -132,7 +132,7 @@ The filtering functionality is provided by
 [usage documentation](https://django-filter.readthedocs.org/en/latest/usage.html#the-filter)
 for details on the format for `filter_fields`. While optional, this tutorial makes use of this functionality so you will need to install `django-filter` for this tutorial to work:
 
-````bash
+```bash
 pip install django-filter
 ```
 
