@@ -2,7 +2,7 @@ import pytest
 
 import graphene
 from graphene import relay
-from graphene.contrib.sqlalchemy import SQLAlchemyObjectType, SQLAlchemyNode
+from graphene.contrib.sqlalchemy import SQLAlchemyObjectType, SQLAlchemyNode, SQLAlchemyConnectionField
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -115,6 +115,7 @@ def test_should_node(session):
         node = relay.NodeField()
         reporter = graphene.Field(ReporterNode)
         article = graphene.Field(ArticleNode)
+        all_articles = SQLAlchemyConnectionField(ArticleNode)
 
         def resolve_reporter(self, *args, **kwargs):
             return Reporter(id=1, first_name='ABA', last_name='X')
@@ -136,6 +137,13 @@ def test_should_node(session):
             }
             lastName,
             email
+          }
+          allArticles {
+            edges {
+              node {
+                headline
+              }
+            }
           }
           myArticle: node(id:"QXJ0aWNsZU5vZGU6MQ==") {
             id
@@ -161,6 +169,13 @@ def test_should_node(session):
                   }
                 }]
             },
+        },
+        'allArticles': {
+            'edges': [{
+                'node': {
+                    'headline': 'Hi!'
+                }
+            }]
         },
         'myArticle': {
             'id': 'QXJ0aWNsZU5vZGU6MQ==',

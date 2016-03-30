@@ -7,21 +7,24 @@ from ...relay.utils import is_node
 from .utils import get_type_for_model, maybe_query, get_query
 
 
+class DefaultQuery(object):
+    pass
+
+
 class SQLAlchemyConnectionField(ConnectionField):
 
     def __init__(self, *args, **kwargs):
+        kwargs['default'] = kwargs.pop('default', lambda: DefaultQuery)
         return super(SQLAlchemyConnectionField, self).__init__(*args, **kwargs)
 
     @property
     def model(self):
         return self.type._meta.model
 
-    def get_query(self, resolved_query, args, info):
-        return resolved_query if resolved_query is not None else get_query(self.model, info)
-
     def from_list(self, connection_type, resolved, args, info):
-        query = self.get_query(resolved, args, info)
-        query = maybe_query(query)
+        if resolved is DefaultQuery:
+            resolved = get_query(self.model, info)
+        query = maybe_query(resolved)
         return super(SQLAlchemyConnectionField, self).from_list(connection_type, query, args, info)
 
 
