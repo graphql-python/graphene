@@ -20,7 +20,8 @@ from .fields import GlobalIDField
 class PageInfo(ObjectType):
 
     def __init__(self, start_cursor="", end_cursor="",
-                 has_previous_page=False, has_next_page=False):
+                 has_previous_page=False, has_next_page=False, **kwargs):
+        super(PageInfo, self).__init__(**kwargs)
         self.startCursor = start_cursor
         self.endCursor = end_cursor
         self.hasPreviousPage = has_previous_page
@@ -58,7 +59,8 @@ class Edge(ObjectType):
 class Connection(ObjectType):
     '''A connection to a list of items.'''
 
-    def __init__(self, edges, page_info):
+    def __init__(self, edges, page_info, **kwargs):
+        super(Connection, self).__init__(**kwargs)
         self.edges = edges
         self.pageInfo = page_info
 
