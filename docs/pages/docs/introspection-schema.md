@@ -14,10 +14,10 @@ Graphene comes with a management command for Django to dump your schema data to
 
 ## Usage
 
-Include `graphene.django.contrib` to `INSTALLED_APPS` in you project settings:
+Include `graphene.contrib.django` to `INSTALLED_APPS` in you project settings:
 
 ```python
-INSTALLED_APPS += ('graphene.django.contrib')
+INSTALLED_APPS += ('graphene.contrib.django')
 ```
 
 Assuming your Graphene schema is at `tutorial.quickstart.schema`, run the command:
