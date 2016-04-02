@@ -53,6 +53,14 @@ def test_should_ipaddress_convert_string():
     assert_conversion(models.GenericIPAddressField, graphene.String)
 
 
+def test_should_file_convert_string():
+    assert_conversion(models.FileField, graphene.String)
+
+
+def test_should_image_convert_string():
+    assert_conversion(models.ImageField, graphene.String)
+
+
 def test_should_auto_convert_id():
     assert_conversion(models.AutoField, graphene.ID, primary_key=True)
 

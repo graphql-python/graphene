@@ -31,6 +31,7 @@ def convert_django_field(field):
 @convert_django_field.register(models.SlugField)
 @convert_django_field.register(models.URLField)
 @convert_django_field.register(models.GenericIPAddressField)
+@convert_django_field.register(models.FileField)
 @convert_django_field.register(UUIDField)
 def convert_field_to_string(field):
     return String(description=field.help_text)
