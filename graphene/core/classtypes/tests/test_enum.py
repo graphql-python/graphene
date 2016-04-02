@@ -3,6 +3,7 @@ from graphql.core.type import GraphQLEnumType
 from graphene.core.schema import Schema
 
 from ..enum import Enum
+from ..objecttype import ObjectType
 
 
 def test_enum():
@@ -35,3 +36,14 @@ def test_enum_values():
     assert RGB.RED == 0
     assert RGB.GREEN == 1
     assert RGB.BLUE == 2
+
+
+def test_enum_instance():
+    RGB = Enum('RGB', dict(RED=0, GREEN=1, BLUE=2))
+    RGB_field = RGB(description='RGB enum description')
+
+    class ObjectWithColor(ObjectType):
+        color = RGB_field
+
+    object_field = ObjectWithColor._meta.fields_map['color']
+    assert object_field.description == 'RGB enum description'

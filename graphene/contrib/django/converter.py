@@ -1,4 +1,3 @@
-from collections import Iterable
 from django.db import models
 
 from ...core.types.scalars import ID, Boolean, Float, Int, String
