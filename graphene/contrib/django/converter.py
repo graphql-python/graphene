@@ -1,9 +1,8 @@
 from django.db import models
 
-from ...core.classtypes.objecttype import ObjectType
 from ...core.types.definitions import List
-from ...core.types.field import Field
 from ...core.types.scalars import ID, Boolean, Float, Int, String
+from ...core.types.custom_scalars import JSONString
 from ...core.classtypes.enum import Enum
 from .compat import RelatedObject, UUIDField, ArrayField, HStoreField, JSONField, RangeField
 from .utils import get_related_model, import_single_dispatch
@@ -103,7 +102,7 @@ def convert_postgres_array_to_list(field):
 @convert_django_field.register(HStoreField)
 @convert_django_field.register(JSONField)
 def convert_posgres_field_to_string(field):
-    return String(description=field.help_text)
+    return JSONString(description=field.help_text)
 
 
 @convert_django_field.register(RangeField)

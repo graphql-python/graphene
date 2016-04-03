@@ -66,11 +66,14 @@ def test_should_query_well():
 
 @pytest.mark.skipif(RangeField is MissingType,
                     reason="RangeField should exist")
-def test_should_query_ranges():
-    from django.contrib.postgres.fields import IntegerRangeField
+def test_should_query_postgres_fields():
+    from django.contrib.postgres.fields import IntegerRangeField, ArrayField, JSONField, HStoreField
 
     class Event(models.Model):
-        ages = IntegerRangeField(help_text='Range desc')
+        ages = IntegerRangeField(help_text='The age ranges')
+        data = JSONField(help_text='Data')
+        store = HStoreField()
+        tags = ArrayField(models.CharField(max_length=50))
 
     class EventType(DjangoObjectType):
         class Meta:
@@ -80,19 +83,30 @@ def test_should_query_ranges():
         event = graphene.Field(EventType)
 
         def resolve_event(self, *args, **kwargs):
-            return Event(ages=(0, 10))
+            return Event(
+                ages=(0, 10),
+                data={'angry_babies': True},
+                store={'h': 'store'},
+                tags=['child', 'angry', 'babies']
+            )
 
     schema = graphene.Schema(query=Query)
     query = '''
         query myQuery {
           event {
             ages
+            tags
+            data
+            store
           }
         }
     '''
     expected = {
         'event': {
             'ages': [0, 10],
+            'tags': ['child', 'angry', 'babies'],
+            'data': '{"angry_babies": true}',
+            'store': '{"h": "store"}',
         },
     }
     result = schema.execute(query)

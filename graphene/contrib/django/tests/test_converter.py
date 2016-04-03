@@ -8,6 +8,7 @@ from ..converter import (
 from ..fields import (ConnectionOrListField,
                       DjangoModelField)
 from ..compat import MissingType, ArrayField, HStoreField, JSONField, RangeField
+from graphene.core.types.custom_scalars import JSONString
 
 from .models import Article, Reporter
 
@@ -168,13 +169,13 @@ def test_should_postgres_array_multiple_convert_list():
 @pytest.mark.skipif(HStoreField is MissingType,
                     reason="HStoreField should exist")
 def test_should_postgres_hstore_convert_string():
-    assert_conversion(HStoreField, graphene.String)
+    assert_conversion(HStoreField, JSONString)
 
 
 @pytest.mark.skipif(JSONField is MissingType,
                     reason="JSONField should exist")
 def test_should_postgres_json_convert_string():
-    assert_conversion(JSONField, graphene.String)
+    assert_conversion(JSONField, JSONString)
 
 
 @pytest.mark.skipif(RangeField is MissingType,
