@@ -13,7 +13,6 @@ except ImportError:
         pass
 
 
-
 def convert_sqlalchemy_relationship(relationship):
     direction = relationship.direction
     model = relationship.mapper.entity

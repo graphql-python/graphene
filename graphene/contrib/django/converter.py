@@ -4,6 +4,7 @@ from ...core.classtypes.enum import Enum
 from ...core.types.custom_scalars import DateTime, JSONString
 from ...core.types.definitions import List
 from ...core.types.scalars import ID, Boolean, Float, Int, String
+from ...utils import to_const
 from .compat import (ArrayField, HStoreField, JSONField, RangeField,
                      RelatedObject, UUIDField)
 from .utils import get_related_model, import_single_dispatch
@@ -11,12 +12,17 @@ from .utils import get_related_model, import_single_dispatch
 singledispatch = import_single_dispatch()
 
 
+def convert_choices(choices):
+    for value, name in choices:
+        yield to_const(name), value
+
+
 def convert_django_field_with_choices(field):
     choices = getattr(field, 'choices', None)
     if choices:
         meta = field.model._meta
         name = '{}_{}_{}'.format(meta.app_label, meta.object_name, field.name)
-        return Enum(name.upper(), choices, description=field.help_text)
+        return Enum(name.upper(), list(convert_choices(choices)), description=field.help_text)
     return convert_django_field(field)
 
 

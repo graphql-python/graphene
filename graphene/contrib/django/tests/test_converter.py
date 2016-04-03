@@ -113,8 +113,8 @@ def test_field_with_choices_convert_enum():
     assert issubclass(graphene_type, graphene.Enum)
     assert graphene_type._meta.type_name == 'TEST_TRANSLATEDMODEL_LANGUAGE'
     assert graphene_type._meta.description == 'Language'
-    assert graphene_type.__enum__.__members__['es'].value == 'Spanish'
-    assert graphene_type.__enum__.__members__['en'].value == 'English'
+    assert graphene_type.__enum__.__members__['SPANISH'].value == 'es'
+    assert graphene_type.__enum__.__members__['ENGLISH'].value == 'en'
 
 
 def test_should_float_convert_float():

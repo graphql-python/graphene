@@ -1,8 +1,9 @@
 import six
 from graphql.core.type import GraphQLEnumType, GraphQLEnumValue
 
+from .base import ClassTypeMeta, ClassType
+from ..types.base import MountedType
 from ...utils.enum import Enum as PyEnum
-from .base import ClassType, ClassTypeMeta
 
 
 class EnumMeta(ClassTypeMeta):
@@ -17,7 +18,12 @@ class EnumMeta(ClassTypeMeta):
                 attrs[k] = v.value
         return super(EnumMeta, cls).construct(bases, attrs)
 
-    def __call__(cls, name, names=None, description=None):
+    def __call__(cls, *args, **kwargs):
+        if cls is Enum:
+            return cls.create_enum(*args, **kwargs)
+        return super(EnumMeta, cls).__call__(*args, **kwargs)
+
+    def create_enum(cls, name, names=None, description=None):
         attrs = {
             '__enum__': PyEnum(name, names)
         }
@@ -26,7 +32,7 @@ class EnumMeta(ClassTypeMeta):
         return type(name, (Enum,), attrs)
 
 
-class Enum(six.with_metaclass(EnumMeta, ClassType)):
+class Enum(six.with_metaclass(EnumMeta, ClassType, MountedType)):
 
     class Meta:
         abstract = True

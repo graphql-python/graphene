@@ -30,6 +30,8 @@ class Article(models.Model):
         ('es', 'Spanish'),
         ('en', 'English')
     ], default='es')
+    importance = models.IntegerField('Importance', null=True, blank=True,
+                                     choices=[(1, u'Very important'), (2, u'Not as important')])
 
     def __str__(self):              # __unicode__ on Python 2
         return self.headline
