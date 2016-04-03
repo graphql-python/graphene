@@ -1,7 +1,7 @@
 import pytest
 
 import graphene
-from graphene.contrib.django import DjangoNode, DjangoConnectionField
+from graphene.contrib.django import DjangoConnectionField, DjangoNode
 from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 
 from ...tests.models import Reporter
@@ -19,6 +19,7 @@ def test_should_query_field():
     r2.save()
 
     class ReporterType(DjangoNode):
+
         class Meta:
             model = Reporter
 

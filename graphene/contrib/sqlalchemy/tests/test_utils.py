@@ -1,4 +1,4 @@
-from graphene import Schema, ObjectType, String
+from graphene import ObjectType, Schema, String
 
 from ..utils import get_session
 

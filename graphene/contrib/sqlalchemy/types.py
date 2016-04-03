@@ -1,7 +1,6 @@
 import inspect
 
 import six
-
 from sqlalchemy.inspection import inspect as sqlalchemyinspect
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -10,7 +9,7 @@ from ...relay.types import Connection, Node, NodeMeta
 from .converter import (convert_sqlalchemy_column,
                         convert_sqlalchemy_relationship)
 from .options import SQLAlchemyOptions
-from .utils import is_mapped, get_query
+from .utils import get_query, is_mapped
 
 
 class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):

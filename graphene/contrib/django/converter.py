@@ -1,9 +1,12 @@
 from django.db import models
 
-from ...core.types.scalars import ID, Boolean, Float, Int, String
 from ...core.classtypes.enum import Enum
+from ...core.types.custom_scalars import DateTime, JSONString
+from ...core.types.definitions import List
+from ...core.types.scalars import ID, Boolean, Float, Int, String
 from ...utils import to_const
-from .compat import RelatedObject, UUIDField
+from .compat import (ArrayField, HStoreField, JSONField, RangeField,
+                     RelatedObject, UUIDField)
 from .utils import get_related_model, import_single_dispatch
 
 singledispatch = import_single_dispatch()
@@ -30,13 +33,13 @@ def convert_django_field(field):
         (field, field.__class__))
 
 
-@convert_django_field.register(models.DateField)
 @convert_django_field.register(models.CharField)
 @convert_django_field.register(models.TextField)
 @convert_django_field.register(models.EmailField)
 @convert_django_field.register(models.SlugField)
 @convert_django_field.register(models.URLField)
 @convert_django_field.register(models.GenericIPAddressField)
+@convert_django_field.register(models.FileField)
 @convert_django_field.register(UUIDField)
 def convert_field_to_string(field):
     return String(description=field.help_text)
@@ -72,6 +75,11 @@ def convert_field_to_float(field):
     return Float(description=field.help_text)
 
 
+@convert_django_field.register(models.DateField)
+def convert_date_to_string(field):
+    return DateTime(description=field.help_text)
+
+
 @convert_django_field.register(models.ManyToManyField)
 @convert_django_field.register(models.ManyToOneRel)
 @convert_django_field.register(models.ManyToManyRel)
@@ -94,3 +102,21 @@ def convert_relatedfield_to_djangomodel(field):
 def convert_field_to_djangomodel(field):
     from .fields import DjangoModelField
     return DjangoModelField(get_related_model(field), description=field.help_text)
+
+
+@convert_django_field.register(ArrayField)
+def convert_postgres_array_to_list(field):
+    base_type = convert_django_field(field.base_field)
+    return List(base_type, description=field.help_text)
+
+
+@convert_django_field.register(HStoreField)
+@convert_django_field.register(JSONField)
+def convert_posgres_field_to_string(field):
+    return JSONString(description=field.help_text)
+
+
+@convert_django_field.register(RangeField)
+def convert_posgres_range_to_string(field):
+    inner_type = convert_django_field(field.base_field)
+    return List(inner_type, description=field.help_text)

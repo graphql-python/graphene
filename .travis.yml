@@ -24,6 +24,7 @@ install:
 - |
   if [ "$TEST_TYPE" = build ]; then
     pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter sqlalchemy_utils
+    pip install --download-cache $HOME/.cache/pip psycopg2 > /dev/null 2>&1
     pip install --download-cache $HOME/.cache/pip/ -e .[django]
     pip install --download-cache $HOME/.cache/pip/ -e .[sqlalchemy]
     pip install django==$DJANGO_VERSION

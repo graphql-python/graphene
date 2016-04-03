@@ -4,7 +4,7 @@ from ...core.types.base import FieldType
 from ...core.types.definitions import List
 from ...relay import ConnectionField
 from ...relay.utils import is_node
-from .utils import get_type_for_model, maybe_query, get_query
+from .utils import get_query, get_type_for_model, maybe_query
 
 
 class DefaultQuery(object):
