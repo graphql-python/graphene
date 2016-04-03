@@ -1,8 +1,9 @@
 from django.db import models
 
+from ...core.types.definitions import List
 from ...core.types.scalars import ID, Boolean, Float, Int, String
 from ...core.classtypes.enum import Enum
-from .compat import RelatedObject, UUIDField
+from .compat import RelatedObject, UUIDField, ArrayField, HStoreField, JSONField
 from .utils import get_related_model, import_single_dispatch
 
 singledispatch = import_single_dispatch()
@@ -33,6 +34,8 @@ def convert_django_field(field):
 @convert_django_field.register(models.GenericIPAddressField)
 @convert_django_field.register(models.FileField)
 @convert_django_field.register(UUIDField)
+@convert_django_field.register(HStoreField)
+@convert_django_field.register(JSONField)
 def convert_field_to_string(field):
     return String(description=field.help_text)
 
@@ -89,3 +92,9 @@ def convert_relatedfield_to_djangomodel(field):
 def convert_field_to_djangomodel(field):
     from .fields import DjangoModelField
     return DjangoModelField(get_related_model(field), description=field.help_text)
+
+
+@convert_django_field.register(ArrayField)
+def convert_field_to_list(field):
+    base_type = convert_django_field(field.base_field)
+    return List(base_type, description=field.help_text)

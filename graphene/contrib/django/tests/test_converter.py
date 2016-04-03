@@ -1,11 +1,13 @@
+import pytest
 from django.db import models
 from py.test import raises
 
 import graphene
-from graphene.contrib.django.converter import (
+from ..converter import (
     convert_django_field, convert_django_field_with_choices)
-from graphene.contrib.django.fields import (ConnectionOrListField,
-                                            DjangoModelField)
+from ..fields import (ConnectionOrListField,
+                      DjangoModelField)
+from ..compat import MissingType, ArrayField, HStoreField, JSONField
 
 from .models import Article, Reporter
 
@@ -144,3 +146,32 @@ def test_should_onetoone_convert_model():
 def test_should_foreignkey_convert_model():
     field = assert_conversion(models.ForeignKey, DjangoModelField, Article)
     assert field.type.model == Article
+
+
+@pytest.mark.skipif(ArrayField is MissingType,
+                    reason="ArrayField should exist")
+def test_should_postgres_array_convert_list():
+    field = assert_conversion(ArrayField, graphene.List, models.CharField(max_length=100))
+    assert isinstance(field.type, graphene.List)
+    assert isinstance(field.type.of_type, graphene.String)
+
+
+@pytest.mark.skipif(ArrayField is MissingType,
+                    reason="ArrayField should exist")
+def test_should_postgres_array_multiple_convert_list():
+    field = assert_conversion(ArrayField, graphene.List, ArrayField(models.CharField(max_length=100)))
+    assert isinstance(field.type, graphene.List)
+    assert isinstance(field.type.of_type, graphene.List)
+    assert isinstance(field.type.of_type.of_type, graphene.String)
+
+
+@pytest.mark.skipif(HStoreField is MissingType,
+                    reason="HStoreField should exist")
+def test_should_postgres_hstore_convert_string():
+    assert_conversion(HStoreField, graphene.String)
+
+
+@pytest.mark.skipif(JSONField is MissingType,
+                    reason="JSONField should exist")
+def test_should_postgres_json_convert_string():
+    assert_conversion(JSONField, graphene.String)

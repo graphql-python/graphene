@@ -65,6 +65,8 @@ setup(
         'sqlalchemy',
         'sqlalchemy_utils',
         'mock',
+        # Required for Django postgres fields testing
+        'psycopg2',
     ],
     extras_require={
         'django': [
