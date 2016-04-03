@@ -1,3 +1,4 @@
+import datetime
 import pytest
 from py.test import raises
 from django.db import models
@@ -134,7 +135,7 @@ def test_should_node():
 
         @classmethod
         def get_node(cls, id, info):
-            return ArticleNode(Article(id=1, headline='Article node'))
+            return ArticleNode(Article(id=1, headline='Article node', pub_date=datetime.date(2002, 3, 11)))
 
     class Query(graphene.ObjectType):
         node = relay.NodeField()
@@ -167,6 +168,7 @@ def test_should_node():
             }
             ... on ArticleNode {
                 headline
+                pubDate
             }
           }
         }
@@ -187,7 +189,8 @@ def test_should_node():
         },
         'myArticle': {
             'id': 'QXJ0aWNsZU5vZGU6MQ==',
-            'headline': 'Article node'
+            'headline': 'Article node',
+            'pubDate': '2002-03-11',
         }
     }
     schema = graphene.Schema(query=Query)

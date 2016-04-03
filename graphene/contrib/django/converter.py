@@ -2,7 +2,7 @@ from django.db import models
 
 from ...core.types.definitions import List
 from ...core.types.scalars import ID, Boolean, Float, Int, String
-from ...core.types.custom_scalars import JSONString
+from ...core.types.custom_scalars import JSONString, DateTime
 from ...core.classtypes.enum import Enum
 from .compat import RelatedObject, UUIDField, ArrayField, HStoreField, JSONField, RangeField
 from .utils import get_related_model, import_single_dispatch
@@ -26,7 +26,6 @@ def convert_django_field(field):
         (field, field.__class__))
 
 
-@convert_django_field.register(models.DateField)
 @convert_django_field.register(models.CharField)
 @convert_django_field.register(models.TextField)
 @convert_django_field.register(models.EmailField)
@@ -67,6 +66,11 @@ def convert_field_to_nullboolean(field):
 @convert_django_field.register(models.FloatField)
 def convert_field_to_float(field):
     return Float(description=field.help_text)
+
+
+@convert_django_field.register(models.DateField)
+def convert_date_to_string(field):
+    return DateTime(description=field.help_text)
 
 
 @convert_django_field.register(models.ManyToManyField)

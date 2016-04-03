@@ -8,7 +8,7 @@ from ..converter import (
 from ..fields import (ConnectionOrListField,
                       DjangoModelField)
 from ..compat import MissingType, ArrayField, HStoreField, JSONField, RangeField
-from graphene.core.types.custom_scalars import JSONString
+from graphene.core.types.custom_scalars import JSONString, DateTime
 
 from .models import Article, Reporter
 
@@ -29,7 +29,7 @@ def test_should_unknown_django_field_raise_exception():
 
 
 def test_should_date_convert_string():
-    assert_conversion(models.DateField, graphene.String)
+    assert_conversion(models.DateField, DateTime)
 
 
 def test_should_char_convert_string():
