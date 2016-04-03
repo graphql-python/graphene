@@ -1,16 +1,17 @@
 from singledispatch import singledispatch
-
 from sqlalchemy import types
 from sqlalchemy.orm import interfaces
+
+from ...core.classtypes.enum import Enum
+from ...core.types.scalars import ID, Boolean, Float, Int, String
+from .fields import ConnectionOrListField, SQLAlchemyModelField
+
 try:
     from sqlalchemy_utils.types.choice import ChoiceType
 except ImportError:
     class ChoiceType(object):
         pass
 
-from ...core.classtypes.enum import Enum
-from ...core.types.scalars import ID, Boolean, Float, Int, String
-from .fields import ConnectionOrListField, SQLAlchemyModelField
 
 
 def convert_sqlalchemy_relationship(relationship):

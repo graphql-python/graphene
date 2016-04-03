@@ -1,6 +1,7 @@
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy.orm import backref, relationship
+
 from database import Base
-from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, func
-from sqlalchemy.orm import relationship, backref
 
 
 class Department(Base):

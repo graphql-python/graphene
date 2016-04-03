@@ -1,13 +1,13 @@
 from py.test import raises
+from sqlalchemy import Column, Table, types
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_utils.types.choice import ChoiceType
 
 import graphene
 from graphene.contrib.sqlalchemy.converter import (convert_sqlalchemy_column,
                                                    convert_sqlalchemy_relationship)
 from graphene.contrib.sqlalchemy.fields import (ConnectionOrListField,
                                                 SQLAlchemyModelField)
-from sqlalchemy import Table, Column, types
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_utils.types.choice import ChoiceType
 
 from .models import Article, Pet, Reporter
 

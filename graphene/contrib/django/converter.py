@@ -1,10 +1,11 @@
 from django.db import models
 
+from ...core.classtypes.enum import Enum
+from ...core.types.custom_scalars import DateTime, JSONString
 from ...core.types.definitions import List
 from ...core.types.scalars import ID, Boolean, Float, Int, String
-from ...core.types.custom_scalars import JSONString, DateTime
-from ...core.classtypes.enum import Enum
-from .compat import RelatedObject, UUIDField, ArrayField, HStoreField, JSONField, RangeField
+from .compat import (ArrayField, HStoreField, JSONField, RangeField,
+                     RelatedObject, UUIDField)
 from .utils import get_related_model, import_single_dispatch
 
 singledispatch = import_single_dispatch()

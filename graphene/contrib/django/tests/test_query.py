@@ -1,13 +1,14 @@
 import datetime
+
 import pytest
-from py.test import raises
 from django.db import models
+from py.test import raises
 
 import graphene
 from graphene import relay
-from ..types import DjangoNode, DjangoObjectType
-from ..compat import MissingType, ArrayField, HStoreField, JSONField, RangeField
 
+from ..compat import MissingType, RangeField
+from ..types import DjangoNode, DjangoObjectType
 from .models import Article, Reporter
 
 pytestmark = pytest.mark.django_db
@@ -77,6 +78,7 @@ def test_should_query_postgres_fields():
         tags = ArrayField(models.CharField(max_length=50))
 
     class EventType(DjangoObjectType):
+
         class Meta:
             model = Event
 

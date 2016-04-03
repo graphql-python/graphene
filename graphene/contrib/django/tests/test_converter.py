@@ -3,13 +3,12 @@ from django.db import models
 from py.test import raises
 
 import graphene
-from ..converter import (
-    convert_django_field, convert_django_field_with_choices)
-from ..fields import (ConnectionOrListField,
-                      DjangoModelField)
-from ..compat import MissingType, ArrayField, HStoreField, JSONField, RangeField
-from graphene.core.types.custom_scalars import JSONString, DateTime
+from graphene.core.types.custom_scalars import DateTime, JSONString
 
+from ..compat import (ArrayField, HStoreField, JSONField, MissingType,
+                      RangeField)
+from ..converter import convert_django_field, convert_django_field_with_choices
+from ..fields import ConnectionOrListField, DjangoModelField
 from .models import Article, Reporter
 
 

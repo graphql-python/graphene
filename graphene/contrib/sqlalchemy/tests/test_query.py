@@ -1,12 +1,13 @@
 import pytest
-
-import graphene
-from graphene import relay
-from graphene.contrib.sqlalchemy import SQLAlchemyObjectType, SQLAlchemyNode, SQLAlchemyConnectionField
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from .models import Base, Reporter, Article
+import graphene
+from graphene import relay
+from graphene.contrib.sqlalchemy import (SQLAlchemyConnectionField,
+                                         SQLAlchemyNode, SQLAlchemyObjectType)
+
+from .models import Article, Base, Reporter
 
 db = create_engine('sqlite:///test_sqlalchemy.sqlite3')
 
