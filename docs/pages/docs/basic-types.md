@@ -16,6 +16,10 @@ Also the following Types are available:
 - `graphene.List`
 - `graphene.NonNull`
 
+Graphene also provides custom scalars for Dates and JSON:
+- `graphene.core.types.custom_scalars.DateTime`
+- `graphene.core.types.custom_scalars.JSONString`
+
 ## Shortcuts
 
 There are some shortcuts for building schemas more easily.
