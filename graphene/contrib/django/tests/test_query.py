@@ -1,9 +1,11 @@
 import pytest
 from py.test import raises
+from django.db import models
 
 import graphene
 from graphene import relay
-from graphene.contrib.django import DjangoNode, DjangoObjectType
+from ..types import DjangoNode, DjangoObjectType
+from ..compat import MissingType, ArrayField, HStoreField, JSONField, RangeField
 
 from .models import Article, Reporter
 
@@ -57,6 +59,42 @@ def test_should_query_well():
         }
     }
     schema = graphene.Schema(query=Query)
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected
+
+
+@pytest.mark.skipif(RangeField is MissingType,
+                    reason="RangeField should exist")
+def test_should_query_ranges():
+    from django.contrib.postgres.fields import IntegerRangeField
+
+    class Event(models.Model):
+        ages = IntegerRangeField(help_text='Range desc')
+
+    class EventType(DjangoObjectType):
+        class Meta:
+            model = Event
+
+    class Query(graphene.ObjectType):
+        event = graphene.Field(EventType)
+
+        def resolve_event(self, *args, **kwargs):
+            return Event(ages=(0, 10))
+
+    schema = graphene.Schema(query=Query)
+    query = '''
+        query myQuery {
+          event {
+            ages
+          }
+        }
+    '''
+    expected = {
+        'event': {
+            'ages': [0, 10],
+        },
+    }
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected

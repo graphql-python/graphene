@@ -7,7 +7,7 @@ from ..converter import (
     convert_django_field, convert_django_field_with_choices)
 from ..fields import (ConnectionOrListField,
                       DjangoModelField)
-from ..compat import MissingType, ArrayField, HStoreField, JSONField
+from ..compat import MissingType, ArrayField, HStoreField, JSONField, RangeField
 
 from .models import Article, Reporter
 
@@ -175,3 +175,11 @@ def test_should_postgres_hstore_convert_string():
                     reason="JSONField should exist")
 def test_should_postgres_json_convert_string():
     assert_conversion(JSONField, graphene.String)
+
+
+@pytest.mark.skipif(RangeField is MissingType,
+                    reason="RangeField should exist")
+def test_should_postgres_range_convert_list():
+    from django.contrib.postgres.fields import IntegerRangeField
+    field = assert_conversion(IntegerRangeField, graphene.List)
+    assert isinstance(field.type.of_type, graphene.Int)

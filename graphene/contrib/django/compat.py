@@ -19,6 +19,6 @@ except:
 
 try:
     # Postgres fields are only available in Django 1.8+
-    from django.contrib.postgres.fields import ArrayField, HStoreField, JSONField
+    from django.contrib.postgres.fields import ArrayField, HStoreField, JSONField, RangeField
 except ImportError:
-    ArrayField, HStoreField, JSONField = (MissingType, ) * 3
+    ArrayField, HStoreField, JSONField, RangeField = (MissingType, ) * 4
