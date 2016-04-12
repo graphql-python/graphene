@@ -113,8 +113,9 @@ class SQLAlchemyNode(six.with_metaclass(
     def get_node(cls, id, info=None):
         try:
             model = cls._meta.model
+            identifier = cls._meta.identifier or "id"
             query = get_query(model, info)
-            instance = query.filter(model.id == id).one()
+            instance = query.filter(getattr(model, identifier) == id).one()
             return cls(instance)
         except NoResultFound:
             return None

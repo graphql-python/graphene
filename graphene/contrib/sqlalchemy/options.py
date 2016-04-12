@@ -10,6 +10,7 @@ class SQLAlchemyOptions(ObjectTypeOptions):
     def __init__(self, *args, **kwargs):
         super(SQLAlchemyOptions, self).__init__(*args, **kwargs)
         self.model = None
+        self.identifier = None
         self.valid_attrs += VALID_ATTRS
         self.only_fields = None
         self.exclude_fields = []
