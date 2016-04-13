@@ -109,11 +109,15 @@ class SQLAlchemyNode(six.with_metaclass(
     class Meta:
         abstract = True
 
+    def to_global_id(self):
+        id_ = getattr(self.instance, self._meta.identifier)
+        return self.global_id(id_)
+
     @classmethod
     def get_node(cls, id, info=None):
         try:
             model = cls._meta.model
-            identifier = cls._meta.identifier or "id"
+            identifier = cls._meta.identifier
             query = get_query(model, info)
             instance = query.filter(getattr(model, identifier) == id).one()
             return cls(instance)
