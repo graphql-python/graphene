@@ -2,7 +2,7 @@ from ...core.classtypes.objecttype import ObjectTypeOptions
 from ...relay.types import Node
 from ...relay.utils import is_node
 
-VALID_ATTRS = ('model', 'only_fields', 'exclude_fields')
+VALID_ATTRS = ('model', 'only_fields', 'exclude_fields', 'identifier')
 
 
 class SQLAlchemyOptions(ObjectTypeOptions):
@@ -10,6 +10,7 @@ class SQLAlchemyOptions(ObjectTypeOptions):
     def __init__(self, *args, **kwargs):
         super(SQLAlchemyOptions, self).__init__(*args, **kwargs)
         self.model = None
+        self.identifier = "id"
         self.valid_attrs += VALID_ATTRS
         self.only_fields = None
         self.exclude_fields = []

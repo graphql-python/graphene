@@ -7,7 +7,7 @@ from graphene import relay
 from graphene.contrib.sqlalchemy import (SQLAlchemyConnectionField,
                                          SQLAlchemyNode, SQLAlchemyObjectType)
 
-from .models import Article, Base, Reporter
+from .models import Article, Base, Reporter, Editor
 
 db = create_engine('sqlite:///test_sqlalchemy.sqlite3')
 
@@ -37,6 +37,8 @@ def setup_fixtures(session):
     session.add(reporter2)
     article = Article(headline='Hi!')
     session.add(article)
+    editor = Editor(name="John")
+    session.add(editor)
     session.commit()
 
 
@@ -183,6 +185,54 @@ def test_should_node(session):
             'headline': 'Hi!'
         }
     }
+    schema = graphene.Schema(query=Query, session=session)
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected
+
+
+def test_should_custom_identifier(session):
+    setup_fixtures(session)
+
+    class EditorNode(SQLAlchemyNode):
+
+        class Meta:
+            model = Editor
+            identifier = "editor_id"
+
+    class Query(graphene.ObjectType):
+        node = relay.NodeField(EditorNode)
+        all_editors = SQLAlchemyConnectionField(EditorNode)
+
+    query = '''
+        query EditorQuery {
+          allEditors {
+            edges {
+                node {
+                    id,
+                    name
+                }
+            }
+          },
+          node(id: "RWRpdG9yTm9kZTox") {
+            name
+          }
+        }
+    '''
+    expected = {
+        'allEditors': {
+            'edges': [{
+                'node': {
+                    'id': 'RWRpdG9yTm9kZTox',
+                    'name': 'John'
+                }
+            }]
+        },
+        'node': {
+            'name': 'John'
+        }
+    }
+
     schema = graphene.Schema(query=Query, session=session)
     result = schema.execute(query)
     assert not result.errors
