@@ -24,7 +24,7 @@ default_query = '''
         }
       }
     }
-  },
+  }
 }'''.strip()
 
 GraphQL(app, schema=schema, default_query=default_query)
