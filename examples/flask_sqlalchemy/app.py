@@ -12,14 +12,19 @@ default_query = '''
   allEmployees {
     edges {
       node {
-        id
-        name
+        id,
+        name,
         department {
+          id,
+          name
+        },
+        role {
+          id,
           name
         }
       }
     }
-  }
+  },
 }'''.strip()
 
 GraphQL(app, schema=schema, default_query=default_query)
