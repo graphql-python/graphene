@@ -11,6 +11,12 @@ association_table = Table('association', Base.metadata,
                           Column('reporter_id', Integer, ForeignKey('reporters.id')))
 
 
+class Editor(Base):
+    __tablename__ = 'editors'
+    editor_id = Column(Integer(), primary_key=True)
+    name = Column(String(100))
+
+
 class Pet(Base):
     __tablename__ = 'pets'
     id = Column(Integer(), primary_key=True)
