@@ -11,7 +11,7 @@ def test_date_time():
     def check_datetime(test_dt):
         assert test_dt.tzinfo == iso8601.UTC
         assert test_dt.year == 2016
-        assert test_dt.month == 04
+        assert test_dt.month == 4
         assert test_dt.day == 29
         assert test_dt.hour == 18
         assert test_dt.minute == 34
