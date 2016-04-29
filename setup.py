@@ -57,6 +57,7 @@ setup(
         'six>=1.10.0',
         'graphql-core>=0.4.9',
         'graphql-relay==0.3.3',
+        'iso8601==0.1.11',
     ],
     tests_require=[
         'django-filter>=0.10.0',

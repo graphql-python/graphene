@@ -1,5 +1,6 @@
 import datetime
 import json
+import iso8601
 
 from graphql.core.language import ast
 
@@ -33,9 +34,8 @@ class DateTime(Scalar):
     @staticmethod
     def parse_literal(node):
         if isinstance(node, ast.StringValue):
-            return datetime.datetime.strptime(
-                node.value, "%Y-%m-%dT%H:%M:%S.%f")
+            return iso8601.parse_date(node.value)
 
     @staticmethod
     def parse_value(value):
-        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+        return iso8601.parse_date(value)
