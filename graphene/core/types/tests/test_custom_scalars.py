@@ -8,7 +8,6 @@ from ..custom_scalars import DateTime
 def test_date_time():
     test_iso_string = "2016-04-29T18:34:12.502Z"
 
-
     def check_datetime(test_dt):
         assert test_dt.tzinfo == iso8601.UTC
         assert test_dt.year == 2016
