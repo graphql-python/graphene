@@ -67,8 +67,7 @@ class Schema(object):
     @property
     def executor(self):
         if not self._executor:
-            self._executor = Executor(
-                [SynchronousExecutionMiddleware()], map_type=OrderedDict)
+            self._executor = SyncExecutor()
         return self._executor
 
     @executor.setter
