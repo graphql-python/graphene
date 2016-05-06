@@ -1,7 +1,7 @@
 
 
-from graphql.core import graphql
-from graphql.core.type import GraphQLSchema
+from graphql import graphql
+from graphql.type import GraphQLSchema
 
 from graphene.core.fields import Field
 from graphene.core.schema import Schema

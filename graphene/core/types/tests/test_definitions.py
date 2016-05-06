@@ -1,4 +1,4 @@
-from graphql.core.type import GraphQLList, GraphQLNonNull, GraphQLString
+from graphql.type import GraphQLList, GraphQLNonNull, GraphQLString
 
 from graphene.core.schema import Schema
 

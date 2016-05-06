@@ -1,5 +1,5 @@
 import six
-from graphql.core.type import GraphQLEnumType, GraphQLEnumValue
+from graphql.type import GraphQLEnumType, GraphQLEnumValue
 
 from .base import ClassTypeMeta, ClassType
 from ..types.base import MountedType

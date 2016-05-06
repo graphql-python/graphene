@@ -1,5 +1,5 @@
 import pytest
-from graphql.core.type import GraphQLID, GraphQLNonNull
+from graphql.type import GraphQLID, GraphQLNonNull
 
 import graphene
 from graphene import relay

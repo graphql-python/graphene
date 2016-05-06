@@ -1,4 +1,4 @@
-from graphql.core import graphql
+from graphql import graphql
 from py.test import raises
 
 from graphene import Interface, List, ObjectType, Schema, String
