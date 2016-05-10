@@ -33,7 +33,8 @@ from graphene.core.fields import (
 )
 
 from graphene.utils import (
-    resolve_only_args
+    resolve_only_args,
+    with_context
 )
 
 __all__ = [

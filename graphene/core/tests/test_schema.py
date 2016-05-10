@@ -63,7 +63,7 @@ def test_query_schema_graphql():
             'type': 'Dog'
         }
     }
-    result = graphql(schema.schema, query, root=Human(object()))
+    result = graphql(schema.schema, query, root_value=Human(object()))
     assert not result.errors
     assert result.data == expected
 
@@ -84,7 +84,7 @@ def test_query_schema_execute():
             'type': 'Dog'
         }
     }
-    result = schema.execute(query, root=object())
+    result = schema.execute(query, root_value=object())
     assert not result.errors
     assert result.data == expected
 
@@ -93,8 +93,8 @@ def test_schema_get_type_map():
     assert_equal_lists(
         schema.schema.get_type_map().keys(),
         ['__Field', 'String', 'Pet', 'Character', '__InputValue',
-         '__Directive', '__TypeKind', '__Schema', '__Type', 'Human',
-         '__EnumValue', 'Boolean'])
+         '__Directive', '__DirectiveLocation', '__TypeKind', '__Schema',
+         '__Type', 'Human', '__EnumValue', 'Boolean'])
 
 
 def test_schema_no_query():
@@ -156,6 +156,10 @@ def test_lazytype():
 
 def test_schema_str():
     expected = """
+schema {
+  query: Human
+}
+
 interface Character {
   name: String
 }

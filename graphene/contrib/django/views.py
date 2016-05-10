@@ -11,6 +11,3 @@ class GraphQLView(BaseGraphQLView):
             executor=schema.executor,
             **kwargs
         )
-
-    def execute(self, *args, **kwargs):
-        return self.graphene_schema.execute(*args, **kwargs)

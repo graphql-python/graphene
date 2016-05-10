@@ -48,7 +48,7 @@ def test_to_arguments_wrong_type():
 
 
 def test_snake_case_args():
-    def resolver(instance, args, info):
+    def resolver(instance, args, context, info):
         return args['my_arg']['inner_arg']
     r = snake_case_args(resolver)
-    assert r(None, {'myArg': {'innerArg': 3}}, None) == 3
+    assert r(None, {'myArg': {'innerArg': 3}}, None, None) == 3

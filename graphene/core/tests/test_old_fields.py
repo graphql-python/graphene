@@ -94,7 +94,7 @@ def test_field_resolve():
     f = StringField(required=True, resolve=lambda *args: 'RESOLVED').as_field()
     f.contribute_to_class(MyOt, 'field_name')
     field_type = schema.T(f)
-    assert 'RESOLVED' == field_type.resolver(MyOt, None, None)
+    assert 'RESOLVED' == field_type.resolver(MyOt, None, None, None)
 
 
 def test_field_resolve_type_custom():

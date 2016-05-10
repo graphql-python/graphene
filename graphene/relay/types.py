@@ -14,6 +14,7 @@ from ..core.types import Boolean, Field, List, String
 from ..core.types.argument import ArgumentsGroup
 from ..core.types.definitions import NonNull
 from ..utils import memoize
+from ..utils.wrap_resolver_function import wrap_resolver_function
 from .fields import GlobalIDField
 
 

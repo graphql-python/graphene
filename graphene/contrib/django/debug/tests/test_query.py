@@ -149,6 +149,7 @@ def test_should_query_connection():
     schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
     result = schema.execute(query)
     assert not result.errors
+    print result.data['__debug']['sql']
     assert result.data['allReporters'] == expected['allReporters']
     assert 'COUNT' in result.data['__debug']['sql'][0]['rawSql']
     query = str(Reporter.objects.all()[:1].query)

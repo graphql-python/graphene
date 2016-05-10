@@ -72,8 +72,8 @@ class DjangoDebugPlugin(Plugin):
 
     @contextmanager
     def context_execution(self, executor):
-        executor['root'] = WrappedRoot(root=executor['root'])
+        executor['root_value'] = WrappedRoot(root=executor.get('root_value'))
         executor['schema'] = self.wrap_schema(executor['schema'])
-        self.enable_instrumentation(executor['root'])
+        self.enable_instrumentation(executor['root_value'])
         yield executor
         self.disable_instrumentation()

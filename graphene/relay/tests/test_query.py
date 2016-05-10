@@ -2,7 +2,7 @@ import pytest
 from graphql.type import GraphQLID, GraphQLNonNull
 
 import graphene
-from graphene import relay
+from graphene import relay, with_context
 
 schema = graphene.Schema()
 
@@ -16,7 +16,7 @@ class MyNode(relay.Node):
     name = graphene.String()
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, id, context, info):
         return MyNode(id=id, name='mo')
 
 
@@ -24,8 +24,9 @@ class SpecialNode(relay.Node):
     value = graphene.String()
 
     @classmethod
-    def get_node(cls, id, info):
-        value = "!!!" if info.request_context.get('is_special') else "???"
+    @with_context
+    def get_node(cls, id, context, info):
+        value = "!!!" if context.get('is_special') else "???"
         return SpecialNode(id=id, value=value)
 
 
@@ -108,7 +109,7 @@ def test_get_node_info(specialness, value):
             'value': value,
         },
     }
-    result = schema.execute(query, request_context={'is_special': specialness})
+    result = schema.execute(query, context_value={'is_special': specialness})
     assert not result.errors
     assert result.data == expected
 

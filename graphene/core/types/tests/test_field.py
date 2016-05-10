@@ -25,7 +25,7 @@ def test_field_internal_type():
     assert field.attname == 'my_field'
     assert isinstance(type, GraphQLField)
     assert type.description == 'My argument'
-    assert type.resolver(None, {}, None) == 'RESOLVED'
+    assert type.resolver(None, {}, None, None) == 'RESOLVED'
     assert type.type == GraphQLString
 
 
@@ -44,7 +44,7 @@ def test_field_objectype_resolver():
     type = schema.T(field)
     assert isinstance(type, GraphQLField)
     assert type.description == 'Custom description'
-    assert type.resolver(Query(), {}, None) == 'RESOLVED'
+    assert type.resolver(Query(), {}, None, None) == 'RESOLVED'
 
 
 def test_field_custom_name():
@@ -143,7 +143,7 @@ def test_field_resolve_argument():
     schema = Schema(query=Query)
 
     type = schema.T(field)
-    assert type.resolver(None, {'firstName': 'Peter'}, None) == 'Peter'
+    assert type.resolver(None, {'firstName': 'Peter'}, None, None) == 'Peter'
 
 
 def test_field_resolve_vars():
@@ -160,7 +160,7 @@ def test_field_resolve_vars():
     {
             hello(firstName:$firstName)
     }
-    """, args={"firstName": "Serkan"})
+    """, variable_values={"firstName": "Serkan"})
 
     expected = {
         'hello': 'Hello Serkan'

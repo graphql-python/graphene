@@ -5,6 +5,7 @@ import six
 from graphql.type import GraphQLField, GraphQLInputObjectField
 
 from ...utils import maybe_func
+from ...utils.wrap_resolver_function import wrap_resolver_function
 from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
@@ -105,14 +106,15 @@ class Field(NamedType, OrderedType):
             assert len(arguments) == 0
             arguments = type_objecttype.get_arguments()
             resolver = getattr(type_objecttype, 'mutate')
+            resolver = wrap_resolver_function(resolver)
         else:
-            my_resolver = resolver
+            my_resolver = wrap_resolver_function(resolver)
 
             @wraps(my_resolver)
-            def wrapped_func(instance, args, info):
+            def wrapped_func(instance, args, context, info):
                 if not isinstance(instance, self.object_type):
                     instance = self.object_type(_root=instance)
-                return my_resolver(instance, args, info)
+                return my_resolver(instance, args, context, info)
             resolver = wrapped_func
 
         assert type, 'Internal type for field %s is None' % str(self)
