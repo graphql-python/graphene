@@ -26,6 +26,7 @@ Flask integration:
 
 ## Other related projects
 
+- [Graphene Todo MVC Example](https://github.com/mickeyinfoshan/graphene_todo) by [@mickeyinfoshan](https://github.com/mickeyinfoshan)
 - [Flask GraphQL Demo](https://github.com/amitsaha/flask-graphql-demo) by [@echorand](https://twitter.com/echorand)
 - [Example GraphQL application](https://github.com/msoedov/flask-graphql-example) by [@msoedov](https://twitter.com/msoedov) with Flask, pypy/python3 and MongoDB (using Docker containers)
 
