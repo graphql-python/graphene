@@ -80,7 +80,7 @@ class NodeField(Field):
         if not is_node(object_type) or (self.field_object_type and object_type != field_object_type):
             return
 
-        return object_type.get_node(_id, info)
+        return object_type.get_node(_id, context, info)
 
     @with_context
     def resolver(self, instance, args, context, info):

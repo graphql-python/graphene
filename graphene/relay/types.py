@@ -14,7 +14,7 @@ from ..core.types import Boolean, Field, List, String
 from ..core.types.argument import ArgumentsGroup
 from ..core.types.definitions import NonNull
 from ..utils import memoize
-from ..utils.wrap_resolver_function import wrap_resolver_function
+from ..utils.wrap_resolver_function import has_context
 from .fields import GlobalIDField
 
 
@@ -108,7 +108,7 @@ class NodeMeta(InterfaceMeta):
         get_node = getattr(cls, 'get_node', None)
         assert get_node, 'get_node classmethod not found in %s Node' % cls
         assert callable(get_node), 'get_node have to be callable'
-        args = 3
+        args = 4
         if isinstance(get_node, staticmethod):
             args -= 1
 
@@ -120,12 +120,15 @@ class NodeMeta(InterfaceMeta):
 
             @staticmethod
             @wraps(get_node)
-            def wrapped_node(*node_args):
-                if len(node_args) < args:
-                    node_args += (None, )
-                return get_node(*node_args[:-1])
-
-            setattr(cls, 'get_node', wrapped_node)
+            def wrapped_node(id, context=None, info=None):
+                node_args = [id, info, context]
+                if has_context(get_node):
+                    return get_node(*node_args[:get_node_num_args-1], context=context)
+                if get_node_num_args-1 == 0:
+                    return get_node(id)
+                return get_node(*node_args[:get_node_num_args-1])
+            node_func = wrapped_node
+            setattr(cls, 'get_node', node_func)
 
     def construct(cls, *args, **kwargs):
         cls = super(NodeMeta, cls).construct(*args, **kwargs)
