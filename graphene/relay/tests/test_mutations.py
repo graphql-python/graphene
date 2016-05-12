@@ -1,4 +1,4 @@
-from graphql.core.type import GraphQLInputObjectField
+from graphql.type import GraphQLInputObjectField
 
 import graphene
 from graphene import relay

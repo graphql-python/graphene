@@ -1,7 +1,7 @@
 from functools import partial
 
 import six
-from graphql.core.type import GraphQLObjectType
+from graphql.type import GraphQLObjectType
 
 from graphene import signals
 

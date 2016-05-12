@@ -1,7 +1,7 @@
 from functools import wraps
 from itertools import chain
 
-from graphql.core.type import GraphQLArgument
+from graphql.type import GraphQLArgument
 
 from ...utils import ProxySnakeDict
 from .base import ArgumentType, GroupNamedType, NamedType, OrderedType

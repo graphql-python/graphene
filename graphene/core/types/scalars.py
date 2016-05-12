@@ -1,4 +1,4 @@
-from graphql.core.type import (GraphQLBoolean, GraphQLFloat, GraphQLID,
+from graphql.type import (GraphQLBoolean, GraphQLFloat, GraphQLID,
                                GraphQLInt, GraphQLString)
 
 from .base import MountedType

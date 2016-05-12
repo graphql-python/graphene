@@ -1,12 +1,10 @@
 import inspect
 from collections import OrderedDict
 
-from graphql.core.execution.executor import Executor
-from graphql.core.execution.middlewares.sync import \
-    SynchronousExecutionMiddleware
-from graphql.core.type import GraphQLSchema as _GraphQLSchema
-from graphql.core.utils.introspection_query import introspection_query
-from graphql.core.utils.schema_printer import print_schema
+from graphql.execution.executors.sync import SyncExecutor
+from graphql.type import GraphQLSchema as _GraphQLSchema
+from graphql.utils.introspection_query import introspection_query
+from graphql.utils.schema_printer import print_schema
 
 from graphene import signals
 
@@ -68,9 +66,6 @@ class Schema(object):
 
     @property
     def executor(self):
-        if not self._executor:
-            self._executor = Executor(
-                [SynchronousExecutionMiddleware()], map_type=OrderedDict)
         return self._executor
 
     @executor.setter

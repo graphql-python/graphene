@@ -1,4 +1,4 @@
-from graphql.core.type import GraphQLList
+from graphql.type import GraphQLList
 from pytest import raises
 
 import graphene

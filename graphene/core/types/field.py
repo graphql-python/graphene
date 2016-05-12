@@ -2,7 +2,7 @@ from collections import OrderedDict
 from functools import wraps
 
 import six
-from graphql.core.type import GraphQLField, GraphQLInputObjectField
+from graphql.type import GraphQLField, GraphQLInputObjectField
 
 from ...utils import maybe_func
 from ..classtypes.base import FieldsClassType

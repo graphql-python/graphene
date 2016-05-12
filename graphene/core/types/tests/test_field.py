@@ -1,4 +1,4 @@
-from graphql.core.type import (GraphQLField, GraphQLInputObjectField,
+from graphql.type import (GraphQLField, GraphQLInputObjectField,
                                GraphQLString)
 
 from graphene.core.schema import Schema

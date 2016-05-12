@@ -1,6 +1,6 @@
 from functools import partial
 
-from graphql.core.type import GraphQLInputObjectType
+from graphql.type import GraphQLInputObjectType
 
 from .base import FieldsClassType
 

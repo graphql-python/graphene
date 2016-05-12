@@ -1,4 +1,4 @@
-from graphql.core.type import GraphQLUnionType
+from graphql.type import GraphQLUnionType
 
 from graphene.core.schema import Schema
 from graphene.core.types import String
