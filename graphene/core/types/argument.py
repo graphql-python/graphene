@@ -1,7 +1,7 @@
 from functools import wraps
 from itertools import chain
 
-from graphql.core.type import GraphQLArgument
+from graphql.type import GraphQLArgument
 
 from ...utils import ProxySnakeDict
 from .base import ArgumentType, GroupNamedType, NamedType, OrderedType
@@ -57,7 +57,7 @@ def to_arguments(*args, **kwargs):
 
 def snake_case_args(resolver):
     @wraps(resolver)
-    def wrapped_resolver(instance, args, info):
-        return resolver(instance, ProxySnakeDict(args), info)
+    def wrapped_resolver(instance, args, context, info):
+        return resolver(instance, ProxySnakeDict(args), context, info)
 
     return wrapped_resolver

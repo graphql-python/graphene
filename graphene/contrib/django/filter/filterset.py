@@ -4,25 +4,25 @@ from django.db import models
 from django.utils.text import capfirst
 from django_filters import Filter, MultipleChoiceFilter
 from django_filters.filterset import FilterSet, FilterSetMetaclass
-from graphql_relay.node.node import from_global_id
 
 from graphene.contrib.django.forms import (GlobalIDFormField,
                                            GlobalIDMultipleChoiceField)
+from graphql_relay.node.node import from_global_id
 
 
 class GlobalIDFilter(Filter):
     field_class = GlobalIDFormField
 
     def filter(self, qs, value):
-        gid = from_global_id(value)
-        return super(GlobalIDFilter, self).filter(qs, gid.id)
+        _type, _id = from_global_id(value)
+        return super(GlobalIDFilter, self).filter(qs, _id)
 
 
 class GlobalIDMultipleChoiceFilter(MultipleChoiceFilter):
     field_class = GlobalIDMultipleChoiceField
 
     def filter(self, qs, value):
-        gids = [from_global_id(v).id for v in value]
+        gids = [from_global_id(v)[1] for v in value]
         return super(GlobalIDMultipleChoiceFilter, self).filter(qs, gids)
 
 

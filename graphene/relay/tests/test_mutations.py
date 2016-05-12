@@ -1,4 +1,4 @@
-from graphql.core.type import GraphQLInputObjectField
+from graphql.type import GraphQLInputObjectField
 
 import graphene
 from graphene import relay
@@ -76,6 +76,6 @@ def test_execute_mutations():
             'result': '5',
         }
     }
-    result = schema.execute(query, root=object())
+    result = schema.execute(query, root_value=object())
     assert not result.errors
     assert result.data == expected

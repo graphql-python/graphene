@@ -7,7 +7,7 @@ from graphene import relay
 from graphene.contrib.sqlalchemy import (SQLAlchemyConnectionField,
                                          SQLAlchemyNode, SQLAlchemyObjectType)
 
-from .models import Article, Base, Reporter, Editor
+from .models import Article, Base, Editor, Reporter
 
 db = create_engine('sqlite:///test_sqlalchemy.sqlite3')
 

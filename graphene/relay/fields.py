@@ -1,9 +1,11 @@
 import six
+
 from graphql_relay.node.node import from_global_id
 
 from ..core.fields import Field
 from ..core.types.definitions import NonNull
 from ..core.types.scalars import ID, Int, String
+from ..utils import with_context
 
 
 class ConnectionField(Field):
@@ -65,14 +67,13 @@ class NodeField(Field):
             object_type or Node, id=id, *args, **kwargs)
         self.field_object_type = object_type
 
-    def id_fetcher(self, global_id, info):
+    def id_fetcher(self, global_id, context, info):
         from graphene.relay.utils import is_node
         schema = info.schema.graphene_schema
         try:
-            resolved_global_id = from_global_id(global_id)
+            _type, _id = from_global_id(global_id)
         except:
             return None
-        _type, _id = resolved_global_id.type, resolved_global_id.id
         object_type = schema.get_type(_type)
         if isinstance(self.field_object_type, six.string_types):
             field_object_type = schema.get_type(self.field_object_type)
@@ -81,11 +82,12 @@ class NodeField(Field):
         if not is_node(object_type) or (self.field_object_type and object_type != field_object_type):
             return
 
-        return object_type.get_node(_id, info)
+        return object_type.get_node(_id, context, info)
 
-    def resolver(self, instance, args, info):
+    @with_context
+    def resolver(self, instance, args, context, info):
         global_id = args.get('id')
-        return self.id_fetcher(global_id, info)
+        return self.id_fetcher(global_id, context, info)
 
 
 class GlobalIDField(Field):

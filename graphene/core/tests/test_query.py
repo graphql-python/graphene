@@ -1,7 +1,7 @@
 
 
-from graphql.core import graphql
-from graphql.core.type import GraphQLSchema
+from graphql import graphql
+from graphql.type import GraphQLSchema
 
 from graphene.core.fields import Field
 from graphene.core.schema import Schema
@@ -40,7 +40,7 @@ Human_type = schema.T(Human)
 
 def test_type():
     assert Human._meta.fields_map['name'].resolver(
-        Human(object()), {}, None) == 'Peter'
+        Human(object()), {}, None, None) == 'Peter'
 
 
 def test_query():
@@ -59,6 +59,6 @@ def test_query():
             'type': 'Dog'
         }
     }
-    result = graphql(schema, query, root=Human(object()))
+    result = graphql(schema, query, root_value=Human(object()))
     assert not result.errors
     assert result.data == expected

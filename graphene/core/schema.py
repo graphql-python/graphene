@@ -1,12 +1,9 @@
 import inspect
-from collections import OrderedDict
 
-from graphql.core.execution.executor import Executor
-from graphql.core.execution.middlewares.sync import \
-    SynchronousExecutionMiddleware
-from graphql.core.type import GraphQLSchema as _GraphQLSchema
-from graphql.core.utils.introspection_query import introspection_query
-from graphql.core.utils.schema_printer import print_schema
+from graphql import graphql
+from graphql.type import GraphQLSchema as _GraphQLSchema
+from graphql.utils.introspection_query import introspection_query
+from graphql.utils.schema_printer import print_schema
 
 from graphene import signals
 
@@ -68,9 +65,6 @@ class Schema(object):
 
     @property
     def executor(self):
-        if not self._executor:
-            self._executor = Executor(
-                [SynchronousExecutionMiddleware()], map_type=OrderedDict)
         return self._executor
 
     @executor.setter
@@ -121,10 +115,19 @@ class Schema(object):
     def types(self):
         return self._types_names
 
-    def execute(self, request='', root=None, args=None, **kwargs):
-        kwargs = dict(kwargs, request=request, root=root, args=args, schema=self.schema)
+    def execute(self, request_string='', root_value=None, variable_values=None,
+                context_value=None, operation_name=None, executor=None):
+        kwargs = dict(
+            schema=self.schema,
+            request_string=request_string,
+            root_value=root_value,
+            context_value=context_value,
+            variable_values=variable_values,
+            operation_name=operation_name,
+            executor=executor or self._executor
+        )
         with self.plugins.context_execution(**kwargs) as execute_kwargs:
-            return self.executor.execute(**execute_kwargs)
+            return graphql(**execute_kwargs)
 
     def introspect(self):
-        return self.execute(introspection_query).data
+        return graphql(self.schema, introspection_query).data

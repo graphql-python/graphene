@@ -1,6 +1,5 @@
 import iso8601
-
-from graphql.core.language.ast import StringValue
+from graphql.language.ast import StringValue
 
 from ..custom_scalars import DateTime
 

@@ -1,4 +1,4 @@
-from graphql.core.type import GraphQLObjectType
+from graphql.type import GraphQLObjectType
 from mock import patch
 
 from graphene import Schema

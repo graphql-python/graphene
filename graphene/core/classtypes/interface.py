@@ -1,7 +1,7 @@
 from functools import partial
 
 import six
-from graphql.core.type import GraphQLInterfaceType
+from graphql.type import GraphQLInterfaceType
 
 from .base import FieldsClassTypeMeta
 from .objecttype import ObjectType, ObjectTypeMeta

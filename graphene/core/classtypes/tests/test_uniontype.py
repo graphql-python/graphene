@@ -1,4 +1,4 @@
-from graphql.core.type import GraphQLUnionType
+from graphql.type import GraphQLUnionType
 
 from graphene.core.schema import Schema
 from graphene.core.types import String
@@ -25,4 +25,4 @@ def test_uniontype():
     assert isinstance(object_type, GraphQLUnionType)
     assert Thing._meta.type_name == 'Thing'
     assert object_type.description == 'Thing union description'
-    assert object_type.get_possible_types() == [schema.T(Human), schema.T(Pet)]
+    assert object_type.get_types() == [schema.T(Human), schema.T(Pet)]

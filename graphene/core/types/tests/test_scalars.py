@@ -1,5 +1,5 @@
-from graphql.core.type import (GraphQLBoolean, GraphQLFloat, GraphQLID,
-                               GraphQLInt, GraphQLString)
+from graphql.type import (GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt,
+                          GraphQLString)
 
 from graphene.core.schema import Schema
 

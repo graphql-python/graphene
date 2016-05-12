@@ -1,4 +1,4 @@
-from graphql.core.type import GraphQLScalarType
+from graphql.type import GraphQLScalarType
 
 from ...schema import Schema
 from ..scalar import Scalar
@@ -6,7 +6,7 @@ from ..scalar import Scalar
 
 def test_custom_scalar():
     import datetime
-    from graphql.core.language import ast
+    from graphql.language import ast
 
     class DateTimeScalar(Scalar):
         '''DateTimeScalar Documentation'''

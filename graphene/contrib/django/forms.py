@@ -3,6 +3,7 @@ import binascii
 from django.core.exceptions import ValidationError
 from django.forms import CharField, Field, IntegerField, MultipleChoiceField
 from django.utils.translation import ugettext_lazy as _
+
 from graphql_relay import from_global_id
 
 
@@ -16,13 +17,13 @@ class GlobalIDFormField(Field):
             return None
 
         try:
-            gid = from_global_id(value)
+            _type, _id = from_global_id(value)
         except (TypeError, ValueError, UnicodeDecodeError, binascii.Error):
             raise ValidationError(self.error_messages['invalid'])
 
         try:
-            IntegerField().clean(gid.id)
-            CharField().clean(gid.type)
+            IntegerField().clean(_id)
+            CharField().clean(_type)
         except ValidationError:
             raise ValidationError(self.error_messages['invalid'])
 
