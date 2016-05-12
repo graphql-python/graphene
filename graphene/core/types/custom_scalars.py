@@ -1,6 +1,6 @@
 import json
-import iso8601
 
+import iso8601
 from graphql.language import ast
 
 from ...core.classtypes.scalar import Scalar

@@ -66,4 +66,5 @@ __all__ = [
     'ListField',
     'NonNullField',
     'FloatField',
-    'resolve_only_args']
+    'resolve_only_args',
+    'with_context']

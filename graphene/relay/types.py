@@ -4,6 +4,7 @@ from collections import Iterable
 from functools import wraps
 
 import six
+
 from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import to_global_id
 
@@ -123,10 +124,10 @@ class NodeMeta(InterfaceMeta):
             def wrapped_node(id, context=None, info=None):
                 node_args = [id, info, context]
                 if has_context(get_node):
-                    return get_node(*node_args[:get_node_num_args-1], context=context)
-                if get_node_num_args-1 == 0:
+                    return get_node(*node_args[:get_node_num_args - 1], context=context)
+                if get_node_num_args - 1 == 0:
                     return get_node(id)
-                return get_node(*node_args[:get_node_num_args-1])
+                return get_node(*node_args[:get_node_num_args - 1])
             node_func = wrapped_node
             setattr(cls, 'get_node', node_func)
 

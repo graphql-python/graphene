@@ -1,10 +1,12 @@
 import six
+
 from graphql_relay.node.node import from_global_id
 
 from ..core.fields import Field
 from ..core.types.definitions import NonNull
 from ..core.types.scalars import ID, Int, String
 from ..utils import with_context
+
 
 class ConnectionField(Field):
 

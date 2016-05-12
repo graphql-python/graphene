@@ -1,9 +1,9 @@
 import six
 from graphql.type import GraphQLEnumType, GraphQLEnumValue
 
-from .base import ClassTypeMeta, ClassType
-from ..types.base import MountedType
 from ...utils.enum import Enum as PyEnum
+from ..types.base import MountedType
+from .base import ClassType, ClassTypeMeta
 
 
 class EnumMeta(ClassTypeMeta):

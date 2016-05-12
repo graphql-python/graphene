@@ -1,5 +1,5 @@
 # coding: utf-8
-from ..str_converters import to_camel_case, to_snake_case, to_const
+from ..str_converters import to_camel_case, to_const, to_snake_case
 
 
 def test_snake_case():

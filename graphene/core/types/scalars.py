@@ -1,5 +1,5 @@
-from graphql.type import (GraphQLBoolean, GraphQLFloat, GraphQLID,
-                               GraphQLInt, GraphQLString)
+from graphql.type import (GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt,
+                          GraphQLString)
 
 from .base import MountedType
 
