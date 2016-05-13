@@ -73,7 +73,7 @@ setup(
         'django': [
             'Django>=1.6.0',
             'singledispatch>=3.4.0.3',
-            'graphql-django-view==1.3b1',
+            'graphql-django-view>=1.3',
         ],
         'sqlalchemy': [
             'sqlalchemy',
