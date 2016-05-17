@@ -124,7 +124,7 @@ def test_should_node():
             model = Reporter
 
         @classmethod
-        def get_node(cls, id, info):
+        def get_node(cls, id, context, info):
             return ReporterNode(Reporter(id=2, first_name='Cookie Monster'))
 
         def resolve_articles(self, *args, **kwargs):
@@ -136,7 +136,7 @@ def test_should_node():
             model = Article
 
         @classmethod
-        def get_node(cls, id, info):
+        def get_node(cls, id, context, info):
             return ArticleNode(Article(id=1, headline='Article node', pub_date=datetime.date(2002, 3, 11)))
 
     class Query(graphene.ObjectType):

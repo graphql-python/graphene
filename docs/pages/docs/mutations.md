@@ -22,7 +22,7 @@ class CreatePerson(graphene.Mutation):
     person = graphene.Field('Person')
 
     @classmethod
-    def mutate(cls, instance, args, info):
+    def mutate(cls, instance, args, context, info):
         person = Person(name=args.get('name'))
         ok = True
         return CreatePerson(person=person, ok=ok)

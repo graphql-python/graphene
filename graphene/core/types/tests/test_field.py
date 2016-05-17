@@ -132,7 +132,7 @@ def test_inputfield_internal_type():
 
 
 def test_field_resolve_argument():
-    def resolver(instance, args, info):
+    def resolver(instance, args, context, info):
         return args.get('first_name')
 
     field = Field(String(), first_name=String(), description='My argument', resolver=resolver)
@@ -149,7 +149,7 @@ def test_field_resolve_vars():
     class Query(ObjectType):
         hello = String(first_name=String())
 
-        def resolve_hello(self, args, info):
+        def resolve_hello(self, args, context, info):
             return 'Hello ' + args.get('first_name')
 
     schema = Schema(query=Query)
@@ -196,8 +196,8 @@ def test_field_resolve_object():
         att = field
         att_func = field_func
 
-    assert field.resolver(Root, {}, None) is True
-    assert field.resolver(Root, {}, None) is True
+    assert field.resolver(Root, {}, None, None) is True
+    assert field.resolver(Root, {}, None, None) is True
 
 
 def test_field_resolve_source_object():
@@ -215,5 +215,5 @@ def test_field_resolve_source_object():
         att = field
         att_func = field_func
 
-    assert field.resolver(Root, {}, None) is True
-    assert field.resolver(Root, {}, None) is True
+    assert field.resolver(Root, {}, None, None) is True
+    assert field.resolver(Root, {}, None, None) is True

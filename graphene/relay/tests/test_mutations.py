@@ -19,7 +19,7 @@ class ChangeNumber(relay.ClientIDMutation):
     result = graphene.String()
 
     @classmethod
-    def mutate_and_get_payload(cls, input, info):
+    def mutate_and_get_payload(cls, input, context, info):
         global my_id
         my_id = input.get('to', my_id + 1)
         return ChangeNumber(result=my_id)

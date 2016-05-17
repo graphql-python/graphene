@@ -16,5 +16,5 @@ def wrap_resolver_function(func):
         if has_context(func):
             return func(self, args, context, info)
         # For old compatibility
-        return func(self, args, info)
+        return func(self, args, context, info)
     return inner

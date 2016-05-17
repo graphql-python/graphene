@@ -11,7 +11,7 @@ class OtherNode(relay.Node):
     name = graphene.String()
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, id, context, info):
         pass
 
 

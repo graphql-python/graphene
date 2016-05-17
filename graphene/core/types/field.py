@@ -79,7 +79,7 @@ class Field(NamedType, OrderedType):
         if hasattr(self.object_type, resolve_fn_name):
             return getattr(self.object_type, resolve_fn_name)
 
-        def default_getter(instance, args, info):
+        def default_getter(instance, args, context, info):
             value = getattr(instance, self.source or self.attname, self.default)
             return maybe_func(value)
         return default_getter

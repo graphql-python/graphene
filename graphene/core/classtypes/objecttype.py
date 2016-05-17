@@ -104,5 +104,5 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
         )
 
     @classmethod
-    def wrap(cls, instance, args, info):
+    def wrap(cls, instance, args, context, info):
         return cls(_root=instance)

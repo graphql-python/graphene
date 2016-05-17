@@ -11,7 +11,7 @@ class Ship(relay.Node):
     name = graphene.String(description='The name of the ship.')
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, id, context, info):
         return get_ship(id)
 
 
@@ -27,7 +27,7 @@ class Faction(relay.Node):
         return [get_ship(ship_id) for ship_id in self.ships]
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, id, context, info):
         return get_faction(id)
 
 
@@ -41,7 +41,7 @@ class IntroduceShip(relay.ClientIDMutation):
     faction = graphene.Field(Faction)
 
     @classmethod
-    def mutate_and_get_payload(cls, input, info):
+    def mutate_and_get_payload(cls, input, context, info):
         ship_name = input.get('ship_name')
         faction_id = input.get('faction_id')
         ship = create_ship(ship_name, faction_id)

@@ -16,7 +16,7 @@ class ChangeNumber(graphene.Mutation):
     result = graphene.String()
 
     @classmethod
-    def mutate(cls, instance, args, info):
+    def mutate(cls, instance, args, context, info):
         global my_id
         my_id = args.get('to', my_id + 1)
         return ChangeNumber(result=my_id)
