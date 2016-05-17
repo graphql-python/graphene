@@ -24,13 +24,13 @@ class DjangoConnectionField(ConnectionField):
         else:
             return self.model._default_manager
 
-    def get_queryset(self, resolved_qs, args, info):
+    def get_queryset(self, resolved_qs, args, context, info):
         return resolved_qs
 
-    def from_list(self, connection_type, resolved, args, info):
+    def from_list(self, connection_type, resolved, args, context, info):
         resolved_qs = maybe_queryset(resolved)
-        qs = self.get_queryset(resolved_qs, args, info)
-        return super(DjangoConnectionField, self).from_list(connection_type, qs, args, info)
+        qs = self.get_queryset(resolved_qs, args, context, info)
+        return super(DjangoConnectionField, self).from_list(connection_type, qs, args, context, info)
 
 
 class ConnectionOrListField(Field):

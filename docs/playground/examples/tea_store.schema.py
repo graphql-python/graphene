@@ -21,7 +21,7 @@ TEAS = [
 class Store(graphene.ObjectType):
     teas = graphene.List(Tea, order_by=graphene.String())
 
-    def resolve_teas(self, args, info):
+    def resolve_teas(self, args, context, info):
         order_by = args.get("order_by")
         if order_by == "steepingTime":
             return sorted(self.teas, key=lambda tea: tea.steeping_time)
@@ -32,7 +32,7 @@ class Store(graphene.ObjectType):
 class Query(graphene.ObjectType):
     store = graphene.Field(Store)
 
-    def resolve_store(self, args, info):
+    def resolve_store(self, args, context, info):
         return Store(teas=TEAS) 
 
 schema = graphene.Schema(query=Query)

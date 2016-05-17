@@ -15,7 +15,7 @@ class Character(Interface):
 class Pet(ObjectType):
     type = String()
 
-    def resolve_type(self, args, info):
+    def resolve_type(self, args, context, info):
         return 'Dog'
 
 

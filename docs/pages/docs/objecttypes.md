@@ -23,7 +23,7 @@ class Person(graphene.ObjectType):
     last_name = graphene.String()
     full_name = graphene.String()
 
-    def resolve_full_name(self, args, info):
+    def resolve_full_name(self, args, context, info):
         return '{} {}'.format(self.first_name, self.last_name)
 ```
 

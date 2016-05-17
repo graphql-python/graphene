@@ -9,4 +9,4 @@ def test_resolve_only_args():
     my_data = {'one': 1, 'two': 2}
 
     wrapped = resolve_only_args(resolver)
-    assert wrapped(None, my_data, None) == my_data
+    assert wrapped(None, my_data, None, None) == my_data

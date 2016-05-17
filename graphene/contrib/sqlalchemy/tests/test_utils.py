@@ -10,7 +10,7 @@ def test_get_session():
     class Query(ObjectType):
         x = String()
 
-        def resolve_x(self, args, info):
+        def resolve_x(self, args, context, info):
             return get_session(info)
 
     query = '''

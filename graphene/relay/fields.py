@@ -26,16 +26,16 @@ class ConnectionField(Field):
         self.connection_type = connection_type
         self.edge_type = edge_type
 
-    def resolver(self, instance, args, info):
+    def resolver(self, instance, args, context, info):
         schema = info.schema.graphene_schema
         connection_type = self.get_type(schema)
-        resolved = super(ConnectionField, self).resolver(instance, args, info)
+        resolved = super(ConnectionField, self).resolver(instance, args, context, info)
         if isinstance(resolved, connection_type):
             return resolved
-        return self.from_list(connection_type, resolved, args, info)
+        return self.from_list(connection_type, resolved, args, context, info)
 
-    def from_list(self, connection_type, resolved, args, info):
-        return connection_type.from_list(resolved, args, info)
+    def from_list(self, connection_type, resolved, args, context, info):
+        return connection_type.from_list(resolved, args, context, info)
 
     def get_connection_type(self, node):
         connection_type = self.connection_type or node.get_connection_type()
@@ -96,5 +96,5 @@ class GlobalIDField(Field):
     def __init__(self, *args, **kwargs):
         super(GlobalIDField, self).__init__(NonNull(ID()), *args, **kwargs)
 
-    def resolver(self, instance, args, info):
+    def resolver(self, instance, args, context, info):
         return instance.to_global_id()

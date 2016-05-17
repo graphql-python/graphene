@@ -16,7 +16,7 @@ class MyNode(relay.Node):
     name = graphene.String()
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, id, context, info):
         return MyNode(id=id, name='mo')
 
 
@@ -37,7 +37,7 @@ class Query(graphene.ObjectType):
     all_my_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection, customArg=graphene.String())
 
-    def resolve_all_my_nodes(self, args, info):
+    def resolve_all_my_nodes(self, args, context, info):
         custom_arg = args.get('customArg')
         assert custom_arg == "1"
         return [MyNode(name='my')]

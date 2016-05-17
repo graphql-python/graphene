@@ -33,7 +33,7 @@ class WrapRoot(object):
     def _root(self, value):
         self._wrapped_root = value
 
-    def resolve_debug(self, args, info):
+    def resolve_debug(self, args, context, info):
         return self._wrapped_root.debug()
 
 

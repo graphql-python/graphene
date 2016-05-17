@@ -21,7 +21,7 @@ class DjangoFilterConnectionField(DjangoConnectionField):
         kwargs['args'].update(**self.filtering_args)
         super(DjangoFilterConnectionField, self).__init__(type, *args, **kwargs)
 
-    def get_queryset(self, qs, args, info):
+    def get_queryset(self, qs, args, context, info):
         filterset_class = self.filterset_class
         filter_kwargs = self.get_filter_kwargs(args)
         order = self.get_order(args)

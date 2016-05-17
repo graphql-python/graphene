@@ -8,7 +8,7 @@ class Query(graphene.ObjectType):
 class Subscription(graphene.ObjectType):
     subscribe_to_foo = graphene.Boolean(id=graphene.Int())
 
-    def resolve_subscribe_to_foo(self, args, info):
+    def resolve_subscribe_to_foo(self, args, context, info):
         return args.get('id') == 1
 
 
