@@ -1,10 +1,11 @@
 from graphql.type import GraphQLInputObjectField
 
 import graphene
-from graphene import relay
+from graphene import relay, with_context
 from graphene.core.schema import Schema
 
 my_id = 0
+my_id_context = 0
 
 
 class Query(graphene.ObjectType):
@@ -25,8 +26,24 @@ class ChangeNumber(relay.ClientIDMutation):
         return ChangeNumber(result=my_id)
 
 
+class ChangeNumberContext(relay.ClientIDMutation):
+    '''Result mutation'''
+    class Input:
+        to = graphene.Int()
+
+    result = graphene.String()
+
+    @classmethod
+    @with_context
+    def mutate_and_get_payload(cls, input, context, info):
+        global my_id_context
+        my_id_context = input.get('to', my_id_context + context)
+        return ChangeNumber(result=my_id_context)
+
+
 class MyResultMutation(graphene.ObjectType):
     change_number = graphene.Field(ChangeNumber)
+    change_number_context = graphene.Field(ChangeNumberContext)
 
 
 schema = Schema(query=Query, mutation=MyResultMutation)
@@ -77,5 +94,41 @@ def test_execute_mutations():
         }
     }
     result = schema.execute(query, root_value=object())
+    assert not result.errors
+    assert result.data == expected
+
+
+def test_context_mutations():
+    query = '''
+    mutation M{
+      first: changeNumberContext(input: {clientMutationId: "mutation1"}) {
+        clientMutationId
+        result
+      },
+      second: changeNumberContext(input: {clientMutationId: "mutation2"}) {
+        clientMutationId
+        result
+      }
+      third: changeNumberContext(input: {clientMutationId: "mutation3", to: 5}) {
+        result
+        clientMutationId
+      }
+    }
+    '''
+    expected = {
+        'first': {
+            'clientMutationId': 'mutation1',
+            'result': '-1',
+        },
+        'second': {
+            'clientMutationId': 'mutation2',
+            'result': '-2',
+        },
+        'third': {
+            'clientMutationId': 'mutation3',
+            'result': '5',
+        }
+    }
+    result = schema.execute(query, root_value=object(), context_value=-1)
     assert not result.errors
     assert result.data == expected
