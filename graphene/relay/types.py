@@ -15,7 +15,7 @@ from ..core.types import Boolean, Field, List, String
 from ..core.types.argument import ArgumentsGroup
 from ..core.types.definitions import NonNull
 from ..utils import memoize
-from ..utils.wrap_resolver_function import has_context
+from ..utils.wrap_resolver_function import has_context, with_context
 from .fields import GlobalIDField
 
 
@@ -192,9 +192,13 @@ class ClientIDMutation(six.with_metaclass(RelayMutationMeta, Mutation)):
         abstract = True
 
     @classmethod
-    def mutate(cls, instance, args, info):
+    @with_context
+    def mutate(cls, instance, args, context, info):
         input = args.get('input')
-        payload = cls.mutate_and_get_payload(input, info)
+        if has_context(cls.mutate_and_get_payload):
+            payload = cls.mutate_and_get_payload(input, context, info)
+        else:
+            payload = cls.mutate_and_get_payload(input, info)
         client_mutation_id = input.get('clientMutationId') or input.get('client_mutation_id')
         setattr(payload, 'clientMutationId', client_mutation_id)
         return payload
