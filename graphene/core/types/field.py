@@ -152,6 +152,8 @@ class InputField(NamedType, OrderedType):
     def __init__(self, type, description=None, default=None,
                  name=None, _creation_counter=None, required=False):
         super(InputField, self).__init__(_creation_counter=_creation_counter)
+        if isinstance(type, six.string_types):
+            type = LazyType(type)
         if required:
             type = NonNull(type)
         self.type = type

@@ -131,6 +131,24 @@ def test_inputfield_internal_type():
     assert type.default_value == '3'
 
 
+def test_inputfield_string_reference():
+    class MyInput(InputObjectType):
+        my_field = InputField(String, description='My input field', default='3')
+
+    my_input_field = InputField('MyInput')
+    class OtherInput(InputObjectType):
+        my_input = my_input_field
+
+    class Query(ObjectType):
+        a = String()
+
+    schema = Schema(query=Query)
+
+    my_input_type = schema.T(MyInput)
+    my_input_field_type = schema.T(my_input_field)
+    assert my_input_field_type.type == my_input_type
+
+
 def test_field_resolve_argument():
     def resolver(instance, args, info):
         return args.get('first_name')
