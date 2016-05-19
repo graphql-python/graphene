@@ -24,6 +24,7 @@ ga = "UA-12613282-7"
 	  "/docs/django/tutorial/",
 	  "/docs/django/filtering/",
 	  "/docs/django/authorization/",
+	  "/docs/django/introspection-schema/",
 	  "/docs/django/debug/",
 	]
 
