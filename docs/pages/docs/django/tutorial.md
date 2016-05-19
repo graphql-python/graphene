@@ -80,8 +80,8 @@ representation, Graphene needs to know about each *type* of object which will ap
 the graph.
 
 This graph also has a *root type* through which all access begins. This is the `Query` class below.
-In this example, we provide the ability to list all users via `all_users`, and the
-ability to obtain a specific user via `get_user`.
+In this example, we provide the ability to list all ingredients via `all_ingredients`, and the
+ability to obtain a specific ingredient via `ingredient`.
 
 Create `cookbook/ingredients/schema.py` and type the following:
 
@@ -94,8 +94,8 @@ from graphene.contrib.django.types import DjangoNode
 from cookbook.ingredients.models import Category, Ingredient
 
 
-# Graphene will automatically map the User model's fields onto the UserType.
-# This is configured in the UserType's Meta class (as you can see below)
+# Graphene will automatically map the Category model's fields onto the CategoryNode.
+# This is configured in the CategoryNode's Meta class (as you can see below)
 class CategoryNode(DjangoNode):
     class Meta:
         model = Category
