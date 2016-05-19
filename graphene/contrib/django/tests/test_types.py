@@ -1,7 +1,7 @@
 from graphql.type import GraphQLObjectType
 from mock import patch
 
-from graphene import Schema
+from graphene import Schema, Interface
 from graphene.contrib.django.types import DjangoNode, DjangoObjectType
 from graphene.core.fields import Field
 from graphene.core.types.scalars import Int
@@ -83,3 +83,20 @@ def test_object_type():
 def test_node_notinterface():
     assert Human._meta.interface is False
     assert DjangoNode in Human._meta.interfaces
+
+
+def test_django_objecttype_could_extend_interface():
+    schema = Schema()
+
+    @schema.register
+    class Customer(Interface):
+        id = Int()
+
+    @schema.register
+    class UserType(DjangoObjectType):
+        class Meta:
+            model = Reporter
+            interfaces = [Customer]
+
+    object_type = schema.T(UserType)
+    assert schema.T(Customer) in object_type.get_interfaces()

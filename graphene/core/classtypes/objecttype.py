@@ -20,6 +20,7 @@ class ObjectTypeOptions(FieldsOptions):
     def __init__(self, *args, **kwargs):
         super(ObjectTypeOptions, self).__init__(*args, **kwargs)
         self.interface = False
+        self.valid_attrs += ['interfaces']
         self.interfaces = []
 
 
