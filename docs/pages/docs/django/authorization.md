@@ -58,7 +58,7 @@ class Query(ObjectType):
 ## User-based Queryset Filtering
 
 If you are using `graphql-django-view` you can access Django's request object
-via `info.request_context`.
+via `with_context` decorator.
 
 ```python
 from graphene import ObjectType
@@ -71,18 +71,20 @@ class Query(ObjectType):
     class Meta:
         abstract = True
 
-    def resolve_my_posts(self, args, info):
-        if not info.request_context.user.is_authenticated():
+    @with_context
+    def resolve_my_posts(self, args, context, info):
+        # context will reference to the Django request
+        if not context.user.is_authenticated():
             return []
         else:
-            return Post.objects.filter(owner=info.request_context.user)
+            return Post.objects.filter(owner=context.user)
 ```
 
 If you're using your own view, passing the request context into the schema is
 simple.
 
 ```python
-result = schema.execute(query, request_context=request)
+result = schema.execute(query, context_value=request)
 ```
 
 ## Filtering ID-based node access
@@ -100,13 +102,14 @@ class PostNode(DjangoNode):
         only_fields = ('title', 'content')
 
     @classmethod
-    def get_node(Cls, id, info):
+    @with_context
+    def get_node(Cls, id, context, info):
         try:
             post = Cls._meta.model.objects.get(id=id)
         except Cls._meta.model.DoesNotExist:
             return None
 
-        if post.published or info.request_context.user is post.owner:
+        if post.published or context.user is post.owner:
             return Cls(instance)
         else:
             return None

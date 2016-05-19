@@ -2,35 +2,36 @@ siteTitle = "Graphene"
 ga = "UA-12613282-7"
 
 [docs.quickstart]
-	name = "Quickstart"
-	pages = [
-	  "/docs/quickstart/",
-	]
+  name = "Quickstart"
+  pages = [
+    "/docs/quickstart/",
+  ]
 
 [docs.walkthrough]
-	name = "Walkthrough"
-	pages = [
-	  "/docs/interfaces/",
-	  "/docs/objecttypes/",
-	  "/docs/mutations/",
-	  "/docs/basic-types/",
-	  "/docs/enums/",
-	  "/docs/relay/",
-	]
+  name = "Walkthrough"
+  pages = [
+    "/docs/interfaces/",
+    "/docs/objecttypes/",
+    "/docs/resolvers/",
+    "/docs/mutations/",
+    "/docs/basic-types/",
+    "/docs/enums/",
+    "/docs/relay/",
+  ]
 
 [docs.django]
-	name = "Django"
-	pages = [
-	  "/docs/django/tutorial/",
-	  "/docs/django/filtering/",
-	  "/docs/django/authorization/",
-	  "/docs/django/introspection-schema/",
-	  "/docs/django/debug/",
-	]
+  name = "Django"
+  pages = [
+    "/docs/django/tutorial/",
+    "/docs/django/filtering/",
+    "/docs/django/authorization/",
+    "/docs/django/introspection-schema/",
+    "/docs/django/debug/",
+  ]
 
 [docs.sqlalchemy]
-	name = "SQLAlchemy"
-	pages = [
-	  "/docs/sqlalchemy/tutorial/",
-	  "/docs/sqlalchemy/tips/",
-	]
+  name = "SQLAlchemy"
+  pages = [
+    "/docs/sqlalchemy/tutorial/",
+    "/docs/sqlalchemy/tips/",
+  ]
