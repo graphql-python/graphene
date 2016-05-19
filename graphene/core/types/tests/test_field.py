@@ -136,6 +136,7 @@ def test_inputfield_string_reference():
         my_field = InputField(String, description='My input field', default='3')
 
     my_input_field = InputField('MyInput')
+
     class OtherInput(InputObjectType):
         my_input = my_input_field
 
