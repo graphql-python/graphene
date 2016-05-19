@@ -49,3 +49,4 @@ You can query it for outputing all the sql transactions that happened in the Gra
   }
 }
 ```
+Note that the `__debug` field must be the last field in your query.
