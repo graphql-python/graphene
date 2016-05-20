@@ -87,7 +87,7 @@ class Connection(ObjectType):
             {'edge_type': edge_type, 'edges': edges})
 
     @classmethod
-    def from_list(cls, iterable, args, info):
+    def from_list(cls, iterable, args, context, info):
         assert isinstance(
             iterable, Iterable), 'Resolved value from the connection field have to be iterable'
         connection = connection_from_list(
