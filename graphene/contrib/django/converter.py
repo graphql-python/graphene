@@ -80,9 +80,15 @@ def convert_date_to_string(field):
     return DateTime(description=field.help_text)
 
 
+@convert_django_field.register(models.OneToOneRel)
+def convert_onetoone_field_to_djangomodel(field):
+    from .fields import DjangoModelField
+    return DjangoModelField(get_related_model(field))
+
+
 @convert_django_field.register(models.ManyToManyField)
-@convert_django_field.register(models.ManyToOneRel)
 @convert_django_field.register(models.ManyToManyRel)
+@convert_django_field.register(models.ManyToOneRel)
 def convert_field_to_list_or_connection(field):
     from .fields import DjangoModelField, ConnectionOrListField
     model_field = DjangoModelField(get_related_model(field))
@@ -94,6 +100,8 @@ def convert_field_to_list_or_connection(field):
 def convert_relatedfield_to_djangomodel(field):
     from .fields import DjangoModelField, ConnectionOrListField
     model_field = DjangoModelField(field.model)
+    if isinstance(field.field, models.OneToOneField):
+        return model_field
     return ConnectionOrListField(model_field)
 
 

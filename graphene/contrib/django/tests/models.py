@@ -7,6 +7,11 @@ class Pet(models.Model):
     name = models.CharField(max_length=30)
 
 
+class FilmDetails(models.Model):
+    location = models.CharField(max_length=30)
+    film = models.OneToOneField('Film', related_name='details')
+
+
 class Film(models.Model):
     reporters = models.ManyToManyField('Reporter',
                                        related_name='films')

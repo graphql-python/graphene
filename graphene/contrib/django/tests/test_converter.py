@@ -9,7 +9,7 @@ from ..compat import (ArrayField, HStoreField, JSONField, MissingType,
                       RangeField)
 from ..converter import convert_django_field, convert_django_field_with_choices
 from ..fields import ConnectionOrListField, DjangoModelField
-from .models import Article, Reporter
+from .models import Article, Reporter, Film, FilmDetails
 
 
 def assert_conversion(django_field, graphene_field, *args, **kwargs):
@@ -136,6 +136,15 @@ def test_should_manytoone_convert_connectionorlist():
     assert isinstance(graphene_type, ConnectionOrListField)
     assert isinstance(graphene_type.type, DjangoModelField)
     assert graphene_type.type.model == Article
+
+
+def test_should_onetoone_reverse_convert_model():
+    # Django 1.9 uses 'rel', <1.9 uses 'related
+    related = getattr(Film.details, 'rel', None) or \
+        getattr(Film.details, 'related')
+    graphene_type = convert_django_field(related)
+    assert isinstance(graphene_type, DjangoModelField)
+    assert graphene_type.model == FilmDetails
 
 
 def test_should_onetoone_convert_model():
