@@ -21,11 +21,11 @@ class SQLAlchemyConnectionField(ConnectionField):
     def model(self):
         return self.type._meta.model
 
-    def from_list(self, connection_type, resolved, args, info):
+    def from_list(self, connection_type, resolved, args, context,  info):
         if resolved is DefaultQuery:
             resolved = get_query(self.model, info)
         query = maybe_query(resolved)
-        return super(SQLAlchemyConnectionField, self).from_list(connection_type, query, args, info)
+        return super(SQLAlchemyConnectionField, self).from_list(connection_type, query, args, context, info)
 
 
 class ConnectionOrListField(Field):
