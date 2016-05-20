@@ -19,4 +19,4 @@ def test_camel_case():
 
 
 def test_to_const():
-    assert to_const('snakes $1. on a "#plane') == 'SNAKES_ON_A_PLANE'
+    assert to_const('snakes $1. on a "#plane') == 'SNAKES_1_ON_A_PLANE'
