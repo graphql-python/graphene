@@ -41,7 +41,7 @@ class ConnectionField(Field):
             return resolved
         return self.from_list(connection_type, resolved, args, context, info)
 
-    def from_list(self, connection_type, resolved, args, info):
+    def from_list(self, connection_type, resolved, args, context, info):
         return connection_type.from_list(resolved, args, context, info)
 
     def get_connection_type(self, node):
