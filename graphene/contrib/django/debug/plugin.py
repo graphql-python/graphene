@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 
 from django.db import connections
+from graphene import with_context
 
 from ....core.schema import GraphQLSchema
 from ....core.types import Field
@@ -10,11 +11,14 @@ from .sql.types import DjangoDebugSQL
 from .types import DjangoDebug
 
 
-class WrappedRoot(object):
+class EmptyContext(object):
+    pass
 
-    def __init__(self, root):
+
+class DjangoDebugContext(object):
+
+    def __init__(self):
         self._recorded = []
-        self._root = root
 
     def record(self, **log):
         self._recorded.append(DjangoDebugSQL(**log))
@@ -24,17 +28,9 @@ class WrappedRoot(object):
 
 
 class WrapRoot(object):
-
-    @property
-    def _root(self):
-        return self._wrapped_root.root
-
-    @_root.setter
-    def _root(self, value):
-        self._wrapped_root = value
-
-    def resolve_debug(self, args, info):
-        return self._wrapped_root.debug()
+    @with_context
+    def resolve_debug(self, args, context, info):
+        return context.django_debug.debug()
 
 
 def debug_objecttype(objecttype):
@@ -72,8 +68,10 @@ class DjangoDebugPlugin(Plugin):
 
     @contextmanager
     def context_execution(self, executor):
-        executor['root_value'] = WrappedRoot(root=executor.get('root_value'))
+        context_value = executor.get('context_value') or EmptyContext()
+        context_value.django_debug = DjangoDebugContext()
+        executor['context_value'] = context_value
         executor['schema'] = self.wrap_schema(executor['schema'])
-        self.enable_instrumentation(executor['root_value'])
+        self.enable_instrumentation(context_value.django_debug)
         yield executor
         self.disable_instrumentation()

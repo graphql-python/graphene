@@ -4,7 +4,7 @@ from pytest import raises
 from graphene.core.schema import Schema
 from graphene.core.types import ObjectType
 
-from ..argument import Argument, snake_case_args, to_arguments
+from ..argument import Argument, to_arguments
 from ..scalars import String
 
 
@@ -45,10 +45,3 @@ def test_to_arguments_wrong_type():
             p=3
         )
     assert 'Unknown argument p=3' == str(excinfo.value)
-
-
-def test_snake_case_args():
-    def resolver(instance, args, context, info):
-        return args['my_arg']['inner_arg']
-    r = snake_case_args(resolver)
-    assert r(None, {'myArg': {'innerArg': 3}}, None, None) == 3

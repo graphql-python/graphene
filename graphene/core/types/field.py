@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from functools import wraps
+from functools import wraps, partial
 
 import six
 from graphql.type import GraphQLField, GraphQLInputObjectField
@@ -10,7 +10,7 @@ from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
 from ..exceptions import SkipField
-from .argument import Argument, ArgumentsGroup, snake_case_args
+from .argument import Argument, ArgumentsGroup
 from .base import (ArgumentType, GroupNamedType, LazyType, MountType,
                    NamedType, OrderedType)
 from .definitions import NonNull
@@ -89,9 +89,6 @@ class Field(NamedType, OrderedType):
             return NonNull(self.type)
         return self.type
 
-    def decorate_resolver(self, resolver):
-        return snake_case_args(resolver)
-
     def internal_type(self, schema):
         if not self.object_type:
             raise Exception('The field is not mounted in any ClassType')
@@ -119,7 +116,7 @@ class Field(NamedType, OrderedType):
 
         assert type, 'Internal type for field %s is None' % str(self)
         return GraphQLField(type, args=schema.T(arguments),
-                            resolver=self.decorate_resolver(resolver),
+                            resolver=partial(schema.resolve, resolver),
                             deprecation_reason=self.deprecation_reason,
                             description=description,)
 
