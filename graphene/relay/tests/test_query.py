@@ -36,8 +36,17 @@ class Query(graphene.ObjectType):
     special_node = relay.NodeField(SpecialNode)
     all_my_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection, customArg=graphene.String())
+    
+    context_nodes = relay.ConnectionField(
+        MyNode, connection_type=MyConnection, customArg=graphene.String())
 
     def resolve_all_my_nodes(self, args, info):
+        custom_arg = args.get('customArg')
+        assert custom_arg == "1"
+        return [MyNode(name='my')]
+    
+    @with_context
+    def resolve_context_nodes(self, args, context, info):
         custom_arg = args.get('customArg')
         assert custom_arg == "1"
         return [MyNode(name='my')]
@@ -46,6 +55,39 @@ schema.query = Query
 
 
 def test_nodefield_query():
+    query = '''
+    query RebelsShipsQuery {
+      contextNodes (customArg:"1") {
+        edges {
+          node {
+            name
+          }
+        },
+        myCustomField
+        pageInfo {
+          hasNextPage
+        }
+      }
+    }
+    '''
+    expected = {
+        'allMyNodes': {
+            'edges': [{
+                'node': {
+                    'name': 'my'
+                }
+            }],
+            'myCustomField': 'Custom',
+            'pageInfo': {
+                'hasNextPage': False,
+            }
+        }
+    }
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected
+
+def test_connectionfield_context_query():
     query = '''
     query RebelsShipsQuery {
       myNode(id:"TXlOb2RlOjE=") {
