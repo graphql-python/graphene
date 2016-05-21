@@ -1,7 +1,7 @@
 from .....core import Boolean, Float, ObjectType, String
 
 
-class DjangoDebugSQL(ObjectType):
+class DjangoDebugBaseSQL(ObjectType):
     vendor = String()
     alias = String()
     sql = String()
@@ -13,6 +13,12 @@ class DjangoDebugSQL(ObjectType):
     is_slow = Boolean()
     is_select = Boolean()
 
+
+class DjangoDebugSQL(DjangoDebugBaseSQL):
+    pass
+
+
+class DjangoDebugPostgreSQL(DjangoDebugBaseSQL):
     trans_id = String()
     trans_status = String()
     iso_level = String()

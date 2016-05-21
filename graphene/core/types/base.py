@@ -3,6 +3,8 @@ from functools import partial, total_ordering
 
 import six
 
+from ...utils import to_camel_case
+
 
 class InstanceType(object):
 
@@ -142,7 +144,9 @@ class GroupNamedType(InstanceType):
         self.types = types
 
     def get_named_type(self, schema, type):
-        name = type.name or schema.get_default_namedtype_name(type.default_name)
+        name = type.name
+        if not name and schema.auto_camelcase:
+            name = to_camel_case(type.default_name)
         return name, schema.T(type)
 
     def iter_types(self, schema):

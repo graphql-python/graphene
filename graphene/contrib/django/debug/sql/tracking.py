@@ -8,6 +8,7 @@ from time import time
 from django.utils import six
 from django.utils.encoding import force_text
 
+from .types import DjangoDebugSQL, DjangoDebugPostgreSQL
 
 class SQLQueryTriggered(Exception):
     """Thrown when template panel triggers a query"""
@@ -139,9 +140,11 @@ class NormalCursorWrapper(object):
                     'iso_level': iso_level,
                     'encoding': conn.encoding,
                 })
-
+                _sql = DjangoDebugPostgreSQL(**params)
+            else:
+                _sql = DjangoDebugSQL(**params)
             # We keep `sql` to maintain backwards compatibility
-            self.logger.record(**params)
+            self.logger.object.sql.append(_sql)
 
     def callproc(self, procname, params=()):
         return self._record(self.cursor.callproc, procname, params)

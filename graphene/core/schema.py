@@ -35,17 +35,13 @@ class Schema(object):
         plugins = plugins or []
         if auto_camelcase:
             plugins.append(CamelCase())
+        self.auto_camelcase = auto_camelcase
         self.plugins = PluginManager(self, plugins)
         self.options = options
         signals.init_schema.send(self)
 
     def __repr__(self):
         return '<Schema: %s (%s)>' % (str(self.name), hash(self))
-
-    def __getattr__(self, name):
-        if name in self.plugins:
-            return getattr(self.plugins, name)
-        return super(Schema, self).__getattr__(name)
 
     def T(self, _type):
         if not _type:
@@ -122,7 +118,7 @@ class Schema(object):
 
     def execute(self, request_string='', root_value=None, variable_values=None,
                 context_value=None, operation_name=None, executor=None):
-        kwargs = dict(
+        return graphql(
             schema=self.schema,
             request_string=request_string,
             root_value=root_value,
@@ -131,8 +127,6 @@ class Schema(object):
             operation_name=operation_name,
             executor=executor or self._executor
         )
-        with self.plugins.context_execution(**kwargs) as execute_kwargs:
-            return graphql(**execute_kwargs)
 
     def introspect(self):
         return graphql(self.schema, introspection_query).data
