@@ -36,7 +36,7 @@ class Query(graphene.ObjectType):
     special_node = relay.NodeField(SpecialNode)
     all_my_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection, customArg=graphene.String())
-    
+
     context_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection, customArg=graphene.String())
 
@@ -44,7 +44,7 @@ class Query(graphene.ObjectType):
         custom_arg = args.get('customArg')
         assert custom_arg == "1"
         return [MyNode(name='my')]
-    
+
     @with_context
     def resolve_context_nodes(self, args, context, info):
         custom_arg = args.get('customArg')
@@ -71,7 +71,7 @@ def test_nodefield_query():
     }
     '''
     expected = {
-        'allMyNodes': {
+        'contextNodes': {
             'edges': [{
                 'node': {
                     'name': 'my'
@@ -86,6 +86,7 @@ def test_nodefield_query():
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected
+
 
 def test_connectionfield_context_query():
     query = '''

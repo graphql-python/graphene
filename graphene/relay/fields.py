@@ -25,18 +25,18 @@ class ConnectionField(Field):
             **kwargs)
         self.connection_type = connection_type
         self.edge_type = edge_type
-    
+
     @with_context
     def resolver(self, instance, args, context, info):
         schema = info.schema.graphene_schema
         connection_type = self.get_type(schema)
-        
+
         resolver = super(ConnectionField, self).resolver
         if has_context(resolver):
             resolved = super(ConnectionField, self).resolver(instance, args, context, info)
         else:
             resolved = super(ConnectionField, self).resolver(instance, args, info)
-            
+
         if isinstance(resolved, connection_type):
             return resolved
         return self.from_list(connection_type, resolved, args, context, info)
