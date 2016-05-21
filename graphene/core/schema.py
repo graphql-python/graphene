@@ -7,8 +7,7 @@ from graphql.utils.schema_printer import print_schema
 
 from graphene import signals
 
-from ..plugins import CamelCase, PluginManager
-from ..utils import promise_middleware
+from ..middlewares import MiddlewareManager, CamelCaseArgsMiddleware
 from .classtypes.base import ClassType
 from .types.base import InstanceType
 
@@ -24,7 +23,7 @@ class Schema(object):
     _executor = None
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 name='Schema', executor=None, plugins=None, auto_camelcase=True, **options):
+                 name='Schema', executor=None, middlewares=None, auto_camelcase=True, **options):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
@@ -32,11 +31,13 @@ class Schema(object):
         self.subscription = subscription
         self.name = name
         self.executor = executor
-        plugins = plugins or []
+        if 'plugins' in options:
+            raise Exception('Plugins are deprecated, please use middlewares.')
+        middlewares = middlewares or []
         if auto_camelcase:
-            plugins.append(CamelCase())
+            middlewares.append(CamelCaseArgsMiddleware())
         self.auto_camelcase = auto_camelcase
-        self.plugins = PluginManager(self, plugins)
+        self.middleware_manager = MiddlewareManager(self, middlewares)
         self.options = options
         signals.init_schema.send(self)
 
@@ -109,8 +110,7 @@ class Schema(object):
         return self._types_names[type_name]
 
     def resolver_with_middleware(self, resolver):
-        plugins_resolve = self.plugins.get_plugin_functions('resolve')
-        return promise_middleware(resolver, plugins_resolve)
+        return self.middleware_manager.wrap(resolver)
 
     @property
     def types(self):

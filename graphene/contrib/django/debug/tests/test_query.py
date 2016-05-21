@@ -8,6 +8,7 @@ from ...tests.models import Reporter
 from ..middleware import DjangoDebugMiddleware
 from ..types import DjangoDebug
 
+
 class context(object):
     pass
 
@@ -56,7 +57,7 @@ def test_should_query_field():
             }]
         }
     }
-    schema = graphene.Schema(query=Query, plugins=[DjangoDebugMiddleware()])
+    schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
     result = schema.execute(query, context_value=context())
     assert not result.errors
     assert result.data == expected
@@ -104,7 +105,7 @@ def test_should_query_list():
             }]
         }
     }
-    schema = graphene.Schema(query=Query, plugins=[DjangoDebugMiddleware()])
+    schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
     result = schema.execute(query, context_value=context())
     assert not result.errors
     assert result.data == expected
@@ -153,7 +154,7 @@ def test_should_query_connection():
             }]
         },
     }
-    schema = graphene.Schema(query=Query, plugins=[DjangoDebugMiddleware()])
+    schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
     result = schema.execute(query, context_value=context())
     assert not result.errors
     assert result.data['allReporters'] == expected['allReporters']
@@ -209,7 +210,7 @@ def test_should_query_connectionfilter():
             }]
         },
     }
-    schema = graphene.Schema(query=Query, plugins=[DjangoDebugMiddleware()])
+    schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
     result = schema.execute(query, context_value=context())
     assert not result.errors
     assert result.data['allReporters'] == expected['allReporters']

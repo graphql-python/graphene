@@ -154,6 +154,12 @@ def test_lazytype():
     assert schema.T(t) == schema.T(MyType)
 
 
+def test_deprecated_plugins_throws_exception():
+    with raises(Exception) as excinfo:
+        Schema(plugins=[])
+    assert 'Plugins are deprecated, please use middlewares' in str(excinfo.value)
+
+
 def test_schema_str():
     expected = """
 schema {
