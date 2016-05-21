@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from functools import wraps, partial
+from functools import wraps
 
 import six
 from graphql.type import GraphQLField, GraphQLInputObjectField

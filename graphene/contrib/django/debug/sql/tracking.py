@@ -10,6 +10,7 @@ from django.utils.encoding import force_text
 
 from .types import DjangoDebugSQL, DjangoDebugPostgreSQL
 
+
 class SQLQueryTriggered(Exception):
     """Thrown when template panel triggers a query"""
 

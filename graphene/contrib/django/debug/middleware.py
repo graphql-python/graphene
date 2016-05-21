@@ -1,8 +1,6 @@
 from promise import Promise
 from django.db import connections
 
-from ....core.schema import GraphQLSchema
-from ....core.types import Field
 from .sql.tracking import unwrap_cursor, wrap_cursor
 from .types import DjangoDebug
 
@@ -47,8 +45,10 @@ class DjangoDebugMiddleware(object):
                 raise Exception('DjangoDebug cannot be executed in None contexts')
             try:
                 context.django_debug = DjangoDebugContext()
-            except Exception, e:
-                raise Exception('DjangoDebug need the context to be writable, context received: {}.'.format(context.__class__.__name__))
+            except Exception:
+                raise Exception('DjangoDebug need the context to be writable, context received: {}.'.format(
+                    context.__class__.__name__
+                ))
         if info.schema.graphene_schema.T(DjangoDebug) == info.return_type:
             return context.django_debug.get_debug_promise()
         promise = next(root, args, context, info)
