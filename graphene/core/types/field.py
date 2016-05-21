@@ -10,7 +10,7 @@ from ..classtypes.base import FieldsClassType
 from ..classtypes.inputobjecttype import InputObjectType
 from ..classtypes.mutation import Mutation
 from ..exceptions import SkipField
-from .argument import Argument, ArgumentsGroup, snake_case_args
+from .argument import Argument, ArgumentsGroup
 from .base import (ArgumentType, GroupNamedType, LazyType, MountType,
                    NamedType, OrderedType)
 from .definitions import NonNull
@@ -89,9 +89,6 @@ class Field(NamedType, OrderedType):
             return NonNull(self.type)
         return self.type
 
-    def decorate_resolver(self, resolver):
-        return snake_case_args(resolver)
-
     def internal_type(self, schema):
         if not self.object_type:
             raise Exception('The field is not mounted in any ClassType')
@@ -118,10 +115,13 @@ class Field(NamedType, OrderedType):
             resolver = wrapped_func
 
         assert type, 'Internal type for field %s is None' % str(self)
-        return GraphQLField(type, args=schema.T(arguments),
-                            resolver=self.decorate_resolver(resolver),
-                            deprecation_reason=self.deprecation_reason,
-                            description=description,)
+        return GraphQLField(
+            type,
+            args=schema.T(arguments),
+            resolver=schema.resolver_with_middleware(resolver),
+            deprecation_reason=self.deprecation_reason,
+            description=description,
+        )
 
     def __repr__(self):
         """
@@ -175,7 +175,8 @@ class InputField(NamedType, OrderedType):
     def internal_type(self, schema):
         return GraphQLInputObjectField(
             schema.T(self.type),
-            default_value=self.default, description=self.description)
+            default_value=self.default, description=self.description
+        )
 
 
 class FieldsGroupType(GroupNamedType):

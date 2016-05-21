@@ -24,7 +24,7 @@ def test_field_internal_type():
     assert field.attname == 'my_field'
     assert isinstance(type, GraphQLField)
     assert type.description == 'My argument'
-    assert type.resolver(None, {}, None, None) == 'RESOLVED'
+    assert type.resolver(None, {}, None, None).value == 'RESOLVED'
     assert type.type == GraphQLString
 
 
@@ -43,7 +43,7 @@ def test_field_objectype_resolver():
     type = schema.T(field)
     assert isinstance(type, GraphQLField)
     assert type.description == 'Custom description'
-    assert type.resolver(Query(), {}, None, None) == 'RESOLVED'
+    assert type.resolver(Query(), {}, None, None).value == 'RESOLVED'
 
 
 def test_field_custom_name():
@@ -161,7 +161,7 @@ def test_field_resolve_argument():
     schema = Schema(query=Query)
 
     type = schema.T(field)
-    assert type.resolver(None, {'firstName': 'Peter'}, None, None) == 'Peter'
+    assert type.resolver(None, {'firstName': 'Peter'}, None, None).value == 'Peter'
 
 
 def test_field_resolve_vars():
@@ -216,7 +216,6 @@ def test_field_resolve_object():
         att_func = field_func
 
     assert field.resolver(Root, {}, None) is True
-    assert field.resolver(Root, {}, None) is True
 
 
 def test_field_resolve_source_object():
@@ -234,5 +233,4 @@ def test_field_resolve_source_object():
         att = field
         att_func = field_func
 
-    assert field.resolver(Root, {}, None) is True
     assert field.resolver(Root, {}, None) is True

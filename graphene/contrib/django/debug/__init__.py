@@ -1,4 +1,4 @@
-from .plugin import DjangoDebugPlugin
+from .middleware import DjangoDebugMiddleware
 from .types import DjangoDebug
 
-__all__ = ['DjangoDebugPlugin', 'DjangoDebug']
+__all__ = ['DjangoDebugMiddleware', 'DjangoDebug']

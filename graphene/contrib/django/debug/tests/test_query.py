@@ -5,7 +5,12 @@ from graphene.contrib.django import DjangoConnectionField, DjangoNode
 from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
 
 from ...tests.models import Reporter
-from ..plugin import DjangoDebugPlugin
+from ..middleware import DjangoDebugMiddleware
+from ..types import DjangoDebug
+
+
+class context(object):
+    pass
 
 # from examples.starwars_django.models import Character
 
@@ -25,6 +30,7 @@ def test_should_query_field():
 
     class Query(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
+        debug = graphene.Field(DjangoDebug, name='__debug')
 
         def resolve_reporter(self, *args, **kwargs):
             return Reporter.objects.first()
@@ -51,8 +57,8 @@ def test_should_query_field():
             }]
         }
     }
-    schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
-    result = schema.execute(query)
+    schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
+    result = schema.execute(query, context_value=context())
     assert not result.errors
     assert result.data == expected
 
@@ -70,6 +76,7 @@ def test_should_query_list():
 
     class Query(graphene.ObjectType):
         all_reporters = ReporterType.List()
+        debug = graphene.Field(DjangoDebug, name='__debug')
 
         def resolve_all_reporters(self, *args, **kwargs):
             return Reporter.objects.all()
@@ -98,8 +105,8 @@ def test_should_query_list():
             }]
         }
     }
-    schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
-    result = schema.execute(query)
+    schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
+    result = schema.execute(query, context_value=context())
     assert not result.errors
     assert result.data == expected
 
@@ -117,6 +124,7 @@ def test_should_query_connection():
 
     class Query(graphene.ObjectType):
         all_reporters = DjangoConnectionField(ReporterType)
+        debug = graphene.Field(DjangoDebug, name='__debug')
 
         def resolve_all_reporters(self, *args, **kwargs):
             return Reporter.objects.all()
@@ -146,8 +154,8 @@ def test_should_query_connection():
             }]
         },
     }
-    schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
-    result = schema.execute(query)
+    schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
+    result = schema.execute(query, context_value=context())
     assert not result.errors
     assert result.data['allReporters'] == expected['allReporters']
     assert 'COUNT' in result.data['__debug']['sql'][0]['rawSql']
@@ -172,6 +180,7 @@ def test_should_query_connectionfilter():
 
     class Query(graphene.ObjectType):
         all_reporters = DjangoFilterConnectionField(ReporterType)
+        debug = graphene.Field(DjangoDebug, name='__debug')
 
         def resolve_all_reporters(self, *args, **kwargs):
             return Reporter.objects.all()
@@ -201,8 +210,8 @@ def test_should_query_connectionfilter():
             }]
         },
     }
-    schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
-    result = schema.execute(query)
+    schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
+    result = schema.execute(query, context_value=context())
     assert not result.errors
     assert result.data['allReporters'] == expected['allReporters']
     assert 'COUNT' in result.data['__debug']['sql'][0]['rawSql']

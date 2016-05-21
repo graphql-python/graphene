@@ -7,7 +7,7 @@ from graphql.utils.schema_printer import print_schema
 
 from graphene import signals
 
-from ..plugins import CamelCase, PluginManager
+from ..middlewares import MiddlewareManager, CamelCaseArgsMiddleware
 from .classtypes.base import ClassType
 from .types.base import InstanceType
 
@@ -23,7 +23,7 @@ class Schema(object):
     _executor = None
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 name='Schema', executor=None, plugins=None, auto_camelcase=True, **options):
+                 name='Schema', executor=None, middlewares=None, auto_camelcase=True, **options):
         self._types_names = {}
         self._types = {}
         self.mutation = mutation
@@ -31,20 +31,18 @@ class Schema(object):
         self.subscription = subscription
         self.name = name
         self.executor = executor
-        plugins = plugins or []
+        if 'plugins' in options:
+            raise Exception('Plugins are deprecated, please use middlewares.')
+        middlewares = middlewares or []
         if auto_camelcase:
-            plugins.append(CamelCase())
-        self.plugins = PluginManager(self, plugins)
+            middlewares.append(CamelCaseArgsMiddleware())
+        self.auto_camelcase = auto_camelcase
+        self.middleware_manager = MiddlewareManager(self, middlewares)
         self.options = options
         signals.init_schema.send(self)
 
     def __repr__(self):
         return '<Schema: %s (%s)>' % (str(self.name), hash(self))
-
-    def __getattr__(self, name):
-        if name in self.plugins:
-            return getattr(self.plugins, name)
-        return super(Schema, self).__getattr__(name)
 
     def T(self, _type):
         if not _type:
@@ -111,13 +109,16 @@ class Schema(object):
             raise KeyError('Type %r not found in %r' % (type_name, self))
         return self._types_names[type_name]
 
+    def resolver_with_middleware(self, resolver):
+        return self.middleware_manager.wrap(resolver)
+
     @property
     def types(self):
         return self._types_names
 
     def execute(self, request_string='', root_value=None, variable_values=None,
                 context_value=None, operation_name=None, executor=None):
-        kwargs = dict(
+        return graphql(
             schema=self.schema,
             request_string=request_string,
             root_value=root_value,
@@ -126,8 +127,6 @@ class Schema(object):
             operation_name=operation_name,
             executor=executor or self._executor
         )
-        with self.plugins.context_execution(**kwargs) as execute_kwargs:
-            return graphql(**execute_kwargs)
 
     def introspect(self):
         return graphql(self.schema, introspection_query).data

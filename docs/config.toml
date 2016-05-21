@@ -17,6 +17,7 @@ ga = "UA-12613282-7"
     "/docs/basic-types/",
     "/docs/enums/",
     "/docs/relay/",
+    "/docs/middleware/",
   ]
 
 [docs.django]
