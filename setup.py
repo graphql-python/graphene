@@ -24,7 +24,7 @@ class PyTest(TestCommand):
 
 setup(
     name='graphene',
-    version='0.9.1',
+    version='0.10.0',
 
     description='GraphQL Framework for Python',
     long_description=open('README.rst').read(),
