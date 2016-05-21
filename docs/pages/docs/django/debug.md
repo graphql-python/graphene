@@ -13,14 +13,19 @@ For that, you will need to add the plugin in your graphene schema.
 
 ## Installation
 
-For use the Django Debug plugin in Graphene, just import `DjangoDebugPlugin` and add it to the `plugins` argument when you initiate the `Schema`.
+For use the Django Debug plugin in Graphene:
+* Import `DjangoDebugMiddleware` and add it to the `middleware` argument when you initiate the `Schema`.
+* Add the `debug` field into the schema root `Query` with the value `graphene.Field(DjangoDebug, name='__debug')`.
 
 
 ```python
-from graphene.contrib.django.debug import DjangoDebugPlugin
+from graphene.contrib.django.debug import DjangoDebugMiddleware, DjangoDebug
 
-# ...
-schema = graphene.Schema(query=Query, plugins=[DjangoDebugPlugin()])
+class Query(graphene.ObjectType):
+    # ...
+    debug = graphene.Field(DjangoDebug, name='__debug')
+
+schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
 ```
 
 This plugin, will add another field in the `Query` named `__debug`.
