@@ -8,18 +8,9 @@ from graphql.utils.schema_printer import print_schema
 from graphene import signals
 
 from ..plugins import CamelCase, PluginManager
+from ..utils import promise_middleware
 from .classtypes.base import ClassType
 from .types.base import InstanceType
-
-
-class ACI(object):
-    def __init__(self, args, context, info):
-        self.args = args
-        self.context = context
-        self.info = info
-
-    def __repr__(self):
-        return "ACI(args={}, context={}, info={})".format(repr(self.args), repr(self.context), repr(self.info))
 
 
 class GraphQLSchema(_GraphQLSchema):
@@ -121,25 +112,9 @@ class Schema(object):
             raise KeyError('Type %r not found in %r' % (type_name, self))
         return self._types_names[type_name]
 
-    def resolve(self, resolver, root, args, context, info):
-        aci = ACI(args, context, info)
-        plugins_process_aci = self.plugins.get_plugin_functions('process_aci')
-        plugins_process_response = self.plugins.get_plugin_functions('process_response')
-        for process_aci in plugins_process_aci:
-            processed_aci = process_aci(aci)
-            if processed_aci is None:
-                continue
-            return processed_aci
-
-        response = resolver(root, aci.args, aci.context, aci.info)
-
-        for process_response in plugins_process_response:
-            processed_response = process_response(response, aci)
-            if processed_response is None:
-                continue
-            return processed_response
-
-        return response
+    def resolver_with_middleware(self, resolver):
+        plugins_resolve = self.plugins.get_plugin_functions('resolve')
+        return promise_middleware(resolver, plugins_resolve)
 
     @property
     def types(self):

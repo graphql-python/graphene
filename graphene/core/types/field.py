@@ -115,10 +115,13 @@ class Field(NamedType, OrderedType):
             resolver = wrapped_func
 
         assert type, 'Internal type for field %s is None' % str(self)
-        return GraphQLField(type, args=schema.T(arguments),
-                            resolver=partial(schema.resolve, resolver),
-                            deprecation_reason=self.deprecation_reason,
-                            description=description,)
+        return GraphQLField(
+            type,
+            args=schema.T(arguments),
+            resolver=schema.resolver_with_middleware(resolver),
+            deprecation_reason=self.deprecation_reason,
+            description=description,
+        )
 
     def __repr__(self):
         """
@@ -172,7 +175,8 @@ class InputField(NamedType, OrderedType):
     def internal_type(self, schema):
         return GraphQLInputObjectField(
             schema.T(self.type),
-            default_value=self.default, description=self.description)
+            default_value=self.default, description=self.description
+        )
 
 
 class FieldsGroupType(GroupNamedType):
