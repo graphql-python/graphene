@@ -1,9 +1,9 @@
 ---
-title: Django Debug Plugin
+title: Django Debug Middleware
 description: How to debug Django queries and requests using Graphene
 ---
 
-# Django Debug Plugin
+# Django Debug Middleware
 
 You can debug your GraphQL queries in a similar way to [django-debug-toolbar](https://django-debug-toolbar.readthedocs.org/),
 but outputing in the results in GraphQL response as fields, instead of the graphical HTML interface.
@@ -14,7 +14,7 @@ For that, you will need to add the plugin in your graphene schema.
 ## Installation
 
 For use the Django Debug plugin in Graphene:
-* Import `DjangoDebugMiddleware` and add it to the `middleware` argument when you initiate the `Schema`.
+* Import `DjangoDebugMiddleware` and add it to the `middlewares` argument when you initiate the `Schema`.
 * Add the `debug` field into the schema root `Query` with the value `graphene.Field(DjangoDebug, name='__debug')`.
 
 
@@ -27,8 +27,6 @@ class Query(graphene.ObjectType):
 
 schema = graphene.Schema(query=Query, middlewares=[DjangoDebugMiddleware()])
 ```
-
-This plugin, will add another field in the `Query` named `__debug`.
 
 
 ## Querying
