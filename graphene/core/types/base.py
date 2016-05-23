@@ -147,6 +147,8 @@ class GroupNamedType(InstanceType):
         name = type.name
         if not name and schema.auto_camelcase:
             name = to_camel_case(type.default_name)
+        elif not name:
+            name = type.default_name
         return name, schema.T(type)
 
     def iter_types(self, schema):
