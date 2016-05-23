@@ -104,6 +104,21 @@ def test_schema_no_query():
     assert 'define a base query type' in str(excinfo)
 
 
+def test_auto_camelcase_off():
+    schema = Schema(name='My own schema', auto_camelcase=False)
+
+    class Query(ObjectType):
+        test_field = String(resolver=lambda *_: 'Dog')
+
+    schema.query = Query
+
+    query = "query {test_field}"
+    expected = {"test_field": "Dog"}
+
+    result = graphql(schema.schema, query, root_value=Query(object()))
+    assert not result.errors
+    assert result.data == expected
+
 def test_schema_register():
     schema = Schema(name='My own schema')
 
