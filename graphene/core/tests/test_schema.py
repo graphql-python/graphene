@@ -119,6 +119,7 @@ def test_auto_camelcase_off():
     assert not result.errors
     assert result.data == expected
 
+
 def test_schema_register():
     schema = Schema(name='My own schema')
 
