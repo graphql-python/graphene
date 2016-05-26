@@ -132,6 +132,21 @@ def test_schema_register():
     assert schema.get_type('MyType') == MyType
 
 
+def test_schema_register_interfaces():
+    class Query(ObjectType):
+        f = Field(Character)
+
+        def resolve_f(self, args, info):
+            return Human()
+
+    schema = Schema(query=Query)
+
+    schema.register(Human)
+
+    result = schema.execute('{ f { name } }')
+    assert not result.errors
+
+
 def test_schema_register_no_query_type():
     schema = Schema(name='My own schema')
 
