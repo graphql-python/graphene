@@ -1,5 +1,6 @@
 import pytest
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from py.test import raises
 
 import graphene
@@ -115,6 +116,21 @@ def test_field_with_choices_convert_enum():
     assert graphene_type._meta.description == 'Language'
     assert graphene_type.__enum__.__members__['SPANISH'].value == 'es'
     assert graphene_type.__enum__.__members__['ENGLISH'].value == 'en'
+
+
+def test_field_with_choices_gettext():
+    field = models.CharField(help_text='Language', choices=(
+        ('es', _('Spanish')),
+        ('en', _('English'))
+    ))
+
+    class TranslatedModel(models.Model):
+        language = field
+
+        class Meta:
+            app_label = 'test'
+
+    convert_django_field_with_choices(field)
 
 
 def test_should_float_convert_float():
