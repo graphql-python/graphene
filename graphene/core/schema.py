@@ -77,6 +77,7 @@ class Schema(object):
             self,
             query=self.T(self.query),
             mutation=self.T(self.mutation),
+            types=[self.T(_type) for _type in list(self._types_names.values())],
             subscription=self.T(self.subscription))
 
     def register(self, object_type, force=False):
