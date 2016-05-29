@@ -10,8 +10,8 @@ Let's build a basic GraphQL schema from scratch.
 
 ## Requirements
 
-- Python (2.6.5+, 2.7, 3.2, 3.3, 3.4, 3.5, pypy)
-- Graphene (0.4+)
+- Python (2.7, 3.2, 3.3, 3.4, 3.5, pypy)
+- Graphene (0.10+)
 
 
 ## Project setup
