@@ -47,8 +47,9 @@ def wrap_cursor(connection, panel):
 
 def unwrap_cursor(connection):
     if hasattr(connection, '_graphene_cursor'):
+        previous_cursor = connection._graphene_cursor
+        connection.cursor = previous_cursor
         del connection._graphene_cursor
-        del connection.cursor
 
 
 class ExceptionCursorWrapper(object):
