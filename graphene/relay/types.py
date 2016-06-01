@@ -176,6 +176,8 @@ class RelayMutationMeta(MutationMeta):
         if not cls._meta.abstract:
             assert hasattr(
                 cls, 'mutate_and_get_payload'), 'You have to implement mutate_and_get_payload'
+        if 'type_name' not in cls._meta.original_attrs:
+            cls._meta.type_name = '{}Payload'.format(cls.__name__)
         return cls
 
     def construct_arguments(cls, items):

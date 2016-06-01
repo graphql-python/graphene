@@ -66,3 +66,37 @@ def test_node_connection_should_have_edge():
     edges_type = connection_fields['edges'].type
     assert isinstance(edges_type, GraphQLList)
     assert edges_type.of_type == schema.T(edge)
+
+
+def test_client_mutation_id():
+    class RemoveWidget(relay.ClientIDMutation):
+
+        class Input:
+            id = graphene.String(required=True)
+
+        deletedWidgetID = graphene.String()
+
+        @classmethod
+        def mutate_and_get_payload(cls, input, info):
+            pass
+
+    graphql_type = schema.T(RemoveWidget)
+    assert graphql_type.name == 'RemoveWidgetPayload'
+
+
+def test_client_mutation_id_with_name():
+    class RemoveWidget(relay.ClientIDMutation):
+        class Meta:
+            type_name = 'RemoveWidgetCustomPayload'
+
+        class Input:
+            id = graphene.String(required=True)
+
+        deletedWidgetID = graphene.String()
+
+        @classmethod
+        def mutate_and_get_payload(cls, input, info):
+            pass
+
+    graphql_type = schema.T(RemoveWidget)
+    assert graphql_type.name == 'RemoveWidgetCustomPayload'
