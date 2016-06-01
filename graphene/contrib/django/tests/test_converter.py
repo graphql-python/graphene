@@ -118,6 +118,23 @@ def test_field_with_choices_convert_enum():
     assert graphene_type.__enum__.__members__['ENGLISH'].value == 'en'
 
 
+def test_field_with_grouped_choices():
+    field = models.CharField(help_text='Language', choices=(
+        ('Europe', (
+            ('es', 'Spanish'),
+            ('en', 'English'),
+        )),
+    ))
+
+    class GroupedChoicesModel(models.Model):
+        language = field
+
+        class Meta:
+            app_label = 'test'
+
+    convert_django_field_with_choices(field)
+
+
 def test_field_with_choices_gettext():
     field = models.CharField(help_text='Language', choices=(
         ('es', _('Spanish')),
