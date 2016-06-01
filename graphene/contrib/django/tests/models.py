@@ -1,6 +1,12 @@
 from __future__ import absolute_import
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+CHOICES = (
+    (1, 'this'),
+    (2, _('that'))
+)
 
 
 class Pet(models.Model):
@@ -22,6 +28,7 @@ class Reporter(models.Model):
     last_name = models.CharField(max_length=30)
     email = models.EmailField()
     pets = models.ManyToManyField('self')
+    a_choice = models.CharField(max_length=30, choices=CHOICES)
 
     def __str__(self):              # __unicode__ on Python 2
         return "%s %s" % (self.first_name, self.last_name)

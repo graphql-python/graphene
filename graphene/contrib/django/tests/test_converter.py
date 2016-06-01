@@ -1,5 +1,6 @@
 import pytest
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from py.test import raises
 
 import graphene
@@ -125,7 +126,22 @@ def test_field_with_grouped_choices():
         )),
     ))
 
-    class TranslatedModel(models.Model):
+    class GroupedChoicesModel(models.Model):
+        language = field
+
+        class Meta:
+            app_label = 'test'
+
+    convert_django_field_with_choices(field)
+
+
+def test_field_with_choices_gettext():
+    field = models.CharField(help_text='Language', choices=(
+        ('es', _('Spanish')),
+        ('en', _('English'))
+    ))
+
+    class TranslatedChoicesModel(models.Model):
         language = field
 
         class Meta:
