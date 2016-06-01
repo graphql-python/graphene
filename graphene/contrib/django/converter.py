@@ -20,8 +20,9 @@ def convert_choices(choices):
 
 def convert_django_field_with_choices(field):
     choices = getattr(field, 'choices', None)
-    if choices:
-        meta = field.model._meta
+    model = getattr(field, 'model', None)
+    if choices and model:
+        meta = model._meta
         name = '{}_{}_{}'.format(meta.app_label, meta.object_name, field.name)
         return Enum(name.upper(), list(convert_choices(choices)), description=field.help_text)
     return convert_django_field(field)

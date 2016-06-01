@@ -124,7 +124,7 @@ def test_field_with_choices_gettext():
         ('en', _('English'))
     ))
 
-    class TranslatedModel(models.Model):
+    class TranslatedChoicesModel(models.Model):
         language = field
 
         class Meta:
