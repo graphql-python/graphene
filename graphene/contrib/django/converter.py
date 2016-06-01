@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.encoding import force_text
 
 from ...core.classtypes.enum import Enum
 from ...core.types.custom_scalars import DateTime, JSONString
@@ -14,7 +15,7 @@ singledispatch = import_single_dispatch()
 
 def convert_choices(choices):
     for value, name in choices:
-        yield to_const(name), value
+        yield to_const(force_text(name)), value
 
 
 def convert_django_field_with_choices(field):
