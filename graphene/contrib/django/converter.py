@@ -15,16 +15,20 @@ singledispatch = import_single_dispatch()
 
 def convert_choices(choices):
     for value, name in choices:
-        yield to_const(force_text(name)), value
+        if isinstance(name, (tuple, list)):
+            for choice in convert_choices(name):
+                yield choice
+        else:
+            yield to_const(force_text(name)), value
 
 
 def convert_django_field_with_choices(field):
     choices = getattr(field, 'choices', None)
-    model = getattr(field, 'model', None)
-    if choices and model:
-        meta = model._meta
+    if choices:
+        meta = field.model._meta
         name = '{}_{}_{}'.format(meta.app_label, meta.object_name, field.name)
-        return Enum(name.upper(), list(convert_choices(choices)), description=field.help_text)
+        graphql_choices = list(convert_choices(choices))
+        return Enum(name.upper(), graphql_choices, description=field.help_text)
     return convert_django_field(field)
 
 
