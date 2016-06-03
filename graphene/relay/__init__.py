@@ -9,6 +9,7 @@ from .types import (
     PageInfo,
     Edge,
     Connection,
+    SimpleConnection
     ClientIDMutation
 )
 
