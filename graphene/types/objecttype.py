@@ -1,6 +1,43 @@
 import six
 
-from .definitions import ClassTypeMeta, GrapheneObjectType, GrapheneInterfaceType, FieldMap
+from graphql import GraphQLObjectType
+
+from .definitions import ClassTypeMeta, GrapheneFieldsType, FieldMap
+from .interface import GrapheneInterfaceType
+
+
+class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
+    __slots__ = ('graphene_type', '_name', '_description', '_fields', '_field_map', '_is_type_of', '_provided_interfaces', '_interfaces')
+
+    @property
+    def is_type_of(self):
+        return self._is_type_of or self.default_is_type_of
+
+    @is_type_of.setter
+    def is_type_of(self, is_type_of):
+        self._is_type_of = is_type_of
+
+    def default_is_type_of(self, interface, context, info):
+        from ..utils.get_graphql_type import get_graphql_type
+        try:
+            graphql_type = get_graphql_type(type(interface))
+            return graphql_type == self
+        except:
+            return False
+
+    def add_interface(self, interface):
+        from ..utils.get_graphql_type import get_graphql_type
+        # We clear the cached interfaces
+        self._interfaces = None
+        # We clear the cached fields as could be inherited from interfaces
+        self._field_map = None
+        graphql_type = get_graphql_type(interface)
+
+        if isinstance(graphql_type, GrapheneInterfaceType):
+            graphql_type.graphene_type.implements(self.graphene_type)
+
+        self._provided_interfaces.append(graphql_type)
+
 
 
 class ObjectTypeMeta(ClassTypeMeta):
@@ -36,7 +73,10 @@ class ObjectTypeMeta(ClassTypeMeta):
 
 
 def implements(*interfaces):
+    # This function let us decorate a ObjectType
+    # Adding a specified interfaces into the graphql_type
     def wrap_class(cls):
+
         for i in interfaces:
             cls._meta.graphql_type.add_interface(i)
         return cls
@@ -48,6 +88,7 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
         abstract = True
 
     def __init__(self, *args, **kwargs):
+        # GraphQL ObjectType acting as container
         args_len = len(args)
         fields = self._meta.graphql_type.get_fields().values()
         if args_len > len(fields):

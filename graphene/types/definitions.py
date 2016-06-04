@@ -3,7 +3,7 @@ import inspect
 import copy
 
 from graphql.utils.assert_valid_name import assert_valid_name
-from graphql.type.definition import GraphQLObjectType, GraphQLInterfaceType, GraphQLScalarType
+from graphql.type.definition import GraphQLObjectType
 
 from .options import Options
 
@@ -135,83 +135,3 @@ class FieldMap(object):
             new_fields.append((field_name, field))
 
         return OrderedDict(new_fields)
-
-
-class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
-    __slots__ = ('graphene_type', '_name', '_description', '_fields', '_field_map', '_is_type_of', '_provided_interfaces', '_interfaces')
-
-    @property
-    def is_type_of(self):
-        return self._is_type_of or self.default_is_type_of
-
-    @is_type_of.setter
-    def is_type_of(self, is_type_of):
-        self._is_type_of = is_type_of
-
-    def default_is_type_of(self, interface, context, info):
-        from ..utils.get_graphql_type import get_graphql_type
-        try:
-            graphql_type = get_graphql_type(type(interface))
-            return graphql_type == self
-        except:
-            return False
-
-    def add_interface(self, interface):
-        from ..utils.get_graphql_type import get_graphql_type
-        # We clear the cached interfaces
-        self._interfaces = None
-        # We clear the cached fields as could be inherited from interfaces
-        self._field_map = None
-        graphql_type = get_graphql_type(interface)
-
-        if isinstance(graphql_type, GrapheneInterfaceType):
-            graphql_type.graphene_type.implements(self.graphene_type)
-
-        self._provided_interfaces.append(graphql_type)
-
-
-class GrapheneInterfaceType(GrapheneFieldsType, GraphQLInterfaceType):
-    __slots__ = ('graphene_type', '_name', '_description', '_fields', '_field_map', 'resolve_type')
-
-
-class GrapheneScalarType(GrapheneType, GraphQLScalarType):
-    __slots__ = ('graphene_type', '_name', '_description', '_serialize', '_parse_value', '_parse_literal')
-
-    def __init__(self, *args, **kwargs):
-        GrapheneType.__init__(self, *args, **kwargs)
-
-    @staticmethod
-    def default_parse(value):
-        return None
-
-    def setup(self):
-        serialize = getattr(self.graphene_type, 'serialize', None)
-        parse_value = getattr(self.graphene_type, 'parse_value', None)
-        parse_literal = getattr(self.graphene_type, 'parse_literal', None)
-
-        assert callable(serialize), (
-            '{} must provide "serialize" function. If this custom Scalar is '
-            'also used as an input type, ensure "parse_value" and "parse_literal" '
-            'functions are also provided.'
-        ).format(self)
-
-        if parse_value is not None or parse_literal is not None:
-            assert callable(parse_value) and callable(parse_literal), (
-                '{} must provide both "parse_value" and "parse_literal" functions.'.format(self)
-            )
-
-        self._serialize = serialize
-        self._parse_value = parse_value
-        self._parse_literal = parse_literal
-
-    @property
-    def serialize(self):
-        return self.graphene_type.serialize
-
-    @property
-    def parse_value(self):
-        return getattr(self.graphene_type, 'parse_value', self.default_parse)
-
-    @property
-    def parse_literal(self):
-        return getattr(self.graphene_type, 'parse_literal', self.default_parse)

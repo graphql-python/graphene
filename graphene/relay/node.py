@@ -2,9 +2,8 @@ from functools import partial
 import six
 from graphql_relay import node_definitions, from_global_id
 
-from ..types.definitions import GrapheneInterfaceType
 from ..types.field import Field
-from ..types.interface import Interface, InterfaceTypeMeta
+from ..types.interface import GrapheneInterfaceType, Interface, InterfaceTypeMeta
 
 
 class NodeMeta(InterfaceTypeMeta):

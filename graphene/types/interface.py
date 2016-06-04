@@ -1,6 +1,11 @@
 import six
 
-from .definitions import ClassTypeMeta, GrapheneInterfaceType, FieldMap
+from graphql import GraphQLInterfaceType
+from .definitions import ClassTypeMeta, GrapheneFieldsType, FieldMap
+
+
+class GrapheneInterfaceType(GrapheneFieldsType, GraphQLInterfaceType):
+    __slots__ = ('graphene_type', '_name', '_description', '_fields', '_field_map', 'resolve_type')
 
 
 class InterfaceTypeMeta(ClassTypeMeta):
