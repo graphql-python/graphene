@@ -1,0 +1,163 @@
+import pytest
+
+from graphql import GraphQLObjectType, GraphQLField, GraphQLString, GraphQLInterfaceType
+
+from ..objecttype import ObjectType
+from ..interface import Interface
+from ..field import Field
+
+
+class Container(ObjectType):
+    field1 = Field(GraphQLString)
+    field2 = Field(GraphQLString)
+
+
+def test_generate_objecttype():
+    class MyObjectType(ObjectType):
+        '''Documentation'''
+        pass
+
+    graphql_type = MyObjectType._meta.graphql_type
+    assert isinstance(graphql_type, GraphQLObjectType)
+    assert graphql_type.name == "MyObjectType"
+    assert graphql_type.description == "Documentation"
+
+
+def test_generate_objecttype_with_meta():
+    class MyObjectType(ObjectType):
+        class Meta:
+            name = 'MyOtherObjectType'
+            description = 'Documentation'
+
+    graphql_type = MyObjectType._meta.graphql_type
+    assert isinstance(graphql_type, GraphQLObjectType)
+    assert graphql_type.name == "MyOtherObjectType"
+    assert graphql_type.description == "Documentation"
+
+
+def test_empty_objecttype_has_meta():
+    class MyObjectType(ObjectType):
+        pass
+
+    assert MyObjectType._meta
+
+
+def test_generate_objecttype_with_fields():
+    class MyObjectType(ObjectType):
+        field = Field(GraphQLString)
+
+    graphql_type = MyObjectType._meta.graphql_type
+    fields = graphql_type.get_fields()
+    assert 'field' in fields
+
+
+def test_objecttype_inheritance():
+    class MyInheritedObjectType(ObjectType):
+        inherited = Field(GraphQLString)
+
+    class MyObjectType(MyInheritedObjectType):
+        field = Field(GraphQLString)
+
+    graphql_type = MyObjectType._meta.graphql_type
+    fields = graphql_type.get_fields()
+    assert 'field' in fields
+    assert 'inherited' in fields
+    assert fields['field'] > fields['inherited']
+
+
+def test_objecttype_as_container_only_args():
+    container = Container("1", "2")
+    assert container.field1 == "1"
+    assert container.field2 == "2"
+
+
+def test_objecttype_as_container_args_kwargs():
+    container = Container("1", field2="2")
+    assert container.field1 == "1"
+    assert container.field2 == "2"
+
+
+def test_objecttype_as_container_few_kwargs():
+    container = Container(field2="2")
+    assert container.field2 == "2"
+
+
+def test_objecttype_as_container_all_kwargs():
+    container = Container(field1="1", field2="2")
+    assert container.field1 == "1"
+    assert container.field2 == "2"
+
+
+def test_objecttype_as_container_extra_args():
+    with pytest.raises(IndexError) as excinfo:
+        Container("1", "2", "3")
+
+    assert "Number of args exceeds number of fields" == str(excinfo.value)
+
+
+def test_objecttype_as_container_invalid_kwargs():
+    with pytest.raises(TypeError) as excinfo:
+        Container(unexisting_field="3")
+
+    assert "'unexisting_field' is an invalid keyword argument for this function" == str(excinfo.value)
+
+
+def test_objecttype_reuse_graphql_type():
+    MyGraphQLType = GraphQLObjectType('MyGraphQLType', fields={
+        'field': GraphQLField(GraphQLString)
+    })
+
+    class GrapheneObjectType(ObjectType):
+        class Meta:
+            graphql_type = MyGraphQLType
+
+    graphql_type = GrapheneObjectType._meta.graphql_type
+    assert graphql_type == MyGraphQLType
+    instance = GrapheneObjectType(field="A")
+    assert instance.field == "A"
+
+
+def test_objecttype_add_fields_in_reused_graphql_type():
+    MyGraphQLType = GraphQLObjectType('MyGraphQLType', fields={
+        'field': GraphQLField(GraphQLString)
+    })
+
+    with pytest.raises(AssertionError) as excinfo:
+        class GrapheneObjectType(ObjectType):
+            field = Field(GraphQLString)
+
+            class Meta:
+                graphql_type = MyGraphQLType
+
+    assert "cannot be mounted in" in str(excinfo.value)
+
+
+def test_objecttype_graphql_interface():
+    MyInterface = GraphQLInterfaceType('MyInterface', fields={
+        'field': GraphQLField(GraphQLString)
+    })
+
+    class GrapheneObjectType(ObjectType):
+        class Meta:
+            interfaces = [MyInterface]
+
+    graphql_type = GrapheneObjectType._meta.graphql_type
+    assert graphql_type.get_interfaces() == [MyInterface]
+    # assert graphql_type.is_type_of(MyInterface, None, None)
+    fields = graphql_type.get_fields()
+    assert 'field' in fields
+
+
+def test_objecttype_graphene_interface():
+    class GrapheneInterface(Interface):
+        field = Field(GraphQLString)
+
+    class GrapheneObjectType(ObjectType):
+        class Meta:
+            interfaces = [GrapheneInterface]
+
+    graphql_type = GrapheneObjectType._meta.graphql_type
+    assert graphql_type.get_interfaces() == [GrapheneInterface._meta.graphql_type]
+    assert graphql_type.is_type_of(GrapheneObjectType(), None, None)
+    fields = graphql_type.get_fields()
+    assert 'field' in fields
