@@ -11,7 +11,7 @@ class Address(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    address = graphene.Field(Address, geo=graphene.Argument(GeoInput))
+    address = graphene.Field(Address, geo=GeoInput())
 
     def resolve_address(self, args, context, info):
         geo = args.get('geo')

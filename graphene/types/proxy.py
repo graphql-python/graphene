@@ -1,11 +1,5 @@
 from .field import Field, InputField
 from .argument import Argument
-
-
-from .objecttype import ObjectType
-from .interface import Interface
-from .inputobjecttype import InputObjectType
-
 from ..utils.orderedtype import OrderedType
 
 
@@ -43,6 +37,10 @@ class TypeProxy(OrderedType):
         )
 
     def contribute_to_class(self, cls, attname):
+        from .inputobjecttype import InputObjectType
+        from .objecttype import ObjectType
+        from .interface import Interface
+
         if issubclass(cls, (ObjectType, Interface)):
             inner = self.as_field()
         elif issubclass(cls, (InputObjectType)):

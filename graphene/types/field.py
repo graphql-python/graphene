@@ -3,9 +3,6 @@ import inspect
 from graphql.type import GraphQLField, GraphQLInputObjectField
 from graphql.utils.assert_valid_name import assert_valid_name
 
-from .objecttype import ObjectType
-from .inputobjecttype import InputObjectType
-from .interface import Interface
 from ..utils.orderedtype import OrderedType
 from ..utils.str_converters import to_camel_case
 from .argument import to_arguments
@@ -66,6 +63,9 @@ class Field(AbstractField, GraphQLField, OrderedType):
         )
 
     def contribute_to_class(self, cls, attname):
+        from .objecttype import ObjectType
+        from .interface import Interface
+
         assert issubclass(cls, (ObjectType, Interface)), self.mount_error_message(cls)
         self.attname = attname
         self.parent = cls
@@ -131,6 +131,8 @@ class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
         )
 
     def contribute_to_class(self, cls, attname):
+        from .inputobjecttype import InputObjectType
+
         assert issubclass(cls, (InputObjectType)), self.mount_error_message(cls)
         self.attname = attname
         self.parent = cls
