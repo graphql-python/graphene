@@ -31,7 +31,7 @@ def test_node_no_get_node():
     assert "MyNode.get_node method is required by the Node interface." == str(excinfo.value)
 
 
-def test_node_no_get_node():
+def test_node_no_get_node_with_meta():
     with pytest.raises(AssertionError) as excinfo:
         class MyNode(ObjectType):
             class Meta:

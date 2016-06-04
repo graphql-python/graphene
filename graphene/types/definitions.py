@@ -162,7 +162,12 @@ class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
         self._interfaces = None
         # We clear the cached fields as could be inherited from interfaces
         self._field_map = None
-        self._provided_interfaces.append(get_graphql_type(interface))
+        graphql_type = get_graphql_type(interface)
+
+        if isinstance(graphql_type, GrapheneInterfaceType):
+            graphql_type.graphene_type.implements(self.graphene_type)
+
+        self._provided_interfaces.append(graphql_type)
 
 
 class GrapheneInterfaceType(GrapheneFieldsType, GraphQLInterfaceType):

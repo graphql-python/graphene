@@ -29,21 +29,16 @@ class ObjectTypeMeta(ClassTypeMeta):
                 name=cls._meta.name or cls.__name__,
                 description=cls._meta.description,
                 fields=FieldMap(cls, bases=filter(None, inherited_types)),
-                interfaces=map(get_graphql_type, cls._meta.interfaces),
+                interfaces=[],
             )
+            for interface in cls._meta.interfaces:
+                cls._meta.graphql_type.add_interface(interface)
 
 
 def implements(*interfaces):
-    from ..utils.get_graphql_type import get_graphql_type
-
     def wrap_class(cls):
         for i in interfaces:
-            graphql_type = get_graphql_type(i)
-            if isinstance(graphql_type, GrapheneInterfaceType):
-                graphql_type.graphene_type.implements(cls)
-            else:
-                # We add the interface in the regular way 
-                cls._meta.graphql_type.add_interface(graphql_type)
+            cls._meta.graphql_type.add_interface(i)
         return cls
     return wrap_class
 

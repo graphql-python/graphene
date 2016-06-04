@@ -40,9 +40,8 @@ class Interface(six.with_metaclass(InterfaceTypeMeta)):
     @classmethod
     def implements(cls, object_type):
         '''
-        We use this function for customizing what the @implements function do
-        for each implementation.
-        For example, if we want to check that the class have some required things
+        We use this function for customizing when a ObjectType have this class as Interface
+        For example, if we want to check that the ObjectType have some required things
         in it like Node.get_node
         '''
-        object_type._meta.graphql_type.add_interface(cls)
+        pass
