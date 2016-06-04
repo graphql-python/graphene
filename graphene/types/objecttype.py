@@ -39,7 +39,6 @@ class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
         self._provided_interfaces.append(graphql_type)
 
 
-
 class ObjectTypeMeta(ClassTypeMeta):
 
     def get_options(cls, meta):

@@ -1,5 +1,10 @@
-from .field import Field
+from .field import Field, InputField
 from .argument import Argument
+
+
+from .objecttype import ObjectType
+from .interface import Interface
+from .inputobjecttype import InputObjectType
 
 from ..utils.orderedtype import OrderedType
 
@@ -21,6 +26,14 @@ class TypeProxy(OrderedType):
             **self.kwargs
         )
 
+    def as_inputfield(self):
+        return InputField(
+            self.get_type(),
+            *self.args,
+            _creation_counter=self.creation_counter,
+            **self.kwargs
+        )
+
     def as_argument(self):
         return Argument(
             self.get_type(),
@@ -30,5 +43,11 @@ class TypeProxy(OrderedType):
         )
 
     def contribute_to_class(self, cls, attname):
-        field = self.as_field()
-        return field.contribute_to_class(cls, attname)
+        if issubclass(cls, (ObjectType, Interface)):
+            inner = self.as_field()
+        elif issubclass(cls, (InputObjectType)):
+            inner = self.as_inputfield()
+        else:
+            raise Exception('TypedProxy "{}" cannot be mounted in {}'.format(self.get_type(), cls))
+
+        return inner.contribute_to_class(cls, attname)

@@ -1,7 +1,7 @@
 import pytest
 import copy
 
-from graphql import GraphQLString, GraphQLField, GraphQLInt
+from graphql import GraphQLString, GraphQLField, GraphQLInt, GraphQLNonNull
 
 from ..field import Field
 from ..argument import Argument
@@ -14,6 +14,14 @@ def test_field():
     assert isinstance(field, GraphQLField)
     assert field.name == "name"
     assert field.description == "description"
+    assert field.type == GraphQLString
+
+
+def test_field_required():
+    field = Field(GraphQLString, required=True)
+    assert isinstance(field, GraphQLField)
+    assert isinstance(field.type, GraphQLNonNull)
+    assert field.type.of_type == GraphQLString
 
 
 def test_field_wrong_name():
