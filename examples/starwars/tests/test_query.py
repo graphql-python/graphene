@@ -58,7 +58,7 @@ def test_nested_query():
             name
             friends {
               name
-              # appearsIn
+              appearsIn
               friends {
                 name
               }
@@ -72,7 +72,7 @@ def test_nested_query():
             'friends': [
                 {
                     'name': 'Luke Skywalker',
-                    # 'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
+                    'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
                     'friends': [
                         {
                             'name': 'Han Solo',
@@ -90,7 +90,7 @@ def test_nested_query():
                 },
                 {
                     'name': 'Han Solo',
-                    # 'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
+                    'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
                     'friends': [
                         {
                             'name': 'Luke Skywalker',
@@ -105,7 +105,7 @@ def test_nested_query():
                 },
                 {
                     'name': 'Leia Organa',
-                    # 'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
+                    'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
                     'friends': [
                         {
                             'name': 'Luke Skywalker',
@@ -328,21 +328,21 @@ def test_check_type_of_r2():
     assert result.data == expected
 
 
-# def test_check_type_of_luke():
-#     query = '''
-#         query CheckTypeOfLuke {
-#           hero(episode: EMPIRE) {
-#             __typename
-#             name
-#           }
-#         }
-#     '''
-#     expected = {
-#         'hero': {
-#             '__typename': 'Human',
-#             'name': 'Luke Skywalker',
-#         }
-#     }
-#     result = schema.execute(query)
-#     assert not result.errors
-#     assert result.data == expected
+def test_check_type_of_luke():
+    query = '''
+        query CheckTypeOfLuke {
+          hero(episode: EMPIRE) {
+            __typename
+            name
+          }
+        }
+    '''
+    expected = {
+        'hero': {
+            '__typename': 'Human',
+            'name': 'Luke Skywalker',
+        }
+    }
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected

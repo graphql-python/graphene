@@ -4,17 +4,17 @@ from graphene import resolve_only_args
 from .data import get_character, get_droid, get_hero, get_human
 
 
-# class Episode(graphene.Enum):
-#     NEWHOPE = 4
-#     EMPIRE = 5
-#     JEDI = 6
+class Episode(graphene.Enum):
+    NEWHOPE = 4
+    EMPIRE = 5
+    JEDI = 6
 
 
 class Character(graphene.Interface):
     id = graphene.ID()
     name = graphene.String()
     friends = graphene.List(lambda: Character)
-    # appears_in = graphene.List(Episode)
+    appears_in = graphene.List(Episode)
 
 
 @graphene.implements(Character)
@@ -37,7 +37,7 @@ class Droid(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     hero = graphene.Field(Character,
-                          # episode=graphene.Argument(Episode)
+                          episode=Episode()
                           )
     human = graphene.Field(Human,
                            id=graphene.String()
