@@ -9,6 +9,7 @@ from ..schema import Schema
 class Character(Interface):
     name = String()
     friends = List(lambda: Character)
+    best_friend = Field(lambda: Character)
 
 
 class Pet(ObjectType):
@@ -25,6 +26,9 @@ class Human(ObjectType):
     def resolve_friends(self, *args):
         return [Human(name='Peter')]
 
+    def resolve_best_friend(self, *args):
+        return Human(name='Best')
+
 
 class RootQuery(ObjectType):
     character = Field(Character)
@@ -37,8 +41,9 @@ schema = Schema(query=RootQuery, types=[Human])
 
 
 def test_schema():
-    executed = schema.execute('{ character {name, friends { name}, ...on Human {pet { type } } } }')
-    assert executed.data == {'character': {'name': 'Harry', 'friends': [{'name': 'Peter'}], 'pet': {'type': 'Dog'}}}
+    executed = schema.execute('{ character {name, bestFriend { name }, friends { name}, ...on Human {pet { type } } } }')
+    assert not executed.errors
+    assert executed.data == {'character': {'name': 'Harry', 'bestFriend': {'name': 'Best'}, 'friends': [{'name': 'Peter'}], 'pet': {'type': 'Dog'}}}
 
 
 def test_schema_introspect():
@@ -55,11 +60,13 @@ schema {
 interface Character {
   name: String
   friends: [Character]
+  bestFriend: Character
 }
 
 type Human implements Character {
   name: String
   friends: [Character]
+  bestFriend: Character
   pet: Pet
 }
 
