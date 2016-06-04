@@ -22,7 +22,6 @@ class Human(graphene.ObjectType):
     home_planet = graphene.String()
 
     def resolve_friends(self, args, *_):
-        print 'resolve_friends'
         # The character friends is a list of strings
         return [get_character(f) for f in self.friends]
 
@@ -32,10 +31,8 @@ class Droid(graphene.ObjectType):
     primary_function = graphene.String()
 
     def resolve_friends(self, args, *_):
-        print 'resolve_friends'
-        # print self.name
         # The character friends is a list of strings
-        return [get_character() for f in self.friends]
+        return [get_character(f) for f in self.friends]
 
 
 class Query(graphene.ObjectType):
@@ -51,7 +48,6 @@ class Query(graphene.ObjectType):
 
     @resolve_only_args
     def resolve_hero(self, episode=None):
-        print 'get_hero', get_hero(episode)
         return get_hero(episode)
 
     @resolve_only_args

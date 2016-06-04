@@ -152,7 +152,7 @@ class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
         from ..utils.get_graphql_type import get_graphql_type
         try:
             graphql_type = get_graphql_type(type(interface))
-            return graphql_type == self or graphql_type in self._provided_interfaces
+            return graphql_type == self
         except:
             return False
 

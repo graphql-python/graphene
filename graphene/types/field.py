@@ -61,17 +61,39 @@ class Field(GraphQLField, OrderedType):
         self._type = type
 
     @property
-    def args(self):
-        return self._args
-
-    @args.setter
-    def args(self, args):
-        self._args = args
-
-    @property
     def resolver(self):
-        return self._resolver or getattr(self.parent(), 'resolve_{}'.format(self.attname), None)
+        def default_resolver(root, args, context, info):
+            return getattr(root, self.source or self.attname, None)
+
+        resolver = getattr(self.parent, 'resolve_{}'.format(self.attname), default_resolver)
+
+        def resolver_wrapper(root, *args, **kwargs):
+            if not isinstance(root, self.parent):
+                root = self.parent()
+            return resolver(root, *args, **kwargs)
+
+        return self._resolver or resolver_wrapper
 
     @resolver.setter
     def resolver(self, resolver):
         self._resolver = resolver
+
+    def __copy__(self):
+        field = Field(
+            type=self._type,
+            args=self.args,
+            resolver=self._resolver,
+            source=self.source,
+            deprecation_reason=self.deprecation_reason,
+            name=self._name,
+            description=self.description,
+            _creation_counter=self.creation_counter,
+        )
+        field.attname = self.attname
+        field.parent = self.parent
+        return field
+
+    def __str__(self):
+        if not self.parent:
+            return 'Not bounded field'
+        return "{}.{}".format(self.parent._meta.graphql_type, self.attname)
