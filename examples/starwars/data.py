@@ -9,7 +9,7 @@ def setup():
         id='1000',
         name='Luke Skywalker',
         friends=['1002', '1003', '2000', '2001'],
-        appears_in=[4, 5, 6],
+        # appears_in=[4, 5, 6],
         home_planet='Tatooine',
     )
 
@@ -17,7 +17,7 @@ def setup():
         id='1001',
         name='Darth Vader',
         friends=['1004'],
-        appears_in=[4, 5, 6],
+        # appears_in=[4, 5, 6],
         home_planet='Tatooine',
     )
 
@@ -25,7 +25,7 @@ def setup():
         id='1002',
         name='Han Solo',
         friends=['1000', '1003', '2001'],
-        appears_in=[4, 5, 6],
+        # appears_in=[4, 5, 6],
         home_planet=None,
     )
 
@@ -33,7 +33,7 @@ def setup():
         id='1003',
         name='Leia Organa',
         friends=['1000', '1002', '2000', '2001'],
-        appears_in=[4, 5, 6],
+        # appears_in=[4, 5, 6],
         home_planet='Alderaan',
     )
 
@@ -41,7 +41,7 @@ def setup():
         id='1004',
         name='Wilhuff Tarkin',
         friends=['1001'],
-        appears_in=[4],
+        # appears_in=[4],
         home_planet=None,
     )
 
@@ -53,25 +53,25 @@ def setup():
         '1004': tarkin,
     }
 
-    threepio = Droid(
+    c3po = Droid(
         id='2000',
         name='C-3PO',
         friends=['1000', '1002', '1003', '2001'],
-        appears_in=[4, 5, 6],
+        # appears_in=[4, 5, 6],
         primary_function='Protocol',
     )
 
-    artoo = Droid(
+    r2d2 = Droid(
         id='2001',
         name='R2-D2',
         friends=['1000', '1002', '1003'],
-        appears_in=[4, 5, 6],
+        # appears_in=[4, 5, 6],
         primary_function='Astromech',
     )
 
     droid_data = {
-        '2000': threepio,
-        '2001': artoo,
+        '2000': c3po,
+        '2001': r2d2,
     }
 
 

@@ -4,34 +4,43 @@ from graphene import resolve_only_args
 from .data import get_character, get_droid, get_hero, get_human
 
 
-class Episode(graphene.Enum):
-    NEWHOPE = 4
-    EMPIRE = 5
-    JEDI = 6
+# class Episode(graphene.Enum):
+#     NEWHOPE = 4
+#     EMPIRE = 5
+#     JEDI = 6
 
 
 class Character(graphene.Interface):
     id = graphene.ID()
     name = graphene.String()
-    friends = graphene.List('Character')
-    appears_in = graphene.List(Episode)
+    friends = graphene.List(lambda: Character)
+    # appears_in = graphene.List(Episode)
+
+
+@graphene.implements(Character)
+class Human(graphene.ObjectType):
+    home_planet = graphene.String()
 
     def resolve_friends(self, args, *_):
+        print 'resolve_friends'
         # The character friends is a list of strings
         return [get_character(f) for f in self.friends]
 
 
-class Human(Character):
-    home_planet = graphene.String()
-
-
-class Droid(Character):
+@graphene.implements(Character)
+class Droid(graphene.ObjectType):
     primary_function = graphene.String()
+
+    def resolve_friends(self, args, *_):
+        print 'resolve_friends'
+        # print self.name
+        # The character friends is a list of strings
+        return [get_character() for f in self.friends]
 
 
 class Query(graphene.ObjectType):
     hero = graphene.Field(Character,
-                          episode=graphene.Argument(Episode)
+                          # episode=graphene.Argument(Episode)
                           )
     human = graphene.Field(Human,
                            id=graphene.String()
@@ -42,6 +51,7 @@ class Query(graphene.ObjectType):
 
     @resolve_only_args
     def resolve_hero(self, episode=None):
+        print 'get_hero', get_hero(episode)
         return get_hero(episode)
 
     @resolve_only_args
@@ -53,4 +63,4 @@ class Query(graphene.ObjectType):
         return get_droid(id)
 
 
-Schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query)
