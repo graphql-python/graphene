@@ -1,5 +1,5 @@
 import six
-from graphql import GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean
+from graphql import GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID
 
 from .definitions import ClassTypeMeta, GrapheneScalarType
 from .proxy import TypeProxy
@@ -52,3 +52,4 @@ String = construct_scalar_class(GraphQLString)
 Int = construct_scalar_class(GraphQLInt)
 Float = construct_scalar_class(GraphQLFloat)
 Boolean = construct_scalar_class(GraphQLBoolean)
+ID = construct_scalar_class(GraphQLID)

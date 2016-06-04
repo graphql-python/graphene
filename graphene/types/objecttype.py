@@ -57,16 +57,19 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
 
         if not kwargs:
             for val, field in zip(args, fields_iter):
-                setattr(self, field.name, val)
+                attname = getattr(field, 'attname', field.name)
+                setattr(self, attname, val)
         else:
             for val, field in zip(args, fields_iter):
-                setattr(self, field.name, val)
-                kwargs.pop(field.name, None)
+                attname = getattr(field, 'attname', field.name)
+                setattr(self, attname, val)
+                kwargs.pop(attname, None)
 
         for field in fields_iter:
             try:
-                val = kwargs.pop(field.name)
-                setattr(self, field.name, val)
+                attname = getattr(field, 'attname', field.name)
+                val = kwargs.pop(attname)
+                setattr(self, attname, val)
             except KeyError:
                 pass
 

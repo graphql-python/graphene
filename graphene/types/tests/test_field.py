@@ -37,7 +37,7 @@ def test_contributed_field_objecttype():
     field = Field(GraphQLString)
     field.contribute_to_class(MyObject, 'field_name')
 
-    assert field.name == 'field_name'
+    assert field.name == 'fieldName'
 
 
 def test_contributed_field_non_objecttype():

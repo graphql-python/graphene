@@ -6,6 +6,7 @@ from graphql.utils.assert_valid_name import assert_valid_name
 from .objecttype import ObjectType
 from .interface import Interface
 from ..utils.orderedtype import OrderedType
+from ..utils.str_converters import to_camel_case
 from .argument import to_arguments
 
 
@@ -40,7 +41,7 @@ class Field(GraphQLField, OrderedType):
 
     @property
     def name(self):
-        return self._name or self.attname
+        return self._name or to_camel_case(self.attname)
 
     @name.setter
     def name(self, name):
