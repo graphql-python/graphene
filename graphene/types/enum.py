@@ -55,11 +55,12 @@ class EnumTypeMeta(ClassTypeMeta):
     def construct(cls, bases, attrs):
         if not cls._meta.enum:
             cls._meta.enum = type(cls.__name__, (PyEnum,), attrs)
-        return super(EnumTypeMeta, cls).construct(bases, {})
+
+        return super(EnumTypeMeta, cls).construct(bases, cls._meta.enum.__members__)
 
     def __call__(cls, *args, **kwargs):
-        if cls is Enum:
-            return Enum.create(PyEnum(*args, **kwargs))
+        if cls._meta.abstract:
+            return cls.create(PyEnum(*args, **kwargs))
         return super(EnumTypeMeta, cls).__call__(*args, **kwargs)
 
     def create(cls, python_enum):
@@ -71,6 +72,3 @@ class EnumTypeMeta(ClassTypeMeta):
 class Enum(six.with_metaclass(EnumTypeMeta, TypeProxy)):
     class Meta:
         abstract = True
-
-    def __getattr__(self, name):
-        return getattr(self._meta.enum, name)

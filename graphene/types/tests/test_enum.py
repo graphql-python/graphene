@@ -50,3 +50,12 @@ def test_enum_from_builtin_enum():
     ]
     assert isinstance(RGB(name='field_name').as_field(), Field)
     assert isinstance(RGB(name='field_name').as_argument(), Argument)
+
+
+def test_enum_value_from_class():
+    class RGB(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    assert RGB.RED.value == 1
