@@ -1,3 +1,4 @@
+import copy
 from functools import partial
 import six
 from graphql_relay import node_definitions, from_global_id
@@ -20,8 +21,16 @@ class NodeMeta(InterfaceTypeMeta):
                 field_class=Field
             )
             cls._meta.graphql_type = node_interface
-            cls.Field = node_field
+            cls._Field = node_field
         return constructed
+
+    @property
+    def Field(cls):
+        # We put as a property for reset the field counter each time is setted up, so
+        # it will be order correctly wherever is mounted
+        field = copy.copy(cls._Field)
+        field.reset_counter()
+        return field
 
 
 class Node(six.with_metaclass(NodeMeta, Interface)):

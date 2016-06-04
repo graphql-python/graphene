@@ -14,6 +14,9 @@ class OrderedType(object):
         OrderedType.creation_counter += 1
         return counter
 
+    def reset_counter(self):
+        self.creation_counter = self.gen_counter()
+
     def __eq__(self, other):
         # Needed for @total_ordering
         if isinstance(self, type(other)):

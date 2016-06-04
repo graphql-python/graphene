@@ -17,6 +17,7 @@ class MyNode(ObjectType):
 
 
 class RootQuery(ObjectType):
+    first = String()
     node = Node.Field
 
 schema = Schema(query=RootQuery, types=[MyNode])
@@ -59,3 +60,24 @@ def test_node_query_incorrect_id():
     )
     assert not executed.errors
     assert executed.data == {'node': None}
+
+def test_str_schema():
+    assert str(schema) == """
+schema {
+  query: RootQuery
+}
+
+type MyNode implements Node {
+  id: ID!
+  name: String
+}
+
+interface Node {
+  id: ID!
+}
+
+type RootQuery {
+  first: String
+  node(id: ID!): Node
+}
+""".lstrip()
