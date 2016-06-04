@@ -6,17 +6,18 @@ from graphql.utils.assert_valid_name import assert_valid_name
 from .objecttype import ObjectType
 from .interface import Interface
 from ..utils.orderedtype import OrderedType
+from .argument import to_arguments
 
 
 class Field(GraphQLField, OrderedType):
-    __slots__ = ('_name', '_type', '_args', '_resolver', 'deprecation_reason', 'description', 'source', '_extra_args', 'attname', 'parent', 'creation_counter')
+    __slots__ = ('_name', '_type', '_args', '_resolver', 'deprecation_reason', 'description', 'source', 'attname', 'parent', 'creation_counter')
 
-    def __init__(self, type, args=None, resolver=None, source=None, deprecation_reason=None, name=None, description=None, **extra_args):
+    def __init__(self, type, args=None, resolver=None, source=None, deprecation_reason=None, name=None, description=None, _creation_counter=None, **extra_args):
         self.name = name
         self.attname = None
         self.parent = None
         self.type = type
-        self.args = args
+        self.args = to_arguments(args, extra_args)
         assert not (source and resolver), ('You cannot have a source '
                                            'and a resolver at the same time')
 
@@ -24,8 +25,7 @@ class Field(GraphQLField, OrderedType):
         self.source = source
         self.deprecation_reason = deprecation_reason
         self.description = description
-        self._extra_args = extra_args
-        OrderedType.__init__(self)
+        OrderedType.__init__(self, _creation_counter=_creation_counter)
 
     def contribute_to_class(self, cls, attname):
         assert issubclass(cls, (ObjectType, Interface)), 'Field {} cannot be mounted in {}'.format(

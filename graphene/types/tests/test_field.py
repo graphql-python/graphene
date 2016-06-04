@@ -1,10 +1,12 @@
 import pytest
 import copy
 
-from graphql import GraphQLString, GraphQLField
+from graphql import GraphQLString, GraphQLField, GraphQLInt
 
 from ..field import Field
+from ..argument import Argument
 from ..objecttype import ObjectType
+from ..scalars import String, Int
 
 
 def test_field():
@@ -55,3 +57,22 @@ def test_copy_field_works():
 def test_field_callable_type():
     field = Field(lambda: GraphQLString)
     assert field.type == GraphQLString
+
+
+def test_field_with_arguments():
+    field = Field(GraphQLString, name="name", description="description", input=Argument(GraphQLString))
+    assert isinstance(field, GraphQLField)
+    assert field.name == "name"
+    assert field.description == "description"
+    assert 'input' in field.args
+    assert field.args['input'].type == GraphQLString
+
+
+def test_field_with_argument_proxies():
+    field = Field(GraphQLString, name="name", description="description", int=Int(), string=String())
+    assert isinstance(field, GraphQLField)
+    assert field.name == "name"
+    assert field.description == "description"
+    assert list(field.args.keys()) == ['int', 'string']
+    assert field.args['string'].type == GraphQLString
+    assert field.args['int'].type == GraphQLInt

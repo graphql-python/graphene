@@ -1,13 +1,14 @@
-import pytest
-from ..scalars import Scalar, String, Int, Float, Boolean
+from ..scalars import String
 from ..field import Field
 from ..objecttype import ObjectType, implements
 from ..interface import Interface
+from ..structures import List
 from ..schema import Schema
 
 
 class Character(Interface):
     name = String()
+    friends = List(lambda: Character)
 
 
 class Pet(ObjectType):
@@ -21,20 +22,23 @@ class Human(ObjectType):
     def resolve_pet(self, *args):
         return Pet(type='Dog')
 
+    def resolve_friends(self, *args):
+        return [Human(name='Peter')]
+
 
 class RootQuery(ObjectType):
     character = Field(Character)
 
     def resolve_character(self, *_):
-        return Human(name='Hey!')
+        return Human(name='Harry')
 
 
 schema = Schema(query=RootQuery, types=[Human])
 
 
 def test_schema():
-    executed = schema.execute('{ character {name, ...on Human {pet { type } } } }')
-    assert executed.data == {'character': {'name': 'Hey!', 'pet': {'type': 'Dog'}}}
+    executed = schema.execute('{ character {name, friends { name}, ...on Human {pet { type } } } }')
+    assert executed.data == {'character': {'name': 'Harry', 'friends': [{'name': 'Peter'}], 'pet': {'type': 'Dog'}}}
 
 
 def test_schema_introspect():
@@ -50,10 +54,12 @@ schema {
 
 interface Character {
   name: String
+  friends: [Character]
 }
 
 type Human implements Character {
   name: String
+  friends: [Character]
   pet: Pet
 }
 

@@ -1,8 +1,8 @@
 import six
-from graphql import GraphQLScalarType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean
+from graphql import GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean
 
 from .definitions import ClassTypeMeta, GrapheneScalarType
-from .field import Field
+from .proxy import TypeProxy
 
 
 class ScalarTypeMeta(ClassTypeMeta):
@@ -34,24 +34,9 @@ class ScalarTypeMeta(ClassTypeMeta):
         return constructed
 
 
-class Scalar(six.with_metaclass(ScalarTypeMeta)):
+class Scalar(six.with_metaclass(ScalarTypeMeta, TypeProxy)):
     class Meta:
         abstract = True
-
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
-
-    def as_field(self):
-        return Field(
-            lambda: self._meta.graphql_type,
-            *self.args,
-            **self.kwargs
-        )
-
-    def contribute_to_class(self, cls, attname):
-        field = self.as_field()
-        return field.contribute_to_class(cls, attname)
 
 
 def construct_scalar_class(graphql_type):
