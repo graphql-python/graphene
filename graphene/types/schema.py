@@ -1,8 +1,10 @@
 from graphql import graphql, GraphQLSchema
 from graphql.utils.introspection_query import introspection_query
 from graphql.utils.schema_printer import print_schema
+# from graphql.type.schema import assert_object_implements_interface
 
 from ..utils.get_graphql_type import get_graphql_type
+# from collections import defaultdict
 
 
 class Schema(GraphQLSchema):
@@ -15,16 +17,23 @@ class Schema(GraphQLSchema):
             mutation = get_graphql_type(mutation)
         if subscription:
             subscription = get_graphql_type(subscription)
-        if types:
-            types = map(get_graphql_type, types)
+        self.types = types
         self._executor = executor
         super(Schema, self).__init__(
             query=query,
             mutation=mutation,
             subscription=subscription,
             directives=directives,
-            types=types
+            types=self.types
         )
+
+    @property
+    def types(self):
+        return map(get_graphql_type, self._types or [])
+
+    @types.setter
+    def types(self, value):
+        self._types = value
 
     def execute(self, request_string='', root_value=None, variable_values=None,
                 context_value=None, operation_name=None, executor=None):
@@ -52,3 +61,19 @@ class Schema(GraphQLSchema):
 
     def lazy(self, _type):
         return lambda: self.get_type(_type)
+
+    # def rebuild(self):
+    #     self._possible_type_map = defaultdict(set)
+    #     self._type_map = self._build_type_map(self.types)
+    #     # Keep track of all implementations by interface name.
+    #     self._implementations = defaultdict(list)
+    #     for type in self._type_map.values():
+    #         if isinstance(type, GraphQLObjectType):
+    #             for interface in type.get_interfaces():
+    #                 self._implementations[interface.name].append(type)
+
+    #     # Enforce correct interface implementations.
+    #     for type in self._type_map.values():
+    #         if isinstance(type, GraphQLObjectType):
+    #             for interface in type.get_interfaces():
+    #                 assert_object_implements_interface(self, type, interface)

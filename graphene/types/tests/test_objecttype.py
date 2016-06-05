@@ -2,8 +2,10 @@ import pytest
 
 from graphql import GraphQLObjectType, GraphQLField, GraphQLString, GraphQLInterfaceType
 
+from ..schema import Schema
 from ..objecttype import ObjectType
 from ..interface import Interface
+from ..scalars import String
 from ..field import Field
 
 
@@ -161,3 +163,47 @@ def test_objecttype_graphene_interface():
     assert graphql_type.is_type_of(GrapheneObjectType(), None, None)
     fields = graphql_type.get_fields()
     assert 'field' in fields
+
+
+# def test_objecttype_graphene_interface_extended():
+#     class GrapheneInterface(Interface):
+#         field = Field(GraphQLString)
+
+#     class GrapheneObjectType(ObjectType):
+#         class Meta:
+#             interfaces = [GrapheneInterface]
+
+#     schema = Schema(query=GrapheneObjectType)
+#     assert str(schema) == """
+# schema {
+#   query: GrapheneObjectType
+# }
+
+# interface GrapheneInterface {
+#   field: String
+# }
+
+# type GrapheneObjectType implements GrapheneInterface {
+#   field: String
+# }
+# """.lstrip()
+#     GrapheneInterface._meta.graphql_type.add_field(Field(String, name='dynamic'))
+#     # GrapheneObjectType._meta.graphql_type._field_map = None
+#     assert GrapheneInterface._meta.graphql_type.get_fields().keys() == ['field', 'dynamic']
+#     assert GrapheneObjectType._meta.graphql_type.get_fields().keys() == ['field', 'dynamic']
+#     schema.rebuild()
+#     assert str(schema) == """
+# schema {
+#   query: GrapheneObjectType
+# }
+
+# interface GrapheneInterface {
+#   field: String
+#   dynamic: String
+# }
+
+# type GrapheneObjectType implements GrapheneInterface {
+#   field: String
+#   dynamic: String
+# }
+# """.lstrip()
