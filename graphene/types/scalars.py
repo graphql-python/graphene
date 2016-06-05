@@ -6,7 +6,6 @@ from .proxy import TypeProxy
 
 
 class GrapheneScalarType(GrapheneType, GraphQLScalarType):
-    __slots__ = ('graphene_type', '_name', '_description', '_serialize', '_parse_value', '_parse_literal')
 
     def __init__(self, *args, **kwargs):
         GrapheneType.__init__(self, *args, **kwargs)

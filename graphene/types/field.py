@@ -38,7 +38,6 @@ class AbstractField(object):
 
 
 class Field(AbstractField, GraphQLField, OrderedType):
-    __slots__ = ('_name', '_type', '_args', '_resolver', 'deprecation_reason', 'description', 'source', 'attname', 'parent', 'creation_counter', 'required')
 
     def __init__(self, type, args=None, resolver=None, source=None, deprecation_reason=None, name=None, description=None, required=False, _creation_counter=None, **extra_args):
         self.name = name
@@ -114,7 +113,6 @@ class Field(AbstractField, GraphQLField, OrderedType):
 
 
 class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
-    __slots__ = ('_name', '_type', 'default_value', 'description', 'required')
 
     def __init__(self, type, default_value=None, description=None, name=None, required=False, _creation_counter=None):
         self.name = name

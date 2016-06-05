@@ -8,7 +8,6 @@ from ..utils.get_graphql_type import get_graphql_type
 
 
 class Schema(GraphQLSchema):
-    __slots__ = '_query', '_mutation', '_subscription', '_type_map', '_directives', '_implementations', '_possible_type_map', '_types', '_executor'
 
     def __init__(self, query=None, mutation=None, subscription=None, directives=None, types=None, executor=None):
         if query:

@@ -10,7 +10,6 @@ from ..utils.orderedtype import OrderedType
 
 
 class Argument(GraphQLArgument, OrderedType):
-    __slots__ = ('name', 'type', 'default_value', 'description', 'creation_counter')
 
     def __init__(self, type, default_value=None, description=None, name=None, _creation_counter=None):
         self.name = name
@@ -43,7 +42,7 @@ class Argument(GraphQLArgument, OrderedType):
 
 def to_arguments(*args, **extra):
     from .proxy import TypeProxy
-    args = list(filter(None, args))+[extra]
+    args = list(filter(None, args)) + [extra]
     arguments = []
     iter_arguments = chain(*[arg.items() for arg in args])
     arguments_names = set()

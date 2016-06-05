@@ -5,7 +5,7 @@ from .definitions import ClassTypeMeta, GrapheneFieldsType, FieldMap
 
 
 class GrapheneInterfaceType(GrapheneFieldsType, GraphQLInterfaceType):
-    __slots__ = ('graphene_type', '_name', '_description', '_fields', '_field_map', 'resolve_type')
+    pass
 
 
 class InterfaceTypeMeta(ClassTypeMeta):

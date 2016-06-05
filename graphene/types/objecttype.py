@@ -7,7 +7,6 @@ from .interface import GrapheneInterfaceType
 
 
 class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
-    __slots__ = ('graphene_type', '_name', '_description', '_fields', '_field_map', '_is_type_of', '_provided_interfaces', '_interfaces')
 
     @property
     def is_type_of(self):

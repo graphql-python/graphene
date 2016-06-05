@@ -11,7 +11,6 @@ from .proxy import TypeProxy
 
 
 class GrapheneEnumType(GrapheneType, GraphQLEnumType):
-    __slots__ = ('graphene_type', '_name', '_description', '_values', '_value_lookup', '_name_lookup')
 
     def __init__(self, *args, **kwargs):
         graphene_type = kwargs.pop('graphene_type')

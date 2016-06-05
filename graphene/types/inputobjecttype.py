@@ -7,7 +7,7 @@ from .proxy import TypeProxy
 
 
 class GrapheneInputObjectType(GrapheneFieldsType, GraphQLInputObjectType):
-    __slots__ = ('graphene_type', '_name', '_description', '_fields', '_field_map')
+    pass
 
 
 class InputObjectTypeMeta(ClassTypeMeta):
