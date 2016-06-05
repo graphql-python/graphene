@@ -1,7 +1,7 @@
 import six
 from graphql.type import GraphQLEnumType, GraphQLEnumValue
 
-from .definitions import ClassTypeMeta, GrapheneType
+from .definitions import ClassTypeMeta, GrapheneGraphQLType
 try:
     from enum import Enum as PyEnum
 except ImportError:
@@ -10,7 +10,7 @@ except ImportError:
 from .proxy import TypeProxy
 
 
-class GrapheneEnumType(GrapheneType, GraphQLEnumType):
+class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
 
     def __init__(self, *args, **kwargs):
         graphene_type = kwargs.pop('graphene_type')

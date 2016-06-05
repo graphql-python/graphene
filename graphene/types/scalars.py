@@ -1,14 +1,14 @@
 import six
 from graphql import GraphQLScalarType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID
 
-from .definitions import ClassTypeMeta, GrapheneType
+from .definitions import ClassTypeMeta, GrapheneGraphQLType
 from .proxy import TypeProxy
 
 
-class GrapheneScalarType(GrapheneType, GraphQLScalarType):
+class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
 
     def __init__(self, *args, **kwargs):
-        GrapheneType.__init__(self, *args, **kwargs)
+        GrapheneGraphQLType.__init__(self, *args, **kwargs)
 
     @staticmethod
     def default_parse(value):

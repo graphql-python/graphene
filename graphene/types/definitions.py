@@ -58,12 +58,12 @@ class ClassTypeMeta(type):
         return cls
 
 
-class GrapheneType(object):
+class GrapheneGraphQLType(object):
     def __init__(self, *args, **kwargs):
         self.graphene_type = kwargs.pop('graphene_type')
         self._name = None
         self._description = None
-        super(GrapheneType, self).__init__(*args, **kwargs)
+        super(GrapheneGraphQLType, self).__init__(*args, **kwargs)
 
     @property
     def name(self):
@@ -82,7 +82,7 @@ class GrapheneType(object):
         self._description = description
 
 
-class GrapheneFieldsType(GrapheneType):
+class GrapheneFieldsType(GrapheneGraphQLType):
     def __init__(self, *args, **kwargs):
         self._fields = None
         self._field_map = None
