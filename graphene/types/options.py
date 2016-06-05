@@ -6,7 +6,7 @@ class Options(object):
         self.parent = None
         for name, value in defaults.items():
             setattr(self, name, value)
-        self.valid_attrs = []
+        self.valid_attrs = defaults.keys()
 
     def contribute_to_class(self, cls, name):
         cls._meta = self

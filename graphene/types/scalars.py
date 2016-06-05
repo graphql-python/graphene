@@ -50,14 +50,13 @@ class GrapheneScalarType(GrapheneType, GraphQLScalarType):
 class ScalarTypeMeta(ClassTypeMeta):
 
     def get_options(cls, meta):
-        options = cls.options_class(
+        return cls.options_class(
             meta,
             name=None,
             description=None,
             graphql_type=None,
+            abstract=False
         )
-        options.valid_attrs = ['graphql_type', 'name', 'description', 'abstract']
-        return options
 
     def construct_graphql_type(cls, bases):
         if not cls._meta.graphql_type and not cls._meta.abstract:
