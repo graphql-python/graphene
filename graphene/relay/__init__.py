@@ -9,8 +9,8 @@ from .types import (
     PageInfo,
     Edge,
     Connection,
-    SimpleConnection
-    ClientIDMutation
+    SimpleConnection,
+    ClientIDMutation,
 )
 
 from .utils import is_node
