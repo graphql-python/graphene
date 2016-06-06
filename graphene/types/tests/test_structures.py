@@ -20,7 +20,7 @@ def test_list_lambda():
 
 def test_list_list():
     list_instance = List(List(String()))
-    assert isinstance(list_instance, List)
+    assert isinstance(list_instance, GraphQLList)
     assert isinstance(list_instance.of_type, GraphQLList)
     assert list_instance.of_type.of_type == GraphQLString
 
