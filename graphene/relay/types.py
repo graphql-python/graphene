@@ -113,13 +113,12 @@ class SimpleConnection(Connection):
     @memoize
     def for_node(cls, node, edge_type=None):
         from graphene.relay.utils import is_node
-        edge_type = edge_type or node
         assert is_node(node), 'ObjectTypes in a connection have to be Nodes'
-        edges = List(edge_type, description='Information to aid in pagination.')
+        edges = List(node, description='Information to aid in pagination.')
         return type(
             '%s%s' % (node._meta.type_name, cls._meta.type_name),
             (cls,),
-            {'edge_type': edge_type, 'edges': edges})
+            {'edge_type': node, 'edges': edges})
 
     @classmethod
     def from_list(cls, iterable, args, context, info):
