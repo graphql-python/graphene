@@ -28,7 +28,7 @@ def test_argument_type():
 
 
 def test_argument_graphene_type():
-    argument = Argument(String())
+    argument = Argument(String)
     assert argument.type == GraphQLString
 
 
@@ -44,7 +44,7 @@ def test_copy_argument_works():
 
 
 def test_to_arguments():
-    arguments = to_arguments(a=String(), b=Argument(GraphQLString), c=Argument(String()))
+    arguments = to_arguments(a=String(), b=Argument(GraphQLString), c=Argument(String))
     assert list(arguments.keys()) == ['a', 'b', 'c']
     assert [a.type for a in arguments.values()] == [GraphQLString] * 3
 
