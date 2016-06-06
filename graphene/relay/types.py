@@ -81,8 +81,11 @@ class Connection(ObjectType):
         edge_type = edge_type or Edge.for_node(node)
         assert is_node(node), 'ObjectTypes in a connection have to be Nodes'
         edges = List(edge_type, description='Information to aid in pagination.')
+        connection_name = (cls._meta.type_name
+                           if node._meta.type_name.lower() in cls._meta.type_name.lower()
+                           else '%s%s' % (node._meta.type_name, cls._meta.type_name))
         return type(
-            '%s%s' % (node._meta.type_name, cls._meta.type_name),
+            connection_name,
             (cls,),
             {'edge_type': edge_type, 'edges': edges})
 
