@@ -26,8 +26,8 @@ class NodeMeta(InterfaceTypeMeta):
 
     @property
     def Field(cls):
-        # We put as a property for reset the field counter each time is setted up, so
-        # it will be order correctly wherever is mounted
+        # We put as a property for reset the field counter each time is called
+        # so it will be order correctly wherever is mounted
         field = copy.copy(cls._Field)
         field.reset_counter()
         return field

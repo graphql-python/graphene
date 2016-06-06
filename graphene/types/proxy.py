@@ -4,10 +4,25 @@ from ..utils.orderedtype import OrderedType
 
 
 class TypeProxy(OrderedType):
+    '''
+    This class acts a proxy for a Graphene Type, so it can be mounted
+    as Field, InputField or Argument.
+
+    Instead of doing
+    >>> class MyObjectType(ObjectType):
+    >>>     my_field = Field(String(), description='Description here')
+
+    You can actually do
+    >>> class MyObjectType(ObjectType):
+    >>>     my_field = String(description='Description here')
+
+    So is simpler to use.
+    '''
+
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
-        OrderedType.__init__(self)
+        super(TypeProxy, self).__init__()
 
     def get_type(self):
         return self._meta.graphql_type
