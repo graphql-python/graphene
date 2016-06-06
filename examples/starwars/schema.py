@@ -16,23 +16,19 @@ class Character(graphene.Interface):
     friends = graphene.List(lambda: Character)
     appears_in = graphene.List(Episode)
 
+    def resolve_friends(self, args, *_):
+        # The character friends is a list of strings
+        return [get_character(f) for f in self.friends]
+
 
 @graphene.implements(Character)
 class Human(graphene.ObjectType):
     home_planet = graphene.String()
 
-    def resolve_friends(self, args, *_):
-        # The character friends is a list of strings
-        return [get_character(f) for f in self.friends]
-
 
 @graphene.implements(Character)
 class Droid(graphene.ObjectType):
     primary_function = graphene.String()
-
-    def resolve_friends(self, args, *_):
-        # The character friends is a list of strings
-        return [get_character(f) for f in self.friends]
 
 
 class Query(graphene.ObjectType):

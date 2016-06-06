@@ -74,10 +74,29 @@ class Field(AbstractField, GraphQLField, OrderedType):
 
     @property
     def resolver(self):
+        from .objecttype import ObjectType
+        from .interface import GrapheneInterfaceType
         def default_resolver(root, args, context, info):
             return getattr(root, self.source or self.attname, None)
 
-        resolver = getattr(self.parent, 'resolve_{}'.format(self.attname), default_resolver)
+        resolver = getattr(self.parent, 'resolve_{}'.format(self.attname), None)
+
+        # We try to get the resolver from the interfaces
+        if not resolver and issubclass(self.parent, ObjectType):
+            graphql_type = self.parent._meta.graphql_type
+            for interface in graphql_type._provided_interfaces:
+                if not isinstance(interface, GrapheneInterfaceType):
+                    continue
+                fields = interface.get_fields()
+                if self.attname in fields:
+                    resolver = getattr(interface.graphene_type, 'resolve_{}'.format(self.attname), None)
+                    if resolver:
+                        # We remove the bounding to the method
+                        resolver = resolver.__func__
+                        break
+
+        if not resolver:
+            resolver = default_resolver
 
         def resolver_wrapper(root, *args, **kwargs):
             if not isinstance(root, self.parent):
