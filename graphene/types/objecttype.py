@@ -1,3 +1,4 @@
+import copy
 import six
 
 from graphql import GraphQLObjectType
@@ -7,6 +8,15 @@ from .interface import GrapheneInterfaceType
 
 
 class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
+
+    def __init__(self, *args, **kwargs):
+        super(GrapheneObjectType, self).__init__(*args, **kwargs)
+        self.check_interfaces()
+
+    def check_interfaces(self):
+        for interface in self._provided_interfaces:
+            if isinstance(interface, GrapheneInterfaceType):
+                interface.graphene_type.implements(self.graphene_type)
 
     @property
     def is_type_of(self):
@@ -20,22 +30,17 @@ class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
         from ..utils.get_graphql_type import get_graphql_type
         try:
             graphql_type = get_graphql_type(type(interface))
-            return graphql_type == self
+            return graphql_type.name == self.name
         except:
             return False
 
-    def add_interface(self, interface):
-        from ..utils.get_graphql_type import get_graphql_type
-        # We clear the cached interfaces
-        self._interfaces = None
-        # We clear the cached fields as could be inherited from interfaces
-        self._field_map = None
+
+def get_interfaces(cls, interfaces):
+    from ..utils.get_graphql_type import get_graphql_type
+
+    for interface in interfaces:
         graphql_type = get_graphql_type(interface)
-
-        if isinstance(graphql_type, GrapheneInterfaceType):
-            graphql_type.graphene_type.implements(self.graphene_type)
-
-        self._provided_interfaces.append(graphql_type)
+        yield graphql_type
 
 
 class ObjectTypeMeta(ClassTypeMeta):
@@ -50,9 +55,11 @@ class ObjectTypeMeta(ClassTypeMeta):
             abstract=False
         )
 
+    def get_interfaces(cls):
+        return get_interfaces(cls, cls._meta.interfaces)
+
     def construct_graphql_type(cls, bases):
         if not cls._meta.graphql_type and not cls._meta.abstract:
-            from ..utils.get_graphql_type import get_graphql_type
             from ..utils.is_graphene_type import is_graphene_type
             inherited_types = [
                 base._meta.graphql_type for base in bases if is_graphene_type(base)
@@ -63,19 +70,20 @@ class ObjectTypeMeta(ClassTypeMeta):
                 name=cls._meta.name or cls.__name__,
                 description=cls._meta.description,
                 fields=FieldMap(cls, bases=filter(None, inherited_types)),
-                interfaces=[],
+                interfaces=list(cls.get_interfaces()),
             )
-            for interface in cls._meta.interfaces:
-                cls._meta.graphql_type.add_interface(interface)
 
 
 def implements(*interfaces):
     # This function let us decorate a ObjectType
     # Adding a specified interfaces into the graphql_type
     def wrap_class(cls):
-
-        for i in interfaces:
-            cls._meta.graphql_type.add_interface(i)
+        interface_types = get_interfaces(cls, interfaces)
+        graphql_type = cls._meta.graphql_type
+        new_type = copy.copy(graphql_type)
+        new_type._provided_interfaces.extend(interface_types)
+        cls._meta.graphql_type = new_type
+        cls._meta.graphql_type.check_interfaces()
         return cls
     return wrap_class
 

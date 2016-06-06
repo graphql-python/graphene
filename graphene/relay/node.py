@@ -61,5 +61,5 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         in it
         '''
         if cls.require_get_node():
-            assert hasattr(object_type, 'get_node'), '{}.get_node method is required by the Node interface.'.format(object_type._meta.graphql_type.name)
+            assert hasattr(object_type, 'get_node'), '{}.get_node method is required by the Node interface.'.format(object_type.__name__)
         return super(Node, cls).implements(object_type)
