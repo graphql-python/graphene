@@ -54,7 +54,7 @@ class EnumTypeMeta(ClassTypeMeta):
         if not cls._meta.enum:
             cls._meta.enum = type(cls.__name__, (PyEnum,), attrs)
 
-        return super(EnumTypeMeta, cls).construct(bases, cls._meta.enum.__members__)
+        return super(EnumTypeMeta, cls).construct(bases, dict(attrs, **cls._meta.enum.__members__))
 
     def __call__(cls, *args, **kwargs):
         if cls._meta.abstract:
