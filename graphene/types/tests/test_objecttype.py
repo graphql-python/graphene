@@ -144,7 +144,7 @@ def test_objecttype_graphql_interface():
             interfaces = [MyInterface]
 
     graphql_type = GrapheneObjectType._meta.graphql_type
-    assert graphql_type.get_interfaces() == [MyInterface]
+    assert graphql_type.get_interfaces() == (MyInterface, )
     # assert graphql_type.is_type_of(MyInterface, None, None)
     fields = graphql_type.get_fields()
     assert 'field' in fields
@@ -159,7 +159,7 @@ def test_objecttype_graphene_interface():
             interfaces = [GrapheneInterface]
 
     graphql_type = GrapheneObjectType._meta.graphql_type
-    assert graphql_type.get_interfaces() == [GrapheneInterface._meta.graphql_type]
+    assert graphql_type.get_interfaces() == (GrapheneInterface._meta.graphql_type, )
     assert graphql_type.is_type_of(GrapheneObjectType(), None, None)
     fields = graphql_type.get_fields()
     assert 'field' in fields

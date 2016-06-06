@@ -70,7 +70,7 @@ class ObjectTypeMeta(ClassTypeMeta):
                 name=cls._meta.name or cls.__name__,
                 description=cls._meta.description,
                 fields=FieldMap(cls, bases=filter(None, inherited_types)),
-                interfaces=list(cls.get_interfaces()),
+                interfaces=tuple(cls.get_interfaces()),
             )
 
 
@@ -81,7 +81,7 @@ def implements(*interfaces):
         interface_types = get_interfaces(cls, interfaces)
         graphql_type = cls._meta.graphql_type
         new_type = copy.copy(graphql_type)
-        new_type._provided_interfaces.extend(interface_types)
+        new_type._provided_interfaces = tuple(graphql_type._provided_interfaces) + tuple(interface_types)
         cls._meta.graphql_type = new_type
         cls._meta.graphql_type.check_interfaces()
         return cls
