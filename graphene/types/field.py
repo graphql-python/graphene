@@ -92,18 +92,20 @@ class Field(AbstractField, GraphQLField, OrderedType):
                     resolver = getattr(interface.graphene_type, 'resolve_{}'.format(self.attname), None)
                     if resolver:
                         # We remove the bounding to the method
-                        resolver = resolver.__func__
+                        resolver = resolver #.__func__
                         break
 
-        if not resolver:
+        if resolver:
+            resolver = resolver.__func__
+        else:
             resolver = default_resolver
 
-        def resolver_wrapper(root, *args, **kwargs):
-            if not isinstance(root, self.parent):
-                root = self.parent()
-            return resolver(root, *args, **kwargs)
+        # def resolver_wrapper(root, *args, **kwargs):
+        #     if not isinstance(root, self.parent):
+        #         root = self.parent()
+        #     return resolver(root, *args, **kwargs)
 
-        return self._resolver or resolver_wrapper
+        return self._resolver or resolver # resolver_wrapper
 
     @resolver.setter
     def resolver(self, resolver):
