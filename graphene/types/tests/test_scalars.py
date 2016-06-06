@@ -48,8 +48,3 @@ def test_custom_scalar_empty():
             pass
 
     assert """DatetimeScalar must provide "serialize" function.""" in str(excinfo.value)
-
-
-def test_custom_scalar():
-    graphql_type = DatetimeScalar._meta.graphql_type
-    assert graphql_type.serialize == DatetimeScalar.serialize
