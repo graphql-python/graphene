@@ -49,8 +49,8 @@ class Edge(ObjectType):
     @classmethod
     @memoize
     def for_node(cls, node):
-        from graphene.relay.utils import is_node
-        assert is_node(node), 'ObjectTypes in a edge have to be Nodes'
+        from graphene.relay.utils import is_node, is_node_type
+        assert is_node(node) or is_node_type(node), 'ObjectTypes in a edge have to be Nodes'
         node_field = Field(node, description='The item at the end of the edge')
         return type(
             '%s%s' % (node._meta.type_name, cls._meta.type_name),
@@ -76,15 +76,15 @@ class Connection(ObjectType):
 
     @classmethod
     @memoize
-    def for_node(cls, node, edge_type=None):
-        from graphene.relay.utils import is_node
+    def for_node(cls, node, edge_type=None, root_values=None):
+        from graphene.relay.utils import is_node, is_node_type
         edge_type = edge_type or Edge.for_node(node)
-        assert is_node(node), 'ObjectTypes in a connection have to be Nodes'
+        assert is_node(node) or is_node_type(node), 'ObjectTypes in a connection have to be Nodes'
         edges = List(edge_type, description='Information to aid in pagination.')
         return type(
             '%s%s' % (node._meta.type_name, cls._meta.type_name),
             (cls,),
-            {'edge_type': edge_type, 'edges': edges})
+            {'edge_type': edge_type, 'edges': edges, '_root': root_values})
 
     @classmethod
     def from_list(cls, iterable, args, context, info):
@@ -101,6 +101,34 @@ class Connection(ObjectType):
 
     def get_connection_data(self):
         return self._connection_data
+
+
+class SimpleConnection(Connection):
+    '''A connection without nodes to a list of items.'''
+
+    class Meta:
+        type_name = 'SimpleConnection'
+
+    @classmethod
+    @memoize
+    def for_node(cls, node, root_values=None):
+        from graphene.relay.utils import is_node, is_node_type
+        assert is_node(node) or is_node_type(node), 'ObjectTypes in a connection have to be Nodes'
+        edges = List(node, description='Information to aid in pagination.')
+        return type(
+            '%s%s' % (node._meta.type_name, cls._meta.type_name),
+            (cls,),
+            {'edge_type': node, 'edges': edges, '_root': root_values})
+
+    @classmethod
+    def from_list(cls, iterable, args, context, info):
+        assert isinstance(
+            iterable, Iterable), 'Resolved value from the connection field have to be iterable'
+        connection = connection_from_list(
+            iterable, args, simple_list=True, connection_type=cls,
+            edge_type=cls.edge_type, pageinfo_type=PageInfo)
+        connection.set_connection_data(iterable)
+        return connection
 
 
 class NodeMeta(InterfaceMeta):

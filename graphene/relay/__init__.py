@@ -9,10 +9,11 @@ from .types import (
     PageInfo,
     Edge,
     Connection,
-    ClientIDMutation
+    SimpleConnection,
+    ClientIDMutation,
 )
 
 from .utils import is_node
 
 __all__ = ['ConnectionField', 'NodeField', 'GlobalIDField', 'Node',
-           'PageInfo', 'Edge', 'Connection', 'ClientIDMutation', 'is_node']
+           'PageInfo', 'Edge', 'Connection', 'SimpleConnection', 'ClientIDMutation', 'is_node']

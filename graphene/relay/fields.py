@@ -46,6 +46,10 @@ class ConnectionField(Field):
 
     def get_connection_type(self, node):
         connection_type = self.connection_type or node.get_connection_type()
+
+        if issubclass(connection_type, SimpleConnection):
+            return connection_type.for_node(node)
+
         edge_type = self.get_edge_type(node)
         return connection_type.for_node(node, edge_type=edge_type)
 
@@ -54,10 +58,10 @@ class ConnectionField(Field):
         return edge_type.for_node(node)
 
     def get_type(self, schema):
-        from graphene.relay.utils import is_node
+        from graphene.relay.utils import is_node, is_node_type
         type = schema.T(self.type)
         node = schema.objecttype(type)
-        assert is_node(node), 'Only nodes have connections.'
+        assert is_node(node) or is_node_type(node), 'Only nodes have connections.'
         schema.register(node)
         connection_type = self.get_connection_type(node)
 
@@ -105,3 +109,5 @@ class GlobalIDField(Field):
 
     def resolver(self, instance, args, info):
         return instance.to_global_id()
+
+from .types import SimpleConnection
