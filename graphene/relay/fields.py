@@ -46,10 +46,10 @@ class ConnectionField(Field):
 
     def get_connection_type(self, node):
         connection_type = self.connection_type or node.get_connection_type()
-        
+
         if issubclass(connection_type, SimpleConnection):
             return connection_type.for_node(node)
-        
+
         edge_type = self.get_edge_type(node)
         return connection_type.for_node(node, edge_type=edge_type)
 
