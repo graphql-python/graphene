@@ -77,7 +77,7 @@ class Connection(ObjectType):
     @classmethod
     @memoize
     def for_node(cls, node, edge_type=None, root_values=None):
-        from graphene.relay.utils import is_node
+        from graphene.relay.utils import is_node, is_node_type
         edge_type = edge_type or Edge.for_node(node)
         assert is_node(node) or is_node_type(node), 'ObjectTypes in a connection have to be Nodes'
         edges = List(edge_type, description='Information to aid in pagination.')
