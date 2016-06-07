@@ -29,7 +29,7 @@ class ScalarTypeMeta(ClassTypeMeta):
             cls._meta.graphql_type = GrapheneScalarType(
                 graphene_type=cls,
                 name=cls._meta.name or cls.__name__,
-                description=cls._meta.description,
+                description=cls._meta.description or cls.__doc__,
 
                 serialize=getattr(cls, 'serialize', None),
                 parse_value=getattr(cls, 'parse_value', None),

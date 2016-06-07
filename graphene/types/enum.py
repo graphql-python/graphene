@@ -15,8 +15,8 @@ class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
     def __init__(self, *args, **kwargs):
         graphene_type = kwargs.pop('graphene_type')
         self.graphene_type = graphene_type
-        self._name = None
-        self._description = None
+        self.name = None
+        self.description = None
         self._values = None
         self._value_lookup = None
         self._name_lookup = None
@@ -47,7 +47,7 @@ class EnumTypeMeta(ClassTypeMeta):
             cls._meta.graphql_type = GrapheneEnumType(
                 graphene_type=cls,
                 name=cls._meta.name or cls.__name__,
-                description=cls._meta.description,
+                description=cls._meta.description or cls.__doc__,
             )
 
     def construct(cls, bases, attrs):

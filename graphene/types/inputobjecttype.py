@@ -33,7 +33,7 @@ class InputObjectTypeMeta(ClassTypeMeta):
             cls._meta.graphql_type = GrapheneInputObjectType(
                 graphene_type=cls,
                 name=cls._meta.name or cls.__name__,
-                description=cls._meta.description,
+                description=cls._meta.description or cls.__doc__,
                 fields=FieldMap(cls, bases=filter(None, inherited_types)),
             )
 

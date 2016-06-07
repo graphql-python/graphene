@@ -61,25 +61,7 @@ class ClassTypeMeta(type):
 class GrapheneGraphQLType(object):
     def __init__(self, *args, **kwargs):
         self.graphene_type = kwargs.pop('graphene_type')
-        self._name = None
-        self._description = None
         super(GrapheneGraphQLType, self).__init__(*args, **kwargs)
-
-    @property
-    def name(self):
-        return self._name or self.graphene_type.__name__
-
-    @name.setter
-    def name(self, name):
-        self._name = name
-
-    @property
-    def description(self):
-        return self._description or self.graphene_type.__doc__
-
-    @description.setter
-    def description(self, description):
-        self._description = description
 
 
 class GrapheneFieldsType(GrapheneGraphQLType):
