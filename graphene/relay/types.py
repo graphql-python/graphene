@@ -112,8 +112,8 @@ class SimpleConnection(Connection):
     @classmethod
     @memoize
     def for_node(cls, node, edge_type=None):
-        from graphene.relay.utils import is_node
-        assert is_node(node), 'ObjectTypes in a connection have to be Nodes'
+        from graphene.relay.utils import is_node, is_node_type
+        assert is_node(node) or is_node_type(node), 'ObjectTypes in a connection have to be Nodes'
         edges = List(node, description='Information to aid in pagination.')
         return type(
             '%s%s' % (node._meta.type_name, cls._meta.type_name),
