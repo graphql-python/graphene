@@ -56,7 +56,7 @@ class Query(graphene.ObjectType):
     def resolve_sliced_nodes(self, args, info):
         sliced_list = [MyNode(name='my1'), MyNode(name='my2'), MyNode(name='my3')]
         total_count = 10
-        return Connection.for_node(MyNode).from_list(sliced_list, args, None, info, total_count)
+        return relay.Connection.for_node(MyNode).from_list(sliced_list, args, None, info, total_count)
 
 schema.query = Query
 
