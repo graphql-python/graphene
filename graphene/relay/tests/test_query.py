@@ -151,7 +151,6 @@ def test_slice_connectionfield_query():
             name
           }
         },
-        myCustomField
         pageInfo {
           hasNextPage
         }
