@@ -1,6 +1,8 @@
 from collections import OrderedDict
 import inspect
 import copy
+from itertools import chain
+from functools import partial
 
 from graphql.utils.assert_valid_name import assert_valid_name
 from graphql.type.definition import GraphQLObjectType
@@ -56,6 +58,26 @@ class ClassTypeMeta(type):
         #     from ..types import List, NonNull
 
         return cls
+
+
+class FieldsMeta(type):
+
+    def _build_field_map(cls, bases, local_fields):
+        from ..utils.extract_fields import get_base_fields
+        extended_fields = get_base_fields(cls, bases)
+        fields = chain(extended_fields, local_fields)
+        return OrderedDict((f.name, f) for f in fields)
+
+    def _fields(cls, bases, attrs):
+        from ..utils.is_graphene_type import is_graphene_type
+        from ..utils.extract_fields import extract_fields
+
+        inherited_types = [
+            base._meta.graphql_type for base in bases if is_graphene_type(base) and not base._meta.abstract
+        ]
+
+        local_fields = extract_fields(cls, attrs)
+        return partial(cls._build_field_map, inherited_types, local_fields)
 
 
 class GrapheneGraphQLType(object):

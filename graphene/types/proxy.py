@@ -64,3 +64,17 @@ class TypeProxy(OrderedType):
             raise Exception('TypedProxy "{}" cannot be mounted in {}'.format(self.get_type(), cls))
 
         return inner.contribute_to_class(cls, attname)
+
+    def as_mounted(self, cls):
+        from .inputobjecttype import InputObjectType
+        from .objecttype import ObjectType
+        from .interface import Interface
+
+        if issubclass(cls, (ObjectType, Interface)):
+            inner = self.as_field()
+        elif issubclass(cls, (InputObjectType)):
+            inner = self.as_inputfield()
+        else:
+            raise Exception('TypedProxy "{}" cannot be mounted in {}'.format(self.get_type(), cls))
+
+        return inner

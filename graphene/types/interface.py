@@ -1,17 +1,14 @@
-from itertools import chain
-from functools import partial
-from collections import OrderedDict
 import six
 
 from graphql import GraphQLInterfaceType
-from .definitions import ClassTypeMeta, GrapheneFieldsType, FieldMap
+from .definitions import FieldsMeta, ClassTypeMeta, GrapheneFieldsType
 
 
 class GrapheneInterfaceType(GrapheneFieldsType, GraphQLInterfaceType):
     pass
 
 
-class InterfaceTypeMeta(ClassTypeMeta):
+class InterfaceTypeMeta(FieldsMeta, ClassTypeMeta):
 
     def get_options(cls, meta):
         return cls.options_class(
@@ -25,29 +22,14 @@ class InterfaceTypeMeta(ClassTypeMeta):
     def construct_graphql_type(cls, bases):
         pass
 
-    def _build_field_map(cls, local_fields, bases):
-        from ..utils.extract_fields import get_base_fields
-        extended_fields = get_base_fields(bases)
-        fields = chain(extended_fields, local_fields)
-        return OrderedDict((f.name, f) for f in fields)
-
     def construct(cls, bases, attrs):
         if not cls._meta.graphql_type and not cls._meta.abstract:
-            from ..utils.is_graphene_type import is_graphene_type
-            from ..utils.extract_fields import extract_fields
-
-            inherited_types = [
-                base._meta.graphql_type for base in bases if is_graphene_type(base)
-            ]
-            inherited_types = filter(None, inherited_types)
-
-            local_fields = list(extract_fields(attrs))
 
             cls._meta.graphql_type = GrapheneInterfaceType(
                 graphene_type=cls,
                 name=cls._meta.name or cls.__name__,
                 description=cls._meta.description or cls.__doc__,
-                fields=partial(cls._build_field_map, local_fields, inherited_types),
+                fields=cls._fields(bases, attrs),
             )
         return super(InterfaceTypeMeta, cls).construct(bases, attrs)
 
