@@ -5,7 +5,7 @@ from functools import wraps
 
 import six
 
-from graphql_relay.connection.arrayconnection import connection_from_list
+from graphql_relay.connection.arrayconnection import connection_from_list_slice
 from graphql_relay.node.node import to_global_id
 
 from ..core.classtypes import InputObjectType, Interface, Mutation, ObjectType
