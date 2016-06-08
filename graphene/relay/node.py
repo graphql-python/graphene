@@ -12,17 +12,16 @@ class NodeMeta(InterfaceTypeMeta):
     def construct_graphql_type(cls, bases):
         pass
 
-    def construct(cls, *args, **kwargs):
-        constructed = super(NodeMeta, cls).construct(*args, **kwargs)
-        if not cls._meta.graphql_type:
-            node_interface, node_field = node_definitions(
-                cls.get_node,
-                interface_class=partial(GrapheneInterfaceType, graphene_type=cls),
-                field_class=Field
-            )
-            cls._meta.graphql_type = node_interface
-            cls._Field = node_field
-        return constructed
+    def construct(cls, bases, attrs):
+        cls.get_node = attrs.pop('get_node')
+        node_interface, node_field = node_definitions(
+            cls.get_node,
+            interface_class=partial(GrapheneInterfaceType, graphene_type=cls),
+            field_class=Field
+        )
+        cls._meta.graphql_type = node_interface
+        cls._Field = node_field
+        return super(NodeMeta, cls).construct(bases, attrs)
 
     @property
     def Field(cls):
