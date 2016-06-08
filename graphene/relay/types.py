@@ -87,12 +87,17 @@ class Connection(ObjectType):
             {'edge_type': edge_type, 'edges': edges})
 
     @classmethod
-    def from_list(cls, iterable, args, context, info):
+    def from_list(cls, iterable, args, context, info, total_count=None):
         assert isinstance(
             iterable, Iterable), 'Resolved value from the connection field have to be iterable'
-        connection = connection_from_list(
-            iterable, args, connection_type=cls,
-            edge_type=cls.edge_type, pageinfo_type=PageInfo)
+        
+        list_slice_length = len(iterable)
+        list_length = total_count if total_count else list_slice_length
+        
+        connection = connection_from_list_slice(
+            iterable, args, connection_type=cls, 
+            edge_type=cls.edge_type, pageinfo_type=PageInfo,
+            list_length=list_length, list_slice_length=list_slice_length)
         connection.set_connection_data(iterable)
         return connection
 
