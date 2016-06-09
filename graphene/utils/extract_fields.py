@@ -15,6 +15,7 @@ def extract_fields(cls, attrs):
             continue
         field = value.as_mounted(cls) if is_field_proxy else copy.copy(value)
         field.attname = attname
+        field.parent = cls
         fields.add(attname)
         del attrs[attname]
         _fields.append(field)
@@ -24,10 +25,15 @@ def extract_fields(cls, attrs):
 
 def get_base_fields(cls, bases):
     fields = set()
+    _fields = list()
     for _class in bases:
         for attname, field in get_graphql_type(_class).get_fields().items():
             if attname in fields:
                 continue
             field = copy.copy(field)
+            if isinstance(field, Field):
+                field.parent = cls
             fields.add(attname)
-            yield field
+            _fields.append(field)
+
+    return sorted(_fields)

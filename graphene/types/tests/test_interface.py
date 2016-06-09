@@ -81,4 +81,4 @@ def test_interface_add_fields_in_reused_graphql_type():
             class Meta:
                 graphql_type = MyGraphQLType
 
-    assert """Field "MyGraphQLType.field" can only be mounted in ObjectType or Interface, received GrapheneInterface.""" == str(excinfo.value)
+    assert """Can't mount Fields in an Interface with a defined graphql_type""" == str(excinfo.value)

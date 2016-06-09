@@ -21,16 +21,11 @@ def test_options_contribute_to_class():
         overwritten = True
         accepted = True
 
-    class MyObject(object):
-        pass
 
     options = Options(Meta, attr=True, overwritten=False)
     options.valid_attrs = ['accepted', 'overwritten']
     assert options.attr
     assert not options.overwritten
-    options.contribute_to_class(MyObject, '_meta')
-    assert MyObject._meta == options
-    assert options.parent == MyObject
 
 
 def test_options_invalid_attrs():
@@ -41,9 +36,10 @@ def test_options_invalid_attrs():
         pass
 
     options = Options(Meta, valid=True)
+    options.parent = MyObject
     options.valid_attrs = ['valid']
     assert options.valid
     with pytest.raises(TypeError) as excinfo:
-        options.contribute_to_class(MyObject, '_meta')
+        options.validate_attrs()
 
     assert "MyObject.Meta got invalid attributes: invalid" == str(excinfo.value)

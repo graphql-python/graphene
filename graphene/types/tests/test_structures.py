@@ -4,6 +4,7 @@ from graphql import GraphQLString, GraphQLList, GraphQLNonNull
 
 from ..structures import List, NonNull
 from ..scalars import String
+from ..field import Field
 
 
 def test_list():
@@ -42,3 +43,10 @@ def test_nonnull_list():
     assert isinstance(list_instance, GraphQLNonNull)
     assert isinstance(list_instance.of_type, GraphQLList)
     assert list_instance.of_type.of_type == GraphQLString
+
+
+def test_preserve_order():
+    field1 = List(lambda: None)
+    field2 = Field(lambda: None)
+
+    assert field1 < field2

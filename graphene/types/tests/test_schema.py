@@ -16,8 +16,11 @@ class Pet(ObjectType):
     type = String()
 
 
-@implements(Character)
+# @implements(Character)
 class Human(ObjectType):
+    class Meta:
+        interfaces = [Character]
+
     pet = Field(Pet)
 
     def resolve_pet(self, *args):

@@ -3,11 +3,11 @@ import six
 
 from graphql import GraphQLObjectType
 
-from .definitions import ClassTypeMeta, GrapheneFieldsType, FieldMap
+from .definitions import FieldsMeta, ClassTypeMeta, GrapheneGraphQLType
 from .interface import GrapheneInterfaceType
 
 
-class GrapheneObjectType(GrapheneFieldsType, GraphQLObjectType):
+class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
 
     def __init__(self, *args, **kwargs):
         super(GrapheneObjectType, self).__init__(*args, **kwargs)
@@ -43,7 +43,7 @@ def get_interfaces(cls, interfaces):
         yield graphql_type
 
 
-class ObjectTypeMeta(ClassTypeMeta):
+class ObjectTypeMeta(FieldsMeta, ClassTypeMeta):
 
     def get_options(cls, meta):
         return cls.options_class(
@@ -55,23 +55,24 @@ class ObjectTypeMeta(ClassTypeMeta):
             abstract=False
         )
 
-    def get_interfaces(cls):
-        return get_interfaces(cls, cls._meta.interfaces)
+    def construct(cls, bases, attrs):
+        if not cls._meta.abstract:
+            interfaces = tuple(get_interfaces(cls, cls._meta.interfaces))
+            local_fields = cls._extract_local_fields(attrs)
+            if not cls._meta.graphql_type:
+                cls = super(ObjectTypeMeta, cls).construct(bases, attrs)
+                cls._meta.graphql_type = GrapheneObjectType(
+                    graphene_type=cls,
+                    name=cls._meta.name or cls.__name__,
+                    description=cls._meta.description or cls.__doc__,
+                    fields=cls._fields(bases, attrs, local_fields, interfaces),
+                    interfaces=interfaces,
+                )
+                return cls
+            else:
+                assert not local_fields, "Can't mount Fields in an ObjectType with a defined graphql_type"
 
-    def construct_graphql_type(cls, bases):
-        if not cls._meta.graphql_type and not cls._meta.abstract:
-            from ..utils.is_graphene_type import is_graphene_type
-            inherited_types = [
-                base._meta.graphql_type for base in bases if is_graphene_type(base)
-            ]
-
-            cls._meta.graphql_type = GrapheneObjectType(
-                graphene_type=cls,
-                name=cls._meta.name or cls.__name__,
-                description=cls._meta.description or cls.__doc__,
-                fields=FieldMap(cls, bases=filter(None, inherited_types)),
-                interfaces=tuple(cls.get_interfaces()),
-            )
+        return super(ObjectTypeMeta, cls).construct(bases, attrs)
 
 
 def implements(*interfaces):
@@ -80,8 +81,10 @@ def implements(*interfaces):
     def wrap_class(cls):
         interface_types = get_interfaces(cls, interfaces)
         graphql_type = cls._meta.graphql_type
+        # fields = cls._build_field_map(interface_types, graphql_type.get_fields().values())
         new_type = copy.copy(graphql_type)
         new_type._provided_interfaces = tuple(graphql_type._provided_interfaces) + tuple(interface_types)
+        new_type._fields = graphql_type._fields
         cls._meta.graphql_type = new_type
         cls._meta.graphql_type.check_interfaces()
         return cls

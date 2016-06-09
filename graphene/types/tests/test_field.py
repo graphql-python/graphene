@@ -38,25 +38,6 @@ def test_not_source_and_resolver():
     assert "You cannot have a source and a resolver at the same time" == str(excinfo.value)
 
 
-def test_contributed_field_objecttype():
-    class MyObject(ObjectType):
-        pass
-
-    field = Field(GraphQLString)
-    field.contribute_to_class(MyObject, 'field_name')
-
-    assert field.name == 'fieldName'
-
-
-def test_contributed_field_non_objecttype():
-    class MyObject(object):
-        pass
-
-    field = Field(GraphQLString)
-    with pytest.raises(AssertionError):
-        field.contribute_to_class(MyObject, 'field_name')
-
-
 def test_copy_field_works():
     field = Field(GraphQLString)
     copy.copy(field)

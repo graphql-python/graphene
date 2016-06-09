@@ -61,16 +61,13 @@ class Field(AbstractField, GraphQLField, OrderedType):
             where.__name__
         )
 
-    def contribute_to_class(self, cls, attname):
+    def mount(self, parent, attname=None):
         from .objecttype import ObjectType
         from .interface import Interface
+        assert issubclass(parent, (ObjectType, Interface)), self.mount_error_message(parent)
 
-        assert issubclass(cls, (ObjectType, Interface)), self.mount_error_message(cls)
         self.attname = attname
-        self.parent = cls
-        add_field = getattr(cls._meta.graphql_type, "add_field", None)
-        assert add_field, self.mount_error_message(cls)
-        add_field(self)
+        self.parent = parent
 
     @property
     def resolver(self):
@@ -149,15 +146,12 @@ class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
             where.__name__
         )
 
-    def contribute_to_class(self, cls, attname):
+    def mount(self, parent, attname):
         from .inputobjecttype import InputObjectType
 
-        assert issubclass(cls, (InputObjectType)), self.mount_error_message(cls)
+        assert issubclass(parent, (InputObjectType)), self.mount_error_message(parent)
         self.attname = attname
-        self.parent = cls
-        add_field = getattr(cls._meta.graphql_type, "add_field", None)
-        assert add_field, self.mount_error_message(cls)
-        add_field(self)
+        self.parent = parent
 
     def __copy__(self):
         return InputField(

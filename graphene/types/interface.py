@@ -1,10 +1,10 @@
 import six
 
 from graphql import GraphQLInterfaceType
-from .definitions import FieldsMeta, ClassTypeMeta, GrapheneFieldsType
+from .definitions import FieldsMeta, ClassTypeMeta, GrapheneGraphQLType
 
 
-class GrapheneInterfaceType(GrapheneFieldsType, GraphQLInterfaceType):
+class GrapheneInterfaceType(GrapheneGraphQLType, GraphQLInterfaceType):
     pass
 
 
@@ -19,18 +19,19 @@ class InterfaceTypeMeta(FieldsMeta, ClassTypeMeta):
             abstract=False
         )
 
-    def construct_graphql_type(cls, bases):
-        pass
-
     def construct(cls, bases, attrs):
-        if not cls._meta.graphql_type and not cls._meta.abstract:
+        if not cls._meta.abstract:
+            local_fields = cls._extract_local_fields(attrs)
+            if not cls._meta.graphql_type:
+                cls._meta.graphql_type = GrapheneInterfaceType(
+                    graphene_type=cls,
+                    name=cls._meta.name or cls.__name__,
+                    description=cls._meta.description or cls.__doc__,
+                    fields=cls._fields(bases, attrs, local_fields),
+                )
+            else:
+                assert not local_fields, "Can't mount Fields in an Interface with a defined graphql_type"
 
-            cls._meta.graphql_type = GrapheneInterfaceType(
-                graphene_type=cls,
-                name=cls._meta.name or cls.__name__,
-                description=cls._meta.description or cls.__doc__,
-                fields=cls._fields(bases, attrs),
-            )
         return super(InterfaceTypeMeta, cls).construct(bases, attrs)
 
 

@@ -3,6 +3,8 @@ from .argument import Argument
 from ..utils.orderedtype import OrderedType
 
 
+# UnmountedType ?
+
 class TypeProxy(OrderedType):
     '''
     This class acts a proxy for a Graphene Type, so it can be mounted
@@ -50,20 +52,6 @@ class TypeProxy(OrderedType):
             _creation_counter=self.creation_counter,
             **self.kwargs
         )
-
-    def contribute_to_class(self, cls, attname):
-        from .inputobjecttype import InputObjectType
-        from .objecttype import ObjectType
-        from .interface import Interface
-
-        if issubclass(cls, (ObjectType, Interface)):
-            inner = self.as_field()
-        elif issubclass(cls, (InputObjectType)):
-            inner = self.as_inputfield()
-        else:
-            raise Exception('TypedProxy "{}" cannot be mounted in {}'.format(self.get_type(), cls))
-
-        return inner.contribute_to_class(cls, attname)
 
     def as_mounted(self, cls):
         from .inputobjecttype import InputObjectType

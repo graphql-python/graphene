@@ -8,11 +8,6 @@ class Options(object):
             setattr(self, name, value)
         self.valid_attrs = defaults.keys()
 
-    def contribute_to_class(self, cls, name):
-        cls._meta = self
-        self.parent = cls
-        self.validate_attrs()
-
     def validate_attrs(self):
         # Store the original user-defined values for each option,
         # for use when serializing the model definition

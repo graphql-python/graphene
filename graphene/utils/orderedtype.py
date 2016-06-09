@@ -3,7 +3,7 @@ from functools import total_ordering
 
 @total_ordering
 class OrderedType(object):
-    creation_counter = 0
+    creation_counter = 1
 
     def __init__(self, _creation_counter=None):
         self.creation_counter = _creation_counter or self.gen_counter()

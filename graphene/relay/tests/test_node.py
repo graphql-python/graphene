@@ -7,8 +7,10 @@ from ...types import ObjectType, Schema, implements
 from ...types.scalars import String
 
 
-@implements(Node)
 class MyNode(ObjectType):
+    class Meta:
+        interfaces = [Node]
+
     name = String()
 
     @staticmethod
@@ -25,8 +27,9 @@ schema = Schema(query=RootQuery, types=[MyNode])
 
 def test_node_no_get_node():
     with pytest.raises(AssertionError) as excinfo:
-        @implements(Node)
         class MyNode(ObjectType):
+            class Meta:
+                interfaces = [Node]
             pass
 
     assert "MyNode.get_node method is required by the Node interface." == str(excinfo.value)

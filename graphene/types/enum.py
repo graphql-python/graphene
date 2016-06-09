@@ -42,7 +42,7 @@ class EnumTypeMeta(ClassTypeMeta):
             abstract=False
         )
 
-    def construct_graphql_type(cls, bases):
+    def construct(cls, bases, attrs):
         if not cls._meta.graphql_type and not cls._meta.abstract:
             cls._meta.graphql_type = GrapheneEnumType(
                 graphene_type=cls,
@@ -50,7 +50,6 @@ class EnumTypeMeta(ClassTypeMeta):
                 description=cls._meta.description or cls.__doc__,
             )
 
-    def construct(cls, bases, attrs):
         if not cls._meta.enum:
             cls._meta.enum = type(cls.__name__, (PyEnum,), attrs)
 

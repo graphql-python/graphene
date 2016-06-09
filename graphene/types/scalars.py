@@ -20,9 +20,6 @@ class ScalarTypeMeta(ClassTypeMeta):
             abstract=False
         )
 
-    def construct_graphql_type(cls, bases):
-        pass
-
     def construct(cls, *args, **kwargs):
         constructed = super(ScalarTypeMeta, cls).construct(*args, **kwargs)
         if not cls._meta.graphql_type and not cls._meta.abstract:

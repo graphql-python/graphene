@@ -23,22 +23,27 @@ scalar_classes = {
 
 @pytest.mark.parametrize("scalar_class,expected_graphql_type", scalar_classes.items())
 def test_scalar_as_field(scalar_class, expected_graphql_type):
+    field_before = Field(None)
     scalar = scalar_class()
     field = scalar.as_field()
     graphql_type = get_graphql_type(scalar_class)
+    field_after = Field(None)
     assert isinstance(field, Field)
     assert field.type == graphql_type
     assert graphql_type == expected_graphql_type
+    assert field_before < field < field_after
 
 
 @pytest.mark.parametrize("scalar_class,graphql_type", scalar_classes.items())
 def test_scalar_in_objecttype(scalar_class, graphql_type):
     class MyObjectType(ObjectType):
+        before = Field(scalar_class)
         field = scalar_class()
+        after = Field(scalar_class)
 
     graphql_type = get_graphql_type(MyObjectType)
     fields = graphql_type.get_fields()
-    assert 'field' in fields
+    assert fields.keys() == ['before', 'field', 'after']
     assert isinstance(fields['field'], Field)
 
 
