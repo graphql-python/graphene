@@ -112,7 +112,7 @@ class Field(AbstractField, GraphQLField, OrderedType):
         self._resolver = resolver
 
     def __copy__(self):
-        field = Field(
+        field = self.__class__(
             type=self._type,
             args=self.args,
             resolver=self._resolver,
@@ -141,6 +141,8 @@ class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
         self.default_value = default_value
         self.description = description
         self.required = required
+        self.attname = None
+        self.parent = None
         OrderedType.__init__(self, _creation_counter=_creation_counter)
 
     def mount_error_message(self, where):
@@ -157,10 +159,13 @@ class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
         self.parent = parent
 
     def __copy__(self):
-        return InputField(
+        field = self.__class__(
             type=self._type,
             name=self._name,
             required=self.required,
             default_value=self.default_value,
             description=self.description,
         )
+        field.attname = self.attname
+        field.parent = self.parent
+        return field
