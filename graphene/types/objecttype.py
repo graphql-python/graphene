@@ -1,10 +1,11 @@
+from itertools import chain
 import copy
 import six
 
 from graphql import GraphQLObjectType
 
 from .definitions import FieldsMeta, ClassTypeMeta, GrapheneGraphQLType
-from .interface import GrapheneInterfaceType
+from .interface import GrapheneInterfaceType, InterfaceTypeMeta, Interface
 
 
 class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
@@ -45,7 +46,7 @@ def get_interfaces(cls, interfaces):
         yield graphql_type
 
 
-class ObjectTypeMeta(FieldsMeta, ClassTypeMeta):
+class ObjectTypeMeta(InterfaceTypeMeta):
 
     def get_options(cls, meta):
         return cls.options_class(
@@ -57,9 +58,19 @@ class ObjectTypeMeta(FieldsMeta, ClassTypeMeta):
             abstract=False
         )
 
+    def get_interfaces(cls, bases):
+        return (b for b in bases if issubclass(b, Interface))
+
+    def is_object_type(cls):
+        return issubclass(cls, ObjectType)
+
     def construct(cls, bases, attrs):
-        if not cls._meta.abstract:
-            interfaces = tuple(get_interfaces(cls, cls._meta.interfaces))
+        if not cls._meta.abstract and cls.is_object_type():
+            cls.get_interfaces(bases)
+            interfaces = tuple(get_interfaces(cls, chain(
+                cls._meta.interfaces,
+                cls.get_interfaces(bases),
+            )))
             local_fields = cls._extract_local_fields(attrs)
             if not cls._meta.graphql_type:
                 cls = super(ObjectTypeMeta, cls).construct(bases, attrs)

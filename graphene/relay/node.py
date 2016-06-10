@@ -4,25 +4,24 @@ import six
 from graphql_relay import node_definitions, from_global_id, to_global_id
 
 from ..types.field import Field
+from ..types.objecttype import ObjectTypeMeta
 from ..types.interface import GrapheneInterfaceType, Interface, InterfaceTypeMeta
 
 
-class NodeMeta(InterfaceTypeMeta):
-
-    def construct_graphql_type(cls, bases):
-        pass
+class NodeMeta(ObjectTypeMeta):
 
     def construct(cls, bases, attrs):
-        cls.get_node = attrs.pop('get_node')
-        cls.id_resolver = attrs.pop('id_resolver', None)
-        node_interface, node_field = node_definitions(
-            cls.get_node,
-            id_resolver=cls.id_resolver,
-            interface_class=partial(GrapheneInterfaceType, graphene_type=cls),
-            field_class=Field,
-        )
-        cls._meta.graphql_type = node_interface
-        cls._Field = node_field
+        if not cls.is_object_type():
+            cls.get_node = attrs.pop('get_node')
+            cls.id_resolver = attrs.pop('id_resolver', None)
+            node_interface, node_field = node_definitions(
+                cls.get_node,
+                id_resolver=cls.id_resolver,
+                interface_class=partial(GrapheneInterfaceType, graphene_type=cls),
+                field_class=Field,
+            )
+            cls._meta.graphql_type = node_interface
+            cls._Field = node_field
         return super(NodeMeta, cls).construct(bases, attrs)
 
     @property

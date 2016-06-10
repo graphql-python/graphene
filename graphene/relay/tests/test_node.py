@@ -7,9 +7,7 @@ from ...types import ObjectType, Schema, implements
 from ...types.scalars import String
 
 
-class MyNode(ObjectType):
-    class Meta:
-        interfaces = [Node]
+class MyNode(ObjectType, Node):
 
     name = String()
 

@@ -15,17 +15,11 @@ class CustomNode(Node):
             return photo_data.get(id)
 
 
-# @implements(CustomNode)
-class User(ObjectType):
-    class Meta:
-        interfaces = [CustomNode]
+class User(ObjectType, CustomNode):
     name = String()
 
 
-# @implements(CustomNode)
-class Photo(ObjectType):
-    class Meta:
-        interfaces = [CustomNode]
+class Photo(ObjectType, CustomNode):
     width = Int()
 
 

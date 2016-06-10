@@ -21,17 +21,11 @@ class Character(graphene.Interface):
         return [get_character(f) for f in self.friends]
 
 
-# @graphene.implements(Character)
-class Human(graphene.ObjectType):
-    class Meta:
-        interfaces = [Character]
+class Human(graphene.ObjectType, Character):
     home_planet = graphene.String()
 
 
-# @graphene.implements(Character)
-class Droid(graphene.ObjectType):
-    class Meta:
-        interfaces = [Character]
+class Droid(graphene.ObjectType, Character):
     primary_function = graphene.String()
 
 

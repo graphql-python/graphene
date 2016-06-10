@@ -69,34 +69,36 @@ class Field(AbstractField, GraphQLField, OrderedType):
         self.attname = attname
         self.parent = parent
 
+    def default_resolver(self, root, args, context, info):
+        return getattr(root, self.source or self.attname, None)
+
     @property
     def resolver(self):
         from .objecttype import ObjectType
         from .interface import GrapheneInterfaceType
-        def default_resolver(root, args, context, info):
-            return getattr(root, self.source or self.attname, None)
 
         resolver = getattr(self.parent, 'resolve_{}'.format(self.attname), None)
 
         # We try to get the resolver from the interfaces
-        if not resolver and issubclass(self.parent, ObjectType):
-            graphql_type = self.parent._meta.graphql_type
-            interfaces = graphql_type._provided_interfaces or []
-            for interface in interfaces:
-                if not isinstance(interface, GrapheneInterfaceType):
-                    continue
-                fields = interface.get_fields()
-                if self.attname in fields:
-                    resolver = getattr(interface.graphene_type, 'resolve_{}'.format(self.attname), None)
-                    if resolver:
-                        # We remove the bounding to the method
-                        resolver = resolver #.__func__
-                        break
+        # This is not needed anymore as Interfaces could be extended now with Python syntax
+        # if not resolver and issubclass(self.parent, ObjectType):
+        #     graphql_type = self.parent._meta.graphql_type
+        #     interfaces = graphql_type._provided_interfaces or []
+        #     for interface in interfaces:
+        #         if not isinstance(interface, GrapheneInterfaceType):
+        #             continue
+        #         fields = interface.get_fields()
+        #         if self.attname in fields:
+        #             resolver = getattr(interface.graphene_type, 'resolve_{}'.format(self.attname), None)
+        #             if resolver:
+        #                 # We remove the bounding to the method
+        #                 resolver = resolver #.__func__
+        #                 break
 
         if resolver:
             resolver = resolver.__func__
         else:
-            resolver = default_resolver
+            resolver = self.default_resolver
 
         # def resolver_wrapper(root, *args, **kwargs):
         #     if not isinstance(root, self.parent):
