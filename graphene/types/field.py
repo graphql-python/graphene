@@ -112,20 +112,25 @@ class Field(AbstractField, GraphQLField, OrderedType):
         self._resolver = resolver
 
     def __copy__(self):
-        field = self.__class__(
-            type=self._type,
-            args=self.args,
-            resolver=self._resolver,
-            source=self.source,
-            deprecation_reason=self.deprecation_reason,
-            name=self._name,
-            required=self.required,
-            description=self.description,
-            _creation_counter=self.creation_counter,
+        return self.copy_and_extend(self)
+
+    @classmethod
+    def copy_and_extend(cls, field, type=None, args=None, resolver=None, source=None, deprecation_reason=None, name=None, description=None, required=False, _creation_counter=False, **extra_args):
+        new_field = cls(
+            type=type or field._type,
+            args=to_arguments(args, field.args),
+            resolver=field._resolver,
+            source=source or getattr(field, 'source', None),
+            deprecation_reason=field.deprecation_reason,
+            name=field._name,
+            required=required or getattr(field, 'required', False),
+            description=field.description,
+            _creation_counter=getattr(field, 'creation_counter', None) if _creation_counter is False else None,
+            **extra_args
         )
-        field.attname = self.attname
-        field.parent = self.parent
-        return field
+        new_field.attname = field.attname
+        new_field.parent = field.parent
+        return new_field
 
     def __str__(self):
         if not self.parent:
@@ -159,13 +164,18 @@ class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
         self.parent = parent
 
     def __copy__(self):
-        field = self.__class__(
-            type=self._type,
-            name=self._name,
-            required=self.required,
-            default_value=self.default_value,
-            description=self.description,
+        return self.copy_and_extend(self)
+
+    @classmethod
+    def copy_and_extend(cls, field, type=None, default_value=None, description=None, name=None, required=False, _creation_counter=False):
+        new_field = cls(
+            type=type or field._type,
+            name=name or field._name,
+            required=required or field.required,
+            default_value=default_value or field.default_value,
+            description=description or field.description,
+            _creation_counter=getattr(field, 'creation_counter', None) if _creation_counter is False else None,
         )
-        field.attname = self.attname
-        field.parent = self.parent
-        return field
+        new_field.attname = field.attname
+        new_field.parent = field.parent
+        return new_field

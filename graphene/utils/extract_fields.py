@@ -20,6 +20,8 @@ def extract_fields(cls, attrs):
         del attrs[attname]
         _fields.append(field)
 
+    # All the fields are Graphene Fields or InputFields, so
+    # are orderable
     return sorted(_fields)
 
 
@@ -36,4 +38,4 @@ def get_base_fields(cls, bases):
             fields.add(attname)
             _fields.append(field)
 
-    return sorted(_fields)
+    return _fields

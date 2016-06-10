@@ -35,7 +35,7 @@ photo_data = {
 
 
 class RootQuery(ObjectType):
-    node = CustomNode.Field
+    node = CustomNode.Field()
 
 schema = Schema(query=RootQuery, types=[User, Photo])
 

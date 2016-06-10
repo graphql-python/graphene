@@ -50,7 +50,7 @@ class IntroduceShip(relay.ClientIDMutation):
 class Query(graphene.ObjectType):
     rebels = graphene.Field(Faction)
     empire = graphene.Field(Faction)
-    node = relay.Node.Field
+    node = relay.Node.Field()
 
     @resolve_only_args
     def resolve_rebels(self):
@@ -62,7 +62,7 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    introduce_ship = IntroduceShip.Field
+    introduce_ship = IntroduceShip.Field()
 
 
 

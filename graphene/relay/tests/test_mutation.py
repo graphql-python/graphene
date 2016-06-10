@@ -23,7 +23,7 @@ class RootQuery(ObjectType):
 
 
 class Mutation(ObjectType):
-    say = SaySomething.Field
+    say = SaySomething.Field()
 
 schema = Schema(query=RootQuery, mutation=Mutation)
 
@@ -40,8 +40,8 @@ def test_node_good():
     graphql_type = SaySomething._meta.graphql_type
     fields = graphql_type.get_fields()
     assert 'phrase' in fields
-    assert SaySomething.Field.type == SaySomething._meta.graphql_type
-    graphql_field = SaySomething.Field
+    graphql_field = SaySomething.Field()
+    assert graphql_field.type == SaySomething._meta.graphql_type
     assert 'input' in graphql_field.args
     input = graphql_field.args['input']
     assert 'clientMutationId' in input.type.of_type.get_fields()

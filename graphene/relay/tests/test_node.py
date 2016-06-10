@@ -18,7 +18,7 @@ class MyNode(ObjectType, Node):
 
 class RootQuery(ObjectType):
     first = String()
-    node = Node.Field
+    node = Node.Field()
 
 schema = Schema(query=RootQuery, types=[MyNode])
 

@@ -21,16 +21,8 @@ class NodeMeta(ObjectTypeMeta):
                 field_class=Field,
             )
             cls._meta.graphql_type = node_interface
-            cls._Field = node_field
+            cls.Field = partial(Field.copy_and_extend, node_field, type=None, _creation_counter=None)
         return super(NodeMeta, cls).construct(bases, attrs)
-
-    @property
-    def Field(cls):
-        # We put as a property for reset the field counter each time is called
-        # so it will be order correctly wherever is mounted
-        field = copy.copy(cls._Field)
-        field.reset_counter()
-        return field
 
 
 class Node(six.with_metaclass(NodeMeta, Interface)):
