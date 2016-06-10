@@ -1,12 +1,9 @@
 import re
-import copy
-from functools import partial
+from collections import Iterable
 import six
-from graphql_relay import connection_definitions
+from graphql_relay import connection_definitions, connection_from_list
 
 from ..types.field import Field
-from ..types.mutation import Mutation, MutationMeta
-from ..types.interface import GrapheneInterfaceType, Interface, InterfaceTypeMeta
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 
 from ..utils.props import props
@@ -47,9 +44,9 @@ class ConnectionMeta(ObjectTypeMeta):
                 edge_fields=edge_fields,
                 connection_fields=local_fields,
             )
+            cls.Edge = type(edge.name, (ObjectType, ), {'Meta': type('Meta', (object,), {'graphql_type': edge})})
             cls._meta.graphql_type = connection
         return cls
-
 
 
 class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
@@ -58,3 +55,25 @@ class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
 
     resolve_node = None
     resolve_cursor = None
+
+
+class IterableConnectionField(Field):
+    # def __init__(self, type, *args, **kwargs):
+    #     if 
+
+    def resolver(self, root, args, context, info):
+        iterable = super(ConnectionField, self).resolver(root, args, context, info)
+        # if isinstance(resolved, self.type.graphene)
+        assert isinstance(
+            iterable, Iterable), 'Resolved value from the connection field have to be iterable'
+        connection = connection_from_list(
+            iterable,
+            args,
+            connection_type=None,
+            edge_type=None,
+            pageinfo_type=None
+        )
+        return connection
+
+
+ConnectionField = IterableConnectionField

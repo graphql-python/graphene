@@ -1,12 +1,10 @@
 from functools import partial
-import copy
 import six
 from graphql_relay import mutation_with_client_mutation_id
 
 from ..types.mutation import Mutation, MutationMeta
-from ..types.inputobjecttype import GrapheneInputObjectType, InputObjectType
-from ..types.objecttype import GrapheneObjectType
-from ..types.field import Field, InputField
+from ..types.inputobjecttype import InputObjectType
+from ..types.field import Field
 
 from ..utils.props import props
 
