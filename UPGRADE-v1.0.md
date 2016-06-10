@@ -40,10 +40,13 @@ from graphene import ObjectType, Mutation, String
 
 class ReverseString(Mutation):
     class Input:
-        input = String()
+        input = String(required=True)
 
     reversed = String()
 
+    def mutate(self, args, context, info):
+        reversed = args.get('input')[::-1]
+        return ReverseString(reversed=reversed)
 
 class Query(ObjectType):
     reverse_string = graphene.Field(ReverseString) # Old way, not working anymore
