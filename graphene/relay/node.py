@@ -30,6 +30,7 @@ class NodeMeta(ObjectTypeMeta):
             cls.implements(cls)
         return cls
 
+
 class Node(six.with_metaclass(NodeMeta, Interface)):
 
     @classmethod
