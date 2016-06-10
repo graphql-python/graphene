@@ -25,6 +25,10 @@ pip install graphene[django]
 pip install graphene[sqlalchemy]
 ```
 
+## 1.0 Upgrade Guide
+
+Please read [UPGRADE-v1.0.md](/UPGRADE-v1.0.md) to learn how to upgrade.
+
 
 ## Examples
 
