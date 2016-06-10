@@ -39,14 +39,9 @@ class ClientIDMutationMeta(MutationMeta):
                 input_fields=input_local_fields,
                 output_fields=cls._fields(bases, attrs, local_fields),
                 mutate_and_get_payload=cls.mutate_and_get_payload,
-
-                input_type_class=partial(GrapheneInputObjectType, graphene_type=cls),
-                input_field_class=InputField,
-                output_type_class=partial(GrapheneObjectType, graphene_type=cls),
-                field_class=Field,
             )
             cls._meta.graphql_type = field.type
-            cls.Field = partial(Field.copy_and_extend, field, type=None, _creation_counter=None)
+            cls.Field = partial(Field.copy_and_extend, field, type=field.type, _creation_counter=None)
         constructed = super(ClientIDMutationMeta, cls).construct(bases, attrs)
         return constructed
 

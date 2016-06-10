@@ -11,25 +11,30 @@ from ..types.interface import GrapheneInterfaceType, Interface, InterfaceTypeMet
 class NodeMeta(ObjectTypeMeta):
 
     def construct(cls, bases, attrs):
-        if not cls.is_object_type():
-            cls.get_node = attrs.pop('get_node')
+        is_object_type = cls.is_object_type()
+        cls = super(NodeMeta, cls).construct(bases, attrs)
+        if not is_object_type:
+            get_node_from_global_id = getattr(cls, 'get_node_from_global_id', None)
+            assert get_node_from_global_id, '{}.get_node method is required by the Node interface.'.format(cls.__name__)
             cls.id_resolver = attrs.pop('id_resolver', None)
             node_interface, node_field = node_definitions(
-                cls.get_node,
+                get_node_from_global_id,
                 id_resolver=cls.id_resolver,
-                interface_class=partial(GrapheneInterfaceType, graphene_type=cls),
-                field_class=Field,
             )
             cls._meta.graphql_type = node_interface
-            cls.Field = partial(Field.copy_and_extend, node_field, type=None, _creation_counter=None)
-        return super(NodeMeta, cls).construct(bases, attrs)
-
+            cls.Field = partial(Field.copy_and_extend, node_field, type=node_field.type, _creation_counter=None)
+        else:
+            # The interface provided by node_definitions is not an instance
+            # of GrapheneInterfaceType, so it will have no graphql_type,
+            # so will not trigger Node.implements
+            cls.implements(cls)
+        return cls
 
 class Node(six.with_metaclass(NodeMeta, Interface)):
 
     @classmethod
     def require_get_node(cls):
-        return cls == Node
+        return Node._meta.graphql_type in cls._meta.graphql_type._provided_interfaces
 
     @classmethod
     def from_global_id(cls, global_id):
@@ -44,7 +49,7 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         return cls.to_global_id(info.parent_type.name, getattr(root, 'id', None))
 
     @classmethod
-    def get_node(cls, global_id, context, info):
+    def get_node_from_global_id(cls, global_id, context, info):
         try:
             _type, _id = cls.from_global_id(global_id)
         except:

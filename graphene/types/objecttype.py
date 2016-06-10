@@ -71,6 +71,7 @@ class ObjectTypeMeta(InterfaceTypeMeta):
                 cls._meta.interfaces,
                 cls.get_interfaces(bases),
             )))
+
             local_fields = cls._extract_local_fields(attrs)
             if not cls._meta.graphql_type:
                 cls = super(ObjectTypeMeta, cls).construct(bases, attrs)

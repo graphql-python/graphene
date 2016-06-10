@@ -40,7 +40,10 @@ class Interface(six.with_metaclass(InterfaceTypeMeta)):
         abstract = True
 
     def __init__(self, *args, **kwargs):
-        raise Exception("An interface cannot be intitialized")
+        from .objecttype import ObjectType
+        if not isinstance(self, ObjectType):
+            raise Exception("An interface cannot be intitialized")
+        super(Interface, self).__init__(*args, **kwargs)
 
     @classmethod
     def implements(cls, object_type):

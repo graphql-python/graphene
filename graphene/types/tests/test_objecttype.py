@@ -93,7 +93,6 @@ def test_objecttype_as_container_get_fields():
 
 def test_parent_container_get_fields():
     fields = Container._meta.graphql_type.get_fields()
-    print [(f.creation_counter, f.name) for f in fields.values()]
     assert fields.keys() == ['field1', 'field2']
 
 

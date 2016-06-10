@@ -4,7 +4,7 @@ from graphene import implements, relay, resolve_only_args
 from .data import create_ship, get_empire, get_faction, get_rebels, get_ship
 
 
-class Ship(graphene.ObjectType, relay.Node):
+class Ship(relay.Node, graphene.ObjectType):
     '''A ship in the Star Wars saga'''
     name = graphene.String(description='The name of the ship.')
 
@@ -13,7 +13,7 @@ class Ship(graphene.ObjectType, relay.Node):
         return get_ship(id)
 
 
-class Faction(graphene.ObjectType, relay.Node):
+class Faction(relay.Node, graphene.ObjectType):
     '''A faction in the Star Wars saga'''
     name = graphene.String(description='The name of the faction.')
     # ships = relay.ConnectionField(

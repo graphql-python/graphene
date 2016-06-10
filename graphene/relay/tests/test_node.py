@@ -7,7 +7,7 @@ from ...types import ObjectType, Schema, implements
 from ...types.scalars import String
 
 
-class MyNode(ObjectType, Node):
+class MyNode(Node, ObjectType):
 
     name = String()
 
@@ -25,9 +25,7 @@ schema = Schema(query=RootQuery, types=[MyNode])
 
 def test_node_no_get_node():
     with pytest.raises(AssertionError) as excinfo:
-        class MyNode(ObjectType):
-            class Meta:
-                interfaces = [Node]
+        class MyNode(Node, ObjectType):
             pass
 
     assert "MyNode.get_node method is required by the Node interface." == str(excinfo.value)
@@ -35,9 +33,8 @@ def test_node_no_get_node():
 
 def test_node_no_get_node_with_meta():
     with pytest.raises(AssertionError) as excinfo:
-        class MyNode(ObjectType):
-            class Meta:
-                interfaces = [Node]
+        class MyNode(Node, ObjectType):
+            pass
 
     assert "MyNode.get_node method is required by the Node interface." == str(excinfo.value)
 

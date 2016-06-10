@@ -7,7 +7,7 @@ from ...types.scalars import String, Int
 
 class CustomNode(Node):
     @staticmethod
-    def get_node(id, context, info):
+    def get_node_from_global_id(id, context, info):
         assert info.schema == schema
         if id in user_data:
             return user_data.get(id)
@@ -15,11 +15,11 @@ class CustomNode(Node):
             return photo_data.get(id)
 
 
-class User(ObjectType, CustomNode):
+class User(CustomNode, ObjectType):
     name = String()
 
 
-class Photo(ObjectType, CustomNode):
+class Photo(CustomNode, ObjectType):
     width = Int()
 
 

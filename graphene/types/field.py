@@ -116,20 +116,40 @@ class Field(AbstractField, GraphQLField, OrderedType):
 
     @classmethod
     def copy_and_extend(cls, field, type=None, args=None, resolver=None, source=None, deprecation_reason=None, name=None, description=None, required=False, _creation_counter=False, **extra_args):
+        if isinstance(field, Field):
+            type = type or field._type
+            resolver = resolver or field._resolver
+            source = source or field.source
+            name = name or field._name
+            required = required or field.required
+            _creation_counter = field.creation_counter if _creation_counter is False else None
+            attname = field.attname
+            parent = field.parent
+        else:
+            # If is a GraphQLField
+            type = type or field.type
+            resolver = resolver or field.resolver
+            source = None
+            name = field.name
+            required = None
+            _creation_counter = None
+            attname = name
+            parent = None
+
         new_field = cls(
-            type=type or field._type,
+            type=type,
             args=to_arguments(args, field.args),
-            resolver=field._resolver,
-            source=source or getattr(field, 'source', None),
+            resolver=resolver,
+            source=source,
             deprecation_reason=field.deprecation_reason,
-            name=field._name,
-            required=required or getattr(field, 'required', False),
+            name=name,
+            required=required,
             description=field.description,
-            _creation_counter=getattr(field, 'creation_counter', None) if _creation_counter is False else None,
+            _creation_counter=_creation_counter,
             **extra_args
         )
-        new_field.attname = field.attname
-        new_field.parent = field.parent
+        new_field.attname = attname
+        new_field.parent = parent
         return new_field
 
     def __str__(self):
@@ -168,14 +188,30 @@ class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
 
     @classmethod
     def copy_and_extend(cls, field, type=None, default_value=None, description=None, name=None, required=False, _creation_counter=False):
+        if isinstance(field, Field):
+            type = type or field._type
+            name = name or field._name
+            required = required or field.required
+            _creation_counter = field.creation_counter if _creation_counter is False else None
+            attname = field.attname
+            parent = field.parent
+        else:
+            # If is a GraphQLField
+            type = type or field.type
+            name = field.name
+            required = None
+            _creation_counter = None
+            attname = None
+            parent = None
+
         new_field = cls(
-            type=type or field._type,
-            name=name or field._name,
-            required=required or field.required,
+            type=type,
+            name=name,
+            required=required,
             default_value=default_value or field.default_value,
             description=description or field.description,
-            _creation_counter=getattr(field, 'creation_counter', None) if _creation_counter is False else None,
+            _creation_counter=_creation_counter,
         )
-        new_field.attname = field.attname
-        new_field.parent = field.parent
+        new_field.attname = attname
+        new_field.parent = parent
         return new_field
