@@ -31,7 +31,7 @@ def get_base_fields(cls, bases):
             if attname in fields:
                 continue
             field = copy.copy(field)
-            if isinstance(field, Field):
+            if isinstance(field, (Field, InputField)):
                 field.parent = cls
             fields.add(attname)
             _fields.append(field)

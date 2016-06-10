@@ -1,7 +1,7 @@
 import copy
 from functools import partial
 import six
-from graphql_relay import node_definitions, from_global_id
+from graphql_relay import node_definitions, from_global_id, to_global_id
 
 from ..types.field import Field
 from ..types.interface import GrapheneInterfaceType, Interface, InterfaceTypeMeta
@@ -14,10 +14,12 @@ class NodeMeta(InterfaceTypeMeta):
 
     def construct(cls, bases, attrs):
         cls.get_node = attrs.pop('get_node')
+        cls.id_resolver = attrs.pop('id_resolver', None)
         node_interface, node_field = node_definitions(
             cls.get_node,
+            id_resolver=cls.id_resolver,
             interface_class=partial(GrapheneInterfaceType, graphene_type=cls),
-            field_class=Field
+            field_class=Field,
         )
         cls._meta.graphql_type = node_interface
         cls._Field = node_field
@@ -43,6 +45,14 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         return from_global_id(global_id)
 
     @classmethod
+    def to_global_id(cls, type, id):
+        return to_global_id(type, id)
+
+    @classmethod
+    def id_resolver(cls, root, args, context, info):
+        return cls.to_global_id(info.parent_type.name, getattr(root, 'id', None))
+
+    @classmethod
     def get_node(cls, global_id, context, info):
         try:
             _type, _id = cls.from_global_id(global_id)
@@ -61,4 +71,5 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         '''
         if cls.require_get_node():
             assert hasattr(object_type, 'get_node'), '{}.get_node method is required by the Node interface.'.format(object_type.__name__)
+
         return super(Node, cls).implements(object_type)

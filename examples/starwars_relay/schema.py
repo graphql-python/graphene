@@ -1,33 +1,37 @@
 import graphene
-from graphene import relay, resolve_only_args
+from graphene import implements, relay, resolve_only_args
 
 from .data import create_ship, get_empire, get_faction, get_rebels, get_ship
 
-schema = graphene.Schema(name='Starwars Relay Schema')
 
-
-class Ship(relay.Node):
+# @implements(relay.Node)
+class Ship(graphene.ObjectType):
+    class Meta:
+        interfaces = [relay.Node]
     '''A ship in the Star Wars saga'''
     name = graphene.String(description='The name of the ship.')
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, id, context, info):
         return get_ship(id)
 
 
-class Faction(relay.Node):
+# @implements(relay.Node)
+class Faction(graphene.ObjectType):
+    class Meta:
+        interfaces = [relay.Node]
     '''A faction in the Star Wars saga'''
     name = graphene.String(description='The name of the faction.')
-    ships = relay.ConnectionField(
-        Ship, description='The ships used by the faction.')
-
-    @resolve_only_args
-    def resolve_ships(self, **args):
-        # Transform the instance ship_ids into real instances
-        return [get_ship(ship_id) for ship_id in self.ships]
+    # ships = relay.ConnectionField(
+    #     Ship, description='The ships used by the faction.')
+    ships = graphene.List(graphene.String)
+    # @resolve_only_args
+    # def resolve_ships(self, **args):
+    #     # Transform the instance ship_ids into real instances
+    #     return [get_ship(ship_id) for ship_id in self.ships]
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, id, context, info):
         return get_faction(id)
 
 
@@ -41,9 +45,9 @@ class IntroduceShip(relay.ClientIDMutation):
     faction = graphene.Field(Faction)
 
     @classmethod
-    def mutate_and_get_payload(cls, input, info):
-        ship_name = input.get('ship_name')
-        faction_id = input.get('faction_id')
+    def mutate_and_get_payload(cls, input, context, info):
+        ship_name = input.get('shipName')
+        faction_id = input.get('factionId')
         ship = create_ship(ship_name, faction_id)
         faction = get_faction(faction_id)
         return IntroduceShip(ship=ship, faction=faction)
@@ -52,7 +56,7 @@ class IntroduceShip(relay.ClientIDMutation):
 class Query(graphene.ObjectType):
     rebels = graphene.Field(Faction)
     empire = graphene.Field(Faction)
-    node = relay.NodeField()
+    node = relay.Node.Field
 
     @resolve_only_args
     def resolve_rebels(self):
@@ -64,8 +68,8 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    introduce_ship = graphene.Field(IntroduceShip)
+    introduce_ship = IntroduceShip.Field
 
 
-schema.query = Query
-schema.mutation = Mutation
+
+schema = graphene.Schema(query=Query, mutation=Mutation)

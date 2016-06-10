@@ -14,14 +14,14 @@ def test_mutations():
         }
         faction {
           name
-          ships {
-            edges {
-              node {
-                id
-                name
-              }
-            }
-          }
+          # ships {
+          #   edges {
+          #     node {
+          #       id
+          #       name
+          #     }
+          #   }
+          # }
         }
       }
     }
@@ -34,42 +34,43 @@ def test_mutations():
             },
             'faction': {
                 'name': 'Alliance to Restore the Republic',
-                'ships': {
-                    'edges': [{
-                        'node': {
-                            'id': 'U2hpcDox',
-                            'name': 'X-Wing'
-                        }
-                    }, {
-                        'node': {
-                            'id': 'U2hpcDoy',
-                            'name': 'Y-Wing'
-                        }
-                    }, {
-                        'node': {
-                            'id': 'U2hpcDoz',
-                            'name': 'A-Wing'
-                        }
-                    }, {
-                        'node': {
-                            'id': 'U2hpcDo0',
-                            'name': 'Millenium Falcon'
-                        }
-                    }, {
-                        'node': {
-                            'id': 'U2hpcDo1',
-                            'name': 'Home One'
-                        }
-                    }, {
-                        'node': {
-                            'id': 'U2hpcDo5',
-                            'name': 'Peter'
-                        }
-                    }]
-                },
+                # 'ships': {
+                #     'edges': [{
+                #         'node': {
+                #             'id': 'U2hpcDox',
+                #             'name': 'X-Wing'
+                #         }
+                #     }, {
+                #         'node': {
+                #             'id': 'U2hpcDoy',
+                #             'name': 'Y-Wing'
+                #         }
+                #     }, {
+                #         'node': {
+                #             'id': 'U2hpcDoz',
+                #             'name': 'A-Wing'
+                #         }
+                #     }, {
+                #         'node': {
+                #             'id': 'U2hpcDo0',
+                #             'name': 'Millenium Falcon'
+                #         }
+                #     }, {
+                #         'node': {
+                #             'id': 'U2hpcDo1',
+                #             'name': 'Home One'
+                #         }
+                #     }, {
+                #         'node': {
+                #             'id': 'U2hpcDo5',
+                #             'name': 'Peter'
+                #         }
+                #     }]
+                # },
             }
         }
     }
     result = schema.execute(query)
+    # raise result.errors[0].original_error, None, result.errors[0].stack
     assert not result.errors
     assert result.data == expected

@@ -14,6 +14,8 @@ class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
         self.check_interfaces()
 
     def check_interfaces(self):
+        if not self._provided_interfaces:
+            return
         for interface in self._provided_interfaces:
             if isinstance(interface, GrapheneInterfaceType):
                 interface.graphene_type.implements(self.graphene_type)

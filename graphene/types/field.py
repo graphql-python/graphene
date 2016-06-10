@@ -11,7 +11,7 @@ from .argument import to_arguments
 class AbstractField(object):
     @property
     def name(self):
-        return self._name or to_camel_case(self.attname)
+        return self._name or self.attname and to_camel_case(self.attname)
 
     @name.setter
     def name(self, name):
@@ -81,7 +81,8 @@ class Field(AbstractField, GraphQLField, OrderedType):
         # We try to get the resolver from the interfaces
         if not resolver and issubclass(self.parent, ObjectType):
             graphql_type = self.parent._meta.graphql_type
-            for interface in graphql_type._provided_interfaces:
+            interfaces = graphql_type._provided_interfaces or []
+            for interface in interfaces:
                 if not isinstance(interface, GrapheneInterfaceType):
                     continue
                 fields = interface.get_fields()
