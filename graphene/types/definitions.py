@@ -27,12 +27,6 @@ class ClassTypeMeta(type):
             meta = attr_meta
 
         new_class._meta = new_class.get_options(meta)
-        new_class._meta.parent = new_class
-        new_class._meta.validate_attrs()
-
-        if new_class._meta.name:
-            assert_valid_name(new_class._meta.name)
-
         return mcs.construct(new_class, bases, attrs)
 
     def get_options(cls, meta):

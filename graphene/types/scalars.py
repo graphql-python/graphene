@@ -2,7 +2,7 @@ import six
 from graphql import GraphQLScalarType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID
 
 from .definitions import ClassTypeMeta, GrapheneGraphQLType
-from .proxy import TypeProxy
+from .unmountedtype import UnmountedType
 
 
 class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
@@ -36,7 +36,7 @@ class ScalarTypeMeta(ClassTypeMeta):
         return constructed
 
 
-class Scalar(six.with_metaclass(ScalarTypeMeta, TypeProxy)):
+class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
     class Meta:
         abstract = True
 

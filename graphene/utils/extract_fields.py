@@ -2,7 +2,7 @@ import copy
 from .get_graphql_type import get_graphql_type
 
 from ..types.field import Field, InputField
-from ..types.proxy import TypeProxy
+from ..types.unmountedtype import UnmountedType
 
 
 def extract_fields(cls, attrs):
@@ -10,7 +10,7 @@ def extract_fields(cls, attrs):
     _fields = list()
     for attname, value in list(attrs.items()):
         is_field = isinstance(value, (Field, InputField))
-        is_field_proxy = isinstance(value, TypeProxy)
+        is_field_proxy = isinstance(value, UnmountedType)
         if not (is_field or is_field_proxy):
             continue
         field = value.as_mounted(cls) if is_field_proxy else copy.copy(value)

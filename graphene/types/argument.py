@@ -41,13 +41,13 @@ class Argument(GraphQLArgument, OrderedType):
 
 
 def to_arguments(*args, **extra):
-    from .proxy import TypeProxy
+    from .unmountedtype import UnmountedType
     args = list(filter(None, args)) + [extra]
     arguments = []
     iter_arguments = chain(*[arg.items() for arg in args])
     arguments_names = set()
     for default_name, arg in iter_arguments:
-        if isinstance(arg, TypeProxy):
+        if isinstance(arg, UnmountedType):
             arg = arg.as_argument()
 
         if not isinstance(arg, GraphQLArgument):

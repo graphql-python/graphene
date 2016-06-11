@@ -5,7 +5,7 @@ from ..utils.orderedtype import OrderedType
 
 # UnmountedType ?
 
-class TypeProxy(OrderedType):
+class UnmountedType(OrderedType):
     '''
     This class acts a proxy for a Graphene Type, so it can be mounted
     as Field, InputField or Argument.
@@ -24,7 +24,7 @@ class TypeProxy(OrderedType):
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
-        super(TypeProxy, self).__init__()
+        super(UnmountedType, self).__init__()
 
     def get_type(self):
         return self._meta.graphql_type

@@ -7,7 +7,7 @@ try:
 except ImportError:
     from ..utils.enum import Enum as PyEnum
 
-from .proxy import TypeProxy
+from .unmountedtype import UnmountedType
 
 
 class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
@@ -66,6 +66,6 @@ class EnumTypeMeta(ClassTypeMeta):
         return type(Meta.enum.__name__, (Enum,), {'Meta': Meta})
 
 
-class Enum(six.with_metaclass(EnumTypeMeta, TypeProxy)):
+class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
     class Meta:
         abstract = True

@@ -3,7 +3,7 @@ import six
 from graphql import GraphQLInputObjectType
 
 from .definitions import FieldsMeta, ClassTypeMeta, GrapheneGraphQLType
-from .proxy import TypeProxy
+from .unmountedtype import UnmountedType
 
 
 class GrapheneInputObjectType(GrapheneGraphQLType, GraphQLInputObjectType):
@@ -36,6 +36,6 @@ class InputObjectTypeMeta(FieldsMeta, ClassTypeMeta):
         return super(InputObjectTypeMeta, cls).construct(bases, attrs)
 
 
-class InputObjectType(six.with_metaclass(InputObjectTypeMeta, TypeProxy)):
+class InputObjectType(six.with_metaclass(InputObjectTypeMeta, UnmountedType)):
     class Meta:
         abstract = True

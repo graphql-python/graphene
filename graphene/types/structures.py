@@ -2,10 +2,10 @@ import inspect
 
 from graphql import GraphQLList, GraphQLNonNull
 
-from .proxy import TypeProxy
+from .unmountedtype import UnmountedType
 
 
-class Structure(TypeProxy):
+class Structure(UnmountedType):
     def __init__(self, of_type, *args, **kwargs):
         super(Structure, self).__init__(*args, **kwargs)
         self.of_type = of_type
