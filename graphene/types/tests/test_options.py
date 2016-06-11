@@ -5,41 +5,19 @@ from ..options import Options
 
 def test_options_defaults():
     class Meta:
-        overwritten = True
-        accepted = True
+        valid_second = True
 
-    options = Options(Meta, attr=True, overwritten=False)
-    options.valid_attrs = ['accepted', 'overwritten']
-    options.validate_attrs()
+    options = Options(Meta, valid_second=False, valid_first=False)
 
-    assert options.attr
-    assert options.overwritten
-
-
-def test_options_contribute_to_class():
-    class Meta:
-        overwritten = True
-        accepted = True
-
-
-    options = Options(Meta, attr=True, overwritten=False)
-    options.valid_attrs = ['accepted', 'overwritten']
-    assert options.attr
-    assert not options.overwritten
+    assert not options.valid_first
+    assert options.valid_second
 
 
 def test_options_invalid_attrs():
     class Meta:
         invalid = True
 
-    class MyObject(object):
-        pass
-
-    options = Options(Meta, valid=True)
-    options.parent = MyObject
-    options.valid_attrs = ['valid']
-    assert options.valid
     with pytest.raises(TypeError) as excinfo:
-        options.validate_attrs()
+        Options(Meta, valid=True)
 
-    assert "MyObject.Meta got invalid attributes: invalid" == str(excinfo.value)
+    assert "Invalid attributes: invalid" == str(excinfo.value)
