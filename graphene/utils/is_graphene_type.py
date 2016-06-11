@@ -7,6 +7,8 @@ from ..types.enum import Enum
 
 
 def is_graphene_type(_type):
+    if _type in [Interface]:
+        return False
     return inspect.isclass(_type) and issubclass(_type, (
         Interface,
         ObjectType,

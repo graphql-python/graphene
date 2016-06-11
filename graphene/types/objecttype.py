@@ -46,7 +46,7 @@ def get_interfaces(cls, interfaces):
         yield graphql_type
 
 
-class ObjectTypeMeta(InterfaceTypeMeta):
+class ObjectTypeMeta(FieldsMeta, ClassTypeMeta, InterfaceTypeMeta):
 
     def get_options(cls, meta):
         return cls.options_class(
