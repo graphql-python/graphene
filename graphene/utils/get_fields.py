@@ -45,4 +45,4 @@ def get_fields(in_type, attrs, bases):
 
     fields.extend(local_fields)
 
-    return OrderedDict(fields)
+    return OrderedDict(sorted(fields, key=lambda kv: kv[1]))
