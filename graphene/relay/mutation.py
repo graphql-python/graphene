@@ -4,8 +4,9 @@ from graphql_relay import mutation_with_client_mutation_id
 
 from ..types.mutation import Mutation, MutationMeta
 from ..types.inputobjecttype import InputObjectType
-from ..types.field import Field
-
+from ..types.field import Field, InputField
+from ..utils.get_fields import get_fields
+from ..utils.copy_fields import copy_fields
 from ..utils.props import props
 
 
@@ -29,7 +30,7 @@ class ClientIDMutationMeta(MutationMeta):
 
             cls.mutate_and_get_payload = attrs.pop('mutate_and_get_payload', None)
 
-            input_local_fields = {f.name: f for f in InputObjectType._extract_local_fields(input_fields)}
+            input_local_fields = copy_fields(InputField, get_fields(InputObjectType, input_fields, ()))
             local_fields = cls._extract_local_fields(attrs)
             assert cls.mutate_and_get_payload, "{}.mutate_and_get_payload method is required in a ClientIDMutation ObjectType.".format(cls.__name__)
             field = mutation_with_client_mutation_id(

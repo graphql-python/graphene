@@ -6,6 +6,7 @@ from .options import Options
 from ..utils.is_base_type import is_base_type
 from ..utils.get_fields import get_fields
 from ..utils.copy_fields import copy_fields
+from .field import Field
 
 
 class GrapheneInterfaceType(GrapheneGraphQLType, GraphQLInterfaceType):
@@ -35,7 +36,7 @@ class InterfaceTypeMeta(type):
         cls = super_new(cls, name, bases, dict(attrs, _meta=options))
 
         if not options.graphql_type:
-            fields = copy_fields(fields, parent=cls)
+            fields = copy_fields(Field, fields, parent=cls)
             options.graphql_type = GrapheneInterfaceType(
                 graphene_type=cls,
                 name=options.name or cls.__name__,

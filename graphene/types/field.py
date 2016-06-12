@@ -129,9 +129,7 @@ class Field(AbstractField, GraphQLField, OrderedType):
             # If is a GraphQLField
             type = type or field.type
             resolver = resolver or field.resolver
-            source = None
             name = field.name
-            required = None
             _creation_counter = None
             attname = attname or name
             parent = parent
@@ -187,22 +185,19 @@ class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
         return self.copy_and_extend(self)
 
     @classmethod
-    def copy_and_extend(cls, field, type=None, default_value=None, description=None, name=None, required=False, _creation_counter=False):
+    def copy_and_extend(cls, field, type=None, default_value=None, description=None, name=None, required=False, parent=None, attname=None, _creation_counter=False):
         if isinstance(field, Field):
             type = type or field._type
             name = name or field._name
             required = required or field.required
             _creation_counter = field.creation_counter if _creation_counter is False else None
-            attname = field.attname
-            parent = field.parent
+            attname = attname or field.attname
+            parent = parent or field.parent
         else:
             # If is a GraphQLField
             type = type or field.type
             name = field.name
-            required = None
             _creation_counter = None
-            attname = None
-            parent = None
 
         new_field = cls(
             type=type,
