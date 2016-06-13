@@ -163,11 +163,11 @@ def test_slice_connectionfield_query():
                 'node': {
                     'name': 'my1'
                 }
-            },{
+            }, {
                 'node': {
                     'name': 'my2'
                 }
-            },{
+            }, {
                 'node': {
                     'name': 'my3'
                 }
