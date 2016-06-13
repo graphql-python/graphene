@@ -29,7 +29,7 @@ class ConnectionField(Field):
     @with_context
     def resolver(self, instance, args, context, info):
         schema = info.schema.graphene_schema
-        connection_type = self.get_type(schema)
+        connection_type_for_node = self.get_type(schema)
 
         resolver = super(ConnectionField, self).resolver
         if has_context(resolver):
@@ -37,17 +37,18 @@ class ConnectionField(Field):
         else:
             resolved = super(ConnectionField, self).resolver(instance, args, info)
 
-        if isinstance(resolved, connection_type):
+        if isinstance(resolved, self.connection_type):
             return resolved
-        return self.from_list(connection_type, resolved, args, context, info)
+
+        return self.from_list(connection_type_for_node, resolved, args, context, info)
 
     def from_list(self, connection_type, resolved, args, context, info):
         return connection_type.from_list(resolved, args, context, info)
 
     def get_connection_type(self, node):
         connection_type = self.connection_type or node.get_connection_type()
-        edge_type = self.get_edge_type(node)
-        return connection_type.for_node(node, edge_type=edge_type)
+        self.connection_type = connection_type
+        return connection_type.for_node(node)
 
     def get_edge_type(self, node):
         edge_type = self.edge_type or node.get_edge_type()
@@ -59,9 +60,9 @@ class ConnectionField(Field):
         node = schema.objecttype(type)
         assert is_node(node), 'Only nodes have connections.'
         schema.register(node)
-        connection_type = self.get_connection_type(node)
+        connection_type_for_node = self.get_connection_type(node)
 
-        return connection_type
+        return connection_type_for_node
 
 
 class NodeField(Field):
