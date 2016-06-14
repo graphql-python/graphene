@@ -19,17 +19,6 @@ def test_get_graphql_type_graphene():
     assert is_type(get_graphql_type(MyGrapheneType))
 
 
-def test_get_graphql_type_graphene_abstract():
-    class MyGrapheneType(ObjectType):
-        class Meta:
-            abstract = True
-
-    with pytest.raises(Exception) as excinfo:
-        get_graphql_type(MyGrapheneType)
-
-    assert "MyGrapheneType has no type. Only non abstract types have GraphQL type." == str(excinfo.value)
-
-
 def test_get_graphql_type_custom_graphene_type():
     class MyGrapheneType(ObjectType):
         class Meta:

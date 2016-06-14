@@ -1,29 +1,37 @@
 import six
 from graphql import GraphQLScalarType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID
 
-from .definitions import ClassTypeMeta, GrapheneGraphQLType
+from .definitions import GrapheneGraphQLType
 from .unmountedtype import UnmountedType
+from .options import Options
+from ..utils.is_base_type import is_base_type
 
 
 class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
     pass
 
 
-class ScalarTypeMeta(ClassTypeMeta):
+class ScalarTypeMeta(type):
 
-    def get_options(cls, meta):
-        return cls.options_class(
-            meta,
+    def __new__(cls, name, bases, attrs):
+        super_new = super(ScalarTypeMeta, cls).__new__
+
+        # Also ensure initialization is only performed for subclasses of Model
+        # (excluding Model class itself).
+        if not is_base_type(bases, ScalarTypeMeta):
+            return super_new(cls, name, bases, attrs)
+
+        options = Options(
+            attrs.pop('Meta', None),
             name=None,
             description=None,
-            graphql_type=None,
-            abstract=False
+            graphql_type=None
         )
 
-    def construct(cls, *args, **kwargs):
-        constructed = super(ScalarTypeMeta, cls).construct(*args, **kwargs)
-        if not cls._meta.graphql_type and not cls._meta.abstract:
-            cls._meta.graphql_type = GrapheneScalarType(
+        cls = super_new(cls, name, bases, dict(attrs, _meta=options))
+
+        if not options.graphql_type:
+            options.graphql_type = GrapheneScalarType(
                 graphene_type=cls,
                 name=cls._meta.name or cls.__name__,
                 description=cls._meta.description or cls.__doc__,
@@ -33,12 +41,11 @@ class ScalarTypeMeta(ClassTypeMeta):
                 parse_literal=getattr(cls, 'parse_literal', None),
             )
 
-        return constructed
+        return cls
 
 
 class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
-    class Meta:
-        abstract = True
+    pass
 
 
 def construct_scalar_class(graphql_type):
