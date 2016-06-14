@@ -2,7 +2,7 @@ import six
 
 from graphql import GraphQLInputObjectType
 
-from .definitions import FieldsMeta, ClassTypeMeta, GrapheneGraphQLType
+from .definitions import GrapheneGraphQLType
 from .interface import attrs_without_fields
 from .unmountedtype import UnmountedType
 from .options import Options
@@ -48,7 +48,7 @@ class InputObjectTypeMeta(type):
             )
         else:
             assert not fields, "Can't mount InputFields in an InputObjectType with a defined graphql_type"
-            fields = copy_fields(options.graphql_type.get_fields(), parent=cls)
+            fields = copy_fields(InputField, options.graphql_type.get_fields(), parent=cls)
 
         for name, field in fields.items():
             setattr(cls, field.attname or name, field)

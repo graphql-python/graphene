@@ -26,12 +26,12 @@ def get_fields_from_types(bases):
             yield attname, field
 
 
-def get_fields(in_type, attrs, bases):
+def get_fields(in_type, attrs, bases, graphql_types=()):
     fields = []
 
     graphene_bases = tuple(
-        base._meta.graphql_type for base in bases if is_graphene_type(base) and not base._meta.abstract
-    )
+        base._meta.graphql_type for base in bases if is_graphene_type(base)
+    ) + graphql_types
 
     extended_fields = list(get_fields_from_types(graphene_bases))
     local_fields = list(get_fields_from_attrs(in_type, attrs))

@@ -1,11 +1,15 @@
-from itertools import chain
 import copy
 import six
 
 from graphql import GraphQLObjectType
 
-from .definitions import FieldsMeta, ClassTypeMeta, GrapheneGraphQLType
-from .interface import GrapheneInterfaceType, InterfaceTypeMeta, Interface
+from .definitions import GrapheneGraphQLType
+from .interface import GrapheneInterfaceType, InterfaceTypeMeta, Interface, attrs_without_fields
+from .options import Options
+from ..utils.is_base_type import is_base_type
+from ..utils.get_fields import get_fields
+from ..utils.copy_fields import copy_fields
+from .field import Field
 
 
 class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
@@ -38,7 +42,7 @@ class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
             return False
 
 
-def get_interfaces(cls, interfaces):
+def get_interfaces(interfaces):
     from ..utils.get_graphql_type import get_graphql_type
 
     for interface in interfaces:
@@ -46,47 +50,57 @@ def get_interfaces(cls, interfaces):
         yield graphql_type
 
 
-class ObjectTypeMeta(FieldsMeta, ClassTypeMeta, InterfaceTypeMeta):
+# We inherit from InterfaceTypeMeta instead of type for being able
+# to have ObjectTypes extending Interfaces using Python syntax, like:
+# class MyObjectType(ObjectType, MyInterface)
+class ObjectTypeMeta(InterfaceTypeMeta):
 
-    def get_options(cls, meta):
-        return cls.options_class(
-            meta,
+    def __new__(cls, name, bases, attrs):
+        super_new = type.__new__
+
+        # Also ensure initialization is only performed for subclasses of Model
+        # (excluding Model class itself).
+        if not is_base_type(bases, ObjectTypeMeta):
+            return super_new(cls, name, bases, attrs)
+
+        options = Options(
+            attrs.pop('Meta', None),
             name=None,
             description=None,
             graphql_type=None,
-            interfaces=[],
+            interfaces=(),
             abstract=False
         )
+
+        interfaces = tuple(options.interfaces)
+        fields = get_fields(ObjectType, attrs, bases, interfaces)
+        attrs = attrs_without_fields(attrs, fields)
+        cls = super_new(cls, name, bases, dict(attrs, _meta=options))
+
+        if not options.graphql_type:
+            fields = copy_fields(Field, fields, parent=cls)
+            base_interfaces = tuple(b for b in bases if issubclass(b, Interface))
+            options.graphql_type = GrapheneObjectType(
+                graphene_type=cls,
+                name=options.name or cls.__name__,
+                description=options.description or cls.__doc__,
+                fields=fields,
+                interfaces=tuple(get_interfaces(interfaces + base_interfaces))
+            )
+        else:
+            assert not fields, "Can't mount Fields in an ObjectType with a defined graphql_type"
+            fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
+
+        for name, field in fields.items():
+            setattr(cls, field.attname or name, field)
+
+        return cls
 
     def get_interfaces(cls, bases):
         return (b for b in bases if issubclass(b, Interface))
 
     def is_object_type(cls):
         return issubclass(cls, ObjectType)
-
-    def construct(cls, bases, attrs):
-        if not cls._meta.abstract and cls.is_object_type():
-            cls.get_interfaces(bases)
-            interfaces = tuple(get_interfaces(cls, chain(
-                cls._meta.interfaces,
-                cls.get_interfaces(bases),
-            )))
-
-            local_fields = cls._extract_local_fields(attrs)
-            if not cls._meta.graphql_type:
-                cls = super(ObjectTypeMeta, cls).construct(bases, attrs)
-                cls._meta.graphql_type = GrapheneObjectType(
-                    graphene_type=cls,
-                    name=cls._meta.name or cls.__name__,
-                    description=cls._meta.description or cls.__doc__,
-                    fields=cls._fields(bases, attrs, local_fields, interfaces),
-                    interfaces=interfaces,
-                )
-                return cls
-            else:
-                assert not local_fields, "Can't mount Fields in an ObjectType with a defined graphql_type"
-
-        return super(ObjectTypeMeta, cls).construct(bases, attrs)
 
 
 def implements(*interfaces):
@@ -106,9 +120,6 @@ def implements(*interfaces):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
-    class Meta:
-        abstract = True
-
     def __init__(self, *args, **kwargs):
         # GraphQL ObjectType acting as container
         args_len = len(args)
