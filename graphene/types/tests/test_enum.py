@@ -40,7 +40,7 @@ def test_enum_instance_construction():
 def test_enum_from_builtin_enum():
     PyRGB = PyEnum('RGB', 'RED,GREEN,BLUE')
 
-    RGB = Enum.create(PyRGB)
+    RGB = Enum.from_enum(PyRGB)
     assert isinstance(RGB._meta.graphql_type, GraphQLEnumType)
     values = RGB._meta.graphql_type.get_values()
     assert values == [
