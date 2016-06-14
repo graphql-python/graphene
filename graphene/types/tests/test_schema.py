@@ -1,6 +1,6 @@
 from ..scalars import String
 from ..field import Field
-from ..objecttype import ObjectType, implements
+from ..objecttype import ObjectType
 from ..interface import Interface
 from ..structures import List
 from ..schema import Schema

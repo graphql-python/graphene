@@ -5,6 +5,7 @@ from .objecttype import ObjectTypeMeta, ObjectType
 from .field import Field
 
 from ..utils.props import props
+from ..utils.is_base_type import is_base_type
 
 
 class MutationMeta(ObjectTypeMeta):
@@ -16,15 +17,22 @@ class MutationMeta(ObjectTypeMeta):
         assert resolver, 'All mutations must define a mutate method in it'
         return partial(Field, cls, args=field_args, resolver=resolver)
 
-    def construct(cls, bases, attrs):
-        super(MutationMeta, cls).construct(bases, attrs)
-        if not cls._meta.abstract and cls._construct_field:
-            Input = attrs.pop('Input', None)
+    def __new__(cls, name, bases, attrs):
+        super_new = super(MutationMeta, cls).__new__
+
+        # Also ensure initialization is only performed for subclasses of Model
+        # (excluding Model class itself).
+        if not is_base_type(bases, MutationMeta):
+            return type.__new__(cls, name, bases, attrs)
+
+        Input = attrs.pop('Input', None)
+
+        cls = super_new(cls, name, bases, attrs)
+        if cls._construct_field:
             field_args = props(Input) if Input else {}
             cls.Field = cls.construct_field(field_args)
         return cls
 
 
 class Mutation(six.with_metaclass(MutationMeta, ObjectType)):
-    class Meta:
-        abstract = True
+    pass

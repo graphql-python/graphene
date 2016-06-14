@@ -124,6 +124,9 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
         # GraphQL ObjectType acting as container
         args_len = len(args)
         fields = self._meta.graphql_type.get_fields().values()
+        for f in fields:
+            setattr(self, getattr(f, 'attname', f.name), None)
+
         if args_len > len(fields):
             # Daft, but matches old exception sans the err msg.
             raise IndexError("Number of args exceeds number of fields")
