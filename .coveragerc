@@ -1,2 +1,2 @@
 [run]
-omit = graphene/utils/enum.py,graphene/contrib/django/debug/sql/tracking.py,*/tests/*
+omit = graphene/utils/enum.py,*/tests/*

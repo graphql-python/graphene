@@ -56,30 +56,20 @@ setup(
     install_requires=[
         'six>=1.10.0',
         'graphql-core>=0.5.1',
-        'graphql-relay>=0.4.2',
+        'graphql-relay>=0.4.3',
         'iso8601',
     ],
     tests_require=[
-        'django-filter>=0.10.0',
         'pytest>=2.7.2',
-        'pytest-django',
-        'sqlalchemy',
-        'sqlalchemy_utils',
         'mock',
-        # Required for Django postgres fields testing
-        'psycopg2',
     ],
     extras_require={
         'django': [
-            'Django>=1.6.0',
-            'singledispatch>=3.4.0.3',
-            'graphql-django-view>=1.3',
+            'graphene-django',
         ],
         'sqlalchemy': [
-            'sqlalchemy',
-            'singledispatch>=3.4.0.3',
+            'graphene-sqlalchemy',
         ]
     },
-
     cmdclass={'test': PyTest},
 )
