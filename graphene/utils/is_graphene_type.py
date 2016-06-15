@@ -9,8 +9,9 @@ def is_graphene_type(_type):
     from ..types.scalars import Scalar
     from ..types.enum import Enum
     from ..relay.mutation import ClientIDMutation
+    from ..relay.connection import Connection
 
-    if _type in [Interface, InputObjectType, ObjectType, Mutation, ClientIDMutation]:
+    if _type in [Interface, InputObjectType, ObjectType, Mutation, ClientIDMutation, Connection]:
         return False
     return inspect.isclass(_type) and issubclass(_type, (
         Interface,

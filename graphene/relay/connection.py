@@ -8,51 +8,61 @@ from ..types.objecttype import ObjectType, ObjectTypeMeta
 
 from ..utils.props import props
 
+from ..types.field import Field, InputField
+from ..utils.get_fields import get_fields
+from ..utils.copy_fields import copy_fields
+from ..utils.props import props
+
+
+from ..types.objecttype import ObjectType
+
+from ..utils.is_base_type import is_base_type
+from ..types.options import Options
+
 
 class ConnectionMeta(ObjectTypeMeta):
 
-    def get_options(cls, meta):
-        options = cls.options_class(
-            meta,
+    def __new__(cls, name, bases, attrs):
+        super_new = type.__new__
+
+        # Also ensure initialization is only performed for subclasses of Model
+        # (excluding Model class itself).
+        if not is_base_type(bases, ConnectionMeta):
+            return super_new(cls, name, bases, attrs)
+
+        options = Options(
+            attrs.pop('Meta', None),
             name=None,
             description=None,
             node=None,
             interfaces=[],
-            abstract=False
         )
-        options.graphql_type = None
-        return options
 
-    def construct(cls, bases, attrs):
-        if not cls._meta.abstract:
-            Edge = attrs.pop('Edge', None)
-            edge_fields = props(Edge) if Edge else {}
+        Edge = attrs.pop('Edge', None)
+        edge_fields = props(Edge) if Edge else {}
+        edge_fields = get_fields(ObjectType, edge_fields, ())
 
-            edge_fields = {f.name: f for f in ObjectType._extract_local_fields(edge_fields)}
-            local_fields = cls._extract_local_fields(attrs)
+        connection_fields = copy_fields(Field, get_fields(ObjectType, attrs, bases))
 
-        cls = super(ConnectionMeta, cls).construct(bases, attrs)
-        if not cls._meta.abstract:
-            from ..utils.get_graphql_type import get_graphql_type
-            assert cls._meta.node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
-            edge, connection = connection_definitions(
-                name=cls._meta.name or re.sub('Connection$', '', cls.__name__),
-                node_type=get_graphql_type(cls._meta.node),
-                resolve_node=cls.resolve_node,
-                resolve_cursor=cls.resolve_cursor,
+        cls = super_new(cls, name, bases, dict(attrs, _meta=options))
 
-                edge_fields=edge_fields,
-                connection_fields=local_fields,
-            )
-            cls.Edge = type(edge.name, (ObjectType, ), {'Meta': type('Meta', (object,), {'graphql_type': edge})})
-            cls._meta.graphql_type = connection
+        assert options.node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
+        from ..utils.get_graphql_type import get_graphql_type
+        edge, connection = connection_definitions(
+            name=options.name or re.sub('Connection$', '', cls.__name__),
+            node_type=get_graphql_type(options.node),
+            resolve_node=cls.resolve_node,
+            resolve_cursor=cls.resolve_cursor,
+
+            edge_fields=edge_fields,
+            connection_fields=connection_fields,
+        )
+        cls.Edge = type(edge.name, (ObjectType, ), {'Meta': type('Meta', (object,), {'graphql_type': edge})})
+        cls._meta.graphql_type = connection
         return cls
 
 
 class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
-    class Meta:
-        abstract = True
-
     resolve_node = None
     resolve_cursor = None
 
