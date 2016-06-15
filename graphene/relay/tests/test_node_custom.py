@@ -7,6 +7,10 @@ from ...types.scalars import String, Int
 
 class CustomNode(Node):
     @staticmethod
+    def to_global_id(type, id):
+        return id
+
+    @staticmethod
     def get_node_from_global_id(id, context, info):
         assert info.schema == schema
         if id in user_data:

@@ -3,25 +3,26 @@ import six
 from graphql_relay import node_definitions, from_global_id, to_global_id
 
 from ..types.field import Field
+from ..types.options import Options
 from ..types.objecttype import ObjectTypeMeta
 from ..types.interface import Interface
 
 
 class NodeMeta(ObjectTypeMeta):
 
-    def construct(cls, bases, attrs):
+    def __new__(cls, name, bases, attrs):
+        cls = super(NodeMeta, cls).__new__(cls, name, bases, attrs)
         is_object_type = cls.is_object_type()
-        cls = super(NodeMeta, cls).construct(bases, attrs)
         if not is_object_type:
             get_node_from_global_id = getattr(cls, 'get_node_from_global_id', None)
+            id_resolver = getattr(cls, 'id_resolver', None)
             assert get_node_from_global_id, '{}.get_node method is required by the Node interface.'.format(cls.__name__)
-            cls.id_resolver = attrs.pop('id_resolver', None)
             node_interface, node_field = node_definitions(
                 get_node_from_global_id,
-                id_resolver=cls.id_resolver,
+                id_resolver=id_resolver,
             )
-            cls._meta.graphql_type = node_interface
-            cls.Field = partial(Field.copy_and_extend, node_field, type=node_field.type, _creation_counter=None)
+            cls._meta = Options(None, graphql_type=node_interface)
+            cls.Field = partial(Field.copy_and_extend, node_field, type=node_field.type, parent=cls, _creation_counter=None)
         else:
             # The interface provided by node_definitions is not an instance
             # of GrapheneInterfaceType, so it will have no graphql_type,
@@ -38,11 +39,15 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
 
     @classmethod
     def from_global_id(cls, global_id):
-        return from_global_id(global_id)
+        if cls is Node:
+            return from_global_id(global_id)
+        raise NotImplementedError("You need to implement {}.from_global_id".format(cls.__name__))
 
     @classmethod
     def to_global_id(cls, type, id):
-        return to_global_id(type, id)
+        if cls is Node:
+            return to_global_id(type, id)
+        raise NotImplementedError("You need to implement {}.to_global_id".format(cls.__name__))
 
     @classmethod
     def id_resolver(cls, root, args, context, info):

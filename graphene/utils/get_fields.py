@@ -35,6 +35,10 @@ def get_fields(in_type, attrs, bases, graphql_types=()):
 
     extended_fields = list(get_fields_from_types(graphene_bases))
     local_fields = list(get_fields_from_attrs(in_type, attrs))
+    # We asume the extended fields are already sorted, so we only
+    # have to sort the local fields, that are get from attrs
+    # and could be unordered as is a dict and not OrderedDict
+    local_fields = sorted(local_fields, key=lambda kv: kv[1])
 
     field_names = set(f[0] for f in local_fields)
     for name, extended_field in extended_fields:
@@ -45,4 +49,4 @@ def get_fields(in_type, attrs, bases, graphql_types=()):
 
     fields.extend(local_fields)
 
-    return OrderedDict(sorted(fields, key=lambda kv: kv[1]))
+    return OrderedDict(fields)
