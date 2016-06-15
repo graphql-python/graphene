@@ -10,13 +10,6 @@ from ..utils.is_base_type import is_base_type
 
 class MutationMeta(ObjectTypeMeta):
 
-    _construct_field = True
-
-    def construct_field(cls, field_args):
-        resolver = getattr(cls, 'mutate', None)
-        assert resolver, 'All mutations must define a mutate method in it'
-        return partial(Field, cls, args=field_args, resolver=resolver)
-
     def __new__(cls, name, bases, attrs):
         super_new = super(MutationMeta, cls).__new__
 
@@ -28,9 +21,10 @@ class MutationMeta(ObjectTypeMeta):
         Input = attrs.pop('Input', None)
 
         cls = super_new(cls, name, bases, attrs)
-        if cls._construct_field:
-            field_args = props(Input) if Input else {}
-            cls.Field = cls.construct_field(field_args)
+        field_args = props(Input) if Input else {}
+        resolver = getattr(cls, 'mutate', None)
+        assert resolver, 'All mutations must define a mutate method in it'
+        cls.Field = partial(Field, cls, args=field_args, resolver=resolver)
         return cls
 
 
