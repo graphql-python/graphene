@@ -1,6 +1,5 @@
 
-from ..data import setup
-from ..schema import schema, Droid
+from ..schema import Droid
 
 
 def test_query_types():

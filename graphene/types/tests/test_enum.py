@@ -1,9 +1,9 @@
 from graphql.type import GraphQLEnumType, GraphQLEnumValue
 
+from ...utils.enum import Enum as PyEnum
+from ..argument import Argument
 from ..enum import Enum
 from ..field import Field
-from ..argument import Argument
-from ...utils.enum import Enum as PyEnum
 
 
 def test_enum_construction():

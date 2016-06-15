@@ -1,6 +1,6 @@
-from .field import Field, InputField
-from .argument import Argument
 from ..utils.orderedtype import OrderedType
+from .argument import Argument
+from .field import Field, InputField
 
 
 # UnmountedType ?

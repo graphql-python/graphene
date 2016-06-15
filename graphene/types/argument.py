@@ -1,6 +1,6 @@
 import copy
-from collections import OrderedDict
 import inspect
+from collections import OrderedDict
 from itertools import chain
 
 from graphql import GraphQLArgument

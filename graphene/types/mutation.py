@@ -1,11 +1,11 @@
 from functools import partial
+
 import six
 
-from .objecttype import ObjectTypeMeta, ObjectType
-from .field import Field
-
-from ..utils.props import props
 from ..utils.is_base_type import is_base_type
+from ..utils.props import props
+from .field import Field
+from .objecttype import ObjectType, ObjectTypeMeta
 
 
 class MutationMeta(ObjectTypeMeta):

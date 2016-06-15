@@ -1,13 +1,15 @@
 import pytest
-from ..scalars import Scalar, String, Int, Float, Boolean
+
+from graphene.utils.get_graphql_type import get_graphql_type
+from graphql import GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString
+
 from ..field import Field
 from ..objecttype import ObjectType
-
-from graphql import GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean
-from graphene.utils.get_graphql_type import get_graphql_type
+from ..scalars import Boolean, Float, Int, Scalar, String
 
 
 class DatetimeScalar(Scalar):
+
     def serialize(value):
         return value.isoformat()
 

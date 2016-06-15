@@ -1,11 +1,12 @@
 from graphql import graphql
 
+from ...types import ObjectType, Schema
+from ...types.scalars import Int, String
 from ..node import Node
-from ...types import ObjectType, Schema, implements
-from ...types.scalars import String, Int
 
 
 class CustomNode(Node):
+
     @staticmethod
     def to_global_id(type, id):
         return id
@@ -222,20 +223,20 @@ def test_have_correct_node_interface():
     '''
     expected = {
         '__type': {
-          'name': 'Node',
-          'kind': 'INTERFACE',
-          'fields': [
-            {
-              'name': 'id',
-              'type': {
-                'kind': 'NON_NULL',
-                'ofType': {
-                  'name': 'ID',
-                  'kind': 'SCALAR'
+            'name': 'Node',
+            'kind': 'INTERFACE',
+            'fields': [
+                {
+                    'name': 'id',
+                    'type': {
+                        'kind': 'NON_NULL',
+                        'ofType': {
+                            'name': 'ID',
+                            'kind': 'SCALAR'
+                        }
+                    }
                 }
-              }
-            }
-          ]
+            ]
         }
     }
     result = graphql(schema, query)
@@ -271,29 +272,29 @@ def test_has_correct_node_root_field():
     '''
     expected = {
         '__schema': {
-          'queryType': {
-            'fields': [
-              {
-                'name': 'node',
-                'type': {
-                  'name': 'Node',
-                  'kind': 'INTERFACE'
-                },
-                'args': [
-                  {
-                    'name': 'id',
-                    'type': {
-                      'kind': 'NON_NULL',
-                      'ofType': {
-                        'name': 'ID',
-                        'kind': 'SCALAR'
-                      }
+            'queryType': {
+                'fields': [
+                    {
+                        'name': 'node',
+                        'type': {
+                            'name': 'Node',
+                            'kind': 'INTERFACE'
+                        },
+                        'args': [
+                            {
+                                'name': 'id',
+                                'type': {
+                                    'kind': 'NON_NULL',
+                                    'ofType': {
+                                        'name': 'ID',
+                                        'kind': 'SCALAR'
+                                    }
+                                }
+                            }
+                        ]
                     }
-                  }
                 ]
-              }
-            ]
-          }
+            }
         }
     }
     result = graphql(schema, query)

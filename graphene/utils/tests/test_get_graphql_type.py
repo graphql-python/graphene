@@ -1,11 +1,10 @@
 import pytest
 
-from graphql.type.definition import is_type
-from graphql import GraphQLObjectType, GraphQLField, GraphQLString
-
 from graphene.types import ObjectType
-from ..get_graphql_type import get_graphql_type
+from graphql import GraphQLField, GraphQLObjectType, GraphQLString
+from graphql.type.definition import is_type
 
+from ..get_graphql_type import get_graphql_type
 
 MyGraphQLType = GraphQLObjectType('MyGraphQLType', fields={
     'field': GraphQLField(GraphQLString)
@@ -21,6 +20,7 @@ def test_get_graphql_type_graphene():
 
 def test_get_graphql_type_custom_graphene_type():
     class MyGrapheneType(ObjectType):
+
         class Meta:
             graphql_type = MyGraphQLType
 

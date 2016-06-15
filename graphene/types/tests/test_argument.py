@@ -1,7 +1,8 @@
-import pytest
 import copy
 
-from graphql import GraphQLString, GraphQLArgument
+import pytest
+
+from graphql import GraphQLArgument, GraphQLString
 
 from ..argument import Argument, to_arguments
 from ..scalars import String

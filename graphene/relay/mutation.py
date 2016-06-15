@@ -1,19 +1,18 @@
 from functools import partial
+
 import six
+
 from graphql_relay import mutation_with_client_mutation_id
 
-from ..types.mutation import Mutation, MutationMeta
-from ..types.inputobjecttype import InputObjectType
 from ..types.field import Field, InputField
-from ..utils.get_fields import get_fields
-from ..utils.copy_fields import copy_fields
-from ..utils.props import props
-
-
+from ..types.inputobjecttype import InputObjectType
+from ..types.mutation import Mutation, MutationMeta
 from ..types.objecttype import ObjectType
-
-from ..utils.is_base_type import is_base_type
 from ..types.options import Options
+from ..utils.copy_fields import copy_fields
+from ..utils.get_fields import get_fields
+from ..utils.is_base_type import is_base_type
+from ..utils.props import props
 
 
 class ClientIDMutationMeta(MutationMeta):
@@ -41,7 +40,8 @@ class ClientIDMutationMeta(MutationMeta):
         output_fields = copy_fields(Field, get_fields(ObjectType, attrs, bases))
 
         mutate_and_get_payload = getattr(cls, 'mutate_and_get_payload', None)
-        assert mutate_and_get_payload, "{}.mutate_and_get_payload method is required in a ClientIDMutation ObjectType.".format(cls.__name__)
+        assert mutate_and_get_payload, "{}.mutate_and_get_payload method is required in a ClientIDMutation ObjectType.".format(
+            cls.__name__)
 
         field = mutation_with_client_mutation_id(
             name=options.name or cls.__name__,
@@ -55,5 +55,6 @@ class ClientIDMutationMeta(MutationMeta):
 
 
 class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, Mutation)):
+
     class Meta:
         abstract = True

@@ -1,13 +1,12 @@
 import pytest
 
-from graphql_relay import to_global_id
-
-from ..mutation import ClientIDMutation
-from ...types import ObjectType, Schema, implements
+from ...types import ObjectType, Schema
 from ...types.scalars import String
+from ..mutation import ClientIDMutation
 
 
 class SaySomething(ClientIDMutation):
+
     class Input:
         what = String()
     phrase = String()
@@ -33,7 +32,8 @@ def test_no_mutate_and_get_payload():
         class MyMutation(ClientIDMutation):
             pass
 
-    assert "MyMutation.mutate_and_get_payload method is required in a ClientIDMutation ObjectType." == str(excinfo.value)
+    assert "MyMutation.mutate_and_get_payload method is required in a ClientIDMutation ObjectType." == str(
+        excinfo.value)
 
 
 def test_node_good():

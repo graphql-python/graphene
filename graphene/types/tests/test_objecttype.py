@@ -1,12 +1,11 @@
 import pytest
 
-from graphql import GraphQLObjectType, GraphQLField, GraphQLString, GraphQLInterfaceType
+from graphql import (GraphQLField, GraphQLInterfaceType, GraphQLObjectType,
+                     GraphQLString)
 
-from ..schema import Schema
-from ..objecttype import ObjectType
-from ..interface import Interface
-from ..scalars import String
 from ..field import Field
+from ..interface import Interface
+from ..objecttype import ObjectType
 
 
 class Container(ObjectType):
@@ -17,7 +16,6 @@ class Container(ObjectType):
 def test_generate_objecttype():
     class MyObjectType(ObjectType):
         '''Documentation'''
-        pass
 
     graphql_type = MyObjectType._meta.graphql_type
     assert isinstance(graphql_type, GraphQLObjectType)
@@ -27,6 +25,7 @@ def test_generate_objecttype():
 
 def test_generate_objecttype_with_meta():
     class MyObjectType(ObjectType):
+
         class Meta:
             name = 'MyOtherObjectType'
             description = 'Documentation'
@@ -139,6 +138,7 @@ def test_objecttype_reuse_graphql_type():
     })
 
     class GrapheneObjectType(ObjectType):
+
         class Meta:
             graphql_type = MyGraphQLType
 
@@ -169,6 +169,7 @@ def test_objecttype_graphql_interface():
     })
 
     class GrapheneObjectType(ObjectType):
+
         class Meta:
             interfaces = [MyInterface]
 
@@ -185,6 +186,7 @@ def test_objecttype_graphene_interface():
         extended = Field(GraphQLString)
 
     class GrapheneObjectType(ObjectType):
+
         class Meta:
             interfaces = [GrapheneInterface]
 

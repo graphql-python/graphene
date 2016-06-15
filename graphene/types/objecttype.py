@@ -1,15 +1,17 @@
 import copy
+
 import six
 
 from graphql import GraphQLObjectType
 
-from .definitions import GrapheneGraphQLType
-from .interface import GrapheneInterfaceType, InterfaceTypeMeta, Interface, attrs_without_fields
-from .options import Options
-from ..utils.is_base_type import is_base_type
-from ..utils.get_fields import get_fields
 from ..utils.copy_fields import copy_fields
+from ..utils.get_fields import get_fields
+from ..utils.is_base_type import is_base_type
+from .definitions import GrapheneGraphQLType
 from .field import Field
+from .interface import (GrapheneInterfaceType, Interface, InterfaceTypeMeta,
+                        attrs_without_fields)
+from .options import Options
 
 
 class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
@@ -120,6 +122,7 @@ def implements(*interfaces):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
+
     def __init__(self, *args, **kwargs):
         # GraphQL ObjectType acting as container
         args_len = len(args)

@@ -1,5 +1,5 @@
 import graphene
-from graphene import implements, relay, resolve_only_args
+from graphene import relay, resolve_only_args
 
 from .data import create_ship, get_empire, get_faction, get_rebels, get_ship
 
@@ -63,7 +63,6 @@ class Query(graphene.ObjectType):
 
 class Mutation(graphene.ObjectType):
     introduce_ship = IntroduceShip.Field()
-
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

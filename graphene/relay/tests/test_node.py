@@ -2,9 +2,9 @@ import pytest
 
 from graphql_relay import to_global_id
 
-from ..node import Node
-from ...types import ObjectType, Schema, implements
+from ...types import ObjectType, Schema
 from ...types.scalars import String
+from ..node import Node
 
 
 class MyNode(Node, ObjectType):
@@ -58,6 +58,7 @@ def test_node_query_incorrect_id():
     )
     assert not executed.errors
     assert executed.data == {'node': None}
+
 
 def test_str_schema():
     assert str(schema) == """

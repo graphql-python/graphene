@@ -1,16 +1,19 @@
-import six
-from graphql.type import GraphQLEnumType, GraphQLEnumValue
 from collections import OrderedDict
 
+import six
+
+from graphql.type import GraphQLEnumType, GraphQLEnumValue
+
+from ..utils.is_base_type import is_base_type
 from .definitions import GrapheneGraphQLType
 from .options import Options
-from ..utils.is_base_type import is_base_type
+from .unmountedtype import UnmountedType
+
 try:
     from enum import Enum as PyEnum
 except ImportError:
     from ..utils.enum import Enum as PyEnum
 
-from .unmountedtype import UnmountedType
 
 
 class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
@@ -65,6 +68,7 @@ class EnumTypeMeta(type):
 
 
 class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
+
     @classmethod
     def from_enum(cls, python_enum):
         class Meta:

@@ -1,12 +1,12 @@
-import pytest
 import copy
 
-from graphql import GraphQLString, GraphQLField, GraphQLInt, GraphQLNonNull
+import pytest
 
-from ..field import Field
+from graphql import GraphQLField, GraphQLInt, GraphQLNonNull, GraphQLString
+
 from ..argument import Argument
-from ..objecttype import ObjectType
-from ..scalars import String, Int
+from ..field import Field
+from ..scalars import Int, String
 
 
 def test_field():
@@ -33,7 +33,7 @@ def test_field_wrong_name():
 
 def test_not_source_and_resolver():
     with pytest.raises(AssertionError) as excinfo:
-        Field(GraphQLString, source="a", resolver=lambda *_:None)
+        Field(GraphQLString, source="a", resolver=lambda *_: None)
 
     assert "You cannot have a source and a resolver at the same time" == str(excinfo.value)
 

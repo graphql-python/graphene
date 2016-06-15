@@ -1,8 +1,10 @@
 from collections import OrderedDict
-from graphql import GraphQLField, GraphQLString, GraphQLInterfaceType, GraphQLInt, GraphQLFloat
-from ..get_fields import get_fields_from_attrs, get_fields_from_types
 
-from ...types import Field, String, Argument, ObjectType
+from graphql import (GraphQLField, GraphQLFloat, GraphQLInt,
+                     GraphQLInterfaceType, GraphQLString)
+
+from ...types import Argument, Field, ObjectType, String
+from ..get_fields import get_fields_from_attrs, get_fields_from_types
 
 
 def test_get_fields_from_attrs():

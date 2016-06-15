@@ -1,8 +1,7 @@
-from graphql import GraphQLObjectType, GraphQLField, GraphQLString
+from graphene.types import ObjectType
+from graphql import GraphQLField, GraphQLObjectType, GraphQLString
 
 from ..is_graphene_type import is_graphene_type
-
-from graphene.types import ObjectType
 
 
 def test_is_graphene_type_objecttype():

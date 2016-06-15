@@ -1,10 +1,12 @@
 import six
-from graphql import GraphQLScalarType, GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID
 
-from .definitions import GrapheneGraphQLType
-from .unmountedtype import UnmountedType
-from .options import Options
+from graphql import (GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt,
+                     GraphQLScalarType, GraphQLString)
+
 from ..utils.is_base_type import is_base_type
+from .definitions import GrapheneGraphQLType
+from .options import Options
+from .unmountedtype import UnmountedType
 
 
 class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
@@ -53,7 +55,7 @@ def construct_scalar_class(graphql_type):
     # class String(Scalar):
     #     class Meta:
     #         graphql_type = graphql_type
-    Meta = type('Meta', (object,), {'graphql_type':graphql_type})
+    Meta = type('Meta', (object,), {'graphql_type': graphql_type})
     return type(graphql_type.name, (Scalar, ), {'Meta': Meta})
 
 

@@ -1,15 +1,14 @@
 import pytest
 
-from graphql import GraphQLInterfaceType, GraphQLField, GraphQLString, GraphQLInterfaceType
+from graphql import GraphQLField, GraphQLInterfaceType, GraphQLString
 
-from ..interface import Interface
 from ..field import Field
+from ..interface import Interface
 
 
 def test_generate_interface():
     class MyInterface(Interface):
         '''Documentation'''
-        pass
 
     graphql_type = MyInterface._meta.graphql_type
     assert isinstance(graphql_type, GraphQLInterfaceType)
@@ -19,6 +18,7 @@ def test_generate_interface():
 
 def test_generate_interface_with_meta():
     class MyInterface(Interface):
+
         class Meta:
             name = 'MyOtherInterface'
             description = 'Documentation'

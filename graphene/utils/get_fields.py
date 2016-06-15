@@ -1,9 +1,9 @@
 from collections import OrderedDict
 
-from .get_graphql_type import get_graphql_type
-from .is_graphene_type import is_graphene_type
 from ..types.field import Field, InputField
 from ..types.unmountedtype import UnmountedType
+from .get_graphql_type import get_graphql_type
+from .is_graphene_type import is_graphene_type
 
 
 def get_fields_from_attrs(in_type, attrs):

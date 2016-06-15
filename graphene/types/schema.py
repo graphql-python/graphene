@@ -1,9 +1,12 @@
-from graphql import graphql, GraphQLSchema
+from graphql import GraphQLSchema, graphql
 from graphql.utils.introspection_query import introspection_query
 from graphql.utils.schema_printer import print_schema
-# from graphql.type.schema import assert_object_implements_interface
 
 from ..utils.get_graphql_type import get_graphql_type
+
+
+# from graphql.type.schema import assert_object_implements_interface
+
 # from collections import defaultdict
 
 

@@ -9,6 +9,7 @@ from .argument import to_arguments
 
 
 class AbstractField(object):
+
     @property
     def name(self):
         return self._name or self.attname and to_camel_case(self.attname)
@@ -39,7 +40,8 @@ class AbstractField(object):
 
 class Field(AbstractField, GraphQLField, OrderedType):
 
-    def __init__(self, type, args=None, resolver=None, source=None, deprecation_reason=None, name=None, description=None, required=False, _creation_counter=None, **extra_args):
+    def __init__(self, type, args=None, resolver=None, source=None, deprecation_reason=None,
+                 name=None, description=None, required=False, _creation_counter=None, **extra_args):
         self.name = name
         self.attname = None
         self.parent = None
@@ -74,8 +76,7 @@ class Field(AbstractField, GraphQLField, OrderedType):
 
     @property
     def resolver(self):
-        from .objecttype import ObjectType
-        from .interface import GrapheneInterfaceType
+        pass
 
         resolver = getattr(self.parent, 'resolve_{}'.format(self.attname), None)
 
@@ -105,7 +106,7 @@ class Field(AbstractField, GraphQLField, OrderedType):
         #         root = self.parent()
         #     return resolver(root, *args, **kwargs)
 
-        return self._resolver or resolver # resolver_wrapper
+        return self._resolver or resolver  # resolver_wrapper
 
     @resolver.setter
     def resolver(self, resolver):
@@ -115,7 +116,9 @@ class Field(AbstractField, GraphQLField, OrderedType):
         return self.copy_and_extend(self)
 
     @classmethod
-    def copy_and_extend(cls, field, type=None, args=None, resolver=None, source=None, deprecation_reason=None, name=None, description=None, required=False, _creation_counter=False, parent=None, attname=None, **extra_args):
+    def copy_and_extend(
+            cls, field, type=None, args=None, resolver=None, source=None, deprecation_reason=None, name=None,
+            description=None, required=False, _creation_counter=False, parent=None, attname=None, **extra_args):
         if isinstance(field, Field):
             type = type or field._type
             resolver = resolver or field._resolver
@@ -185,7 +188,8 @@ class InputField(AbstractField, GraphQLInputObjectField, OrderedType):
         return self.copy_and_extend(self)
 
     @classmethod
-    def copy_and_extend(cls, field, type=None, default_value=None, description=None, name=None, required=False, parent=None, attname=None, _creation_counter=False):
+    def copy_and_extend(cls, field, type=None, default_value=None, description=None, name=None,
+                        required=False, parent=None, attname=None, _creation_counter=False):
         if isinstance(field, Field):
             type = type or field._type
             name = name or field._name

@@ -1,10 +1,9 @@
-import pytest
 
+from ...types import ObjectType, Schema
+from ...types.field import Field
+from ...types.scalars import String
 from ..connection import Connection
 from ..node import Node
-from ...types import ObjectType, Schema
-from ...types.scalars import String
-from ...types.field import Field
 
 
 class MyObject(Node, ObjectType):
@@ -16,6 +15,7 @@ class MyObject(Node, ObjectType):
 
 
 class MyObjectConnection(Connection):
+
     class Meta:
         node = MyObject
 

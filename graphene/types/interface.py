@@ -1,12 +1,13 @@
 import six
 
 from graphql import GraphQLInterfaceType
-from .definitions import GrapheneGraphQLType
-from .options import Options
-from ..utils.is_base_type import is_base_type
-from ..utils.get_fields import get_fields
+
 from ..utils.copy_fields import copy_fields
+from ..utils.get_fields import get_fields
+from ..utils.is_base_type import is_base_type
+from .definitions import GrapheneGraphQLType
 from .field import Field
+from .options import Options
 
 
 class GrapheneInterfaceType(GrapheneGraphQLType, GraphQLInterfaceType):
@@ -72,4 +73,3 @@ class Interface(six.with_metaclass(InterfaceTypeMeta)):
         For example, if we want to check that the ObjectType have some required things
         in it like Node.get_node
         '''
-        pass

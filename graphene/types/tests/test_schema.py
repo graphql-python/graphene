@@ -1,9 +1,9 @@
-from ..scalars import String
 from ..field import Field
-from ..objecttype import ObjectType
 from ..interface import Interface
-from ..structures import List
+from ..objecttype import ObjectType
+from ..scalars import String
 from ..schema import Schema
+from ..structures import List
 
 
 class Character(Interface):
@@ -18,6 +18,7 @@ class Pet(ObjectType):
 
 # @implements(Character)
 class Human(ObjectType):
+
     class Meta:
         interfaces = [Character]
 
@@ -44,9 +45,11 @@ schema = Schema(query=RootQuery, types=[Human])
 
 
 def test_schema():
-    executed = schema.execute('{ character {name, bestFriend { name }, friends { name}, ...on Human {pet { type } } } }')
+    executed = schema.execute(
+        '{ character {name, bestFriend { name }, friends { name}, ...on Human {pet { type } } } }')
     assert not executed.errors
-    assert executed.data == {'character': {'name': 'Harry', 'bestFriend': {'name': 'Best'}, 'friends': [{'name': 'Peter'}], 'pet': {'type': 'Dog'}}}
+    assert executed.data == {'character': {'name': 'Harry', 'bestFriend': {
+        'name': 'Best'}, 'friends': [{'name': 'Peter'}], 'pet': {'type': 'Dog'}}}
 
 
 def test_schema_introspect():

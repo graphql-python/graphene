@@ -1,23 +1,17 @@
 import re
 from collections import Iterable
+
 import six
+
 from graphql_relay import connection_definitions, connection_from_list
 
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
-
-from ..utils.props import props
-
-from ..types.field import Field, InputField
-from ..utils.get_fields import get_fields
-from ..utils.copy_fields import copy_fields
-from ..utils.props import props
-
-
-from ..types.objecttype import ObjectType
-
-from ..utils.is_base_type import is_base_type
 from ..types.options import Options
+from ..utils.copy_fields import copy_fields
+from ..utils.get_fields import get_fields
+from ..utils.is_base_type import is_base_type
+from ..utils.props import props
 
 
 class ConnectionMeta(ObjectTypeMeta):
@@ -69,7 +63,7 @@ class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
 
 class IterableConnectionField(Field):
     # def __init__(self, type, *args, **kwargs):
-    #     if 
+    #     if
 
     def resolver(self, root, args, context, info):
         iterable = super(ConnectionField, self).resolver(root, args, context, info)

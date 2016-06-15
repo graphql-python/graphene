@@ -1,11 +1,13 @@
 from functools import partial
+
 import six
-from graphql_relay import node_definitions, from_global_id, to_global_id
+
+from graphql_relay import from_global_id, node_definitions, to_global_id
 
 from ..types.field import Field
-from ..types.options import Options
-from ..types.objecttype import ObjectTypeMeta
 from ..types.interface import Interface
+from ..types.objecttype import ObjectTypeMeta
+from ..types.options import Options
 
 
 class NodeMeta(ObjectTypeMeta):
@@ -22,7 +24,12 @@ class NodeMeta(ObjectTypeMeta):
                 id_resolver=id_resolver,
             )
             cls._meta = Options(None, graphql_type=node_interface)
-            cls.Field = partial(Field.copy_and_extend, node_field, type=node_field.type, parent=cls, _creation_counter=None)
+            cls.Field = partial(
+                Field.copy_and_extend,
+                node_field,
+                type=node_field.type,
+                parent=cls,
+                _creation_counter=None)
         else:
             # The interface provided by node_definitions is not an instance
             # of GrapheneInterfaceType, so it will have no graphql_type,
@@ -71,6 +78,8 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         in it
         '''
         if cls.require_get_node():
-            assert hasattr(object_type, 'get_node'), '{}.get_node method is required by the Node interface.'.format(object_type.__name__)
+            assert hasattr(
+                object_type, 'get_node'), '{}.get_node method is required by the Node interface.'.format(
+                object_type.__name__)
 
         return super(Node, cls).implements(object_type)

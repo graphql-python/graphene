@@ -2,14 +2,14 @@ import six
 
 from graphql import GraphQLInputObjectType
 
-from .definitions import GrapheneGraphQLType
-from .interface import attrs_without_fields
-from .unmountedtype import UnmountedType
-from .options import Options
-from ..utils.is_base_type import is_base_type
-from ..utils.get_fields import get_fields
 from ..utils.copy_fields import copy_fields
+from ..utils.get_fields import get_fields
+from ..utils.is_base_type import is_base_type
+from .definitions import GrapheneGraphQLType
 from .field import InputField
+from .interface import attrs_without_fields
+from .options import Options
+from .unmountedtype import UnmountedType
 
 
 class GrapheneInputObjectType(GrapheneGraphQLType, GraphQLInputObjectType):

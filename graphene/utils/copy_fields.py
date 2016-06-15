@@ -1,5 +1,4 @@
 from collections import OrderedDict
-from ..types.field import Field, InputField
 
 
 def copy_fields(like, fields, **extra):

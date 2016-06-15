@@ -1,14 +1,11 @@
 import pytest
 
-from graphql import GraphQLObjectType, GraphQLField, GraphQLString, GraphQLInterfaceType
+from graphql import GraphQLObjectType, GraphQLString
 
-from ..schema import Schema
-from ..objecttype import ObjectType
-from ..mutation import Mutation
-from ..interface import Interface
-from ..scalars import String
 from ..field import Field
-from ..argument import Argument
+from ..mutation import Mutation
+from ..objecttype import ObjectType
+from ..scalars import String
 
 
 def test_generate_mutation_no_args():
@@ -48,6 +45,7 @@ def test_generate_mutation_with_args():
 
 def test_generate_mutation_with_meta():
     class MyMutation(Mutation):
+
         class Meta:
             name = 'MyOtherMutation'
             description = 'Documentation'
@@ -64,6 +62,7 @@ def test_generate_mutation_with_meta():
 
 def test_empty_mutation_has_meta():
     class MyMutation(Mutation):
+
         @classmethod
         def mutate(cls, *args, **kwargs):
             pass

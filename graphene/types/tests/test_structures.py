@@ -1,10 +1,9 @@
-import pytest
 
-from graphql import GraphQLString, GraphQLList, GraphQLNonNull
+from graphql import GraphQLList, GraphQLNonNull, GraphQLString
 
-from ..structures import List, NonNull
-from ..scalars import String
 from ..field import Field
+from ..scalars import String
+from ..structures import List, NonNull
 
 
 def test_list():

@@ -1,17 +1,14 @@
-import pytest
 
-from graphql import GraphQLObjectType, GraphQLField, GraphQLString, GraphQLInputObjectType
+from graphql import GraphQLInputObjectType, GraphQLString
 
-from ..objecttype import ObjectType
+from ..field import InputField
 from ..inputobjecttype import InputObjectType
-from ..field import Field, InputField
 from ..scalars import String
 
 
 def test_generate_inputobjecttype():
     class MyObjectType(InputObjectType):
         '''Documentation'''
-        pass
 
     graphql_type = MyObjectType._meta.graphql_type
     assert isinstance(graphql_type, GraphQLInputObjectType)
@@ -21,6 +18,7 @@ def test_generate_inputobjecttype():
 
 def test_generate_inputobjecttype_with_meta():
     class MyObjectType(InputObjectType):
+
         class Meta:
             name = 'MyOtherObjectType'
             description = 'Documentation'
