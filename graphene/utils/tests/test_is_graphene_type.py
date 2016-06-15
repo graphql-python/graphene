@@ -6,7 +6,10 @@ from graphene.types import ObjectType
 
 
 def test_is_graphene_type_objecttype():
-    assert is_graphene_type(ObjectType)
+    class MyObjectType(ObjectType):
+        pass
+
+    assert is_graphene_type(MyObjectType)
 
 
 def test_is_graphene_type_graphqltype():
