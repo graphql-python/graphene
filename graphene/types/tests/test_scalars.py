@@ -45,7 +45,7 @@ def test_scalar_in_objecttype(scalar_class, graphql_type):
 
     graphql_type = get_graphql_type(MyObjectType)
     fields = graphql_type.get_fields()
-    assert fields.keys() == ['before', 'field', 'after']
+    assert list(fields.keys()) == ['before', 'field', 'after']
     assert isinstance(fields['field'], Field)
 
 

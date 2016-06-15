@@ -61,7 +61,7 @@ def test_ordered_fields_in_objecttype():
 
     graphql_type = MyObjectType._meta.graphql_type
     fields = graphql_type.get_fields()
-    assert fields.keys() == ['b', 'a', 'field', 'asa']
+    assert list(fields.keys()) == ['b', 'a', 'field', 'asa']
 
 
 def test_objecttype_inheritance():
@@ -87,12 +87,12 @@ def test_objecttype_as_container_get_fields():
         field1 = Field(GraphQLString)
         field2 = Field(GraphQLString)
 
-    assert Container._meta.graphql_type.get_fields().keys() == ['field1', 'field2']
+    assert list(Container._meta.graphql_type.get_fields().keys()) == ['field1', 'field2']
 
 
 def test_parent_container_get_fields():
     fields = Container._meta.graphql_type.get_fields()
-    assert fields.keys() == ['field1', 'field2']
+    assert list(fields.keys()) == ['field1', 'field2']
 
 
 def test_objecttype_as_container_only_args():

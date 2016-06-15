@@ -35,4 +35,4 @@ def test_get_graphql_type_unknown_type():
     with pytest.raises(Exception) as excinfo:
         get_graphql_type(object)
 
-    assert "Cannot get GraphQL type of <type 'object'>." == str(excinfo.value)
+    assert "Cannot get GraphQL type" in str(excinfo.value)

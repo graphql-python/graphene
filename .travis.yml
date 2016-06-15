@@ -64,7 +64,7 @@ script:
     flake8
     exit
   elif [ "$TEST_TYPE" = build ]; then
-    py.test --cov=graphene
+    py.test graphene examples --cov=graphene
   fi
 after_success:
 - |
