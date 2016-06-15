@@ -5,6 +5,7 @@ from graphql_relay import to_global_id
 from ...types import ObjectType, Schema
 from ...types.scalars import String
 from ..node import Node
+from ..connection import Connection
 
 
 class MyNode(Node, ObjectType):
@@ -42,6 +43,15 @@ def test_node_no_get_node_with_meta():
 def test_node_good():
     graphql_type = MyNode._meta.graphql_type
     assert 'id' in graphql_type.get_fields()
+
+
+def test_node_get_connection():
+    connection = MyNode.get_default_connection()
+    assert issubclass(connection, Connection)
+
+
+def test_node_get_connection_dont_duplicate():
+    assert MyNode.get_default_connection() == MyNode.get_default_connection()
 
 
 def test_node_query():

@@ -4,6 +4,7 @@ from collections import Iterable
 import six
 
 from graphql_relay import connection_definitions, connection_from_list
+from graphql_relay.connection.connection import connection_args
 
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
@@ -60,24 +61,57 @@ class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
     resolve_node = None
     resolve_cursor = None
 
+    def __init__(self, *args, **kwargs):
+        kwargs['pageInfo'] = kwargs.pop('pageInfo', kwargs.pop('page_info'))
+        super(Connection, self).__init__(*args, **kwargs)
+
 
 class IterableConnectionField(Field):
-    # def __init__(self, type, *args, **kwargs):
-    #     if
 
-    def resolver(self, root, args, context, info):
-        iterable = super(ConnectionField, self).resolver(root, args, context, info)
-        # if isinstance(resolved, self.type.graphene)
-        assert isinstance(
-            iterable, Iterable), 'Resolved value from the connection field have to be iterable'
-        connection = connection_from_list(
-            iterable,
-            args,
-            connection_type=None,
-            edge_type=None,
-            pageinfo_type=None
-        )
-        return connection
+    def __init__(self, type, args={}, *other_args, **kwargs):
+        super(IterableConnectionField, self).__init__(type, args=connection_args, *other_args, **kwargs)
 
+    @property
+    def type(self):
+        from ..utils.get_graphql_type import get_graphql_type
+        return get_graphql_type(self.connection)
+
+    @type.setter
+    def type(self, value):
+        self._type = value
+
+    @property
+    def connection(self):
+        from .node import Node
+        graphql_type = super(IterableConnectionField, self).type
+        if issubclass(graphql_type.graphene_type, Node):
+            connection_type = graphql_type.graphene_type.get_default_connection()
+        else:
+            connection_type = graphql_type.graphene_type
+        assert issubclass(connection_type, Connection), '{} type have to be a subclass of Connection'.format(str(self))
+        return connection_type
+
+    @property
+    def resolver(self):
+        super_resolver = super(ConnectionField, self).resolver
+
+        def resolver(root, args, context, info):
+            iterable = super_resolver(root, args, context, info)
+            # if isinstance(resolved, self.type.graphene)
+            assert isinstance(
+                iterable, Iterable), 'Resolved value from the connection field have to be iterable'
+            connection = connection_from_list(
+                iterable,
+                args,
+                connection_type=self.connection,
+                edge_type=self.connection.Edge,
+                pageinfo_type=None
+            )
+            return connection
+        return resolver
+
+    @resolver.setter
+    def resolver(self, resolver):
+        self._resolver = resolver
 
 ConnectionField = IterableConnectionField

@@ -76,8 +76,6 @@ class Field(AbstractField, GraphQLField, OrderedType):
 
     @property
     def resolver(self):
-        pass
-
         resolver = getattr(self.parent, 'resolve_{}'.format(self.attname), None)
 
         # We try to get the resolver from the interfaces

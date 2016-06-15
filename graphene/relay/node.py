@@ -4,9 +4,10 @@ import six
 
 from graphql_relay import from_global_id, node_definitions, to_global_id
 
+from .connection import Connection
 from ..types.field import Field
 from ..types.interface import Interface
-from ..types.objecttype import ObjectTypeMeta
+from ..types.objecttype import ObjectTypeMeta, ObjectType
 from ..types.options import Options
 
 
@@ -39,6 +40,7 @@ class NodeMeta(ObjectTypeMeta):
 
 
 class Node(six.with_metaclass(NodeMeta, Interface)):
+    _connection = None
 
     @classmethod
     def require_get_node(cls):
@@ -70,6 +72,15 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         if cls._meta.graphql_type not in graphql_type.get_interfaces():
             return
         return graphql_type.graphene_type.get_node(_id, context, info)
+
+    @classmethod
+    def get_default_connection(cls):
+        assert issubclass(cls, ObjectType), 'Can only get connection type on implemented Nodes.'
+        if not cls._connection:
+            class Meta:
+                node = cls
+            cls._connection = type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
+        return cls._connection
 
     @classmethod
     def implements(cls, object_type):

@@ -16,13 +16,12 @@ class Ship(relay.Node, graphene.ObjectType):
 class Faction(relay.Node, graphene.ObjectType):
     '''A faction in the Star Wars saga'''
     name = graphene.String(description='The name of the faction.')
-    # ships = relay.ConnectionField(
-    #     Ship, description='The ships used by the faction.')
-    ships = graphene.List(graphene.String)
-    # @resolve_only_args
-    # def resolve_ships(self, **args):
-    #     # Transform the instance ship_ids into real instances
-    #     return [get_ship(ship_id) for ship_id in self.ships]
+    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
+
+    @resolve_only_args
+    def resolve_ships(self, **args):
+        # Transform the instance ship_ids into real instances
+        return [get_ship(ship_id) for ship_id in self.ships]
 
     @classmethod
     def get_node(cls, id, context, info):
