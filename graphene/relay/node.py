@@ -19,7 +19,7 @@ class NodeMeta(ObjectTypeMeta):
         if not is_object_type:
             get_node_from_global_id = getattr(cls, 'get_node_from_global_id', None)
             id_resolver = getattr(cls, 'id_resolver', None)
-            assert get_node_from_global_id, '{}.get_node method is required by the Node interface.'.format(cls.__name__)
+            assert get_node_from_global_id, '{}.get_node_from_global_id method is required by the Node interface.'.format(cls.__name__)
             node_interface, node_field = node_definitions(
                 get_node_from_global_id,
                 id_resolver=id_resolver,

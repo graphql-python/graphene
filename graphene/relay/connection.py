@@ -105,7 +105,6 @@ class IterableConnectionField(Field):
                 args,
                 connection_type=self.connection,
                 edge_type=self.connection.Edge,
-                pageinfo_type=None
             )
             return connection
         return resolver
