@@ -4,8 +4,8 @@ from graphql_relay import to_global_id
 
 from ...types import ObjectType, Schema
 from ...types.scalars import String
-from ..node import Node
 from ..connection import Connection
+from ..node import Node
 
 
 class MyNode(Node, ObjectType):

@@ -1,8 +1,10 @@
 import datetime
+
 import pytest
 
 from graphene.utils.get_graphql_type import get_graphql_type
-from graphql import GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString, GraphQLScalarType, graphql
+from graphql import (GraphQLBoolean, GraphQLFloat, GraphQLInt,
+                     GraphQLScalarType, GraphQLString, graphql)
 from graphql.language import ast
 
 from ..field import Field
@@ -12,6 +14,7 @@ from ..schema import Schema
 
 
 class DatetimeScalar(Scalar):
+
     class Meta:
         name = 'DateTime'
 
@@ -53,6 +56,7 @@ GraphQLDateTimeType = GraphQLScalarType(
 
 
 class DatetimeScalarGraphQL(Scalar):
+
     class Meta:
         graphql_type = GraphQLDateTimeType
 

@@ -4,11 +4,11 @@ import six
 
 from graphql_relay import from_global_id, node_definitions, to_global_id
 
-from .connection import Connection
 from ..types.field import Field
 from ..types.interface import Interface
-from ..types.objecttype import ObjectTypeMeta, ObjectType
+from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
+from .connection import Connection
 
 
 class NodeMeta(ObjectTypeMeta):
