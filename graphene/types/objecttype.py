@@ -105,22 +105,6 @@ class ObjectTypeMeta(InterfaceTypeMeta):
         return issubclass(cls, ObjectType)
 
 
-def implements(*interfaces):
-    # This function let us decorate a ObjectType
-    # Adding a specified interfaces into the graphql_type
-    def wrap_class(cls):
-        interface_types = get_interfaces(cls, interfaces)
-        graphql_type = cls._meta.graphql_type
-        # fields = cls._build_field_map(interface_types, graphql_type.get_fields().values())
-        new_type = copy.copy(graphql_type)
-        new_type._provided_interfaces = tuple(graphql_type._provided_interfaces) + tuple(interface_types)
-        new_type._fields = graphql_type._fields
-        cls._meta.graphql_type = new_type
-        cls._meta.graphql_type.check_interfaces()
-        return cls
-    return wrap_class
-
-
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
 
     def __init__(self, *args, **kwargs):

@@ -1,4 +1,4 @@
-from .objecttype import ObjectType, implements
+from .objecttype import ObjectType
 from .interface import Interface
 from .scalars import Scalar, String, ID, Int, Float, Boolean
 from .schema import Schema
@@ -12,7 +12,6 @@ __all__ = [
     'ObjectType',
     'InputObjectType',
     'Interface',
-    'implements',
     'Enum',
     'Field',
     'InputField',
