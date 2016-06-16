@@ -3,22 +3,18 @@ from .argument import Argument
 from .field import Field, InputField
 
 
-# UnmountedType ?
-
 class UnmountedType(OrderedType):
     '''
     This class acts a proxy for a Graphene Type, so it can be mounted
     as Field, InputField or Argument.
 
-    Instead of doing
+    Instead of writing
     >>> class MyObjectType(ObjectType):
     >>>     my_field = Field(String(), description='Description here')
 
-    You can actually do
+    It let you write
     >>> class MyObjectType(ObjectType):
     >>>     my_field = String(description='Description here')
-
-    So is simpler to use.
     '''
 
     def __init__(self, *args, **kwargs):
@@ -30,6 +26,9 @@ class UnmountedType(OrderedType):
         return self._meta.graphql_type
 
     def as_field(self):
+        '''
+        Mount the UnmountedType as Field
+        '''
         return Field(
             self.get_type(),
             *self.args,
@@ -38,6 +37,9 @@ class UnmountedType(OrderedType):
         )
 
     def as_inputfield(self):
+        '''
+        Mount the UnmountedType as InputField
+        '''
         return InputField(
             self.get_type(),
             *self.args,
@@ -46,6 +48,9 @@ class UnmountedType(OrderedType):
         )
 
     def as_argument(self):
+        '''
+        Mount the UnmountedType as Argument
+        '''
         return Argument(
             self.get_type(),
             *self.args,
@@ -54,6 +59,13 @@ class UnmountedType(OrderedType):
         )
 
     def as_mounted(self, cls):
+        '''
+        Mount the UnmountedType dinamically as Field or InputField
+        depending on the class is mounted in.
+
+        ObjectType -> Field
+        InputObjectType -> InputField
+        '''
         from .inputobjecttype import InputObjectType
         from .objecttype import ObjectType
         from .interface import Interface
