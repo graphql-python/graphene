@@ -40,8 +40,10 @@ class ClientIDMutationMeta(MutationMeta):
         output_fields = copy_fields(Field, get_fields(ObjectType, attrs, bases))
 
         mutate_and_get_payload = getattr(cls, 'mutate_and_get_payload', None)
-        assert mutate_and_get_payload, "{}.mutate_and_get_payload method is required in a ClientIDMutation ObjectType.".format(
-            cls.__name__)
+        assert mutate_and_get_payload, (
+            "{}.mutate_and_get_payload method is required"
+            " in a ClientIDMutation ObjectType.".format(cls.__name__)
+        )
 
         field = mutation_with_client_mutation_id(
             name=options.name or cls.__name__,

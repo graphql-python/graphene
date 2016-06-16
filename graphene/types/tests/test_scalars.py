@@ -106,7 +106,7 @@ def test_custom_scalar_empty():
 
 
 @pytest.mark.parametrize("scalar_class", (DatetimeScalar, DatetimeScalarGraphQL))
-def test_custom_scalar_empty(scalar_class):
+def test_custom_scalar_query(scalar_class):
     class Query(ObjectType):
         datetime = scalar_class(_in=scalar_class(name='in'))
 

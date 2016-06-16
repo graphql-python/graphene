@@ -1,4 +1,3 @@
-import copy
 import inspect
 from collections import OrderedDict
 from itertools import chain
@@ -39,6 +38,16 @@ class Argument(GraphQLArgument, OrderedType):
     def type(self, type):
         self._type = type
 
+    @classmethod
+    def copy_from(cls, argument):
+        return cls(
+            type=argument.type,
+            default_value=argument.default_value,
+            description=argument.description,
+            name=argument.name,
+            _creation_counter=argument.creation_counter if isinstance(argument, Argument) else None,
+        )
+
 
 def to_arguments(*args, **extra):
     from .unmountedtype import UnmountedType
@@ -53,7 +62,7 @@ def to_arguments(*args, **extra):
         if not isinstance(arg, GraphQLArgument):
             raise ValueError('Unknown argument "{}".'.format(default_name))
 
-        arg = copy.copy(arg)
+        arg = Argument.copy_from(arg)
         arg.name = arg.name or default_name
         assert arg.name, 'All arguments must have a name.'
         assert arg.name not in arguments_names, 'More than one Argument have same name "{}".'.format(arg.name)

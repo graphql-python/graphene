@@ -29,7 +29,7 @@ def values_from_enum(enum):
 class EnumTypeMeta(type):
 
     def __new__(cls, name, bases, attrs):
-        super_new = super(EnumTypeMeta, cls).__new__
+        super_new = type.__new__
 
         # Also ensure initialization is only performed for subclasses of Model
         # (excluding Model class itself).
@@ -43,11 +43,12 @@ class EnumTypeMeta(type):
             enum=None,
             graphql_type=None
         )
-
         if not options.enum:
-            options.enum = type(cls.__name__, (PyEnum,), attrs)
+            options.enum = PyEnum(cls.__name__, attrs)
 
-        cls = super_new(cls, name, bases, dict(attrs, _meta=options, **options.enum.__members__))
+        new_attrs = OrderedDict(attrs, _meta=options, **options.enum.__members__)
+
+        cls = super_new(cls, name, bases, new_attrs)
 
         if not options.graphql_type:
             values = values_from_enum(options.enum)
