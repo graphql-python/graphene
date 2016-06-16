@@ -15,7 +15,6 @@ except ImportError:
     from ..utils.enum import Enum as PyEnum
 
 
-
 class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
     pass
 
@@ -60,6 +59,9 @@ class EnumTypeMeta(type):
             )
 
         return cls
+
+    def __prepare__(name, bases, **kwargs):
+        return OrderedDict()
 
     def __call__(cls, *args, **kwargs):
         if cls is Enum:

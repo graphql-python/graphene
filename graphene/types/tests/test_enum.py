@@ -1,8 +1,7 @@
 from graphql.type import GraphQLEnumType, GraphQLEnumValue
 
-from ...utils.enum import Enum as PyEnum
 from ..argument import Argument
-from ..enum import Enum
+from ..enum import Enum, PyEnum
 from ..field import Field
 
 

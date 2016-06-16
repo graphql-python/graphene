@@ -8,13 +8,13 @@ from ..get_fields import get_fields_from_attrs, get_fields_from_types
 
 
 def test_get_fields_from_attrs():
-    attrs = {
-        'field_string': Field(String),
-        'string': String(),
-        'other': None,
-        'argument': Argument(String),
-        'graphql_field': GraphQLField(GraphQLString)
-    }
+    attrs = OrderedDict((
+        ('field_string', Field(String)),
+        ('string', String()),
+        ('other', None),
+        ('argument', Argument(String)),
+        ('graphql_field', GraphQLField(GraphQLString)),
+    ))
     extracted_fields = OrderedDict(get_fields_from_attrs(ObjectType, attrs))
     assert [f for f in extracted_fields.keys()] == ['field_string', 'string']
 

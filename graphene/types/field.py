@@ -95,7 +95,7 @@ class Field(AbstractField, GraphQLField, OrderedType):
         #                 break
 
         if resolver:
-            resolver = resolver.__func__
+            resolver = getattr(resolver, '__func__', resolver)
         else:
             resolver = self.default_resolver
 
