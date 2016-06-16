@@ -53,32 +53,3 @@ def test_node_query():
     )
     assert not executed.errors
     assert executed.data == {'say': {'phrase': 'hello'}}
-
-
-# def test_node_query_incorrect_id():
-#     executed = schema.execute(
-#         '{ node(id:"%s") { ... on MyNode { name } } }' % "something:2"
-#     )
-#     assert not executed.errors
-#     assert executed.data == {'node': None}
-
-# def test_str_schema():
-#     assert str(schema) == """
-# schema {
-#   query: RootQuery
-# }
-
-# type MyNode implements Node {
-#   id: ID!
-#   name: String
-# }
-
-# interface Node {
-#   id: ID!
-# }
-
-# type RootQuery {
-#   first: String
-#   node(id: ID!): Node
-# }
-# """.lstrip()
