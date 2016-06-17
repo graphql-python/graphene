@@ -11,9 +11,7 @@ def is_graphene_type(_type):
     from ..relay.mutation import ClientIDMutation
     from ..relay.connection import Connection
 
-    if _type in [Interface, InputObjectType, ObjectType, Mutation, ClientIDMutation, Connection]:
-        return False
-    return inspect.isclass(_type) and issubclass(_type, (
+    return inspect.isclass(_type) and hasattr(_type, '_meta') and issubclass(_type, (
         Interface,
         ObjectType,
         InputObjectType,
