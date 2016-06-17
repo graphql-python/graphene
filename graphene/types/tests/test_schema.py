@@ -16,7 +16,6 @@ class Pet(ObjectType):
     type = String()
 
 
-# @implements(Character)
 class Human(ObjectType):
 
     class Meta:

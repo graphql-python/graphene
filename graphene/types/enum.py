@@ -66,14 +66,14 @@ class EnumTypeMeta(type):
 
     def __call__(cls, *args, **kwargs):
         if cls is Enum:
-            return cls.from_enum(PyEnum(*args, **kwargs))
+            description = kwargs.pop('description', None)
+            return cls.from_enum(PyEnum(*args, **kwargs), description=description)
         return super(EnumTypeMeta, cls).__call__(*args, **kwargs)
 
 
 class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
 
     @classmethod
-    def from_enum(cls, python_enum):
-        class Meta:
-            enum = python_enum
+    def from_enum(cls, enum, description=None):
+        Meta = type('Meta', (object,), {'enum': enum, 'description': description})
         return type(Meta.enum.__name__, (Enum,), {'Meta': Meta})
