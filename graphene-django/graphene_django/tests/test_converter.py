@@ -5,12 +5,14 @@ from py.test import raises
 
 import graphene
 from graphene.relay import Node, ConnectionField
+from graphene.types.datetime import DateTime
 from graphene.utils.get_graphql_type import get_graphql_type
 # from graphene.core.types.custom_scalars import DateTime, JSONString
 
 from ..compat import (ArrayField, HStoreField, JSONField, MissingType,
                       RangeField)
-from ..converter import convert_django_field, convert_django_field_with_choices, Registry
+from ..converter import convert_django_field, convert_django_field_with_choices
+from ..registry import Registry
 from .models import Article, Reporter, Film, FilmDetails, Pet
 from ..types import DjangoObjectType, DjangoNode
 
@@ -163,27 +165,22 @@ def test_should_manytomany_convert_connectionorlist():
 
 
 def test_should_manytomany_convert_connectionorlist_list():
-    registry = Registry()
-
     class A(DjangoObjectType):
         class Meta:
             model = Reporter
 
-    registry.register(A)
-    graphene_field = convert_django_field(Reporter._meta.local_many_to_many[0], registry)
+    graphene_field = convert_django_field(Reporter._meta.local_many_to_many[0], A._meta.registry)
     assert isinstance(graphene_field, graphene.Field)
     assert isinstance(graphene_field.type, graphene.List)
     assert graphene_field.type.of_type == get_graphql_type(A)
 
 
 def test_should_manytomany_convert_connectionorlist_connection():
-    registry = Registry()
     class A(DjangoNode, DjangoObjectType):
         class Meta:
             model = Reporter
 
-    registry.register(A)
-    graphene_field = convert_django_field(Reporter._meta.local_many_to_many[0], registry)
+    graphene_field = convert_django_field(Reporter._meta.local_many_to_many[0], A._meta.registry)
     assert isinstance(graphene_field, ConnectionField)
     assert graphene_field.type == get_graphql_type(A.get_default_connection())
 
@@ -192,14 +189,12 @@ def test_should_manytoone_convert_connectionorlist():
     # Django 1.9 uses 'rel', <1.9 uses 'related
     related = getattr(Reporter.articles, 'rel', None) or \
         getattr(Reporter.articles, 'related')
-    registry = Registry()
 
     class A(DjangoObjectType):
         class Meta:
             model = Article
 
-    registry.register(A)
-    graphene_field = convert_django_field(related, registry)
+    graphene_field = convert_django_field(related, A._meta.registry)
     assert isinstance(graphene_field, graphene.Field)
     assert isinstance(graphene_field.type, graphene.List)
     assert graphene_field.type.of_type == get_graphql_type(A)
@@ -214,9 +209,7 @@ def test_should_onetoone_reverse_convert_model():
         class Meta:
             model = FilmDetails
 
-    registry = Registry()
-    registry.register(A)
-    graphene_field = convert_django_field(related, registry)
+    graphene_field = convert_django_field(related, A._meta.registry)
     assert isinstance(graphene_field, graphene.Field)
     assert graphene_field.type == get_graphql_type(A)
 

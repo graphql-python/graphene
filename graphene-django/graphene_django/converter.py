@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.encoding import force_text
 
 from graphene import Enum, List, ID, Boolean, Float, Int, String, Field
+from graphene.types.datetime import DateTime
 from graphene.utils.str_converters import to_const
 from graphene.relay import Node, ConnectionField
 # from ...core.types.custom_scalars import DateTime, JSONString
@@ -11,22 +12,6 @@ from .utils import get_related_model, import_single_dispatch
 from .fields import DjangoConnectionField
 
 singledispatch = import_single_dispatch()
-
-
-class Registry(object):
-    def __init__(self):
-        self._registry = {}
-        self._registry_models = {}
-
-    def register(self, cls):
-        from .types import DjangoObjectType
-        print(cls.get_registry(), self)
-        assert issubclass(cls, DjangoObjectType), 'Only DjangoObjectTypes can be registered, received "{}"'.format(cls.__name__)
-        assert cls.get_registry() == self, 'Registry for a Model have to match.'
-        self._registry[cls._meta.model] = cls
-
-    def get_type_for_model(self, model):
-        return self._registry.get(model)
 
 
 def convert_choices(choices):
@@ -42,9 +27,11 @@ def convert_django_field_with_choices(field, registry=None):
     choices = getattr(field, 'choices', None)
     if choices:
         meta = field.model._meta
-        name = '{}_{}_{}'.format(meta.app_label, meta.object_name, field.name)
+        name = '{}{}'.format(meta.object_name, field.name.capitalize())
         graphql_choices = list(convert_choices(choices))
-        return Enum(name.upper(), graphql_choices, description=field.help_text)
+        from collections import OrderedDict
+        enum = Enum(name, OrderedDict(graphql_choices))
+        return enum(description=field.help_text)
     return convert_django_field(field, registry)
 
 

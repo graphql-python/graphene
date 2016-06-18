@@ -13,7 +13,7 @@ class Character(DjangoNode):
     class Meta:
         model = Reporter
 
-    def get_node(self, id):
+    def get_node(self, id, context, info):
         pass
 
 
@@ -33,7 +33,7 @@ class Human(DjangoNode):
 class Query(graphene.ObjectType):
     human = graphene.Field(Human)
 
-    def resolve_human(self, args, info):
+    def resolve_human(self, args, context, info):
         return Human()
 
 

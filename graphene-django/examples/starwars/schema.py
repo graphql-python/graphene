@@ -1,24 +1,26 @@
 import graphene
-from graphene import relay, resolve_only_args
-from graphene.contrib.django import DjangoNode, DjangoObjectType
+from graphene import relay, resolve_only_args, Schema
+from graphene_django import DjangoNode, DjangoObjectType
 
 from .data import (create_ship, get_empire, get_faction, get_rebels, get_ship,
                    get_ships)
-from .models import Character as CharacterModel
-from .models import Faction as FactionModel
-from .models import Ship as ShipModel
+from .models import (
+    Character as CharacterModel,
+    Faction as FactionModel,
+    Ship as ShipModel
+)
 
-schema = graphene.Schema(name='Starwars Django Relay Schema')
 
-
-class Ship(DjangoNode):
+class Ship(DjangoNode, DjangoObjectType):
 
     class Meta:
         model = ShipModel
 
     @classmethod
-    def get_node(cls, id, info):
-        return Ship(get_ship(id))
+    def get_node(cls, id, context, info):
+        node = get_ship(id)
+        print(node)
+        return node
 
 
 class Character(DjangoObjectType):
@@ -27,14 +29,14 @@ class Character(DjangoObjectType):
         model = CharacterModel
 
 
-class Faction(DjangoNode):
+class Faction(DjangoNode, DjangoObjectType):
 
     class Meta:
         model = FactionModel
 
     @classmethod
-    def get_node(cls, id, info):
-        return Faction(get_faction(id))
+    def get_node(cls, id, context, info):
+        return get_faction(id)
 
 
 class IntroduceShip(relay.ClientIDMutation):
@@ -52,13 +54,13 @@ class IntroduceShip(relay.ClientIDMutation):
         faction_id = input.get('faction_id')
         ship = create_ship(ship_name, faction_id)
         faction = get_faction(faction_id)
-        return IntroduceShip(ship=Ship(ship), faction=Faction(faction))
+        return IntroduceShip(ship=ship, faction=faction)
 
 
 class Query(graphene.ObjectType):
     rebels = graphene.Field(Faction)
     empire = graphene.Field(Faction)
-    node = relay.NodeField()
+    node = relay.Node.Field()
     ships = relay.ConnectionField(Ship, description='All the ships.')
 
     @resolve_only_args
@@ -80,7 +82,4 @@ class Mutation(graphene.ObjectType):
 
 # We register the Character Model because if not would be
 # inaccessible for the schema
-schema.register(Character)
-
-schema.query = Query
-schema.mutation = Mutation
+schema = Schema(query=Query, mutation=Mutation, types=[])

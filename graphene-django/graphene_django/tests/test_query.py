@@ -9,6 +9,7 @@ from graphene import relay
 
 from ..compat import MissingType, RangeField
 from ..types import DjangoNode, DjangoObjectType
+from ..registry import reset_global_registry
 from .models import Article, Reporter
 
 pytestmark = pytest.mark.django_db
@@ -118,6 +119,8 @@ def test_should_query_postgres_fields():
 
 
 def test_should_node():
+    reset_global_registry()
+
     class ReporterNode(DjangoNode):
 
         class Meta:
@@ -128,7 +131,7 @@ def test_should_node():
             return ReporterNode(Reporter(id=2, first_name='Cookie Monster'))
 
         def resolve_articles(self, *args, **kwargs):
-            return [ArticleNode(Article(headline='Hi!'))]
+            return [Article(headline='Hi!')]
 
     class ArticleNode(DjangoNode):
 
@@ -137,10 +140,10 @@ def test_should_node():
 
         @classmethod
         def get_node(cls, id, info):
-            return ArticleNode(Article(id=1, headline='Article node', pub_date=datetime.date(2002, 3, 11)))
+            return Article(id=1, headline='Article node', pub_date=datetime.date(2002, 3, 11))
 
     class Query(graphene.ObjectType):
-        node = relay.NodeField()
+        node = relay.Node.Field()
         reporter = graphene.Field(ReporterNode)
         article = graphene.Field(ArticleNode)
 

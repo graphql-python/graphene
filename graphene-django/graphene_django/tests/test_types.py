@@ -1,102 +1,120 @@
 from graphql.type import GraphQLObjectType
 from mock import patch
 
-from graphene import Schema, Interface
+from graphene import ObjectType, Field, Int, ID, Schema, Interface
+from graphene.relay import Node, ConnectionField
 from ..types import DjangoNode, DjangoObjectType
-from graphene.core.fields import Field
-from graphene.core.types.scalars import Int
-from graphene.relay.fields import GlobalIDField
-from tests.utils import assert_equal_lists
 
-from .models import Article, Reporter
-
-schema = Schema()
+from .models import Article as ArticleModel, Reporter as ReporterModel
 
 
-@schema.register
-class Character(DjangoObjectType):
+class Reporter(DjangoObjectType):
     '''Character description'''
     class Meta:
-        model = Reporter
+        model = ReporterModel
 
 
-@schema.register
-class Human(DjangoNode):
+class Article(DjangoNode, DjangoObjectType):
     '''Human description'''
 
     pub_date = Int()
 
     class Meta:
-        model = Article
+        model = ArticleModel
+
+
+class RootQuery(ObjectType):
+    node = DjangoNode.Field()
+
+
+schema = Schema(query=RootQuery, types=[Article, Reporter])
 
 
 def test_django_interface():
-    assert DjangoNode._meta.interface is True
+    assert issubclass(DjangoNode, Interface)
+    assert issubclass(DjangoNode, Node)
 
 
 @patch('graphene_django.tests.models.Article.objects.get', return_value=Article(id=1))
 def test_django_get_node(get):
-    human = Human.get_node(1, None)
+    article = Article.get_node(1, None, None)
     get.assert_called_with(id=1)
-    assert human.id == 1
+    assert article.id == 1
 
 
-def test_djangonode_idfield():
-    idfield = DjangoNode._meta.fields_map['id']
-    assert isinstance(idfield, GlobalIDField)
+def test_django_objecttype_map_correct_fields():
+    graphql_type = Reporter._meta.graphql_type
+    assert list(graphql_type.get_fields().keys()) == ['id', 'firstName', 'lastName', 'email', 'pets', 'aChoice', 'articles']
 
 
-def test_node_idfield():
-    idfield = Human._meta.fields_map['id']
-    assert isinstance(idfield, GlobalIDField)
+def test_django_objecttype_with_node_have_correct_fields():
+    graphql_type = Article._meta.graphql_type
+    assert list(graphql_type.get_fields().keys()) == ['id', 'pubDate', 'headline', 'reporter', 'lang', 'importance']
 
 
-def test_node_replacedfield():
-    idfield = Human._meta.fields_map['pub_date']
-    assert isinstance(idfield, Field)
-    assert schema.T(idfield).type == schema.T(Int())
+def test_schema_representation():
+    expected = """
+schema {
+  query: RootQuery
+}
 
+type Article implements Node {
+  id: ID!
+  pubDate: Int
+  headline: String
+  reporter: Reporter
+  lang: ArticleLang
+  importance: ArticleImportance
+}
 
-def test_objecttype_init_none():
-    h = Human()
-    assert h._root is None
+type ArticleConnection {
+  pageInfo: PageInfo!
+  edges: [ArticleEdge]
+}
 
+type ArticleEdge {
+  node: Article
+  cursor: String!
+}
 
-def test_objecttype_init_good():
-    instance = Article()
-    h = Human(instance)
-    assert h._root == instance
+enum ArticleImportance {
+  VERY_IMPORTANT
+  NOT_AS_IMPORTANT
+}
 
+enum ArticleLang {
+  SPANISH
+  ENGLISH
+}
 
-def test_object_type():
-    object_type = schema.T(Human)
-    Human._meta.fields_map
-    assert Human._meta.interface is False
-    assert isinstance(object_type, GraphQLObjectType)
-    assert_equal_lists(
-        object_type.get_fields().keys(),
-        ['headline', 'id', 'reporter', 'pubDate']
-    )
-    assert schema.T(DjangoNode) in object_type.get_interfaces()
+interface Node {
+  id: ID!
+}
 
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
 
-def test_node_notinterface():
-    assert Human._meta.interface is False
-    assert DjangoNode in Human._meta.interfaces
+type Reporter {
+  id: ID
+  firstName: String
+  lastName: String
+  email: String
+  pets: [Reporter]
+  aChoice: ReporterA_choice
+  articles(before: String, after: String, first: Int, last: Int): ArticleConnection
+}
 
+enum ReporterA_choice {
+  THIS
+  THAT
+}
 
-def test_django_objecttype_could_extend_interface():
-    schema = Schema()
-
-    @schema.register
-    class Customer(Interface):
-        id = Int()
-
-    @schema.register
-    class UserType(DjangoObjectType):
-        class Meta:
-            model = Reporter
-            interfaces = [Customer]
-
-    object_type = schema.T(UserType)
-    assert schema.T(Customer) in object_type.get_interfaces()
+type RootQuery {
+  node(id: ID!): Node
+}
+""".lstrip()
+    assert str(schema) == expected

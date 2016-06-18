@@ -61,7 +61,7 @@ def convert_form_field_to_float(field):
 @convert_form_field.register(forms.ModelMultipleChoiceField)
 @convert_form_field.register(GlobalIDMultipleChoiceField)
 def convert_form_field_to_list(field):
-    return List(ID())
+    return List(ID)
 
 
 @convert_form_field.register(forms.ModelChoiceField)

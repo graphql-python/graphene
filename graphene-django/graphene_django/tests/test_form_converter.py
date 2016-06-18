@@ -4,6 +4,7 @@ from py.test import raises
 import graphene
 from ..form_converter import convert_form_field
 from graphene import ID, List
+from graphene.utils.get_graphql_type import get_graphql_type
 
 from .models import Reporter
 
@@ -94,7 +95,7 @@ def test_should_multiple_choice_convert_connectionorlist():
     field = forms.ModelMultipleChoiceField(Reporter.objects.all())
     graphene_type = convert_form_field(field)
     assert isinstance(graphene_type, List)
-    assert isinstance(graphene_type.of_type, ID)
+    assert graphene_type.of_type == get_graphql_type(ID)
 
 
 def test_should_manytoone_convert_connectionorlist():
