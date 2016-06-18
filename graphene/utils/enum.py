@@ -94,7 +94,7 @@ def _make_class_unpicklable(cls):
     cls.__module__ = '<unknown>'
 
 
-class _EnumDict(dict):
+class _EnumDict(OrderedDict):
     """Track enum member order and ensure member names are not reused.
 
     EnumMeta will use the names found in self._member_names as the
