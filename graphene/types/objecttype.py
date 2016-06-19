@@ -26,22 +26,6 @@ class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
             if isinstance(interface, GrapheneInterfaceType):
                 interface.graphene_type.implements(self.graphene_type)
 
-    @property
-    def is_type_of(self):
-        return self._is_type_of or self.default_is_type_of
-
-    @is_type_of.setter
-    def is_type_of(self, is_type_of):
-        self._is_type_of = is_type_of
-
-    def default_is_type_of(self, interface, context, info):
-        from ..utils.get_graphql_type import get_graphql_type
-        try:
-            graphql_type = get_graphql_type(type(interface))
-            return graphql_type.name == self.name
-        except:
-            return False
-
 
 def get_interfaces(interfaces):
     from ..utils.get_graphql_type import get_graphql_type
@@ -49,6 +33,13 @@ def get_interfaces(interfaces):
     for interface in interfaces:
         graphql_type = get_graphql_type(interface)
         yield graphql_type
+
+
+def is_objecttype(bases):
+    for base in bases:
+        if issubclass(base, ObjectType):
+            return True
+    return False
 
 
 # We inherit from InterfaceTypeMeta instead of type for being able
@@ -61,8 +52,12 @@ class ObjectTypeMeta(InterfaceTypeMeta):
 
         # Also ensure initialization is only performed for subclasses of Model
         # (excluding Model class itself).
+
         if not is_base_type(bases, ObjectTypeMeta):
             return super_new(cls, name, bases, attrs)
+
+        if not is_objecttype(bases):
+            return super(ObjectTypeMeta, cls).__new__(cls, name, bases, attrs)
 
         options = Options(
             attrs.pop('Meta', None),
@@ -86,6 +81,7 @@ class ObjectTypeMeta(InterfaceTypeMeta):
                 name=options.name or cls.__name__,
                 description=options.description or cls.__doc__,
                 fields=fields,
+                is_type_of=cls.is_type_of,
                 interfaces=tuple(get_interfaces(interfaces + base_interfaces))
             )
         else:
@@ -147,3 +143,12 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
                 raise TypeError(
                     "'%s' is an invalid keyword argument for this function" %
                     list(kwargs)[0])
+
+    @classmethod
+    def is_type_of(cls, interface, context, info):
+        from ..utils.get_graphql_type import get_graphql_type
+        try:
+            graphql_type = get_graphql_type(type(interface))
+            return graphql_type.name == cls._meta.graphql_type.name
+        except:
+            return False
