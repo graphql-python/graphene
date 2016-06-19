@@ -2,13 +2,13 @@ from django.conf.urls import url
 
 import graphene
 from graphene import Schema
-from ..types import DjangoNode
+from ..types import DjangoNode, DjangoObjectType
 from ..views import GraphQLView
 
 from .models import Article, Reporter
 
 
-class Character(DjangoNode):
+class Character(DjangoNode, DjangoObjectType):
 
     class Meta:
         model = Reporter
@@ -17,7 +17,7 @@ class Character(DjangoNode):
         pass
 
 
-class Human(DjangoNode):
+class Human(DjangoNode, DjangoObjectType):
     raises = graphene.String()
 
     class Meta:

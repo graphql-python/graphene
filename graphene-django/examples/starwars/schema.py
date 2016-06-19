@@ -49,9 +49,9 @@ class IntroduceShip(relay.ClientIDMutation):
     faction = graphene.Field(Faction)
 
     @classmethod
-    def mutate_and_get_payload(cls, input, info):
-        ship_name = input.get('ship_name')
-        faction_id = input.get('faction_id')
+    def mutate_and_get_payload(cls, input, context, info):
+        ship_name = input.get('shipName')
+        faction_id = input.get('factionId')
         ship = create_ship(ship_name, faction_id)
         faction = get_faction(faction_id)
         return IntroduceShip(ship=ship, faction=faction)
@@ -60,7 +60,7 @@ class IntroduceShip(relay.ClientIDMutation):
 class Query(graphene.ObjectType):
     rebels = graphene.Field(Faction)
     empire = graphene.Field(Faction)
-    node = relay.Node.Field()
+    node = DjangoNode.Field()
     ships = relay.ConnectionField(Ship, description='All the ships.')
 
     @resolve_only_args
@@ -77,9 +77,9 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    introduce_ship = graphene.Field(IntroduceShip)
+    introduce_ship = IntroduceShip.Field()
 
 
 # We register the Character Model because if not would be
 # inaccessible for the schema
-schema = Schema(query=Query, mutation=Mutation, types=[])
+schema = Schema(query=Query, mutation=Mutation, types=[Ship, Character])

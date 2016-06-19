@@ -1,7 +1,7 @@
 from py.test import raises
 
 from ..types import DjangoObjectType
-from tests.utils import assert_equal_lists
+from ..registry import Registry
 
 from .models import Reporter
 
@@ -10,7 +10,7 @@ def test_should_raise_if_no_model():
     with raises(Exception) as excinfo:
         class Character1(DjangoObjectType):
             pass
-    assert 'model in the Meta' in str(excinfo.value)
+    assert 'valid Django Model' in str(excinfo.value)
 
 
 def test_should_raise_if_model_is_invalid():
@@ -19,18 +19,15 @@ def test_should_raise_if_model_is_invalid():
 
             class Meta:
                 model = 1
-    assert 'not a Django model' in str(excinfo.value)
+    assert 'valid Django Model' in str(excinfo.value)
 
 
 def test_should_map_fields_correctly():
     class ReporterType2(DjangoObjectType):
-
         class Meta:
             model = Reporter
-    assert_equal_lists(
-        ReporterType2._meta.fields_map.keys(),
-        ['articles', 'first_name', 'last_name', 'email', 'pets', 'id', 'films']
-    )
+            registry = Registry()
+    assert list(ReporterType2._meta.graphql_type.get_fields().keys()) == ['id', 'firstName', 'lastName', 'email', 'pets', 'aChoice']
 
 
 def test_should_map_only_few_fields():
@@ -38,8 +35,6 @@ def test_should_map_only_few_fields():
 
         class Meta:
             model = Reporter
-            only_fields = ('id', 'email')
-    assert_equal_lists(
-        Reporter2._meta.fields_map.keys(),
-        ['id', 'email']
-    )
+            fields = ('id', 'email')
+
+    assert list(Reporter2._meta.graphql_type.get_fields().keys()) == ['id', 'email']

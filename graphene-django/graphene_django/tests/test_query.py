@@ -5,11 +5,10 @@ from django.db import models
 from py.test import raises
 
 import graphene
-from graphene import relay
 
 from ..compat import MissingType, RangeField
 from ..types import DjangoNode, DjangoObjectType
-from ..registry import reset_global_registry
+from ..registry import reset_global_registry, get_global_registry
 from .models import Article, Reporter
 
 pytestmark = pytest.mark.django_db
@@ -43,7 +42,7 @@ def test_should_query_well():
         reporter = graphene.Field(ReporterType)
 
         def resolve_reporter(self, *args, **kwargs):
-            return ReporterType(Reporter(first_name='ABA', last_name='X'))
+            return Reporter(first_name='ABA', last_name='X')
 
     query = '''
         query ReporterQuery {
@@ -119,37 +118,37 @@ def test_should_query_postgres_fields():
 
 
 def test_should_node():
-    reset_global_registry()
+    # reset_global_registry()
+    # DjangoNode._meta.registry = get_global_registry()
 
-    class ReporterNode(DjangoNode):
+    class ReporterNode(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Reporter
 
         @classmethod
-        def get_node(cls, id, info):
-            return ReporterNode(Reporter(id=2, first_name='Cookie Monster'))
+        def get_node(cls, id, context, info):
+            return Reporter(id=2, first_name='Cookie Monster')
 
         def resolve_articles(self, *args, **kwargs):
             return [Article(headline='Hi!')]
 
-    class ArticleNode(DjangoNode):
+    class ArticleNode(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Article
 
         @classmethod
-        def get_node(cls, id, info):
+        def get_node(cls, id, context, info):
             return Article(id=1, headline='Article node', pub_date=datetime.date(2002, 3, 11))
 
     class Query(graphene.ObjectType):
-        node = relay.Node.Field()
+        node = DjangoNode.Field()
         reporter = graphene.Field(ReporterNode)
         article = graphene.Field(ArticleNode)
 
         def resolve_reporter(self, *args, **kwargs):
-            return ReporterNode(
-                Reporter(id=1, first_name='ABA', last_name='X'))
+            return Reporter(id=1, first_name='ABA', last_name='X')
 
     query = '''
         query ReporterQuery {

@@ -1,21 +1,18 @@
-import inspect
-from collections import OrderedDict
 from functools import partial
 
 import six
-from django.db import models
 
 from graphene import Field, Interface
 from graphene.types.objecttype import ObjectType, ObjectTypeMeta, attrs_without_fields, GrapheneObjectType, get_interfaces
-from graphene.types.interface import InterfaceTypeMeta
-from graphene.relay import Connection, Node
+from graphene.relay import Node
 from graphene.relay.node import NodeMeta
 from .converter import convert_django_field_with_choices
 from graphene.types.options import Options
-from .utils import get_model_fields
+from .utils import get_model_fields, is_valid_django_model
 from .registry import Registry, get_global_registry
 from graphene.utils.is_base_type import is_base_type
 from graphene.utils.copy_fields import copy_fields
+from graphene.utils.get_graphql_type import get_graphql_type
 from graphene.utils.get_fields import get_fields
 from graphene.utils.as_field import as_field
 
@@ -63,8 +60,8 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         )
         if not options.registry:
             options.registry = get_global_registry()
-        assert isinstance(options.registry, Registry), 'The attribute registry in {}.Meta needs to be an instance of Registry.'.format(name)
-        assert options.model, 'You need to pass a valid Django Model in {}.Meta'.format(name)
+        assert isinstance(options.registry, Registry), 'The attribute registry in {}.Meta needs to be an instance of Registry, received "{}".'.format(name, options.registry)
+        assert is_valid_django_model(options.model), 'You need to pass a valid Django Model in {}.Meta, received "{}".'.format(name, options.model)
 
         interfaces = tuple(options.interfaces)
         fields = get_fields(ObjectType, attrs, bases, interfaces)
@@ -80,7 +77,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             interfaces=tuple(get_interfaces(interfaces + base_interfaces))
         )
 
-        if issubclass(cls,  DjangoObjectType):
+        if issubclass(cls, DjangoObjectType):
             options.registry.register(cls)
 
         return cls
@@ -90,8 +87,24 @@ class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, ObjectType)):
     pass
 
 
-class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
-    pass
+class DjangoNodeMeta(NodeMeta, DjangoObjectTypeMeta):
+
+    @staticmethod
+    def _get_interface_options(meta):
+        return Options(
+            meta,
+            name=None,
+            description=None,
+            graphql_type=None,
+            registry=False
+        )
+
+    def __new__(cls, name, bases, attrs):
+        cls = super(DjangoNodeMeta, cls).__new__(cls, name, bases, attrs)
+        if not cls._meta.registry:
+            cls._meta.registry = get_global_registry()
+        assert isinstance(cls._meta.registry, Registry), 'The attribute registry in {}.Meta needs to be an instance of Registry.'.format(name)
+        return cls
 
 
 class DjangoNode(six.with_metaclass(DjangoNodeMeta, Node)):
@@ -101,3 +114,13 @@ class DjangoNode(six.with_metaclass(DjangoNodeMeta, Node)):
             return cls._meta.model.objects.get(id=id)
         except cls._meta.model.DoesNotExist:
             return None
+
+    @classmethod
+    def resolve_type(cls, type, context, info):
+        # We get the model from the _meta in the Django class/instance
+        model = type._meta.model
+        graphene_type = cls._meta.registry.get_type_for_model(model)
+        if graphene_type:
+            return get_graphql_type(graphene_type)
+
+        raise Exception("Type not found for model \"{}\"".format(model))

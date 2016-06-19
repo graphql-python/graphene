@@ -1,6 +1,6 @@
+import inspect
 from django.db import models
 from django.db.models.manager import Manager
-from django.db.models.query import QuerySet
 
 # from graphene.utils import LazyList
 class LazyList(object):
@@ -54,8 +54,6 @@ class WrappedQueryset(LazyList):
 def maybe_queryset(value):
     if isinstance(value, Manager):
         value = value.get_queryset()
-    if isinstance(value, QuerySet):
-        return WrappedQueryset(value)
     return value
 
 
@@ -73,6 +71,10 @@ def get_related_model(field):
         # Django 1.6, 1.7
         return field.rel.to
     return field.related_model
+
+
+def is_valid_django_model(model):
+    return inspect.isclass(model) and issubclass(model, models.Model)
 
 
 def import_single_dispatch():
