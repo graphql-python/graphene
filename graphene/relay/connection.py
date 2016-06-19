@@ -91,23 +91,22 @@ class IterableConnectionField(Field):
         assert issubclass(connection_type, Connection), '{} type have to be a subclass of Connection'.format(str(self))
         return connection_type
 
+    def connection_resolver(self, root, args, context, info):
+        iterable = super(ConnectionField, self).resolver(root, args, context, info)
+        # if isinstance(resolved, self.type.graphene)
+        assert isinstance(
+            iterable, Iterable), 'Resolved value from the connection field have to be iterable. Received "{}"'.format(iterable)
+        connection = connection_from_list(
+            iterable,
+            args,
+            connection_type=self.connection,
+            edge_type=self.connection.Edge,
+        )
+        return connection
+
     @property
     def resolver(self):
-        super_resolver = super(ConnectionField, self).resolver
-
-        def resolver(root, args, context, info):
-            iterable = super_resolver(root, args, context, info)
-            # if isinstance(resolved, self.type.graphene)
-            assert isinstance(
-                iterable, Iterable), 'Resolved value from the connection field have to be iterable'
-            connection = connection_from_list(
-                iterable,
-                args,
-                connection_type=self.connection,
-                edge_type=self.connection.Edge,
-            )
-            return connection
-        return resolver
+        return self.connection_resolver
 
     @resolver.setter
     def resolver(self, resolver):
