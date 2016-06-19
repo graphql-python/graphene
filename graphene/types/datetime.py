@@ -14,7 +14,7 @@ class DateTime(Scalar):
 
     @staticmethod
     def serialize(dt):
-        assert isinstance(dt, datetime.datetime)
+        assert isinstance(dt, (datetime.datetime, datetime.date)), 'Received not compatible datetime "{}"'.format(repr(dt))
         return dt.isoformat()
 
     @staticmethod
