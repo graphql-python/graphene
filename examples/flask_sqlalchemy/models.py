@@ -1,4 +1,8 @@
+import uuid
+
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy.dialects.postgresql import UUID, ENUM, JSON, JSONB, HSTORE, ARRAY
+from sqlalchemy.sql.expression import text
 from sqlalchemy.orm import backref, relationship
 
 from database import Base
@@ -26,6 +30,15 @@ class Employee(Base):
     hired_on = Column(DateTime, default=func.now())
     department_id = Column(Integer, ForeignKey('department.id'))
     role_id = Column(Integer, ForeignKey('roles.role_id'))
+
+    # Uncomment below for postgresql specific fields testing
+    # uuid = Column(UUID(), server_default=text("uuid_generate_v4()"))
+    # is_active = Column(ENUM('Yes', 'No', name='is_active'), default="Yes")
+    # json_data = Column(JSON())
+    # jsonb_data = Column(JSONB())
+    # hstore_data = Column(HSTORE())
+    # articles = Column(ARRAY(Integer))
+
     # Use cascade='delete,all' to propagate the deletion of a Department onto its Employees
     department = relationship(
         Department,
