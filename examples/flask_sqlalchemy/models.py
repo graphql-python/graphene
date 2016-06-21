@@ -1,9 +1,10 @@
-import uuid
-
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
-from sqlalchemy.dialects.postgresql import UUID, ENUM, JSON, JSONB, HSTORE, ARRAY
-from sqlalchemy.sql.expression import text
 from sqlalchemy.orm import backref, relationship
+
+# Uncomment import below for postgresql tests
+# import uuid
+# from sqlalchemy.dialects.postgresql import UUID, ENUM, JSON, JSONB, HSTORE, ARRAY
+# from sqlalchemy.sql.expression import text
 
 from database import Base
 
