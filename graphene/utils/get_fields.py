@@ -16,10 +16,24 @@ def get_fields_from_attrs(in_type, attrs):
         yield attname, field
 
 
-def get_fields_from_types(bases):
+def get_fields_from_bases_and_types(bases, types):
     fields = set()
     for _class in bases:
-        for attname, field in get_graphql_type(_class).get_fields().items():
+        if not is_graphene_type(_class):
+            continue
+        _fields = get_graphql_type(_class)._fields
+        if callable(_fields):
+            _fields = _fields()
+
+        for default_attname, field in _fields.items():
+            attname = getattr(field, 'attname', default_attname)
+            if attname in fields:
+                continue
+            fields.add(attname)
+            yield attname, field
+
+    for grapqhl_type in types:
+        for attname, field in get_graphql_type(grapqhl_type).get_fields().items():
             if attname in fields:
                 continue
             fields.add(attname)
@@ -29,11 +43,7 @@ def get_fields_from_types(bases):
 def get_fields(in_type, attrs, bases, graphql_types=()):
     fields = []
 
-    graphene_bases = tuple(
-        base._meta.graphql_type for base in bases if is_graphene_type(base)
-    ) + graphql_types
-
-    extended_fields = list(get_fields_from_types(graphene_bases))
+    extended_fields = list(get_fields_from_bases_and_types(bases, graphql_types))
     local_fields = list(get_fields_from_attrs(in_type, attrs))
     # We asume the extended fields are already sorted, so we only
     # have to sort the local fields, that are get from attrs

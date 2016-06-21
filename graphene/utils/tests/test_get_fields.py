@@ -4,7 +4,7 @@ from graphql import (GraphQLField, GraphQLFloat, GraphQLInt,
                      GraphQLInterfaceType, GraphQLString)
 
 from ...types import Argument, Field, ObjectType, String
-from ..get_fields import get_fields_from_attrs, get_fields_from_types
+from ..get_fields import get_fields_from_attrs, get_fields_from_bases_and_types
 
 
 def test_get_fields_from_attrs():
@@ -31,8 +31,8 @@ def test_get_fields_from_types():
         ('extra', GraphQLField(GraphQLFloat))
     ]))
 
-    bases = (int_base, float_base)
-    base_fields = OrderedDict(get_fields_from_types(bases))
+    _types = (int_base, float_base)
+    base_fields = OrderedDict(get_fields_from_bases_and_types((), _types))
     assert [f for f in base_fields.keys()] == ['int', 'num', 'extra', 'float']
     assert [f.type for f in base_fields.values()] == [
         GraphQLInt,

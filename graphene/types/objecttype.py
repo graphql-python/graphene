@@ -146,9 +146,13 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
     def __init__(self, *args, **kwargs):
         # GraphQL ObjectType acting as container
         args_len = len(args)
-        fields = self._meta.graphql_type.get_fields().values()
-        for f in fields:
-            setattr(self, getattr(f, 'attname', f.name), None)
+        _fields = self._meta.graphql_type._fields
+        if callable(_fields):
+            _fields = _fields()
+
+        fields = _fields.items()
+        for name, f in fields:
+            setattr(self, getattr(f, 'attname', name), None)
 
         if args_len > len(fields):
             # Daft, but matches old exception sans the err msg.
@@ -156,18 +160,18 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
         fields_iter = iter(fields)
 
         if not kwargs:
-            for val, field in zip(args, fields_iter):
-                attname = getattr(field, 'attname', field.name)
+            for val, (name, field) in zip(args, fields_iter):
+                attname = getattr(field, 'attname', name)
                 setattr(self, attname, val)
         else:
-            for val, field in zip(args, fields_iter):
-                attname = getattr(field, 'attname', field.name)
+            for val, (name, field) in zip(args, fields_iter):
+                attname = getattr(field, 'attname', name)
                 setattr(self, attname, val)
                 kwargs.pop(attname, None)
 
-        for field in fields_iter:
+        for name, field in fields_iter:
             try:
-                attname = getattr(field, 'attname', field.name)
+                attname = getattr(field, 'attname', name)
                 val = kwargs.pop(attname)
                 setattr(self, attname, val)
             except KeyError:
