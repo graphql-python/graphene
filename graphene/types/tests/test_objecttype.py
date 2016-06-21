@@ -74,11 +74,7 @@ def test_objecttype_inheritance():
 
     graphql_type = MyObjectType._meta.graphql_type
     fields = graphql_type.get_fields()
-    assert 'field1' in fields
-    assert 'field2' in fields
-    assert 'inherited' in fields
-    assert fields['field1'] > fields['inherited']
-    assert fields['field2'] > fields['field1']
+    assert fields.keys() == ['inherited', 'field1', 'field2']
 
 
 def test_objecttype_as_container_get_fields():
@@ -195,11 +191,7 @@ def test_objecttype_graphene_interface():
     graphql_type = GrapheneObjectType._meta.graphql_type
     assert graphql_type.get_interfaces() == (GrapheneInterface._meta.graphql_type, )
     assert graphql_type.is_type_of(GrapheneObjectType(), None, None)
-    fields = graphql_type.get_fields()
-    assert 'field' in fields
-    assert 'extended' in fields
-    assert 'name' in fields
-    assert fields['field'] > fields['extended'] > fields['name']
+    fields = graphql_type.get_fields().keys() == ['name', 'extended', 'field']
 
 
 def test_objecttype_graphene_inherit_interface():

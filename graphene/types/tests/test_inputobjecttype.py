@@ -1,5 +1,6 @@
 
 from graphql import GraphQLInputObjectType, GraphQLString
+from graphql.type.definition import GraphQLInputFieldDefinition
 
 from ..field import InputField
 from ..inputobjecttype import InputObjectType
@@ -43,7 +44,7 @@ def test_generate_objecttype_with_fields():
     graphql_type = MyObjectType._meta.graphql_type
     fields = graphql_type.get_fields()
     assert 'field' in fields
-    assert isinstance(fields['field'], InputField)
+    assert isinstance(fields['field'], GraphQLInputFieldDefinition)
 
 
 def test_generate_objecttype_with_graphene_fields():
@@ -53,4 +54,4 @@ def test_generate_objecttype_with_graphene_fields():
     graphql_type = MyObjectType._meta.graphql_type
     fields = graphql_type.get_fields()
     assert 'field' in fields
-    assert isinstance(fields['field'], InputField)
+    assert isinstance(fields['field'], GraphQLInputFieldDefinition)

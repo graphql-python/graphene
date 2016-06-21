@@ -2,7 +2,7 @@ import inspect
 from collections import OrderedDict
 from itertools import chain
 
-from graphql import GraphQLArgument
+from graphql.type.definition import GraphQLArgument, GraphQLArgumentDefinition
 from graphql.utils.assert_valid_name import assert_valid_name
 
 from ..utils.orderedtype import OrderedType
@@ -40,11 +40,15 @@ class Argument(GraphQLArgument, OrderedType):
 
     @classmethod
     def copy_from(cls, argument):
+        if isinstance (argument, (GraphQLArgumentDefinition, Argument)):
+            name = argument.name
+        else:
+            name = None
         return cls(
             type=argument.type,
             default_value=argument.default_value,
             description=argument.description,
-            name=argument.name,
+            name=name,
             _creation_counter=argument.creation_counter if isinstance(argument, Argument) else None,
         )
 

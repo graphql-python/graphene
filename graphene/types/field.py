@@ -1,6 +1,7 @@
+from collections import OrderedDict
 import inspect
 
-from graphql.type import GraphQLField, GraphQLInputObjectField
+from graphql.type import GraphQLField, GraphQLInputObjectField, GraphQLFieldDefinition
 from graphql.utils.assert_valid_name import assert_valid_name
 
 from ..utils.orderedtype import OrderedType
@@ -126,18 +127,23 @@ class Field(AbstractField, GraphQLField, OrderedType):
             _creation_counter = field.creation_counter if _creation_counter is False else None
             attname = attname or field.attname
             parent = parent or field.parent
+            args = to_arguments(args, field.args)
         else:
             # If is a GraphQLField
             type = type or field.type
             resolver = resolver or field.resolver
-            name = field.name
+            field_args = field.args
+            if isinstance(field, GraphQLFieldDefinition):
+                name = name or field.name
+                field_args = OrderedDict((a.name, a) for a in field_args)
+            args = to_arguments(args, field_args)
             _creation_counter = None
             attname = attname or name
             parent = parent
 
         new_field = cls(
             type=type,
-            args=to_arguments(args, field.args),
+            args=args,
             resolver=resolver,
             source=source,
             deprecation_reason=field.deprecation_reason,
