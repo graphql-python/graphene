@@ -206,11 +206,8 @@ def test_objecttype_graphene_inherit_interface():
     assert graphql_type.get_interfaces() == (GrapheneInterface._meta.graphql_type, )
     assert graphql_type.is_type_of(GrapheneObjectType(), None, None)
     fields = graphql_type.get_fields()
-    assert 'field' in fields
-    assert 'extended' in fields
-    assert 'name' in fields
+    fields = graphql_type.get_fields().keys() == ['name', 'extended', 'field']
     assert issubclass(GrapheneObjectType, GrapheneInterface)
-    assert fields['field'] > fields['extended'] > fields['name']
 
 
 # def test_objecttype_graphene_interface_extended():
