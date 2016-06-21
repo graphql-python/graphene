@@ -46,7 +46,7 @@ from graphene.contrib.django.filter import DjangoFilterConnectionField
 from .models import Post
 
 class Query(ObjectType):
-    all_posts = DjangoFilterConnectionField(CategoryNode)
+    all_posts = DjangoFilterConnectionField(PostNode)
 
     class Meta:
         abstract = True
@@ -66,7 +66,7 @@ from graphene.contrib.django.filter import DjangoFilterConnectionField
 from .models import Post
 
 class Query(ObjectType):
-    my_posts = DjangoFilterConnectionField(CategoryNode)
+    my_posts = DjangoFilterConnectionField(PostNode)
 
     class Meta:
         abstract = True
