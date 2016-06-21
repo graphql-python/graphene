@@ -34,5 +34,12 @@ def init_db():
     roy = Employee(name='Roy', department=engineering, role=engineer)
     db_session.add(roy)
     tracy = Employee(name='Tracy', department=hr, role=manager)
+
+    # postgresql specific dialects tests
+    # tracy.articles = [1, 2, 3, 4]
+    # tracy.json_data = {"test_json": "test_json"}
+    # tracy.jsonb_data = {"test_jsonb": "test_jsonb"}
+    # tracy.hstore_data = {"test_hstore": "test_hstore"}
+
     db_session.add(tracy)
     db_session.commit()
