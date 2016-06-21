@@ -7,7 +7,7 @@ from ..utils.get_fields import get_fields
 from ..utils.is_base_type import is_base_type
 from .definitions import GrapheneGraphQLType
 from .field import InputField
-from .interface import attrs_without_fields
+from .objecttype import attrs_without_fields
 from .options import Options
 from .unmountedtype import UnmountedType
 
