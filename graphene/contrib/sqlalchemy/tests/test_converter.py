@@ -2,8 +2,10 @@ from py.test import raises
 from sqlalchemy import Column, Table, types
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils.types.choice import ChoiceType
+from sqlalchemy.dialects import postgresql
 
 import graphene
+from graphene.core.types.custom_scalars import JSONString
 from graphene.contrib.sqlalchemy.converter import (convert_sqlalchemy_column,
                                                    convert_sqlalchemy_relationship)
 from graphene.contrib.sqlalchemy.fields import (ConnectionOrListField,
@@ -122,3 +124,27 @@ def test_should_onetomany_convert_model():
     assert isinstance(graphene_type, ConnectionOrListField)
     assert isinstance(graphene_type.type, SQLAlchemyModelField)
     assert graphene_type.type.model == Article
+
+
+def test_should_postgresql_uuid_convert():
+    assert_column_conversion(postgresql.UUID(), graphene.String)
+
+
+def test_should_postgresql_enum_convert():
+    assert_column_conversion(postgresql.ENUM(), graphene.String)
+
+
+def test_should_postgresql_array_convert():
+    assert_column_conversion(postgresql.ARRAY(types.Integer), graphene.List)
+
+
+def test_should_postgresql_json_convert():
+    assert_column_conversion(postgresql.JSON(), JSONString)
+
+
+def test_should_postgresql_jsonb_convert():
+    assert_column_conversion(postgresql.JSONB(), JSONString)
+
+
+def test_should_postgresql_hstore_convert():
+    assert_column_conversion(postgresql.HSTORE(), JSONString)

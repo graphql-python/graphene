@@ -80,7 +80,8 @@ def convert_column_to_enum(type, column):
 
 @convert_sqlalchemy_type.register(postgresql.ARRAY)
 def convert_postgres_array_to_list(type, column):
-    return List(description=column.doc)
+    graphene_type = convert_sqlalchemy_type(column.type.item_type, column)
+    return List(graphene_type, description=column.doc)
 
 
 @convert_sqlalchemy_type.register(postgresql.HSTORE)
