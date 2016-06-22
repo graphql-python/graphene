@@ -21,7 +21,7 @@ def get_fields_from_bases_and_types(bases, types):
     for _class in bases:
         if not is_graphene_type(_class):
             continue
-        _fields = get_graphql_type(_class)._fields
+        _fields = _class._meta.get_fields()
         if callable(_fields):
             _fields = _fields()
 

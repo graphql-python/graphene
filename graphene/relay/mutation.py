@@ -52,6 +52,8 @@ class ClientIDMutationMeta(MutationMeta):
             mutate_and_get_payload=cls.mutate_and_get_payload,
         )
         options.graphql_type = field.type
+        options.get_fields = lambda: output_fields
+
         cls.Field = partial(Field.copy_and_extend, field, type=field.type, _creation_counter=None)
         return cls
 

@@ -56,7 +56,7 @@ class ObjectTypeMeta(type):
         super_new = type.__new__
 
         # Also ensure initialization is only performed for subclasses of
-        # ObjectType, Interfaces
+        # ObjectType,or Interfaces
         if not is_base_type(bases, ObjectTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
@@ -100,7 +100,9 @@ class ObjectTypeMeta(type):
             )
         else:
             assert not fields, "Can't mount Fields in an Interface with a defined graphql_type"
-            fields = copy_fields(options.graphql_type.get_fields(), parent=cls)
+            fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
+
+        options.get_fields = lambda: fields
 
         for name, field in fields.items():
             setattr(cls, field.attname or name, field)
@@ -138,6 +140,8 @@ class ObjectTypeMeta(type):
             assert not fields, "Can't mount Fields in an ObjectType with a defined graphql_type"
             fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
 
+        options.get_fields = lambda: fields
+
         for name, field in fields.items():
             setattr(cls, field.attname or name, field)
 
@@ -149,11 +153,7 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
     def __init__(self, *args, **kwargs):
         # GraphQL ObjectType acting as container
         args_len = len(args)
-        _fields = self._meta.graphql_type._fields
-        if callable(_fields):
-            _fields = _fields()
-
-        fields = _fields.items()
+        fields = self._meta.get_fields().items()
         for name, f in fields:
             setattr(self, getattr(f, 'attname', name), None)
 
