@@ -1,5 +1,5 @@
 import warnings
-from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
+from ..utils import DJANGO_FILTER_INSTALLED
 
 if not DJANGO_FILTER_INSTALLED:
     warnings.warn(

@@ -1,7 +1,7 @@
 from django.db.models.query import QuerySet
 from graphene.relay import ConnectionField
 from graphql_relay.connection.arrayconnection import connection_from_list_slice
-from .utils import maybe_queryset
+from .utils import maybe_queryset, DJANGO_FILTER_INSTALLED
 
 
 class DjangoConnectionField(ConnectionField):
@@ -39,3 +39,10 @@ class DjangoConnectionField(ConnectionField):
             connection_type=self.connection,
             edge_type=self.connection.Edge,
         )
+
+
+def get_connection_field(*args, **kwargs):
+    if DJANGO_FILTER_INSTALLED:
+        from .filter.fields import DjangoFilterConnectionField
+        return DjangoFilterConnectionField(*args, **kwargs)
+    return ConnectionField(*args, **kwargs)

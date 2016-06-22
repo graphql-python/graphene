@@ -1,7 +1,6 @@
-from ....core.classtypes.objecttype import ObjectType
-from ....core.types import Field
+from graphene import ObjectType, List
 from .sql.types import DjangoDebugBaseSQL
 
 
 class DjangoDebug(ObjectType):
-    sql = Field(DjangoDebugBaseSQL.List())
+    sql = List(DjangoDebugBaseSQL)

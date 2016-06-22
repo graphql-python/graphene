@@ -1,4 +1,4 @@
-from .....core import Boolean, Float, ObjectType, String
+from graphene import Boolean, Float, ObjectType, String
 
 
 class DjangoDebugBaseSQL(ObjectType):

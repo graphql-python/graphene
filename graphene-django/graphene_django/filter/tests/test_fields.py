@@ -2,51 +2,58 @@ from datetime import datetime
 
 import pytest
 
-from graphene import ObjectType, Schema
-from graphene.contrib.django import DjangoNode
-from graphene.contrib.django.forms import (GlobalIDFormField,
-                                           GlobalIDMultipleChoiceField)
-from graphene.contrib.django.tests.models import Article, Pet, Reporter
-from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
-from graphene.relay import NodeField
+from graphene import ObjectType, Schema, Field
+from graphene_django import DjangoNode, DjangoObjectType
+from graphene_django.forms import (GlobalIDFormField,
+                                   GlobalIDMultipleChoiceField)
+from graphene_django.tests.models import Article, Pet, Reporter
+from graphene_django.utils import DJANGO_FILTER_INSTALLED
 
 pytestmark = []
 if DJANGO_FILTER_INSTALLED:
     import django_filters
-    from graphene.contrib.django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
-                                                GlobalIDMultipleChoiceFilter)
-    from graphene.contrib.django.filter.tests.filters import ArticleFilter, PetFilter
+    from graphene_django.filter import (GlobalIDFilter, DjangoFilterConnectionField,
+                                        GlobalIDMultipleChoiceFilter)
+    from graphene_django.filter.tests.filters import ArticleFilter, PetFilter
 else:
     pytestmark.append(pytest.mark.skipif(True, reason='django_filters not installed'))
 
 pytestmark.append(pytest.mark.django_db)
 
 
-class ArticleNode(DjangoNode):
+class ArticleNode(DjangoNode, DjangoObjectType):
 
     class Meta:
         model = Article
 
 
-class ReporterNode(DjangoNode):
+class ReporterNode(DjangoNode, DjangoObjectType):
 
     class Meta:
         model = Reporter
 
 
-class PetNode(DjangoNode):
+class PetNode(DjangoNode, DjangoObjectType):
 
     class Meta:
         model = Pet
 
-schema = Schema()
+# schema = Schema()
+
+
+def get_args(field):
+    if isinstance(field.args, list):
+        return {arg.name: arg for arg in field.args}
+    else:
+        return field.args
 
 
 def assert_arguments(field, *arguments):
     ignore = ('after', 'before', 'first', 'last', 'orderBy')
+    args = get_args(field)
     actual = [
         name
-        for name in schema.T(field.arguments)
+        for name in args
         if name not in ignore and not name.startswith('_')
     ]
     assert set(arguments) == set(actual), \
@@ -57,12 +64,14 @@ def assert_arguments(field, *arguments):
 
 
 def assert_orderable(field):
-    assert 'orderBy' in schema.T(field.arguments), \
+    args = get_args(field)
+    assert 'orderBy' in args, \
         'Field cannot be ordered'
 
 
 def assert_not_orderable(field):
-    assert 'orderBy' not in schema.T(field.arguments), \
+    args = get_args(field)
+    assert 'orderBy' not in args, \
         'Field can be ordered'
 
 
@@ -122,7 +131,7 @@ def test_filter_shortcut_filterset_extra_meta():
 
 
 def test_filter_filterset_information_on_meta():
-    class ReporterFilterNode(DjangoNode):
+    class ReporterFilterNode(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Reporter
@@ -135,14 +144,14 @@ def test_filter_filterset_information_on_meta():
 
 
 def test_filter_filterset_information_on_meta_related():
-    class ReporterFilterNode(DjangoNode):
+    class ReporterFilterNode(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Reporter
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
-    class ArticleFilterNode(DjangoNode):
+    class ArticleFilterNode(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Article
@@ -152,25 +161,24 @@ def test_filter_filterset_information_on_meta_related():
     class Query(ObjectType):
         all_reporters = DjangoFilterConnectionField(ReporterFilterNode)
         all_articles = DjangoFilterConnectionField(ArticleFilterNode)
-        reporter = NodeField(ReporterFilterNode)
-        article = NodeField(ArticleFilterNode)
+        reporter = Field(ReporterFilterNode)
+        article = Field(ArticleFilterNode)
 
     schema = Schema(query=Query)
-    schema.schema  # Trigger the schema loading
-    articles_field = schema.get_type('ReporterFilterNode')._meta.fields_map['articles']
+    articles_field = ReporterFilterNode._meta.graphql_type.get_fields()['articles']
     assert_arguments(articles_field, 'headline', 'reporter')
     assert_orderable(articles_field)
 
 
 def test_filter_filterset_related_results():
-    class ReporterFilterNode(DjangoNode):
+    class ReporterFilterNode(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Reporter
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
-    class ArticleFilterNode(DjangoNode):
+    class ArticleFilterNode(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Article
@@ -180,8 +188,8 @@ def test_filter_filterset_related_results():
     class Query(ObjectType):
         all_reporters = DjangoFilterConnectionField(ReporterFilterNode)
         all_articles = DjangoFilterConnectionField(ArticleFilterNode)
-        reporter = NodeField(ReporterFilterNode)
-        article = NodeField(ArticleFilterNode)
+        reporter = Field(ReporterFilterNode)
+        article = Field(ArticleFilterNode)
 
     r1 = Reporter.objects.create(first_name='r1', last_name='r1', email='r1@test.com')
     r2 = Reporter.objects.create(first_name='r2', last_name='r2', email='r2@test.com')

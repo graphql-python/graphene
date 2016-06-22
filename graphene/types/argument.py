@@ -6,6 +6,7 @@ from graphql.type.definition import GraphQLArgument, GraphQLArgumentDefinition
 from graphql.utils.assert_valid_name import assert_valid_name
 
 from ..utils.orderedtype import OrderedType
+from ..utils.str_converters import to_camel_case
 
 
 class Argument(GraphQLArgument, OrderedType):
@@ -67,7 +68,7 @@ def to_arguments(*args, **extra):
             raise ValueError('Unknown argument "{}".'.format(default_name))
 
         arg = Argument.copy_from(arg)
-        arg.name = arg.name or default_name
+        arg.name = arg.name or default_name and to_camel_case(default_name)
         assert arg.name, 'All arguments must have a name.'
         assert arg.name not in arguments_names, 'More than one Argument have same name "{}".'.format(arg.name)
         arguments.append(arg)

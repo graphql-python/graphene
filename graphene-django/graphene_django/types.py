@@ -8,7 +8,7 @@ from graphene.relay import Node
 from graphene.relay.node import NodeMeta
 from .converter import convert_django_field_with_choices
 from graphene.types.options import Options
-from .utils import get_model_fields, is_valid_django_model
+from .utils import get_model_fields, is_valid_django_model, DJANGO_FILTER_INSTALLED
 from .registry import Registry, get_global_registry
 from graphene.utils.is_base_type import is_base_type
 from graphene.utils.copy_fields import copy_fields
@@ -49,8 +49,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         if not is_base_type(bases, DjangoObjectTypeMeta):
             return super_new(cls, name, bases, attrs)
 
-        options = Options(
-            attrs.pop('Meta', None),
+        defaults = dict(
             name=None,
             description=None,
             model=None,
@@ -58,6 +57,19 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             exclude=(),
             interfaces=(),
             registry=None
+        )
+        if DJANGO_FILTER_INSTALLED:
+            # In case Django filter is available, then
+            # we allow more attributes in Meta
+            defaults = dict(
+                defaults,
+                filter_fields=(),
+                filter_order_by=(),
+            )
+
+        options = Options(
+            attrs.pop('Meta', None),
+            **defaults
         )
         if not options.registry:
             options.registry = get_global_registry()
@@ -77,7 +89,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             fields=partial(cls._construct_fields, fields, options),
             interfaces=tuple(get_interfaces(interfaces + base_interfaces))
         )
-        options.get_fields = lambda: {}
+        options.get_fields = partial(cls._construct_fields, fields, options)
 
         if issubclass(cls, DjangoObjectType):
             options.registry.register(cls)

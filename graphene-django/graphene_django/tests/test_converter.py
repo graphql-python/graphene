@@ -248,4 +248,4 @@ def test_should_postgres_range_convert_list():
     from django.contrib.postgres.fields import IntegerRangeField
     field = assert_conversion(IntegerRangeField, graphene.List)
     assert isinstance(field.type, graphene.List)
-    # assert isinstance(field.type.of_type, graphene.Int)
+    assert field.type.of_type == get_graphql_type(graphene.Int)

@@ -4,13 +4,14 @@ from django.utils.encoding import force_text
 from graphene import Enum, List, ID, Boolean, Float, Int, String, Field, NonNull
 from graphene.types.json import JSONString
 from graphene.types.datetime import DateTime
+from graphene.types.json import JSONString
 from graphene.utils.str_converters import to_const
-from graphene.relay import Node, ConnectionField
-# from ...core.types.custom_scalars import DateTime, JSONString
+from graphene.relay import Node
+
 from .compat import (ArrayField, HStoreField, JSONField, RangeField,
                      RelatedObject, UUIDField)
 from .utils import get_related_model, import_single_dispatch
-from .fields import DjangoConnectionField
+from .fields import get_connection_field
 
 singledispatch = import_single_dispatch()
 
@@ -30,8 +31,7 @@ def convert_django_field_with_choices(field, registry=None):
         meta = field.model._meta
         name = '{}{}'.format(meta.object_name, field.name.capitalize())
         graphql_choices = list(convert_choices(choices))
-        from collections import OrderedDict
-        enum = Enum(name, OrderedDict(graphql_choices))
+        enum = Enum(name, list(graphql_choices))
         return enum(description=field.help_text)
     return convert_django_field(field, registry)
 
@@ -106,7 +106,7 @@ def convert_field_to_list_or_connection(field, registry=None):
         return
 
     if issubclass(_type, Node):
-        return DjangoConnectionField(_type)
+        return get_connection_field(_type)
     return Field(List(_type))
 
 
@@ -116,8 +116,8 @@ def convert_relatedfield_to_djangomodel(field, registry=None):
     model = field.model
     _type = registry.get_type_for_model(model)
     if issubclass(_type, Node):
-        return DjangoConnectionField(_type)
-    return Field(List(_type))
+        return get_connection_field(_type)
+    return List(_type)
 
 
 @convert_django_field.register(models.OneToOneField)

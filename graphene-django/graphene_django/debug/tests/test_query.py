@@ -1,8 +1,8 @@
 import pytest
 
 import graphene
-from graphene.contrib.django import DjangoConnectionField, DjangoNode
-from graphene.contrib.django.utils import DJANGO_FILTER_INSTALLED
+from graphene_django import DjangoConnectionField, DjangoNode, DjangoObjectType
+from graphene_django.utils import DJANGO_FILTER_INSTALLED
 
 from ...tests.models import Reporter
 from ..middleware import DjangoDebugMiddleware
@@ -23,7 +23,7 @@ def test_should_query_field():
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoNode):
+    class ReporterType(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Reporter
@@ -69,7 +69,7 @@ def test_should_query_list():
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoNode):
+    class ReporterType(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Reporter
@@ -117,7 +117,7 @@ def test_should_query_connection():
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoNode):
+    class ReporterType(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Reporter
@@ -166,14 +166,14 @@ def test_should_query_connection():
 @pytest.mark.skipif(not DJANGO_FILTER_INSTALLED,
                     reason="requires django-filter")
 def test_should_query_connectionfilter():
-    from graphene.contrib.django.filter import DjangoFilterConnectionField
+    from ...filter import DjangoFilterConnectionField
 
     r1 = Reporter(last_name='ABA')
     r1.save()
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoNode):
+    class ReporterType(DjangoNode, DjangoObjectType):
 
         class Meta:
             model = Reporter

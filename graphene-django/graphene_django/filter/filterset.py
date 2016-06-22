@@ -5,8 +5,7 @@ from django.utils.text import capfirst
 from django_filters import Filter, MultipleChoiceFilter
 from django_filters.filterset import FilterSet, FilterSetMetaclass
 
-from graphene.contrib.django.forms import (GlobalIDFormField,
-                                           GlobalIDMultipleChoiceField)
+from ..forms import GlobalIDFormField, GlobalIDMultipleChoiceField
 from graphql_relay.node.node import from_global_id
 
 

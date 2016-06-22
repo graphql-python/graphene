@@ -1,5 +1,6 @@
 import re
-from collections import Iterable
+import copy
+from collections import Iterable, OrderedDict
 
 import six
 
@@ -72,8 +73,15 @@ class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
 
 class IterableConnectionField(Field):
 
-    def __init__(self, type, args={}, *other_args, **kwargs):
-        super(IterableConnectionField, self).__init__(type, args=connection_args, *other_args, **kwargs)
+    def __init__(self, type, *other_args, **kwargs):
+        args = kwargs.pop('args', {})
+        if not args:
+            args = connection_args
+        else:
+            args = copy.copy(args)
+            args.update(connection_args)
+
+        super(IterableConnectionField, self).__init__(type, args=args, *other_args, **kwargs)
 
     @property
     def type(self):
