@@ -16,16 +16,6 @@ except (ImportError, AttributeError):
     DJANGO_FILTER_INSTALLED = False
 
 
-def get_type_for_model(schema, model):
-    schema = schema
-    types = schema.types.values()
-    for _type in types:
-        type_model = hasattr(_type, '_meta') and getattr(
-            _type._meta, 'model', None)
-        if model == type_model:
-            return _type
-
-
 def get_reverse_fields(model):
     for name, attr in model.__dict__.items():
         # Django =>1.9 uses 'rel', django <1.9 uses 'related'
@@ -40,15 +30,6 @@ def get_reverse_fields(model):
             yield related
         elif isinstance(related, models.ManyToManyRel) and not related.symmetrical:
             yield related
-
-
-class WrappedQueryset(LazyList):
-
-    def __len__(self):
-        # Dont calculate the length using len(queryset), as this will
-        # evaluate the whole queryset and return it's length.
-        # Use .count() instead
-        return self._origin.count()
 
 
 def maybe_queryset(value):
