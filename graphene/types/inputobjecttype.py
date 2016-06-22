@@ -31,7 +31,6 @@ class InputObjectTypeMeta(type):
             name=None,
             description=None,
             graphql_type=None,
-            abstract=False
         )
 
         fields = get_fields(InputObjectType, attrs, bases)

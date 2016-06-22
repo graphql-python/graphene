@@ -78,7 +78,6 @@ class ObjectTypeMeta(type):
             name=None,
             description=None,
             graphql_type=None,
-            abstract=False
         )
 
     @staticmethod
@@ -117,7 +116,6 @@ class ObjectTypeMeta(type):
             description=None,
             graphql_type=None,
             interfaces=(),
-            abstract=False
         )
 
         interfaces = tuple(options.interfaces)
