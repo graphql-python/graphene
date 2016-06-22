@@ -55,48 +55,15 @@ class ObjectTypeMeta(type):
     def __new__(cls, name, bases, attrs):
         super_new = type.__new__
 
-        # Also ensure initialization is only performed for subclasses of Model
-        # (excluding Model class itself).
-
+        # Also ensure initialization is only performed for subclasses of
+        # ObjectType,or Interfaces
         if not is_base_type(bases, ObjectTypeMeta):
-            return super_new(cls, name, bases, attrs)
+            return type.__new__(cls, name, bases, attrs)
 
         if not is_objecttype(bases):
             return cls._create_interface(cls, name, bases, attrs)
 
-        options = Options(
-            attrs.pop('Meta', None),
-            name=None,
-            description=None,
-            graphql_type=None,
-            interfaces=(),
-            abstract=False
-        )
-
-        interfaces = tuple(options.interfaces)
-        fields = get_fields(ObjectType, attrs, bases, interfaces)
-        attrs = attrs_without_fields(attrs, fields)
-        cls = super_new(cls, name, bases, dict(attrs, _meta=options))
-
-        if not options.graphql_type:
-            fields = copy_fields(Field, fields, parent=cls)
-            base_interfaces = tuple(b for b in bases if issubclass(b, Interface))
-            options.graphql_type = GrapheneObjectType(
-                graphene_type=cls,
-                name=options.name or cls.__name__,
-                description=options.description or cls.__doc__,
-                fields=fields,
-                is_type_of=cls.is_type_of,
-                interfaces=tuple(get_interfaces(interfaces + base_interfaces))
-            )
-        else:
-            assert not fields, "Can't mount Fields in an ObjectType with a defined graphql_type"
-            fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
-
-        for name, field in fields.items():
-            setattr(cls, field.attname or name, field)
-
-        return cls
+        return cls._create_objecttype(cls, name, bases, attrs)
 
     def get_interfaces(cls, bases):
         return (b for b in bases if issubclass(b, Interface))
@@ -133,7 +100,47 @@ class ObjectTypeMeta(type):
             )
         else:
             assert not fields, "Can't mount Fields in an Interface with a defined graphql_type"
-            fields = copy_fields(options.graphql_type.get_fields(), parent=cls)
+            fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
+
+        options.get_fields = lambda: fields
+
+        for name, field in fields.items():
+            setattr(cls, field.attname or name, field)
+
+        return cls
+
+    @staticmethod
+    def _create_objecttype(cls, name, bases, attrs):
+        options = Options(
+            attrs.pop('Meta', None),
+            name=None,
+            description=None,
+            graphql_type=None,
+            interfaces=(),
+            abstract=False
+        )
+
+        interfaces = tuple(options.interfaces)
+        fields = get_fields(ObjectType, attrs, bases, interfaces)
+        attrs = attrs_without_fields(attrs, fields)
+        cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
+
+        if not options.graphql_type:
+            fields = copy_fields(Field, fields, parent=cls)
+            base_interfaces = tuple(b for b in bases if issubclass(b, Interface))
+            options.graphql_type = GrapheneObjectType(
+                graphene_type=cls,
+                name=options.name or cls.__name__,
+                description=options.description or cls.__doc__,
+                fields=fields,
+                is_type_of=cls.is_type_of,
+                interfaces=tuple(get_interfaces(interfaces + base_interfaces))
+            )
+        else:
+            assert not fields, "Can't mount Fields in an ObjectType with a defined graphql_type"
+            fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
+
+        options.get_fields = lambda: fields
 
         for name, field in fields.items():
             setattr(cls, field.attname or name, field)
@@ -146,9 +153,9 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
     def __init__(self, *args, **kwargs):
         # GraphQL ObjectType acting as container
         args_len = len(args)
-        fields = self._meta.graphql_type.get_fields().values()
-        for f in fields:
-            setattr(self, getattr(f, 'attname', f.name), None)
+        fields = self._meta.get_fields().items()
+        for name, f in fields:
+            setattr(self, getattr(f, 'attname', name), None)
 
         if args_len > len(fields):
             # Daft, but matches old exception sans the err msg.
@@ -156,18 +163,18 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
         fields_iter = iter(fields)
 
         if not kwargs:
-            for val, field in zip(args, fields_iter):
-                attname = getattr(field, 'attname', field.name)
+            for val, (name, field) in zip(args, fields_iter):
+                attname = getattr(field, 'attname', name)
                 setattr(self, attname, val)
         else:
-            for val, field in zip(args, fields_iter):
-                attname = getattr(field, 'attname', field.name)
+            for val, (name, field) in zip(args, fields_iter):
+                attname = getattr(field, 'attname', name)
                 setattr(self, attname, val)
                 kwargs.pop(attname, None)
 
-        for field in fields_iter:
+        for name, field in fields_iter:
             try:
-                attname = getattr(field, 'attname', field.name)
+                attname = getattr(field, 'attname', name)
                 val = kwargs.pop(attname)
                 setattr(self, attname, val)
             except KeyError:

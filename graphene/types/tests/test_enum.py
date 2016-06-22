@@ -11,12 +11,21 @@ def test_enum_construction():
         GREEN = 2
         BLUE = 3
 
+        @property
+        def description(self):
+            return "Description {}".format(self.name)
+
     assert isinstance(RGB._meta.graphql_type, GraphQLEnumType)
     values = RGB._meta.graphql_type.get_values()
     assert sorted([v.name for v in values]) == [
         'BLUE',
         'GREEN',
         'RED'
+    ]
+    assert sorted([v.description for v in values]) == [
+        'Description BLUE',
+        'Description GREEN',
+        'Description RED'
     ]
     assert isinstance(RGB(name='field_name').as_field(), Field)
     assert isinstance(RGB(name='field_name').as_argument(), Argument)

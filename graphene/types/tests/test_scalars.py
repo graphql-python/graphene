@@ -3,8 +3,9 @@ import datetime
 import pytest
 
 from graphene.utils.get_graphql_type import get_graphql_type
-from graphql import (GraphQLBoolean, GraphQLFloat, GraphQLInt,
-                     GraphQLScalarType, GraphQLString, graphql)
+from graphql import graphql
+from graphql.type import (GraphQLBoolean, GraphQLFloat, GraphQLInt,
+                          GraphQLScalarType, GraphQLString, GraphQLFieldDefinition)
 from graphql.language import ast
 
 from ..field import Field
@@ -94,7 +95,7 @@ def test_scalar_in_objecttype(scalar_class, graphql_type):
     graphql_type = get_graphql_type(MyObjectType)
     fields = graphql_type.get_fields()
     assert list(fields.keys()) == ['before', 'field', 'after']
-    assert isinstance(fields['field'], Field)
+    assert isinstance(fields['field'], GraphQLFieldDefinition)
 
 
 def test_custom_scalar_empty():

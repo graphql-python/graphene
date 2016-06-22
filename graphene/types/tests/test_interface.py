@@ -56,7 +56,7 @@ def test_interface_inheritance():
     fields = graphql_type.get_fields()
     assert 'field' in fields
     assert 'inherited' in fields
-    assert fields['field'] > fields['inherited']
+    assert MyInterface.field > MyInheritedInterface.inherited
 
 
 def test_interface_instance():

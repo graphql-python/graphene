@@ -10,6 +10,8 @@ from ..types.objecttype import ObjectType, ObjectTypeMeta, is_objecttype
 from ..types.options import Options
 from .connection import Connection
 
+from ..utils.copy_fields import copy_fields
+
 
 # We inherit from ObjectTypeMeta as we want to allow
 # inheriting from Node, and also ObjectType.
@@ -23,16 +25,17 @@ class NodeMeta(ObjectTypeMeta):
             meta,
         )
 
-    def __new__(cls, name, bases, attrs):
+    @staticmethod
+    def _create_objecttype(cls, name, bases, attrs):
+        # The interface provided by node_definitions is not an instance
+        # of GrapheneInterfaceType, so it will have no graphql_type,
+        # so will not trigger Node.implements
+        cls = super(NodeMeta, cls)._create_objecttype(cls, name, bases, attrs)
+        cls.implements(cls)
+        return cls
 
-        if is_objecttype(bases):
-            cls = super(NodeMeta, cls).__new__(cls, name, bases, attrs)
-            # The interface provided by node_definitions is not an instance
-            # of GrapheneInterfaceType, so it will have no graphql_type,
-            # so will not trigger Node.implements
-            cls.implements(cls)
-            return cls
-
+    @staticmethod
+    def _create_interface(cls, name, bases, attrs):
         options = cls._get_interface_options(attrs.pop('Meta', None))
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
@@ -45,6 +48,10 @@ class NodeMeta(ObjectTypeMeta):
             type_resolver=cls.resolve_type,
         )
         options.graphql_type = node_interface
+
+        fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
+        options.get_fields = lambda: fields
+
         cls.Field = partial(
             Field.copy_and_extend,
             node_field,

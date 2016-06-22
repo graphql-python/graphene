@@ -54,6 +54,10 @@ class ConnectionMeta(ObjectTypeMeta):
         )
         cls.Edge = type(edge.name, (ObjectType, ), {'Meta': type('Meta', (object,), {'graphql_type': edge})})
         cls._meta.graphql_type = connection
+        fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
+
+        cls._meta.get_fields = lambda: fields
+
         return cls
 
 
