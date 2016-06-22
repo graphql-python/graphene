@@ -6,6 +6,7 @@ from py.test import raises
 import graphene
 from graphene.relay import Node, ConnectionField
 from graphene.types.datetime import DateTime
+from graphene.types.json import JSONString
 from graphene.utils.get_graphql_type import get_graphql_type
 # from graphene.core.types.custom_scalars import DateTime, JSONString
 
@@ -93,13 +94,12 @@ def test_should_integer_convert_int():
 
 
 def test_should_boolean_convert_boolean():
-    field = assert_conversion(models.BooleanField, graphene.Boolean)
-    assert field.required is True
+    field = assert_conversion(models.BooleanField, graphene.NonNull)
+    assert field.type.of_type == get_graphql_type(graphene.Boolean)
 
 
 def test_should_nullboolean_convert_boolean():
-    field = assert_conversion(models.NullBooleanField, graphene.Boolean)
-    assert field.required is False
+    assert_conversion(models.NullBooleanField, graphene.Boolean)
 
 
 def test_field_with_choices_convert_enum():
@@ -218,7 +218,7 @@ def test_should_onetoone_reverse_convert_model():
 def test_should_postgres_array_convert_list():
     field = assert_conversion(ArrayField, graphene.List, models.CharField(max_length=100))
     assert isinstance(field.type, graphene.List)
-    assert isinstance(field.type.of_type, graphene.String)
+    assert field.type.of_type == get_graphql_type(graphene.String)
 
 
 @pytest.mark.skipif(ArrayField is MissingType,
@@ -227,7 +227,7 @@ def test_should_postgres_array_multiple_convert_list():
     field = assert_conversion(ArrayField, graphene.List, ArrayField(models.CharField(max_length=100)))
     assert isinstance(field.type, graphene.List)
     assert isinstance(field.type.of_type, graphene.List)
-    assert isinstance(field.type.of_type.of_type, graphene.String)
+    assert field.type.of_type.of_type == get_graphql_type(graphene.String)
 
 
 @pytest.mark.skipif(HStoreField is MissingType,
@@ -247,4 +247,5 @@ def test_should_postgres_json_convert_string():
 def test_should_postgres_range_convert_list():
     from django.contrib.postgres.fields import IntegerRangeField
     field = assert_conversion(IntegerRangeField, graphene.List)
-    assert isinstance(field.type.of_type, graphene.Int)
+    assert isinstance(field.type, graphene.List)
+    # assert isinstance(field.type.of_type, graphene.Int)

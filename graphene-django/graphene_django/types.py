@@ -39,7 +39,8 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
 
         return fields
 
-    def __new__(cls, name, bases, attrs):
+    @staticmethod
+    def _create_objecttype(cls, name, bases, attrs):
         # super_new = super(DjangoObjectTypeMeta, cls).__new__
         super_new = type.__new__
 
@@ -76,6 +77,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             fields=partial(cls._construct_fields, fields, options),
             interfaces=tuple(get_interfaces(interfaces + base_interfaces))
         )
+        options.get_fields = lambda: {}
 
         if issubclass(cls, DjangoObjectType):
             options.registry.register(cls)
@@ -87,7 +89,7 @@ class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, ObjectType)):
     pass
 
 
-class DjangoNodeMeta(NodeMeta, DjangoObjectTypeMeta):
+class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
 
     @staticmethod
     def _get_interface_options(meta):
@@ -99,8 +101,9 @@ class DjangoNodeMeta(NodeMeta, DjangoObjectTypeMeta):
             registry=False
         )
 
-    def __new__(cls, name, bases, attrs):
-        cls = super(DjangoNodeMeta, cls).__new__(cls, name, bases, attrs)
+    @staticmethod
+    def _create_interface(cls, name, bases, attrs):
+        cls = super(DjangoNodeMeta, cls)._create_interface(cls, name, bases, attrs)
         if not cls._meta.registry:
             cls._meta.registry = get_global_registry()
         assert isinstance(cls._meta.registry, Registry), 'The attribute registry in {}.Meta needs to be an instance of Registry.'.format(name)

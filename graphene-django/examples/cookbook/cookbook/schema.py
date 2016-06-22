@@ -5,5 +5,4 @@ import graphene
 class Query(cookbook.ingredients.schema.Query):
     pass
 
-schema = graphene.Schema(name='Cookbook Schema')
-schema.query = Query
+schema = graphene.Schema(name='Cookbook Schema', query=Query)

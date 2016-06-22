@@ -38,7 +38,6 @@ class NodeMeta(ObjectTypeMeta):
     def _create_interface(cls, name, bases, attrs):
         options = cls._get_interface_options(attrs.pop('Meta', None))
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
-
         get_node_from_global_id = getattr(cls, 'get_node_from_global_id', None)
         id_resolver = getattr(cls, 'id_resolver', None)
         assert get_node_from_global_id, '{}.get_node_from_global_id method is required by the Node interface.'.format(cls.__name__)
