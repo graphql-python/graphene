@@ -61,8 +61,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         if DJANGO_FILTER_INSTALLED:
             # In case Django filter is available, then
             # we allow more attributes in Meta
-            defaults = dict(
-                defaults,
+            defaults.update(
                 filter_fields=(),
                 filter_order_by=(),
             )
