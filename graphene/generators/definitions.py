@@ -1,4 +1,4 @@
-from graphql import GraphQLObjectType, GraphQLInterfaceType
+from graphql import GraphQLObjectType, GraphQLInterfaceType, GraphQLScalarType
 
 
 class GrapheneGraphQLType(object):
@@ -27,3 +27,7 @@ class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
         for interface in self._provided_interfaces:
             if isinstance(interface, GrapheneInterfaceType):
                 interface.graphene_type.implements(self.graphene_type)
+
+
+class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
+    pass

@@ -1,16 +1,13 @@
 import six
 
 from graphql import (GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt,
-                     GraphQLScalarType, GraphQLString)
+                     GraphQLString)
 
 from ..utils.is_base_type import is_base_type
-from .definitions import GrapheneGraphQLType
 from .options import Options
 from .unmountedtype import UnmountedType
 
-
-class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
-    pass
+from ..generators import generate_scalar
 
 
 class ScalarTypeMeta(type):
@@ -33,15 +30,7 @@ class ScalarTypeMeta(type):
         cls = super_new(cls, name, bases, dict(attrs, _meta=options))
 
         if not options.graphql_type:
-            options.graphql_type = GrapheneScalarType(
-                graphene_type=cls,
-                name=cls._meta.name or cls.__name__,
-                description=cls._meta.description or cls.__doc__,
-
-                serialize=getattr(cls, 'serialize', None),
-                parse_value=getattr(cls, 'parse_value', None),
-                parse_literal=getattr(cls, 'parse_literal', None),
-            )
+            options.graphql_type = generate_scalar(cls)
 
         return cls
 

@@ -1,4 +1,4 @@
-from .definitions import GrapheneInterfaceType, GrapheneObjectType
+from .definitions import GrapheneInterfaceType, GrapheneObjectType, GrapheneScalarType
 
 
 def generate_interface(interface):
@@ -19,4 +19,16 @@ def generate_objecttype(objecttype):
         fields=objecttype._meta.get_fields,
         is_type_of=objecttype.is_type_of,
         interfaces=objecttype._meta.get_interfaces
+    )
+
+
+def generate_scalar(scalar):
+    return GrapheneScalarType(
+        graphene_type=scalar,
+        name=scalar._meta.name or scalar.__name__,
+        description=scalar._meta.description or scalar.__doc__,
+
+        serialize=getattr(scalar, 'serialize', None),
+        parse_value=getattr(scalar, 'parse_value', None),
+        parse_literal=getattr(scalar, 'parse_literal', None),
     )
