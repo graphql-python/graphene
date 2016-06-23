@@ -1,4 +1,5 @@
-from .definitions import GrapheneInterfaceType, GrapheneObjectType, GrapheneScalarType
+from .definitions import GrapheneInterfaceType, GrapheneObjectType, GrapheneScalarType, GrapheneEnumType
+from .utils import values_from_enum
 
 
 def generate_interface(interface):
@@ -31,4 +32,13 @@ def generate_scalar(scalar):
         serialize=getattr(scalar, 'serialize', None),
         parse_value=getattr(scalar, 'parse_value', None),
         parse_literal=getattr(scalar, 'parse_literal', None),
+    )
+
+
+def generate_enum(enum):
+    return GrapheneEnumType(
+        graphene_type=enum,
+        values=values_from_enum(enum._meta.enum),
+        name=enum._meta.name or enum.__name__,
+        description=enum._meta.description or enum.__doc__,
     )

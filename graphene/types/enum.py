@@ -2,10 +2,7 @@ from collections import OrderedDict
 
 import six
 
-from graphql.type import GraphQLEnumType, GraphQLEnumValue
-
 from ..utils.is_base_type import is_base_type
-from .definitions import GrapheneGraphQLType
 from .options import Options
 from .unmountedtype import UnmountedType
 
@@ -14,21 +11,7 @@ try:
 except ImportError:
     from ..utils.enum import Enum as PyEnum
 
-
-class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
-    pass
-
-
-def values_from_enum(enum):
-    _values = OrderedDict()
-    for name, value in enum.__members__.items():
-        _values[name] = GraphQLEnumValue(
-            name=name,
-            value=value.value,
-            description=getattr(value, 'description', None),
-            deprecation_reason=getattr(value, 'deprecation_reason', None)
-        )
-    return _values
+from ..generators import generate_enum
 
 
 class EnumTypeMeta(type):
@@ -56,13 +39,7 @@ class EnumTypeMeta(type):
         cls = super_new(cls, name, bases, new_attrs)
 
         if not options.graphql_type:
-            values = values_from_enum(options.enum)
-            options.graphql_type = GrapheneEnumType(
-                graphene_type=cls,
-                values=values,
-                name=options.name or cls.__name__,
-                description=options.description or cls.__doc__,
-            )
+            options.graphql_type = generate_enum(cls)
 
         return cls
 

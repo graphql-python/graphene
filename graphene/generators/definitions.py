@@ -1,4 +1,4 @@
-from graphql import GraphQLObjectType, GraphQLInterfaceType, GraphQLScalarType
+from graphql import GraphQLObjectType, GraphQLInterfaceType, GraphQLScalarType, GraphQLEnumType
 
 
 class GrapheneGraphQLType(object):
@@ -30,4 +30,8 @@ class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
 
 
 class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
+    pass
+
+
+class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
     pass
