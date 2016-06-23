@@ -1,5 +1,6 @@
 import re
 import copy
+from functools import partial
 from collections import Iterable, OrderedDict
 
 import six
@@ -103,22 +104,25 @@ class IterableConnectionField(Field):
         assert issubclass(connection_type, Connection), '{} type have to be a subclass of Connection'.format(str(self))
         return connection_type
 
-    def connection_resolver(self, root, args, context, info):
-        iterable = super(ConnectionField, self).resolver(root, args, context, info)
+    @staticmethod
+    def connection_resolver(resolver, connection, root, args, context, info):
+        iterable = resolver(root, args, context, info)
         # if isinstance(resolved, self.type.graphene)
         assert isinstance(
             iterable, Iterable), 'Resolved value from the connection field have to be iterable. Received "{}"'.format(iterable)
         connection = connection_from_list(
             iterable,
             args,
-            connection_type=self.connection,
-            edge_type=self.connection.Edge,
+            connection_type=connection,
+            edge_type=connection.Edge,
         )
         return connection
 
     @property
     def resolver(self):
-        return self.connection_resolver
+        resolver = super(ConnectionField, self).resolver
+        connection = self.connection
+        return partial(self.connection_resolver, resolver, connection)
 
     @resolver.setter
     def resolver(self, resolver):
