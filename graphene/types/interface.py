@@ -1,1 +1,1 @@
-from .objecttype import Interface, GrapheneInterfaceType
+from .objecttype import Interface

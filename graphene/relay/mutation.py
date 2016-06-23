@@ -59,6 +59,4 @@ class ClientIDMutationMeta(MutationMeta):
 
 
 class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, Mutation)):
-
-    class Meta:
-        abstract = True
+    pass

@@ -1,32 +1,14 @@
 
 import six
 
-from graphql import GraphQLObjectType, GraphQLInterfaceType
-
 from ..utils.copy_fields import copy_fields
 from ..utils.get_fields import get_fields
 from ..utils.is_base_type import is_base_type
-from .definitions import GrapheneGraphQLType
 from .field import Field
 from .options import Options
 
 
-class GrapheneInterfaceType(GrapheneGraphQLType, GraphQLInterfaceType):
-    pass
-
-
-class GrapheneObjectType(GrapheneGraphQLType, GraphQLObjectType):
-
-    def __init__(self, *args, **kwargs):
-        super(GrapheneObjectType, self).__init__(*args, **kwargs)
-        self.check_interfaces()
-
-    def check_interfaces(self):
-        if not self._provided_interfaces:
-            return
-        for interface in self._provided_interfaces:
-            if isinstance(interface, GrapheneInterfaceType):
-                interface.graphene_type.implements(self.graphene_type)
+from ..generators import generate_interface, generate_objecttype
 
 
 def get_interfaces(interfaces):
@@ -47,14 +29,13 @@ def is_objecttype(bases):
 def attrs_without_fields(attrs, fields):
     return {k: v for k, v in attrs.items() if k not in fields}
 
+
 # We inherit from InterfaceTypeMeta instead of type for being able
 # to have ObjectTypes extending Interfaces using Python syntax, like:
 # class MyObjectType(ObjectType, MyInterface)
 class ObjectTypeMeta(type):
 
     def __new__(cls, name, bases, attrs):
-        super_new = type.__new__
-
         # Also ensure initialization is only performed for subclasses of
         # ObjectType,or Interfaces
         if not is_base_type(bases, ObjectTypeMeta):
@@ -90,18 +71,12 @@ class ObjectTypeMeta(type):
 
         if not options.graphql_type:
             fields = copy_fields(Field, fields, parent=cls)
-            options.graphql_type = GrapheneInterfaceType(
-                graphene_type=cls,
-                name=options.name or cls.__name__,
-                resolve_type=cls.resolve_type,
-                description=options.description or cls.__doc__,
-                fields=fields,
-            )
+            options.get_fields = lambda: fields
+            options.graphql_type = generate_interface(cls)
         else:
             assert not fields, "Can't mount Fields in an Interface with a defined graphql_type"
             fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
-
-        options.get_fields = lambda: fields
+            options.get_fields = lambda: fields
 
         for name, field in fields.items():
             setattr(cls, field.attname or name, field)
@@ -126,19 +101,14 @@ class ObjectTypeMeta(type):
         if not options.graphql_type:
             fields = copy_fields(Field, fields, parent=cls)
             base_interfaces = tuple(b for b in bases if issubclass(b, Interface))
-            options.graphql_type = GrapheneObjectType(
-                graphene_type=cls,
-                name=options.name or cls.__name__,
-                description=options.description or cls.__doc__,
-                fields=fields,
-                is_type_of=cls.is_type_of,
-                interfaces=tuple(get_interfaces(interfaces + base_interfaces))
-            )
+            options.get_fields = lambda: fields
+            options.get_interfaces = tuple(get_interfaces(interfaces + base_interfaces))
+            options.graphql_type = generate_objecttype(cls)
         else:
             assert not fields, "Can't mount Fields in an ObjectType with a defined graphql_type"
             fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
 
-        options.get_fields = lambda: fields
+            options.get_fields = lambda: fields
 
         for name, field in fields.items():
             setattr(cls, field.attname or name, field)

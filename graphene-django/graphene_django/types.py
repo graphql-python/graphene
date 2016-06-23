@@ -3,7 +3,7 @@ from functools import partial
 import six
 
 from graphene import Field, Interface
-from graphene.types.objecttype import ObjectType, ObjectTypeMeta, attrs_without_fields, GrapheneObjectType, get_interfaces
+from graphene.types.objecttype import ObjectType, ObjectTypeMeta, attrs_without_fields, get_interfaces
 from graphene.relay import Node
 from graphene.relay.node import NodeMeta
 from .converter import convert_django_field_with_choices
@@ -15,6 +15,8 @@ from graphene.utils.copy_fields import copy_fields
 from graphene.utils.get_graphql_type import get_graphql_type
 from graphene.utils.get_fields import get_fields
 from graphene.utils.as_field import as_field
+from graphene.generators import generate_objecttype
+from graphene.generators.definitions import GrapheneObjectType
 
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
@@ -81,14 +83,16 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         cls = super_new(cls, name, bases, dict(attrs, _meta=options))
 
         base_interfaces = tuple(b for b in bases if issubclass(b, Interface))
+        options.get_fields = partial(cls._construct_fields, fields, options)
+        options.get_interfaces = tuple(get_interfaces(interfaces + base_interfaces))
+
         options.graphql_type = GrapheneObjectType(
             graphene_type=cls,
             name=options.name or cls.__name__,
             description=options.description or cls.__doc__,
-            fields=partial(cls._construct_fields, fields, options),
-            interfaces=tuple(get_interfaces(interfaces + base_interfaces))
+            fields=options.get_fields,
+            interfaces=options.get_interfaces
         )
-        options.get_fields = partial(cls._construct_fields, fields, options)
 
         if issubclass(cls, DjangoObjectType):
             options.registry.register(cls)
