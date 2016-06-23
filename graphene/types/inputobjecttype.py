@@ -1,19 +1,15 @@
 import six
 
-from graphql import GraphQLInputObjectType
-
 from ..utils.copy_fields import copy_fields
 from ..utils.get_fields import get_fields
 from ..utils.is_base_type import is_base_type
-from .definitions import GrapheneGraphQLType
 from .field import InputField
 from .objecttype import attrs_without_fields
 from .options import Options
 from .unmountedtype import UnmountedType
 
 
-class GrapheneInputObjectType(GrapheneGraphQLType, GraphQLInputObjectType):
-    pass
+from ..generators import generate_inputobjecttype
 
 
 class InputObjectTypeMeta(type):
@@ -39,12 +35,8 @@ class InputObjectTypeMeta(type):
 
         if not options.graphql_type:
             fields = copy_fields(InputField, fields, parent=cls)
-            options.graphql_type = GrapheneInputObjectType(
-                graphene_type=cls,
-                name=options.name or cls.__name__,
-                description=options.description or cls.__doc__,
-                fields=fields,
-            )
+            options.get_fields = lambda: fields
+            options.graphql_type = generate_inputobjecttype(cls)
         else:
             assert not fields, "Can't mount InputFields in an InputObjectType with a defined graphql_type"
             fields = copy_fields(InputField, options.graphql_type.get_fields(), parent=cls)

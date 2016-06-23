@@ -1,4 +1,4 @@
-from .definitions import GrapheneInterfaceType, GrapheneObjectType, GrapheneScalarType, GrapheneEnumType
+from .definitions import GrapheneInterfaceType, GrapheneObjectType, GrapheneScalarType, GrapheneEnumType, GrapheneInputObjectType
 from .utils import values_from_enum
 
 
@@ -41,4 +41,13 @@ def generate_enum(enum):
         values=values_from_enum(enum._meta.enum),
         name=enum._meta.name or enum.__name__,
         description=enum._meta.description or enum.__doc__,
+    )
+
+
+def generate_inputobjecttype(inputobjecttype):
+    return GrapheneInputObjectType(
+        graphene_type=inputobjecttype,
+        name=inputobjecttype._meta.name or inputobjecttype.__name__,
+        description=inputobjecttype._meta.description or inputobjecttype.__doc__,
+        fields=inputobjecttype._meta.get_fields,
     )
