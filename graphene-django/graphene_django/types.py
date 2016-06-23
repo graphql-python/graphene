@@ -16,7 +16,6 @@ from graphene.utils.get_graphql_type import get_graphql_type
 from graphene.utils.get_fields import get_fields
 from graphene.utils.as_field import as_field
 from graphene.generators import generate_objecttype
-from graphene.generators.definitions import GrapheneObjectType
 
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
@@ -86,13 +85,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         options.get_fields = partial(cls._construct_fields, fields, options)
         options.get_interfaces = tuple(get_interfaces(interfaces + base_interfaces))
 
-        options.graphql_type = GrapheneObjectType(
-            graphene_type=cls,
-            name=options.name or cls.__name__,
-            description=options.description or cls.__doc__,
-            fields=options.get_fields,
-            interfaces=options.get_interfaces
-        )
+        options.graphql_type = generate_objecttype(cls)
 
         if issubclass(cls, DjangoObjectType):
             options.registry.register(cls)
@@ -101,7 +94,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
 
 
 class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, ObjectType)):
-    pass
+    is_type_of = None
 
 
 class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
