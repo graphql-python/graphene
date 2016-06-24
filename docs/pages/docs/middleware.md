@@ -37,7 +37,7 @@ class AuthorizationMiddleware(object):
 ```
 
 Then, add the middleware to your schema:
-
+ 
 ```python
 schema = Schema(middlewares=[AuthorizationMiddleware()])
 ```
