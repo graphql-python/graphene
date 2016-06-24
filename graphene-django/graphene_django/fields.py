@@ -23,8 +23,9 @@ class DjangoConnectionField(ConnectionField):
     def default_resolver(self, root, args, context, info):
         return getattr(root, self.source or self.attname, self.get_manager())
 
-    def connection_resolver(self, root, args, context, info):
-        iterable = super(ConnectionField, self).resolver(root, args, context, info)
+    @staticmethod
+    def connection_resolver(resolver, connection, root, args, context, info):
+        iterable = resolver(root, args, context, info)
         iterable = maybe_queryset(iterable)
         if isinstance(iterable, QuerySet):
             _len = iterable.count()
@@ -36,8 +37,8 @@ class DjangoConnectionField(ConnectionField):
             slice_start=0,
             list_length=_len,
             list_slice_length=_len,
-            connection_type=self.connection,
-            edge_type=self.connection.Edge,
+            connection_type=connection,
+            edge_type=connection.Edge,
         )
 
 
