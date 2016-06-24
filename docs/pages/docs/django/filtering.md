@@ -3,7 +3,7 @@ title: Filtering
 description: Details of how to perform filtering in Graphene Django
 ---
 
-# Filtering
+# Filteringo
 
 Graphene integrates with [django-filter](https://django-filter.readthedocs.org)
 to provide filtering of results. See the
@@ -106,7 +106,7 @@ class AnimalNode(DjangoNode):
         filter_fields = ['name', 'genus', 'is_domesticated']
         # Either a tuple/list of fields upon which ordering is allowed, or
         # True to allow filtering on all fields specified in filter_fields
-        order_by_fields = True
+        filter_order_by = True
 ```
 
 You can then control the ordering via the `orderBy` argument:
@@ -129,7 +129,7 @@ query {
 By default Graphene provides easy access to the most commonly used
 features of `django-filter`. This is done by transparently creating a
 `django_filters.FilterSet` class for you and passing in the values for
-`filter_fields` and `order_by_fields`.
+`filter_fields` and `filter_order_by`.
 
 However, you may find this to be insufficient. In these cases you can
 create your own `Filterset` as follows:
