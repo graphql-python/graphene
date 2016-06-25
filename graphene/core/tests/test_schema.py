@@ -89,6 +89,7 @@ def test_query_schema_execute():
     assert not result.errors
     assert result.data == expected
 
+
 def test_schema_returns_promise():
     object()
     query = '''
