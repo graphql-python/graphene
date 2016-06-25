@@ -1,9 +1,12 @@
 from singledispatch import singledispatch
 from sqlalchemy import types
 from sqlalchemy.orm import interfaces
+from sqlalchemy.dialects import postgresql
 
 from ...core.classtypes.enum import Enum
 from ...core.types.scalars import ID, Boolean, Float, Int, String
+from ...core.types.definitions import List
+from ...core.types.custom_scalars import JSONString
 from .fields import ConnectionOrListField, SQLAlchemyModelField
 
 try:
@@ -42,6 +45,8 @@ def convert_sqlalchemy_type(type, column):
 @convert_sqlalchemy_type.register(types.Unicode)
 @convert_sqlalchemy_type.register(types.UnicodeText)
 @convert_sqlalchemy_type.register(types.Enum)
+@convert_sqlalchemy_type.register(postgresql.ENUM)
+@convert_sqlalchemy_type.register(postgresql.UUID)
 def convert_column_to_string(type, column):
     return String(description=column.doc)
 
@@ -71,3 +76,16 @@ def convert_column_to_float(type, column):
 def convert_column_to_enum(type, column):
     name = '{}_{}'.format(column.table.name, column.name).upper()
     return Enum(name, type.choices, description=column.doc)
+
+
+@convert_sqlalchemy_type.register(postgresql.ARRAY)
+def convert_postgres_array_to_list(type, column):
+    graphene_type = convert_sqlalchemy_type(column.type.item_type, column)
+    return List(graphene_type, description=column.doc)
+
+
+@convert_sqlalchemy_type.register(postgresql.HSTORE)
+@convert_sqlalchemy_type.register(postgresql.JSON)
+@convert_sqlalchemy_type.register(postgresql.JSONB)
+def convert_json_to_string(type, column):
+    return JSONString(description=column.doc)
