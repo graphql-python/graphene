@@ -1,5 +1,6 @@
 from graphql import graphql
 from py.test import raises
+from promise import is_thenable
 
 from graphene import Interface, List, ObjectType, Schema, String
 from graphene.core.fields import Field
@@ -87,6 +88,20 @@ def test_query_schema_execute():
     result = schema.execute(query, root_value=object())
     assert not result.errors
     assert result.data == expected
+
+
+def test_schema_returns_promise():
+    object()
+    query = '''
+    {
+      name
+      pet {
+        type
+      }
+    }
+    '''
+    result = schema.execute(query, root_value=object(), return_promise=True)
+    assert is_thenable(result)
 
 
 def test_schema_get_type_map():

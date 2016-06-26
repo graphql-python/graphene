@@ -118,7 +118,7 @@ class Schema(object):
         return self._types_names
 
     def execute(self, request_string='', root_value=None, variable_values=None,
-                context_value=None, operation_name=None, executor=None):
+                context_value=None, operation_name=None, executor=None, return_promise=False):
         return graphql(
             schema=self.schema,
             request_string=request_string,
@@ -126,7 +126,8 @@ class Schema(object):
             context_value=context_value,
             variable_values=variable_values,
             operation_name=operation_name,
-            executor=executor or self._executor
+            executor=executor or self._executor,
+            return_promise=return_promise
         )
 
     def introspect(self):
