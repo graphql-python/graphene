@@ -5,11 +5,12 @@ from sqlalchemy_utils.types.choice import ChoiceType
 from sqlalchemy.dialects import postgresql
 
 import graphene
-from graphene.core.types.custom_scalars import JSONString
-from graphene.contrib.sqlalchemy.converter import (convert_sqlalchemy_column,
-                                                   convert_sqlalchemy_relationship)
-from graphene.contrib.sqlalchemy.fields import (ConnectionOrListField,
-                                                SQLAlchemyModelField)
+from graphene.types.json import JSONString
+from ..converter import (convert_sqlalchemy_column,
+                         convert_sqlalchemy_relationship)
+from ..fields import SQLAlchemyConnectionField
+from ..types import SQLAlchemyObjectType, SQLAlchemyNode
+from ..registry import Registry
 
 from .models import Article, Pet, Reporter
 
@@ -100,30 +101,63 @@ def test_should_choice_convert_enum():
     Table('translatedmodel', Base.metadata, column)
     graphene_type = convert_sqlalchemy_column(column)
     assert issubclass(graphene_type, graphene.Enum)
-    assert graphene_type._meta.type_name == 'TRANSLATEDMODEL_LANGUAGE'
-    assert graphene_type._meta.description == 'Language'
-    assert graphene_type.__enum__.__members__['es'].value == 'Spanish'
-    assert graphene_type.__enum__.__members__['en'].value == 'English'
+    assert graphene_type._meta.graphql_type.name == 'TRANSLATEDMODEL_LANGUAGE'
+    assert graphene_type._meta.graphql_type.description == 'Language'
+    assert graphene_type._meta.enum.__members__['es'].value == 'Spanish'
+    assert graphene_type._meta.enum.__members__['en'].value == 'English'
 
 
 def test_should_manytomany_convert_connectionorlist():
-    graphene_type = convert_sqlalchemy_relationship(Reporter.pets.property)
-    assert isinstance(graphene_type, ConnectionOrListField)
-    assert isinstance(graphene_type.type, SQLAlchemyModelField)
-    assert graphene_type.type.model == Pet
+    registry = Registry()
+    graphene_type = convert_sqlalchemy_relationship(Reporter.pets.property, registry)
+    assert not graphene_type
+
+
+def test_should_manytomany_convert_connectionorlist_list():
+    class A(SQLAlchemyObjectType):
+        class Meta:
+            model = Pet
+
+    graphene_type = convert_sqlalchemy_relationship(Reporter.pets.property, A._meta.registry)
+    assert isinstance(graphene_type, graphene.List)
+    assert graphene_type.of_type == A._meta.graphql_type
+
+
+def test_should_manytomany_convert_connectionorlist_connection():
+    class A(SQLAlchemyNode, SQLAlchemyObjectType):
+        class Meta:
+            model = Pet
+
+    graphene_type = convert_sqlalchemy_relationship(Reporter.pets.property, A._meta.registry)
+    assert isinstance(graphene_type, SQLAlchemyConnectionField)
+
+
 
 
 def test_should_manytoone_convert_connectionorlist():
-    field = convert_sqlalchemy_relationship(Article.reporter.property)
-    assert isinstance(field, SQLAlchemyModelField)
-    assert field.model == Reporter
+    registry = Registry()
+    graphene_type = convert_sqlalchemy_relationship(Article.reporter.property, registry)
+    assert not graphene_type
 
 
-def test_should_onetomany_convert_model():
-    graphene_type = convert_sqlalchemy_relationship(Reporter.articles.property)
-    assert isinstance(graphene_type, ConnectionOrListField)
-    assert isinstance(graphene_type.type, SQLAlchemyModelField)
-    assert graphene_type.type.model == Article
+def test_should_manytoone_convert_connectionorlist_list():
+    class A(SQLAlchemyObjectType):
+        class Meta:
+            model = Reporter
+
+    graphene_type = convert_sqlalchemy_relationship(Article.reporter.property, A._meta.registry)
+    assert isinstance(graphene_type, graphene.Field)
+    assert graphene_type.type == A._meta.graphql_type
+
+
+def test_should_manytoone_convert_connectionorlist_connection():
+    class A(SQLAlchemyNode, SQLAlchemyObjectType):
+        class Meta:
+            model = Reporter
+
+    graphene_type = convert_sqlalchemy_relationship(Article.reporter.property, A._meta.registry)
+    assert isinstance(graphene_type, graphene.Field)
+    assert graphene_type.type == A._meta.graphql_type
 
 
 def test_should_postgresql_uuid_convert():

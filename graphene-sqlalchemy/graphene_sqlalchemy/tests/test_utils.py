@@ -5,13 +5,12 @@ from ..utils import get_session
 
 def test_get_session():
     session = 'My SQLAlchemy session'
-    schema = Schema(session=session)
 
     class Query(ObjectType):
         x = String()
 
-        def resolve_x(self, args, info):
-            return get_session(info)
+        def resolve_x(self, args, context, info):
+            return get_session(context)
 
     query = '''
         query ReporterQuery {
@@ -19,7 +18,7 @@ def test_get_session():
         }
     '''
 
-    schema = Schema(query=Query, session=session)
-    result = schema.execute(query)
+    schema = Schema(query=Query)
+    result = schema.execute(query, context_value={'session': session})
     assert not result.errors
     assert result.data['x'] == session

@@ -1,125 +1,158 @@
-import inspect
-
 import six
 from sqlalchemy.inspection import inspect as sqlalchemyinspect
 from sqlalchemy.orm.exc import NoResultFound
 
-from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
-from ...relay.types import Connection, Node, NodeMeta
+from graphene import ObjectType
+from graphene.relay import Node
 from .converter import (convert_sqlalchemy_column,
                         convert_sqlalchemy_relationship)
-from .options import SQLAlchemyOptions
-from .utils import get_query, is_mapped
+from .utils import is_mapped
+
+from functools import partial
 
 
-class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
-    options_class = SQLAlchemyOptions
+from graphene import Field, Interface
+from graphene.types.options import Options
+from graphene.types.objecttype import attrs_without_fields, get_interfaces
 
-    def construct_fields(cls):
-        only_fields = cls._meta.only_fields
-        exclude_fields = cls._meta.exclude_fields
-        already_created_fields = {f.attname for f in cls._meta.local_fields}
+from .registry import Registry, get_global_registry
+from .utils import get_query
+from graphene.utils.is_base_type import is_base_type
+from graphene.utils.copy_fields import copy_fields
+from graphene.utils.get_graphql_type import get_graphql_type
+from graphene.utils.get_fields import get_fields
+from graphene.utils.as_field import as_field
+from graphene.generators import generate_objecttype
+
+
+class SQLAlchemyObjectTypeMeta(type(ObjectType)):
+    def _construct_fields(cls, fields, options):
+        only_fields = cls._meta.only
+        exclude_fields = cls._meta.exclude
         inspected_model = sqlalchemyinspect(cls._meta.model)
 
         # Get all the columns for the relationships on the model
         for relationship in inspected_model.relationships:
             is_not_in_only = only_fields and relationship.key not in only_fields
-            is_already_created = relationship.key in already_created_fields
+            is_already_created = relationship.key in fields
             is_excluded = relationship.key in exclude_fields or is_already_created
             if is_not_in_only or is_excluded:
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we excldue this field in exclude_fields
                 continue
-            converted_relationship = convert_sqlalchemy_relationship(relationship)
-            cls.add_to_class(relationship.key, converted_relationship)
+            converted_relationship = convert_sqlalchemy_relationship(relationship, options.registry)
+            if not converted_relationship:
+                continue
+            name = relationship.key
+            fields[name] = as_field(converted_relationship)
 
         for name, column in inspected_model.columns.items():
             is_not_in_only = only_fields and name not in only_fields
-            is_already_created = name in already_created_fields
+            is_already_created = name in fields
             is_excluded = name in exclude_fields or is_already_created
             if is_not_in_only or is_excluded:
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we excldue this field in exclude_fields
                 continue
-            converted_column = convert_sqlalchemy_column(column)
-            cls.add_to_class(name, converted_column)
+            converted_column = convert_sqlalchemy_column(column, options.registry)
+            if not converted_column:
+                continue
+            fields[name] = as_field(converted_column)
 
-    def construct(cls, *args, **kwargs):
-        cls = super(SQLAlchemyObjectTypeMeta, cls).construct(*args, **kwargs)
-        if not cls._meta.abstract:
-            if not cls._meta.model:
-                raise Exception(
-                    'SQLAlchemy ObjectType %s must have a model in the Meta class attr' %
-                    cls)
-            elif not inspect.isclass(cls._meta.model) or not is_mapped(cls._meta.model):
-                raise Exception('Provided model in %s is not a SQLAlchemy model' % cls)
+        fields = copy_fields(Field, fields, parent=cls)
 
-            cls.construct_fields()
+        return fields
+
+    @staticmethod
+    def _create_objecttype(cls, name, bases, attrs):
+        # super_new = super(SQLAlchemyObjectTypeMeta, cls).__new__
+        super_new = type.__new__
+
+        # Also ensure initialization is only performed for subclasses of Model
+        # (excluding Model class itself).
+        if not is_base_type(bases, SQLAlchemyObjectTypeMeta):
+            return super_new(cls, name, bases, attrs)
+
+        options = Options(
+            attrs.pop('Meta', None),
+            name=None,
+            description=None,
+            model=None,
+            fields=(),
+            exclude=(),
+            only=(),
+            interfaces=(),
+            registry=None
+        )
+
+        if not options.registry:
+            options.registry = get_global_registry()
+        assert isinstance(options.registry, Registry), 'The attribute registry in {}.Meta needs to be an instance of Registry, received "{}".'.format(name, options.registry)
+        assert is_mapped(options.model), 'You need to pass a valid SQLAlchemy Model in {}.Meta, received "{}".'.format(name, options.model)
+
+        interfaces = tuple(options.interfaces)
+        fields = get_fields(ObjectType, attrs, bases, interfaces)
+        attrs = attrs_without_fields(attrs, fields)
+        cls = super_new(cls, name, bases, dict(attrs, _meta=options))
+
+        base_interfaces = tuple(b for b in bases if issubclass(b, Interface))
+        options.get_fields = partial(cls._construct_fields, fields, options)
+        options.get_interfaces = tuple(get_interfaces(interfaces + base_interfaces))
+
+        options.graphql_type = generate_objecttype(cls)
+
+        if issubclass(cls, SQLAlchemyObjectType):
+            options.registry.register(cls)
+
         return cls
 
 
-class InstanceObjectType(ObjectType):
-
-    class Meta:
-        abstract = True
-
-    def __init__(self, _root=None):
-        super(InstanceObjectType, self).__init__(_root=_root)
-        assert not self._root or isinstance(self._root, self._meta.model), (
-            '{} received a non-compatible instance ({}) '
-            'when expecting {}'.format(
-                self.__class__.__name__,
-                self._root.__class__.__name__,
-                self._meta.model.__name__
-            ))
-
-    @property
-    def instance(self):
-        return self._root
-
-    @instance.setter
-    def instance(self, value):
-        self._root = value
+class SQLAlchemyObjectType(six.with_metaclass(SQLAlchemyObjectTypeMeta, ObjectType)):
+    is_type_of = None
 
 
-class SQLAlchemyObjectType(six.with_metaclass(
-        SQLAlchemyObjectTypeMeta, InstanceObjectType)):
+class SQLAlchemyNodeMeta(SQLAlchemyObjectTypeMeta, type(Node)):
 
-    class Meta:
-        abstract = True
+    @staticmethod
+    def _get_interface_options(meta):
+        return Options(
+            meta,
+            name=None,
+            description=None,
+            model=None,
+            graphql_type=None,
+            registry=False
+        )
+
+    @staticmethod
+    def _create_interface(cls, name, bases, attrs):
+        cls = super(SQLAlchemyNodeMeta, cls)._create_interface(cls, name, bases, attrs)
+        if not cls._meta.registry:
+            cls._meta.registry = get_global_registry()
+        assert isinstance(cls._meta.registry, Registry), 'The attribute registry in {}.Meta needs to be an instance of Registry.'.format(name)
+        return cls
 
 
-class SQLAlchemyConnection(Connection):
-    pass
-
-
-class SQLAlchemyNodeMeta(SQLAlchemyObjectTypeMeta, NodeMeta):
-    pass
-
-
-class NodeInstance(Node, InstanceObjectType):
-
-    class Meta:
-        abstract = True
-
-
-class SQLAlchemyNode(six.with_metaclass(
-        SQLAlchemyNodeMeta, NodeInstance)):
-
-    class Meta:
-        abstract = True
-
-    def to_global_id(self):
-        id_ = getattr(self.instance, self._meta.identifier)
-        return self.global_id(id_)
-
+class SQLAlchemyNode(six.with_metaclass(SQLAlchemyNodeMeta, Node)):
     @classmethod
-    def get_node(cls, id, info=None):
+    def get_node(cls, id, context, info):
         try:
             model = cls._meta.model
-            identifier = cls._meta.identifier
-            query = get_query(model, info)
-            instance = query.filter(getattr(model, identifier) == id).one()
-            return cls(instance)
+            query = get_query(model, context)
+            return query.get(id)
         except NoResultFound:
             return None
+
+    @classmethod
+    def resolve_id(cls, root, args, context, info):
+        return root.__mapper__.primary_key_from_instance(root)[0]
+
+    @classmethod
+    def resolve_type(cls, type_instance, context, info):
+        # We get the model from the _meta in the SQLAlchemy class/instance
+        model = type(type_instance)
+        graphene_type = cls._meta.registry.get_type_for_model(model)
+        if graphene_type:
+            return get_graphql_type(graphene_type)
+
+        raise Exception("Type not found for model \"{}\"".format(model))

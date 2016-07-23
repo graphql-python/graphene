@@ -1,8 +1,8 @@
-from graphene.contrib.sqlalchemy.types import (
+from .types import (
     SQLAlchemyObjectType,
     SQLAlchemyNode
 )
-from graphene.contrib.sqlalchemy.fields import (
+from .fields import (
     SQLAlchemyConnectionField
 )
 

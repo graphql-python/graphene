@@ -96,11 +96,10 @@ class IterableConnectionField(Field):
     @property
     def connection(self):
         from .node import Node
-        graphql_type = super(IterableConnectionField, self).type
-        if issubclass(graphql_type.graphene_type, Node):
-            connection_type = graphql_type.graphene_type.get_default_connection()
+        if issubclass(self._type, Node):
+            connection_type = self._type.get_default_connection()
         else:
-            connection_type = graphql_type.graphene_type
+            connection_type = self._type
         assert issubclass(connection_type, Connection), '{} type have to be a subclass of Connection'.format(str(self))
         return connection_type
 

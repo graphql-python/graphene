@@ -4,8 +4,8 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 import graphene
 from graphene import relay
-from graphene.contrib.sqlalchemy import (SQLAlchemyConnectionField,
-                                         SQLAlchemyNode, SQLAlchemyObjectType)
+from ..types import (SQLAlchemyNode, SQLAlchemyObjectType)
+from ..fields import SQLAlchemyConnectionField
 
 from .models import Article, Base, Editor, Reporter
 
@@ -52,7 +52,7 @@ def test_should_query_well(session):
 
     class Query(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
-        reporters = ReporterType.List()
+        reporters = graphene.List(ReporterType)
 
         def resolve_reporter(self, *args, **kwargs):
             return session.query(Reporter).first()
@@ -93,7 +93,7 @@ def test_should_query_well(session):
 def test_should_node(session):
     setup_fixtures(session)
 
-    class ReporterNode(SQLAlchemyNode):
+    class ReporterNode(SQLAlchemyNode, SQLAlchemyObjectType):
 
         class Meta:
             model = Reporter
@@ -105,7 +105,7 @@ def test_should_node(session):
         def resolve_articles(self, *args, **kwargs):
             return [Article(headline='Hi!')]
 
-    class ArticleNode(SQLAlchemyNode):
+    class ArticleNode(SQLAlchemyNode, SQLAlchemyObjectType):
 
         class Meta:
             model = Article
@@ -115,7 +115,7 @@ def test_should_node(session):
         #     return Article(id=1, headline='Article node')
 
     class Query(graphene.ObjectType):
-        node = relay.NodeField()
+        node = SQLAlchemyNode.Field()
         reporter = graphene.Field(ReporterNode)
         article = graphene.Field(ArticleNode)
         all_articles = SQLAlchemyConnectionField(ArticleNode)
@@ -185,8 +185,8 @@ def test_should_node(session):
             'headline': 'Hi!'
         }
     }
-    schema = graphene.Schema(query=Query, session=session)
-    result = schema.execute(query)
+    schema = graphene.Schema(query=Query)
+    result = schema.execute(query, context_value={'session': session})
     assert not result.errors
     assert result.data == expected
 
@@ -194,14 +194,13 @@ def test_should_node(session):
 def test_should_custom_identifier(session):
     setup_fixtures(session)
 
-    class EditorNode(SQLAlchemyNode):
+    class EditorNode(SQLAlchemyNode, SQLAlchemyObjectType):
 
         class Meta:
             model = Editor
-            identifier = "editor_id"
 
     class Query(graphene.ObjectType):
-        node = relay.NodeField(EditorNode)
+        node = SQLAlchemyNode.Field()
         all_editors = SQLAlchemyConnectionField(EditorNode)
 
     query = '''
@@ -215,7 +214,9 @@ def test_should_custom_identifier(session):
             }
           },
           node(id: "RWRpdG9yTm9kZTox") {
-            name
+            ...on EditorNode {
+              name
+            }
           }
         }
     '''
@@ -233,7 +234,7 @@ def test_should_custom_identifier(session):
         }
     }
 
-    schema = graphene.Schema(query=Query, session=session)
-    result = schema.execute(query)
+    schema = graphene.Schema(query=Query)
+    result = schema.execute(query, context_value={'session': session})
     assert not result.errors
     assert result.data == expected

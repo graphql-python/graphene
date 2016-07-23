@@ -4,7 +4,6 @@ from django.utils.encoding import force_text
 from graphene import Enum, List, ID, Boolean, Float, Int, String, Field, NonNull
 from graphene.types.json import JSONString
 from graphene.types.datetime import DateTime
-from graphene.types.json import JSONString
 from graphene.utils.str_converters import to_const
 from graphene.relay import Node
 

@@ -85,8 +85,12 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         # raise NotImplementedError("You need to implement {}.to_global_id".format(cls.__name__))
 
     @classmethod
+    def resolve_id(cls, root, args, context, info):
+        return getattr(root, 'id', None)
+
+    @classmethod
     def id_resolver(cls, root, args, context, info):
-        return cls.to_global_id(info.parent_type.name, getattr(root, 'id', None))
+        return cls.to_global_id(info.parent_type.name, cls.resolve_id(root, args, context, info))
 
     @classmethod
     def get_node_from_global_id(cls, global_id, context, info):
