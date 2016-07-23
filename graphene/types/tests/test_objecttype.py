@@ -74,7 +74,7 @@ def test_objecttype_inheritance():
 
     graphql_type = MyObjectType._meta.graphql_type
     fields = graphql_type.get_fields()
-    assert fields.keys() == ['inherited', 'field1', 'field2']
+    assert list(fields.keys()) == ['inherited', 'field1', 'field2']
 
 
 def test_objecttype_as_container_get_fields():
