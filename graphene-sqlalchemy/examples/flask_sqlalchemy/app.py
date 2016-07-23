@@ -1,7 +1,7 @@
 from flask import Flask
 
 from database import db_session, init_db
-from flask_graphql import GraphQL
+from flask_graphql import GraphQLView
 from schema import schema
 
 app = Flask(__name__)
@@ -27,7 +27,8 @@ default_query = '''
   }
 }'''.strip()
 
-GraphQL(app, schema=schema, default_query=default_query)
+
+app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
 
 
 @app.teardown_appcontext

@@ -1,40 +1,36 @@
 import graphene
 from graphene import relay
-from graphene.contrib.sqlalchemy import (SQLAlchemyConnectionField,
-                                         SQLAlchemyNode)
+from graphene_sqlalchemy import (SQLAlchemyConnectionField,
+                                 SQLAlchemyObjectType,
+                                 SQLAlchemyNode)
 from models import Department as DepartmentModel
 from models import Employee as EmployeeModel
 from models import Role as RoleModel
 
-schema = graphene.Schema()
 
-
-@schema.register
-class Department(SQLAlchemyNode):
+class Department(SQLAlchemyNode, SQLAlchemyObjectType):
 
     class Meta:
         model = DepartmentModel
 
 
-@schema.register
-class Employee(SQLAlchemyNode):
+class Employee(SQLAlchemyNode, SQLAlchemyObjectType):
 
     class Meta:
         model = EmployeeModel
 
 
-@schema.register
-class Role(SQLAlchemyNode):
+class Role(SQLAlchemyNode, SQLAlchemyObjectType):
 
     class Meta:
         model = RoleModel
-        identifier = 'role_id'
 
 
 class Query(graphene.ObjectType):
-    node = relay.NodeField(Employee)
+    node = SQLAlchemyNode.Field()
     all_employees = SQLAlchemyConnectionField(Employee)
     all_roles = SQLAlchemyConnectionField(Role)
-    role = relay.NodeField(Role)
+    role = graphene.Field(Role)
 
-schema.query = Query
+
+schema = graphene.Schema(query=Query, types=[Department, Employee, Role])
