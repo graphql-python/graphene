@@ -119,7 +119,6 @@ class SQLAlchemyNodeMeta(SQLAlchemyObjectTypeMeta, type(Node)):
             meta,
             name=None,
             description=None,
-            model=None,
             graphql_type=None,
             registry=False
         )
