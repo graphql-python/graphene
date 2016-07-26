@@ -54,12 +54,7 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
 
     def __init__(self, *args, **kwargs):
         signals.pre_init.send(self.__class__, args=args, kwargs=kwargs)
-        
         self._root = kwargs.pop('_root', None)
-        for key, value in kwargs.items():
-            if key.startswith('_'):
-                setattr(self, key, kwargs.pop(key))
-                
         args_len = len(args)
         fields = self._meta.fields
         if args_len > len(fields):
@@ -85,7 +80,7 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
         if kwargs:
             for prop in list(kwargs):
                 try:
-                    if isinstance(getattr(self.__class__, prop), property):
+                    if isinstance(getattr(self.__class__, prop), property) or prop.startswith('_'):
                         setattr(self, prop, kwargs.pop(prop))
                 except AttributeError:
                     pass
