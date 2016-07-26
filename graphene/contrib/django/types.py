@@ -4,7 +4,8 @@ import six
 from django.db import models
 
 from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
-from ...relay.types import Connection, Node, NodeMeta
+from ...relay.types import Node, NodeMeta
+from ...relay.connection import Connection
 from .converter import convert_django_field_with_choices
 from .options import DjangoOptions
 from .utils import get_reverse_fields
