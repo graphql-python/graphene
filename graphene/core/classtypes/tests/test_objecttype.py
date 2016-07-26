@@ -58,9 +58,11 @@ def test_object_type_set_private_attributes():
     class Human(ObjectType):
         _private_state = None
     
-    h = Human(_private_state='custom', _other_private_state='custom')
+    h = Human(_private_state='custom')
     assert h._private_state == 'custom'
-    assert h._other_private_state == 'custom'
+    
+    with raises(TypeError):
+        Human(_other_private_state='My name')
 
 def test_object_type_container_invalid_kwarg():
     class Human(ObjectType):
