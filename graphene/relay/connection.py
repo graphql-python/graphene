@@ -1,3 +1,7 @@
+from collections import Iterable
+
+from graphql_relay.connection.arrayconnection import connection_from_list
+
 from ..core.classtypes import ObjectType
 from ..core.types import Field, Boolean, String, List
 from ..utils import memoize
