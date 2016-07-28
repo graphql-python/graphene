@@ -40,6 +40,8 @@ class Query(graphene.ObjectType):
     context_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection, customArg=graphene.String())
 
+    sliced_nodes = relay.ConnectionField(MyNode)
+
     def resolve_all_my_nodes(self, args, info):
         custom_arg = args.get('customArg')
         assert custom_arg == "1"
@@ -50,6 +52,11 @@ class Query(graphene.ObjectType):
         custom_arg = args.get('customArg')
         assert custom_arg == "1"
         return [MyNode(name='my')]
+
+    def resolve_sliced_nodes(self, args, info):
+        sliced_list = [MyNode(name='my1'), MyNode(name='my2'), MyNode(name='my3')]
+        total_count = 10
+        return relay.Connection.for_node(MyNode).from_list(sliced_list, args, None, info, total_count)
 
 schema.query = Query
 
@@ -127,6 +134,46 @@ def test_connectionfield_context_query():
             'myCustomField': 'Custom',
             'pageInfo': {
                 'hasNextPage': False,
+            }
+        }
+    }
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected
+
+
+def test_slice_connectionfield_query():
+    query = '''
+    query RebelsShipsQuery {
+      slicedNodes (first: 3) {
+        edges {
+          node {
+            name
+          }
+        },
+        pageInfo {
+          hasNextPage
+        }
+      }
+    }
+    '''
+    expected = {
+        'slicedNodes': {
+            'edges': [{
+                'node': {
+                    'name': 'my1'
+                }
+            }, {
+                'node': {
+                    'name': 'my2'
+                }
+            }, {
+                'node': {
+                    'name': 'my3'
+                }
+            }],
+            'pageInfo': {
+                'hasNextPage': True,
             }
         }
     }
