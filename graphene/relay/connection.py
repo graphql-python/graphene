@@ -28,6 +28,7 @@ class PageInfo(ObjectType):
     endCursor = String(
         description='When paginating forwards, the cursor to continue.')
 
+
 class Edge(ObjectType):
     '''An edge in a connection.'''
     cursor = String(
@@ -36,8 +37,6 @@ class Edge(ObjectType):
     @classmethod
     @memoize
     def for_node(cls, node):
-        from graphene.relay.utils import is_node
-        # assert is_node(node), 'ObjectTypes in a edge have to be Nodes'
         node_field = Field(node, description='The item at the end of the edge')
         return type(
             '%s%s' % (node._meta.type_name, cls._meta.type_name),
@@ -64,7 +63,6 @@ class Connection(ObjectType):
     @classmethod
     @memoize
     def for_node(cls, node, edge_type=None):
-        from graphene.relay.utils import is_node
         edge_type = edge_type or Edge.for_node(node)
         edges = List(edge_type, description='Information to aid in pagination.')
         return type(
