@@ -6,13 +6,12 @@ import six
 
 from graphql_relay.node.node import to_global_id
 
-from ..core.classtypes import InputObjectType, Interface, Mutation, ObjectType
+from ..core.classtypes import InputObjectType, Interface, Mutation
 from ..core.classtypes.interface import InterfaceMeta
 from ..core.classtypes.mutation import MutationMeta
-from ..core.types import Boolean, Field, List, String
+from ..core.types import String
 from ..core.types.argument import ArgumentsGroup
 from ..core.types.definitions import NonNull
-from ..utils import memoize
 from ..utils.wrap_resolver_function import has_context, with_context
 from .fields import GlobalIDField
 
