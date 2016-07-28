@@ -52,7 +52,6 @@ class ConnectionField(Field):
         return self.edge_type.for_node(node)
 
     def get_type(self, schema):
-        from graphene.relay.utils import is_node
         type = schema.T(self.type)
         node = schema.objecttype(type)
         schema.register(node)
