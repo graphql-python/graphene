@@ -19,6 +19,9 @@ class MyNode(relay.Node):
     def get_node(cls, id, info):
         return MyNode(id=id, name='mo')
 
+class MyObject(graphene.ObjectType):
+    name = graphene.String()
+
 
 class SpecialNode(relay.Node):
     value = graphene.String()
@@ -29,6 +32,9 @@ class SpecialNode(relay.Node):
         value = "!!!" if context.get('is_special') else "???"
         return SpecialNode(id=id, value=value)
 
+def _create_my_node_edge(myNode):
+    edge_type = relay.Edge.for_node(MyNode)
+    return edge_type(node=myNode, cursor=str(myNode.id))
 
 class Query(graphene.ObjectType):
     my_node = relay.NodeField(MyNode)
@@ -40,6 +46,12 @@ class Query(graphene.ObjectType):
     context_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection, customArg=graphene.String())
 
+    connection_type_nodes = relay.ConnectionField(
+        MyNode, connection_type=MyConnection)
+
+    all_my_objects = relay.ConnectionField(
+        MyObject, connection_type=MyConnection)
+
     def resolve_all_my_nodes(self, args, info):
         custom_arg = args.get('customArg')
         assert custom_arg == "1"
@@ -50,6 +62,16 @@ class Query(graphene.ObjectType):
         custom_arg = args.get('customArg')
         assert custom_arg == "1"
         return [MyNode(name='my')]
+
+    def resolve_connection_type_nodes(self, args, info):
+        edges = [_create_my_node_edge(n) for n in [MyNode(id='1', name='my')]]
+        connection_type = MyConnection.for_node(MyNode)
+
+        return connection_type(
+            edges=edges, page_info=relay.PageInfo(has_next_page=True))
+
+    def resolve_all_my_objects(self, args, info):
+        return [MyObject(name='my_object')]
 
 schema.query = Query
 
@@ -122,6 +144,74 @@ def test_connectionfield_context_query():
             'edges': [{
                 'node': {
                     'name': 'my'
+                }
+            }],
+            'myCustomField': 'Custom',
+            'pageInfo': {
+                'hasNextPage': False,
+            }
+        }
+    }
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected
+
+
+def test_connectionfield_resolve_returns_connection_type_directly():
+    query = '''
+    query RebelsShipsQuery {
+      connectionTypeNodes {
+        edges {
+          node {
+            name
+          }
+        },
+        myCustomField
+        pageInfo {
+          hasNextPage
+        }
+      }
+    }
+    '''
+    expected = {
+        'connectionTypeNodes': {
+            'edges': [{
+                'node': {
+                    'name': 'my'
+                }
+            }],
+            'myCustomField': 'Custom',
+            'pageInfo': {
+                'hasNextPage': True,
+            }
+        }
+    }
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == expected
+
+
+def test_connectionfield_resolve_returning_objects():
+    query = '''
+    query RebelsShipsQuery {
+      allMyObjects {
+        edges {
+          node {
+            name
+          }
+        },
+        myCustomField
+        pageInfo {
+          hasNextPage
+        }
+      }
+    }
+    '''
+    expected = {
+        'allMyObjects': {
+            'edges': [{
+                'node': {
+                    'name': 'my_object'
                 }
             }],
             'myCustomField': 'Custom',
