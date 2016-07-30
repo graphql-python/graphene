@@ -7,6 +7,7 @@ class Registry(object):
         from .types import SQLAlchemyObjectType
         assert issubclass(cls, SQLAlchemyObjectType), 'Only SQLAlchemyObjectType can be registered, received "{}"'.format(cls.__name__)
         assert cls._meta.registry == self, 'Registry for a Model have to match.'
+        assert cls._meta.model not in self._registry, 'SQLAlchemy model "{}" already associated with another type "{}".'.format(cls._meta.model, self._registry[cls._meta.model])
         self._registry[cls._meta.model] = cls
 
     def get_type_for_model(self, model):
