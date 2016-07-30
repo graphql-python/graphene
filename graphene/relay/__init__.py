@@ -6,10 +6,13 @@ from .fields import (
 
 from .types import (
     Node,
-    PageInfo,
-    Edge,
-    Connection,
     ClientIDMutation
+)
+
+from .connection import (
+    PageInfo,
+    Connection,
+    Edge,
 )
 
 from .utils import is_node
