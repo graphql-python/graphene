@@ -52,8 +52,9 @@ class InstanceObjectType(ObjectType):
     class Meta:
         abstract = True
 
-    def __init__(self, _root=None):
-        super(InstanceObjectType, self).__init__(_root=_root)
+    def __init__(self, _root=None, **kwargs):
+        kwargs['_root'] = _root
+        super(InstanceObjectType, self).__init__(**kwargs)
         assert not self._root or isinstance(self._root, self._meta.model), (
             '{} received a non-compatible instance ({}) '
             'when expecting {}'.format(

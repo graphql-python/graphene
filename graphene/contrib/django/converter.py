@@ -28,12 +28,12 @@ def convert_django_field_with_choices(field):
         meta = field.model._meta
         name = '{}_{}_{}'.format(meta.app_label, meta.object_name, field.name)
         graphql_choices = list(convert_choices(choices))
-        return Enum(name.upper(), graphql_choices, description=field.help_text)
+        return convert_django_field(field, Enum(name.upper(), graphql_choices, description=field.help_text))
     return convert_django_field(field)
 
 
 @singledispatch
-def convert_django_field(field):
+def convert_django_field(field, enum=None):
     raise Exception(
         "Don't know how to convert the Django field %s (%s)" %
         (field, field.__class__))
@@ -47,12 +47,16 @@ def convert_django_field(field):
 @convert_django_field.register(models.GenericIPAddressField)
 @convert_django_field.register(models.FileField)
 @convert_django_field.register(UUIDField)
-def convert_field_to_string(field):
+def convert_field_to_string(field, enum=None):
+    if enum is not None:
+        return String(enum)
     return String(description=field.help_text)
 
 
 @convert_django_field.register(models.AutoField)
-def convert_field_to_id(field):
+def convert_field_to_id(field, enum=None):
+    if enum is not None:
+        return ID(enum)
     return ID(description=field.help_text)
 
 
@@ -61,28 +65,38 @@ def convert_field_to_id(field):
 @convert_django_field.register(models.SmallIntegerField)
 @convert_django_field.register(models.BigIntegerField)
 @convert_django_field.register(models.IntegerField)
-def convert_field_to_int(field):
+def convert_field_to_int(field, enum=None):
+    if enum is not None:
+        return Int(enum)
     return Int(description=field.help_text)
 
 
 @convert_django_field.register(models.BooleanField)
-def convert_field_to_boolean(field):
+def convert_field_to_boolean(field, enum=None):
+    if enum is not None:
+        return Boolean(enum)
     return Boolean(description=field.help_text, required=True)
 
 
 @convert_django_field.register(models.NullBooleanField)
-def convert_field_to_nullboolean(field):
+def convert_field_to_nullboolean(field, enum=None):
+    if enum is not None:
+        return Boolean(enum)
     return Boolean(description=field.help_text)
 
 
 @convert_django_field.register(models.DecimalField)
 @convert_django_field.register(models.FloatField)
-def convert_field_to_float(field):
+def convert_field_to_float(field, enum=None):
+    if enum is not None:
+        return Float(enum)
     return Float(description=field.help_text)
 
 
 @convert_django_field.register(models.DateField)
-def convert_date_to_string(field):
+def convert_date_to_string(field, enum=None):
+    if enum is not None:
+        return DateTime(enum)
     return DateTime(description=field.help_text)
 
 
