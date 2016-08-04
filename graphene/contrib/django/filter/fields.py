@@ -1,3 +1,4 @@
+from ....utils import to_snake_case
 from ..fields import DjangoConnectionField
 from .utils import get_filtering_args_from_filterset, get_filterset_class
 
@@ -26,7 +27,13 @@ class DjangoFilterConnectionField(DjangoConnectionField):
         filter_kwargs = self.get_filter_kwargs(args)
         order = self.get_order(args)
         if order:
-            qs = qs.order_by(order)
+            qs = qs.order_by(to_snake_case(order))
+        if filterset_class.order_by_field in filter_kwargs:
+            filter_kwargs.update({
+                filterset_class.order_by_field: to_snake_case(
+                    filter_kwargs[filterset_class.order_by_field]
+                )
+            })
         return filterset_class(data=filter_kwargs, queryset=qs)
 
     def get_filter_kwargs(self, args):
