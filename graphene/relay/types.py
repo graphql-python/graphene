@@ -68,7 +68,7 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
 
 
 class MutationInputType(InputObjectType):
-    clientMutationId = String(required=True)
+    clientMutationId = String()
 
 
 class RelayMutationMeta(MutationMeta):
@@ -90,7 +90,7 @@ class RelayMutationMeta(MutationMeta):
 
 
 class ClientIDMutation(six.with_metaclass(RelayMutationMeta, Mutation)):
-    clientMutationId = String(required=True)
+    clientMutationId = String()
 
     class Meta:
         abstract = True
