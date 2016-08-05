@@ -19,6 +19,7 @@ class MyNode(relay.Node):
     def get_node(cls, id, info):
         return MyNode(id=id, name='mo')
 
+
 class MyObject(graphene.ObjectType):
     name = graphene.String()
 
@@ -32,9 +33,11 @@ class SpecialNode(relay.Node):
         value = "!!!" if context.get('is_special') else "???"
         return SpecialNode(id=id, value=value)
 
+
 def _create_my_node_edge(myNode):
     edge_type = relay.Edge.for_node(MyNode)
     return edge_type(node=myNode, cursor=str(myNode.id))
+
 
 class Query(graphene.ObjectType):
     my_node = relay.NodeField(MyNode)
