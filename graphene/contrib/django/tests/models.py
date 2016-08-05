@@ -35,7 +35,7 @@ class Reporter(models.Model):
 
 
 class Article(models.Model):
-    headline = models.CharField(max_length=100)
+    headline = models.CharField(max_length=100, null=True)
     pub_date = models.DateField()
     reporter = models.ForeignKey(Reporter, related_name='articles')
     lang = models.CharField(max_length=2, help_text='Language', choices=[
