@@ -285,3 +285,38 @@ def test_global_id_multiple_field_explicit_reverse():
     multiple_filter = filterset_class.base_filters['articles']
     assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
+
+
+def test_filter_filterset_order_by_camel_case():
+    class ReporterFilterNode(DjangoNode):
+
+        class Meta:
+            model = Reporter
+            filter_fields = ['first_name', 'articles']
+            filter_order_by = True
+
+    class Query(ObjectType):
+        all_reporters = DjangoFilterConnectionField(ReporterFilterNode)
+        reporter = NodeField(ReporterFilterNode)
+
+    Reporter.objects.create(first_name='r1', last_name='r1', email='r1@test.com')
+    Reporter.objects.create(first_name='r2', last_name='r2', email='r2@test.com')
+
+    query = '''
+    query {
+        allReporters(orderBy: "firstName") {
+            edges {
+                node {
+                    firstName
+                }
+            }
+        }
+    }
+    '''
+    schema = Schema(query=Query)
+    result = schema.execute(query)
+    assert not result.errors
+    assert len(result.data['allReporters']['edges']) == 2
+    # We should only get back a single article for each reporter
+    assert result.data['allReporters']['edges'][0]['node']['firstName'] == 'r1'
+    assert result.data['allReporters']['edges'][1]['node']['firstName'] == 'r2'
