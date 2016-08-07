@@ -1,7 +1,7 @@
 import iso8601
 from graphql.language.ast import StringValue
 
-from ..custom_scalars import DateTime
+from ..custom_scalars import DateTime, JSONString
 
 
 def test_date_time():
@@ -24,3 +24,16 @@ def test_date_time():
     node = StringValue(test_iso_string)
     test_dt = DateTime.parse_literal(node)
     check_datetime(test_dt)
+
+
+def test_json_string():
+    test_json_string = '{"foo": "bar"}'
+
+    test_object = JSONString().parse_value(test_json_string)
+    assert test_object == {'foo': 'bar'}
+
+    assert JSONString.serialize(test_object) == test_json_string
+
+    node = StringValue(test_json_string)
+    test_object = JSONString.parse_literal(node)
+    assert test_object == {'foo': 'bar'}
