@@ -5,15 +5,25 @@ python:
 - 3.4
 - 3.5
 - pypy
-cache:
-  directories:
-  - .cache/pip/
-  - $HOME/.cache/pip
+cache: pip
+before_install:
+  - |
+      if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
+        export PYENV_ROOT="$HOME/.pyenv"
+        if [ -f "$PYENV_ROOT/bin/pyenv" ]; then
+          cd "$PYENV_ROOT" && git pull
+        else
+          rm -rf "$PYENV_ROOT" && git clone --depth 1 https://github.com/yyuu/pyenv.git "$PYENV_ROOT"
+        fi
+        export PYPY_VERSION="4.0.1"
+        "$PYENV_ROOT/bin/pyenv" install "pypy-$PYPY_VERSION"
+        virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
+        source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
+      fi
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
     pip install pytest pytest-cov coveralls six
-    pip install psycopg2 > /dev/null 2>&1
     pip install -e .
     python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
