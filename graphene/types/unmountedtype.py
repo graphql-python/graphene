@@ -57,24 +57,3 @@ class UnmountedType(OrderedType):
             _creation_counter=self.creation_counter,
             **self.kwargs
         )
-
-    def as_mounted(self, cls):
-        '''
-        Mount the UnmountedType dinamically as Field or InputField
-        depending on the class is mounted in.
-
-        ObjectType -> Field
-        InputObjectType -> InputField
-        '''
-        from .inputobjecttype import InputObjectType
-        from .objecttype import ObjectType
-        from .interface import Interface
-
-        if issubclass(cls, (ObjectType, Interface)):
-            inner = self.as_field()
-        elif issubclass(cls, (InputObjectType)):
-            inner = self.as_inputfield()
-        else:
-            raise Exception('TypedProxy "{}" cannot be mounted in {}'.format(self.get_type(), cls))
-
-        return inner

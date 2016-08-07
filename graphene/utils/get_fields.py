@@ -6,14 +6,32 @@ from .get_graphql_type import get_graphql_type
 from .is_graphene_type import is_graphene_type
 
 
+def unmounted_field_in_type(unmounted_field, type):
+    '''
+    Mount the UnmountedType dinamically as Field or InputField
+    depending on where mounted in.
+
+    ObjectType -> Field
+    InputObjectType -> InputField
+    '''
+    from ..types.inputobjecttype import InputObjectType
+    from ..types.objecttype import ObjectType
+    from ..types.interface import Interface
+
+    if issubclass(type, (ObjectType, Interface)):
+        return unmounted_field.as_field()
+    elif issubclass(type, (InputObjectType)):
+        return unmounted_field.as_inputfield()
+
+    raise Exception('Unmounted field "{}" cannot be mounted in {}'.format(self.get_type(), type))
+
+
 def get_fields_from_attrs(in_type, attrs):
     for attname, value in list(attrs.items()):
-        is_field = isinstance(value, (Field, InputField))
-        is_field_proxy = isinstance(value, UnmountedType)
-        if not (is_field or is_field_proxy):
-            continue
-        field = value.as_mounted(in_type) if is_field_proxy else value
-        yield attname, field
+        if isinstance(value, (Field, InputField)):
+            yield attname, value
+        elif isinstance(value, UnmountedType):
+            yield attname, unmounted_field_in_type(value, in_type)
 
 
 def get_fields_from_bases_and_types(bases, types):
