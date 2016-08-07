@@ -67,3 +67,42 @@ class Query(ObjectType):
     node = relay.NodeField() # Old way, NodeField no longer exists
     node = relay.Node.Field() # New way
 ```
+
+Also, if wanted to create an `ObjectType` that implements `Node`, you have to do it
+explicity.
+
+
+## Django
+
+The Django integration with Graphene now have an independent package: `graphene-django`.
+For installing, you have to replace the old `graphene[django]` with `graphene-django`.
+
+### Importing
+
+As the package is now independent, you have to import now from `graphene_django`.
+
+```python
+from graphene.contrib.django import DjangoObjectType  # Old way of importing
+from graphene_django import DjangoObjectType  # New way
+```
+
+### Attributes
+
+Also, the `Meta` option attrs have changed:
+* `only_fields` is now `fields`.
+* `exclude_fields` is now `exclude`.
+
+
+## SQLAlchemy
+
+The SQLAlchemy integration with Graphene now have an independent package: `graphene-sqlalchemy`.
+For installing, you have to replace the old `graphene[sqlalchemy]` with `graphene-sqlalchemy`.
+
+### Importing
+
+As the package is now independent, you have to import now from `graphene_sqlalchemy`.
+
+```python
+from graphene.contrib.sqlalchemy import SQLAlchemyObjectType  # Old way of importing
+from graphene_sqlalchemy import SQLAlchemyObjectType  # New way
+```
