@@ -1,7 +1,7 @@
-import re
 import copy
+import re
+from collections import Iterable
 from functools import partial
-from collections import Iterable, OrderedDict
 
 import six
 
@@ -35,8 +35,8 @@ class ConnectionMeta(ObjectTypeMeta):
             interfaces=[],
         )
 
-        Edge = attrs.pop('Edge', None)
-        edge_fields = props(Edge) if Edge else {}
+        edge_class = attrs.pop('Edge', None)
+        edge_fields = props(edge_class) if edge_class else {}
         edge_fields = get_fields(ObjectType, edge_fields, ())
 
         connection_fields = copy_fields(Field, get_fields(ObjectType, attrs, bases))
@@ -108,7 +108,8 @@ class IterableConnectionField(Field):
         iterable = resolver(root, args, context, info)
         # if isinstance(resolved, self.type.graphene)
         assert isinstance(
-            iterable, Iterable), 'Resolved value from the connection field have to be iterable. Received "{}"'.format(iterable)
+            iterable, Iterable), 'Resolved value from the connection field have to be iterable. Received "{}"'.format(
+            iterable)
         connection = connection_from_list(
             iterable,
             args,

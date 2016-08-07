@@ -1,5 +1,4 @@
-from .objecttype import ObjectType
-from .interface import Interface
+from .objecttype import ObjectType, Interface
 from .scalars import Scalar, String, ID, Int, Float, Boolean
 from .schema import Schema
 from .structures import List, NonNull

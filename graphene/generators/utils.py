@@ -1,4 +1,5 @@
 from collections import OrderedDict
+
 from graphql.type import GraphQLEnumValue
 
 

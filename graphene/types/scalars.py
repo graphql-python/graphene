@@ -3,11 +3,10 @@ import six
 from graphql import (GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt,
                      GraphQLString)
 
+from ..generators import generate_scalar
 from ..utils.is_base_type import is_base_type
 from .options import Options
 from .unmountedtype import UnmountedType
-
-from ..generators import generate_scalar
 
 
 class ScalarTypeMeta(type):
@@ -44,8 +43,8 @@ def construct_scalar_class(graphql_type):
     # class String(Scalar):
     #     class Meta:
     #         graphql_type = graphql_type
-    Meta = type('Meta', (object,), {'graphql_type': graphql_type})
-    return type(graphql_type.name, (Scalar, ), {'Meta': Meta})
+    meta_class = type('Meta', (object,), {'graphql_type': graphql_type})
+    return type(graphql_type.name, (Scalar, ), {'Meta': meta_class})
 
 
 String = construct_scalar_class(GraphQLString)

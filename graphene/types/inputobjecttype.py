@@ -1,5 +1,6 @@
 import six
 
+from ..generators import generate_inputobjecttype
 from ..utils.copy_fields import copy_fields
 from ..utils.get_fields import get_fields
 from ..utils.is_base_type import is_base_type
@@ -7,9 +8,6 @@ from .field import InputField
 from .objecttype import attrs_without_fields
 from .options import Options
 from .unmountedtype import UnmountedType
-
-
-from ..generators import generate_inputobjecttype
 
 
 class InputObjectTypeMeta(type):

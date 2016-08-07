@@ -31,11 +31,11 @@ class ClientIDMutationMeta(MutationMeta):
             description=None,
         )
 
-        Input = attrs.pop('Input', None)
+        input_class = attrs.pop('Input', None)
 
         cls = super_new(cls, name, bases, dict(attrs, _meta=options))
 
-        input_fields = props(Input) if Input else {}
+        input_fields = props(input_class) if input_class else {}
         input_local_fields = copy_fields(InputField, get_fields(InputObjectType, input_fields, ()))
         output_fields = copy_fields(Field, get_fields(ObjectType, attrs, bases))
 

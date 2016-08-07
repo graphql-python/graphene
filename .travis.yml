@@ -23,10 +23,10 @@ script:
 - |
   if [ "$TEST_TYPE" = lint ]; then
     echo "Checking Python code lint."
-    flake8
+    flake8 graphene
     exit
   elif [ "$TEST_TYPE" = build ]; then
-    py.test --cov=graphene
+    py.test --cov=graphene graphene examples
   fi
 after_success:
 - |

@@ -41,7 +41,7 @@ class Argument(GraphQLArgument, OrderedType):
 
     @classmethod
     def copy_from(cls, argument):
-        if isinstance (argument, (GraphQLArgumentDefinition, Argument)):
+        if isinstance(argument, (GraphQLArgumentDefinition, Argument)):
             name = argument.name
         else:
             name = None

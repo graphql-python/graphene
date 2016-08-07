@@ -1,20 +1,27 @@
 from __future__ import absolute_import
 
 import datetime
-try:
-    import iso8601
-except:
-    raise ImportError("iso8601 package is required for DateTime Scalar.\nYou can install it using: pip install iso8601.")
+
 from graphql.language import ast
 
 from .scalars import Scalar
+
+try:
+    import iso8601
+except:
+    raise ImportError(
+        "iso8601 package is required for DateTime Scalar.\n"
+        "You can install it using: pip install iso8601."
+    )
 
 
 class DateTime(Scalar):
 
     @staticmethod
     def serialize(dt):
-        assert isinstance(dt, (datetime.datetime, datetime.date)), 'Received not compatible datetime "{}"'.format(repr(dt))
+        assert isinstance(dt, (datetime.datetime, datetime.date)), (
+            'Received not compatible datetime "{}"'.format(repr(dt))
+        )
         return dt.isoformat()
 
     @staticmethod

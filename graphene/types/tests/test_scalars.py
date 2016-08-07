@@ -4,9 +4,9 @@ import pytest
 
 from graphene.utils.get_graphql_type import get_graphql_type
 from graphql import graphql
-from graphql.type import (GraphQLBoolean, GraphQLFloat, GraphQLInt,
-                          GraphQLScalarType, GraphQLString, GraphQLFieldDefinition)
 from graphql.language import ast
+from graphql.type import (GraphQLBoolean, GraphQLFieldDefinition, GraphQLFloat,
+                          GraphQLInt, GraphQLScalarType, GraphQLString)
 
 from ..field import Field
 from ..objecttype import ObjectType

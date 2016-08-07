@@ -1,7 +1,8 @@
-from collections import OrderedDict
 import inspect
+from collections import OrderedDict
 
-from graphql.type import GraphQLField, GraphQLInputObjectField, GraphQLFieldDefinition
+from graphql.type import (GraphQLField, GraphQLFieldDefinition,
+                          GraphQLInputObjectField)
 from graphql.utils.assert_valid_name import assert_valid_name
 
 from ..utils.orderedtype import OrderedType

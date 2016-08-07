@@ -1,4 +1,6 @@
-from graphql import GraphQLObjectType, GraphQLInterfaceType, GraphQLScalarType, GraphQLEnumType, GraphQLInputObjectType
+from graphql import (GraphQLEnumType, GraphQLInputObjectType,
+                     GraphQLInterfaceType, GraphQLObjectType,
+                     GraphQLScalarType)
 
 
 class GrapheneGraphQLType(object):
@@ -6,6 +8,7 @@ class GrapheneGraphQLType(object):
     A class for extending the base GraphQLType with the related
     graphene_type
     '''
+
     def __init__(self, *args, **kwargs):
         self.graphene_type = kwargs.pop('graphene_type')
         super(GrapheneGraphQLType, self).__init__(*args, **kwargs)

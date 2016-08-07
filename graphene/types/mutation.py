@@ -16,10 +16,10 @@ class MutationMeta(ObjectTypeMeta):
         if not is_base_type(bases, MutationMeta):
             return type.__new__(cls, name, bases, attrs)
 
-        Input = attrs.pop('Input', None)
+        input_class = attrs.pop('Input', None)
 
         cls = cls._create_objecttype(cls, name, bases, attrs)
-        field_args = props(Input) if Input else {}
+        field_args = props(input_class) if input_class else {}
         resolver = getattr(cls, 'mutate', None)
         assert resolver, 'All mutations must define a mutate method in it'
         cls.Field = partial(Field, cls, args=field_args, resolver=resolver)

@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 import six
 
+from ..generators import generate_enum
 from ..utils.is_base_type import is_base_type
 from .options import Options
 from .unmountedtype import UnmountedType
@@ -10,8 +11,6 @@ try:
     from enum import Enum as PyEnum
 except ImportError:
     from ..utils.enum import Enum as PyEnum
-
-from ..generators import generate_enum
 
 
 class EnumTypeMeta(type):
@@ -43,10 +42,10 @@ class EnumTypeMeta(type):
 
         return cls
 
-    def __prepare__(name, bases, **kwargs):
+    def __prepare__(name, bases, **kwargs):  # noqa: N805
         return OrderedDict()
 
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args, **kwargs):  # noqa: N805
         if cls is Enum:
             description = kwargs.pop('description', None)
             return cls.from_enum(PyEnum(*args, **kwargs), description=description)
@@ -57,5 +56,5 @@ class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
 
     @classmethod
     def from_enum(cls, enum, description=None):
-        Meta = type('Meta', (object,), {'enum': enum, 'description': description})
-        return type(Meta.enum.__name__, (Enum,), {'Meta': Meta})
+        meta_class = type('Meta', (object,), {'enum': enum, 'description': description})
+        return type(meta_class.enum.__name__, (Enum,), {'Meta': meta_class})

@@ -8,8 +8,6 @@ def is_graphene_type(_type):
     from ..types.interface import Interface
     from ..types.scalars import Scalar
     from ..types.enum import Enum
-    from ..relay.mutation import ClientIDMutation
-    from ..relay.connection import Connection
 
     return inspect.isclass(_type) and hasattr(_type, '_meta') and issubclass(_type, (
         Interface,

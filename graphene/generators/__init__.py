@@ -1,4 +1,10 @@
-from .definitions import GrapheneInterfaceType, GrapheneObjectType, GrapheneScalarType, GrapheneEnumType, GrapheneInputObjectType
+from .definitions import (
+    GrapheneInterfaceType,
+    GrapheneObjectType,
+    GrapheneScalarType,
+    GrapheneEnumType,
+    GrapheneInputObjectType
+)
 from .utils import values_from_enum
 
 

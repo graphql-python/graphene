@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import json
+
 from graphql.language import ast
 
 from .scalars import Scalar
