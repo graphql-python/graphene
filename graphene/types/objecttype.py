@@ -178,11 +178,3 @@ class Interface(six.with_metaclass(ObjectTypeMeta)):
         if not isinstance(self, ObjectType):
             raise Exception("An interface cannot be intitialized")
         super(Interface, self).__init__(*args, **kwargs)
-
-    @classmethod
-    def implements(cls, object_type):
-        '''
-        We use this function for customizing when a ObjectType have this class as Interface
-        For example, if we want to check that the ObjectType have some required things
-        in it like Node.get_node
-        '''

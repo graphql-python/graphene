@@ -26,11 +26,13 @@ class NodeMeta(ObjectTypeMeta):
 
     @staticmethod
     def _create_objecttype(cls, name, bases, attrs):
-        # The interface provided by node_definitions is not an instance
-        # of GrapheneInterfaceType, so it will have no graphql_type,
-        # so will not trigger Node.implements
         cls = super(NodeMeta, cls)._create_objecttype(cls, name, bases, attrs)
-        cls.implements(cls)
+        require_get_node = Node._meta.graphql_type in cls._meta.graphql_type._provided_interfaces
+        if require_get_node:
+            assert hasattr(
+                cls, 'get_node'), '{}.get_node method is required by the Node interface.'.format(
+                cls.__name__)
+
         return cls
 
     @staticmethod
@@ -64,25 +66,14 @@ class NodeMeta(ObjectTypeMeta):
 class Node(six.with_metaclass(NodeMeta, Interface)):
     _connection = None
     resolve_type = None
-    use_global_id = True
-
-    @classmethod
-    def require_get_node(cls):
-        return Node._meta.graphql_type in cls._meta.graphql_type._provided_interfaces
 
     @classmethod
     def from_global_id(cls, global_id):
         return from_global_id(global_id)
-        # if cls is Node:
-        #     return from_global_id(global_id)
-        # raise NotImplementedError("You need to implement {}.from_global_id".format(cls.__name__))
 
     @classmethod
     def to_global_id(cls, type, id):
         return to_global_id(type, id)
-        # if cls is Node:
-        #     return to_global_id(type, id)
-        # raise NotImplementedError("You need to implement {}.to_global_id".format(cls.__name__))
 
     @classmethod
     def resolve_id(cls, root, args, context, info):
@@ -111,16 +102,3 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
                 node = cls
             cls._connection = type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
         return cls._connection
-
-    @classmethod
-    def implements(cls, object_type):
-        '''
-        We check here that the object_type have the required get_node method
-        in it
-        '''
-        if cls.require_get_node():
-            assert hasattr(
-                object_type, 'get_node'), '{}.get_node method is required by the Node interface.'.format(
-                object_type.__name__)
-
-        return super(Node, cls).implements(object_type)
