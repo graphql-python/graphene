@@ -16,7 +16,7 @@ class JSONString(Scalar):
     @staticmethod
     def parse_literal(node):
         if isinstance(node, ast.StringValue):
-            return json.dumps(node.value)
+            return json.loads(node.value)
 
     @staticmethod
     def parse_value(value):
