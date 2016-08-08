@@ -1,6 +1,6 @@
 from graphql import graphql
 
-from ...types import ObjectType, Schema
+from ...types import ObjectType, Interface, Schema
 from ...types.scalars import Int, String
 from ..node import Node
 
@@ -20,12 +20,16 @@ class CustomNode(Node):
             return photo_data.get(id)
 
 
+class BasePhoto(Interface):
+    width = Int()
+
+
 class User(CustomNode, ObjectType):
     name = String()
 
 
-class Photo(CustomNode, ObjectType):
-    width = Int()
+class Photo(CustomNode, BasePhoto, ObjectType):
+    pass
 
 
 user_data = {
@@ -43,6 +47,36 @@ class RootQuery(ObjectType):
     node = CustomNode.Field()
 
 schema = Schema(query=RootQuery, types=[User, Photo])
+
+
+def test_str_schema_correct():
+    print str(schema)
+    assert str(schema) == '''schema {
+  query: RootQuery
+}
+
+interface BasePhoto {
+  width: Int
+}
+
+interface Node {
+  id: ID!
+}
+
+type Photo implements Node, BasePhoto {
+  id: ID!
+  width: Int
+}
+
+type RootQuery {
+  node(id: ID!): Node
+}
+
+type User implements Node {
+  id: ID!
+  name: String
+}
+'''
 
 
 def test_gets_the_correct_id_for_users():
