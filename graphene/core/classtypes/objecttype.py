@@ -80,7 +80,7 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta, FieldsClassType)):
         if kwargs:
             for prop in list(kwargs):
                 try:
-                    if isinstance(getattr(self.__class__, prop), property):
+                    if isinstance(getattr(self.__class__, prop), property) or prop.startswith('_'):
                         setattr(self, prop, kwargs.pop(prop))
                 except AttributeError:
                     pass
