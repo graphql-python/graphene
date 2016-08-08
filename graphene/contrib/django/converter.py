@@ -3,7 +3,7 @@ from django.utils.encoding import force_text
 
 from ...core.classtypes.enum import Enum
 from ...core.types.custom_scalars import DateTime, JSONString
-from ...core.types.definitions import List
+from ...core.types.definitions import NonNull, List
 from ...core.types.scalars import ID, Boolean, Float, Int, String
 from ...utils import to_const
 from .compat import (ArrayField, HStoreField, JSONField, RangeField,
@@ -32,6 +32,17 @@ def convert_django_field_with_choices(field):
     return convert_django_field(field)
 
 
+def add_nonnull_to_field(convert_field):
+    def convert_django_nonnull_field(field):
+        graphene_type = convert_field(field)
+        if isinstance(field, models.ManyToOneRel):
+            is_null = field.field.null
+        else:
+            is_null = field.null
+        return graphene_type if is_null else NonNull(graphene_type)
+    return convert_django_nonnull_field
+
+
 @singledispatch
 def convert_django_field(field):
     raise Exception(
@@ -47,11 +58,13 @@ def convert_django_field(field):
 @convert_django_field.register(models.GenericIPAddressField)
 @convert_django_field.register(models.FileField)
 @convert_django_field.register(UUIDField)
+@add_nonnull_to_field
 def convert_field_to_string(field):
     return String(description=field.help_text)
 
 
 @convert_django_field.register(models.AutoField)
+@add_nonnull_to_field
 def convert_field_to_id(field):
     return ID(description=field.help_text)
 
@@ -61,11 +74,13 @@ def convert_field_to_id(field):
 @convert_django_field.register(models.SmallIntegerField)
 @convert_django_field.register(models.BigIntegerField)
 @convert_django_field.register(models.IntegerField)
+@add_nonnull_to_field
 def convert_field_to_int(field):
     return Int(description=field.help_text)
 
 
 @convert_django_field.register(models.BooleanField)
+@add_nonnull_to_field
 def convert_field_to_boolean(field):
     return Boolean(description=field.help_text, required=True)
 
@@ -77,16 +92,19 @@ def convert_field_to_nullboolean(field):
 
 @convert_django_field.register(models.DecimalField)
 @convert_django_field.register(models.FloatField)
+@add_nonnull_to_field
 def convert_field_to_float(field):
     return Float(description=field.help_text)
 
 
 @convert_django_field.register(models.DateField)
+@add_nonnull_to_field
 def convert_date_to_string(field):
     return DateTime(description=field.help_text)
 
 
 @convert_django_field.register(models.OneToOneRel)
+@add_nonnull_to_field
 def convert_onetoone_field_to_djangomodel(field):
     from .fields import DjangoModelField
     return DjangoModelField(get_related_model(field))
@@ -107,12 +125,13 @@ def convert_relatedfield_to_djangomodel(field):
     from .fields import DjangoModelField, ConnectionOrListField
     model_field = DjangoModelField(field.model)
     if isinstance(field.field, models.OneToOneField):
-        return model_field
+        return model_field if field.field.null else NonNull(model_field)
     return ConnectionOrListField(model_field)
 
 
 @convert_django_field.register(models.OneToOneField)
 @convert_django_field.register(models.ForeignKey)
+@add_nonnull_to_field
 def convert_field_to_djangomodel(field):
     from .fields import DjangoModelField
     return DjangoModelField(get_related_model(field), description=field.help_text)
@@ -126,11 +145,13 @@ def convert_postgres_array_to_list(field):
 
 @convert_django_field.register(HStoreField)
 @convert_django_field.register(JSONField)
+@add_nonnull_to_field
 def convert_posgres_field_to_string(field):
     return JSONString(description=field.help_text)
 
 
 @convert_django_field.register(RangeField)
+@add_nonnull_to_field
 def convert_posgres_range_to_string(field):
     inner_type = convert_django_field(field.base_field)
     return List(inner_type, description=field.help_text)

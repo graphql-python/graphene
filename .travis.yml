@@ -9,60 +9,22 @@ cache:
   directories:
   - .cache/pip/
   - $HOME/.cache/pip
-  - docs/node_modules/
-  - $HOME/docs/node_modules
-before_install:
-- |
-  git_diff=$(git diff --name-only $TRAVIS_COMMIT_RANGE)
-  if [ "$?" == 0 ] && [ "$TEST_TYPE" != build_website ] && \
-    ! echo "$git_diff" | grep -qvE '(\.md$)|(^(docs))/'
-  then
-    echo "Only docs were updated, stopping build process."
-    exit
-  fi
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
-    pip install --download-cache $HOME/.cache/pip/ pytest pytest-cov coveralls six pytest-django django-filter sqlalchemy_utils
-    pip install --download-cache $HOME/.cache/pip psycopg2 > /dev/null 2>&1
-    pip install --download-cache $HOME/.cache/pip/ -e .
-    pip install --download-cache $HOME/.cache/pip/ -e .[django]
-    pip install --download-cache $HOME/.cache/pip/ -e .[sqlalchemy]
+    pip install pytest pytest-cov coveralls six pytest-django django-filter sqlalchemy_utils
+    pip install psycopg2 > /dev/null 2>&1
+    pip install -e .
+    pip install -e .[django]
+    pip install -e .[sqlalchemy]
     pip install django==$DJANGO_VERSION
     python setup.py develop
-  elif [ "$TEST_TYPE" = build_website ]; then
-    pip install --download-cache $HOME/.cache/pip/ -e .
-    python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
-    pip install --download-cache $HOME/.cache/pip/ flake8
+    pip install flake8
   fi
 script:
 - |
-  if [ "$TEST_TYPE" = build_website ]; then
-    if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
-      echo "Building the web."
-      nvm install 4.0
-
-      GH_PAGES_DIR="$TRAVIS_BUILD_DIR"/docs/public
-      git config --global user.name "Travis CI"
-      git config --global user.email "travis@graphene-python.org"
-      git clone --branch gh-pages --depth=50 \
-        https://graphql-python-bot@github.com/graphql-python/graphene.git \
-        $GH_PAGES_DIR
-      cd docs
-      ./playground/graphene-js/build.sh
-      npm run deploy
-      cd $GH_PAGES_DIR
-      git status
-      git add --intent-to-add .
-      if ! git diff-index --quiet HEAD --; then
-        git add -A .
-        git commit -m "Rebuild website"
-        git push "https://${GITHUB_TOKEN}@github.com/graphql-python/graphene.git" gh-pages
-      fi
-      exit
-    fi
-  elif [ "$TEST_TYPE" = lint ]; then
+  if [ "$TEST_TYPE" = lint ]; then
     echo "Checking Python code lint."
     flake8
     exit
@@ -90,7 +52,5 @@ matrix:
     env: TEST_TYPE=build DJANGO_VERSION=1.8
   - python: '2.7'
     env: TEST_TYPE=build DJANGO_VERSION=1.9
-  - python: '2.7'
-    env: TEST_TYPE=build_website
   - python: '2.7'
     env: TEST_TYPE=lint

@@ -5,6 +5,7 @@ from py.test import raises
 
 import graphene
 from graphene.core.types.custom_scalars import DateTime, JSONString
+from graphene.core.types.definitions import OfType
 
 from ..compat import (ArrayField, HStoreField, JSONField, MissingType,
                       RangeField)
@@ -14,11 +15,16 @@ from .models import Article, Reporter, Film, FilmDetails
 
 
 def assert_conversion(django_field, graphene_field, *args, **kwargs):
-    field = django_field(help_text='Custom Help Text', *args, **kwargs)
+    field = django_field(help_text='Custom Help Text', null=True, *args, **kwargs)
     graphene_type = convert_django_field(field)
     assert isinstance(graphene_type, graphene_field)
     field = graphene_type.as_field()
     assert field.description == 'Custom Help Text'
+    if not isinstance(graphene_type, OfType):
+        nonnull_field = django_field(null=False, *args, **kwargs)
+        if not nonnull_field.null:
+            nonnull_graphene_type = convert_django_field(nonnull_field)
+            assert isinstance(nonnull_graphene_type, graphene.NonNull)
     return field
 
 
@@ -176,8 +182,9 @@ def test_should_onetoone_reverse_convert_model():
     related = getattr(Film.details, 'rel', None) or \
         getattr(Film.details, 'related')
     graphene_type = convert_django_field(related)
-    assert isinstance(graphene_type, DjangoModelField)
-    assert graphene_type.model == FilmDetails
+    assert isinstance(graphene_type, graphene.NonNull)
+    assert isinstance(graphene_type.of_type, DjangoModelField)
+    assert graphene_type.of_type.model == FilmDetails
 
 
 def test_should_onetoone_convert_model():
@@ -195,7 +202,8 @@ def test_should_foreignkey_convert_model():
 def test_should_postgres_array_convert_list():
     field = assert_conversion(ArrayField, graphene.List, models.CharField(max_length=100))
     assert isinstance(field.type, graphene.List)
-    assert isinstance(field.type.of_type, graphene.String)
+    assert isinstance(field.type.of_type, graphene.NonNull)
+    assert isinstance(field.type.of_type.of_type, graphene.String)
 
 
 @pytest.mark.skipif(ArrayField is MissingType,
@@ -204,7 +212,8 @@ def test_should_postgres_array_multiple_convert_list():
     field = assert_conversion(ArrayField, graphene.List, ArrayField(models.CharField(max_length=100)))
     assert isinstance(field.type, graphene.List)
     assert isinstance(field.type.of_type, graphene.List)
-    assert isinstance(field.type.of_type.of_type, graphene.String)
+    assert isinstance(field.type.of_type.of_type, graphene.NonNull)
+    assert isinstance(field.type.of_type.of_type.of_type, graphene.String)
 
 
 @pytest.mark.skipif(HStoreField is MissingType,
@@ -224,4 +233,5 @@ def test_should_postgres_json_convert_string():
 def test_should_postgres_range_convert_list():
     from django.contrib.postgres.fields import IntegerRangeField
     field = assert_conversion(IntegerRangeField, graphene.List)
-    assert isinstance(field.type.of_type, graphene.Int)
+    assert isinstance(field.type.of_type, graphene.NonNull)
+    assert isinstance(field.type.of_type.of_type, graphene.Int)

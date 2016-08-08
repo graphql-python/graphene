@@ -1,106 +1,19 @@
 import inspect
 import warnings
-from collections import Iterable
 from functools import wraps
 
 import six
 
-from graphql_relay.connection.arrayconnection import connection_from_list
 from graphql_relay.node.node import to_global_id
 
-from ..core.classtypes import InputObjectType, Interface, Mutation, ObjectType
+from ..core.classtypes import InputObjectType, Interface, Mutation
 from ..core.classtypes.interface import InterfaceMeta
 from ..core.classtypes.mutation import MutationMeta
-from ..core.types import Boolean, Field, List, String
+from ..core.types import String
 from ..core.types.argument import ArgumentsGroup
 from ..core.types.definitions import NonNull
-from ..utils import memoize
 from ..utils.wrap_resolver_function import has_context, with_context
 from .fields import GlobalIDField
-
-
-class PageInfo(ObjectType):
-
-    def __init__(self, start_cursor="", end_cursor="",
-                 has_previous_page=False, has_next_page=False, **kwargs):
-        super(PageInfo, self).__init__(**kwargs)
-        self.startCursor = start_cursor
-        self.endCursor = end_cursor
-        self.hasPreviousPage = has_previous_page
-        self.hasNextPage = has_next_page
-
-    hasNextPage = Boolean(
-        required=True,
-        description='When paginating forwards, are there more items?')
-    hasPreviousPage = Boolean(
-        required=True,
-        description='When paginating backwards, are there more items?')
-    startCursor = String(
-        description='When paginating backwards, the cursor to continue.')
-    endCursor = String(
-        description='When paginating forwards, the cursor to continue.')
-
-
-class Edge(ObjectType):
-    '''An edge in a connection.'''
-    cursor = String(
-        required=True, description='A cursor for use in pagination')
-
-    @classmethod
-    @memoize
-    def for_node(cls, node):
-        from graphene.relay.utils import is_node
-        assert is_node(node), 'ObjectTypes in a edge have to be Nodes'
-        node_field = Field(node, description='The item at the end of the edge')
-        return type(
-            '%s%s' % (node._meta.type_name, cls._meta.type_name),
-            (cls,),
-            {'node_type': node, 'node': node_field})
-
-
-class Connection(ObjectType):
-    '''A connection to a list of items.'''
-
-    def __init__(self, edges, page_info, **kwargs):
-        super(Connection, self).__init__(**kwargs)
-        self.edges = edges
-        self.pageInfo = page_info
-
-    class Meta:
-        type_name = 'DefaultConnection'
-
-    pageInfo = Field(PageInfo, required=True,
-                     description='The Information to aid in pagination')
-
-    _connection_data = None
-
-    @classmethod
-    @memoize
-    def for_node(cls, node, edge_type=None):
-        from graphene.relay.utils import is_node
-        edge_type = edge_type or Edge.for_node(node)
-        assert is_node(node), 'ObjectTypes in a connection have to be Nodes'
-        edges = List(edge_type, description='Information to aid in pagination.')
-        return type(
-            '%s%s' % (node._meta.type_name, cls._meta.type_name),
-            (cls,),
-            {'edge_type': edge_type, 'edges': edges})
-
-    @classmethod
-    def from_list(cls, iterable, args, context, info):
-        assert isinstance(
-            iterable, Iterable), 'Resolved value from the connection field have to be iterable'
-        connection = connection_from_list(
-            iterable, args, connection_type=cls,
-            edge_type=cls.edge_type, pageinfo_type=PageInfo)
-        connection.set_connection_data(iterable)
-        return connection
-
-    def set_connection_data(self, data):
-        self._connection_data = data
-
-    def get_connection_data(self):
-        return self._connection_data
 
 
 class NodeMeta(InterfaceMeta):
@@ -153,20 +66,9 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
     def to_global_id(self):
         return self.global_id(self.id)
 
-    connection_type = Connection
-    edge_type = Edge
-
-    @classmethod
-    def get_connection_type(cls):
-        return cls.connection_type
-
-    @classmethod
-    def get_edge_type(cls):
-        return cls.edge_type
-
 
 class MutationInputType(InputObjectType):
-    clientMutationId = String(required=True)
+    clientMutationId = String()
 
 
 class RelayMutationMeta(MutationMeta):
@@ -188,7 +90,7 @@ class RelayMutationMeta(MutationMeta):
 
 
 class ClientIDMutation(six.with_metaclass(RelayMutationMeta, Mutation)):
-    clientMutationId = String(required=True)
+    clientMutationId = String()
 
     class Meta:
         abstract = True

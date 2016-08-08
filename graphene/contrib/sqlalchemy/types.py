@@ -5,7 +5,8 @@ from sqlalchemy.inspection import inspect as sqlalchemyinspect
 from sqlalchemy.orm.exc import NoResultFound
 
 from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
-from ...relay.types import Connection, Node, NodeMeta
+from ...relay.types import Node, NodeMeta
+from ...relay.connection import Connection
 from .converter import (convert_sqlalchemy_column,
                         convert_sqlalchemy_relationship)
 from .options import SQLAlchemyOptions

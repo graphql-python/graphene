@@ -6,6 +6,7 @@ from ..core.fields import Field
 from ..core.types.definitions import NonNull
 from ..core.types.scalars import ID, Int, String
 from ..utils.wrap_resolver_function import has_context, with_context
+from .connection import Connection, Edge
 
 
 class ConnectionField(Field):
@@ -23,8 +24,8 @@ class ConnectionField(Field):
             last=Int(),
             description=description,
             **kwargs)
-        self.connection_type = connection_type
-        self.edge_type = edge_type
+        self.connection_type = connection_type or Connection
+        self.edge_type = edge_type or Edge
 
     @with_context
     def resolver(self, instance, args, context, info):
@@ -37,7 +38,7 @@ class ConnectionField(Field):
         else:
             resolved = super(ConnectionField, self).resolver(instance, args, info)
 
-        if isinstance(resolved, connection_type):
+        if isinstance(resolved, self.connection_type):
             return resolved
         return self.from_list(connection_type, resolved, args, context, info)
 
@@ -45,19 +46,14 @@ class ConnectionField(Field):
         return connection_type.from_list(resolved, args, context, info)
 
     def get_connection_type(self, node):
-        connection_type = self.connection_type or node.get_connection_type()
-        edge_type = self.get_edge_type(node)
-        return connection_type.for_node(node, edge_type=edge_type)
+        return self.connection_type.for_node(node)
 
     def get_edge_type(self, node):
-        edge_type = self.edge_type or node.get_edge_type()
-        return edge_type.for_node(node)
+        return self.edge_type.for_node(node)
 
     def get_type(self, schema):
-        from graphene.relay.utils import is_node
         type = schema.T(self.type)
         node = schema.objecttype(type)
-        assert is_node(node), 'Only nodes have connections.'
         schema.register(node)
         connection_type = self.get_connection_type(node)
 

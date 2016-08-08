@@ -56,8 +56,7 @@ def test_mutation_arguments():
     client_mutation_id_field = inner_type._meta.fields_map[
         'clientMutationId']
     assert issubclass(inner_type, graphene.InputObjectType)
-    assert isinstance(client_mutation_id_field.type, graphene.NonNull)
-    assert isinstance(client_mutation_id_field.type.of_type, graphene.String)
+    assert isinstance(client_mutation_id_field.type, graphene.String)
     assert client_mutation_id_field.object_type == inner_type
     assert isinstance(schema.T(client_mutation_id_field), GraphQLInputObjectField)
 
@@ -65,7 +64,7 @@ def test_mutation_arguments():
 def test_execute_mutations():
     query = '''
     mutation M{
-      first: changeNumber(input: {clientMutationId: "mutation1"}) {
+      first: changeNumber(input: {}) {
         clientMutationId
         result
       },
@@ -81,7 +80,7 @@ def test_execute_mutations():
     '''
     expected = {
         'first': {
-            'clientMutationId': 'mutation1',
+            'clientMutationId': None,
             'result': '1',
         },
         'second': {
