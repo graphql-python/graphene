@@ -46,9 +46,6 @@ class ObjectTypeMeta(type):
 
         return cls._create_objecttype(cls, name, bases, attrs)
 
-    def get_interfaces(cls, bases):  # noqa: N805
-        return (b for b in bases if issubclass(b, Interface))
-
     def is_object_type(cls):  # noqa: N805
         return issubclass(cls, ObjectType)
 
