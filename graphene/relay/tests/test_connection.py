@@ -6,7 +6,9 @@ from ..connection import Connection
 from ..node import Node
 
 
-class MyObject(Node, ObjectType):
+class MyObject(ObjectType):
+    class Meta:
+        interfaces = [Node]
     field = String()
 
     @classmethod

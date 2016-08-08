@@ -4,7 +4,9 @@ from graphene import relay, resolve_only_args
 from .data import create_ship, get_empire, get_faction, get_rebels, get_ship
 
 
-class Ship(relay.Node, graphene.ObjectType):
+class Ship(graphene.ObjectType):
+    class Meta:
+        interfaces = [relay.Node]
     '''A ship in the Star Wars saga'''
     name = graphene.String(description='The name of the ship.')
 

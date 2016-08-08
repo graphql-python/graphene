@@ -12,6 +12,15 @@ from ..utils.copy_fields import copy_fields
 from .connection import Connection
 
 
+def get_default_connection(cls):
+    assert issubclass(cls, ObjectType), 'Can only get connection type on implemented Nodes.'
+
+    class Meta:
+        node = cls
+
+    return type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
+
+
 # We inherit from ObjectTypeMeta as we want to allow
 # inheriting from Node, and also ObjectType.
 # Like class MyNode(Node): pass
@@ -23,17 +32,6 @@ class NodeMeta(ObjectTypeMeta):
         return Options(
             meta,
         )
-
-    @staticmethod
-    def _create_objecttype(cls, name, bases, attrs):
-        cls = super(NodeMeta, cls)._create_objecttype(cls, name, bases, attrs)
-        require_get_node = Node._meta.graphql_type in cls._meta.graphql_type._provided_interfaces
-        if require_get_node:
-            assert hasattr(
-                cls, 'get_node'), '{}.get_node method is required by the Node interface.'.format(
-                cls.__name__)
-
-        return cls
 
     @staticmethod
     def _create_interface(cls, name, bases, attrs):
@@ -95,10 +93,14 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         return graphql_type.graphene_type.get_node(_id, context, info)
 
     @classmethod
-    def get_default_connection(cls):
-        assert issubclass(cls, ObjectType), 'Can only get connection type on implemented Nodes.'
-        if not cls._connection:
-            class Meta:
-                node = cls
-            cls._connection = type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
-        return cls._connection
+    def implements(cls, objecttype):
+        require_get_node = Node._meta.graphql_type in objecttype._meta.get_interfaces
+        get_connection = getattr(objecttype, 'get_connection', None)
+        if not get_connection:
+            get_connection = partial(get_default_connection, objecttype)
+
+        objecttype.Connection = get_connection()
+        if require_get_node:
+            assert hasattr(
+                objecttype, 'get_node'), '{}.get_node method is required by the Node interface.'.format(
+                objecttype.__name__)

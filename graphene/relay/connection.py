@@ -96,8 +96,8 @@ class IterableConnectionField(Field):
     @property
     def connection(self):
         from .node import Node
-        if issubclass(self._type, Node):
-            connection_type = self._type.get_default_connection()
+        if Node in self._type._meta.interfaces:
+            connection_type = self._type.Connection
         else:
             connection_type = self._type
         assert issubclass(connection_type, Connection), '{} type have to be a subclass of Connection'.format(str(self))

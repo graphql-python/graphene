@@ -1,4 +1,4 @@
-
+import inspect
 import six
 
 from ..utils.copy_fields import copy_fields
@@ -97,12 +97,17 @@ class ObjectTypeMeta(type):
 
         if not options.graphql_type:
             fields = copy_fields(Field, fields, parent=cls)
-            base_interfaces = tuple(b for b in bases if issubclass(b, Interface))
+            inherited_interfaces = tuple(b for b in bases if issubclass(b, Interface))
             options.get_fields = lambda: fields
-            options.get_interfaces = tuple(get_interfaces(interfaces + base_interfaces))
+            options.interfaces = interfaces + inherited_interfaces
+            options.get_interfaces = tuple(get_interfaces(options.interfaces))
             options.graphql_type = generate_objecttype(cls)
+            for i in options.interfaces:
+                if inspect.isclass(i) and issubclass(i, Interface):
+                    i.implements(cls)
         else:
             assert not fields, "Can't mount Fields in an ObjectType with a defined graphql_type"
+            assert not interfaces, "Can't have extra interfaces with a defined graphql_type"
             fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
 
             options.get_fields = lambda: fields
@@ -175,3 +180,7 @@ class Interface(six.with_metaclass(ObjectTypeMeta)):
         if not isinstance(self, ObjectType):
             raise Exception("An interface cannot be intitialized")
         super(Interface, self).__init__(*args, **kwargs)
+
+    @classmethod
+    def implements(cls, objecttype):
+        pass

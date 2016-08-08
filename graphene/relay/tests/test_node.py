@@ -8,8 +8,9 @@ from ..connection import Connection
 from ..node import Node
 
 
-class MyNode(Node, ObjectType):
-
+class MyNode(ObjectType):
+    class Meta:
+        interfaces = [Node]
     name = String()
 
     @staticmethod
@@ -46,12 +47,12 @@ def test_node_good():
 
 
 def test_node_get_connection():
-    connection = MyNode.get_default_connection()
+    connection = MyNode.Connection
     assert issubclass(connection, Connection)
 
 
 def test_node_get_connection_dont_duplicate():
-    assert MyNode.get_default_connection() == MyNode.get_default_connection()
+    assert MyNode.Connection == MyNode.Connection
 
 
 def test_node_query():

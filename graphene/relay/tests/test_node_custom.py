@@ -24,12 +24,15 @@ class BasePhoto(Interface):
     width = Int()
 
 
-class User(CustomNode, ObjectType):
+class User(ObjectType):
+    class Meta:
+        interfaces = [CustomNode]
     name = String()
 
 
-class Photo(CustomNode, BasePhoto, ObjectType):
-    pass
+class Photo(ObjectType):
+    class Meta:
+        interfaces = [CustomNode, BasePhoto]
 
 
 user_data = {
@@ -50,7 +53,6 @@ schema = Schema(query=RootQuery, types=[User, Photo])
 
 
 def test_str_schema_correct():
-    print str(schema)
     assert str(schema) == '''schema {
   query: RootQuery
 }
