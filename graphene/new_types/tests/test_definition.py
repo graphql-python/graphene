@@ -64,7 +64,7 @@ def test_defines_a_query_only_schema():
     assert issubclass(author_field_type, ObjectType)
     recent_article_field = author_field_type._meta.fields['recent_article']
 
-    assert recent_article_field.type() == Article
+    assert recent_article_field.type == Article
 
     feed_field = Query._meta.fields['feed']
     assert feed_field.type.of_type == Article
