@@ -1,33 +1,30 @@
 import six
-from collections import OrderedDict
 
 from ..utils.is_base_type import is_base_type
 from .options import Options
 
-from .utils import get_fields_in_type, attrs_without_fields
-
-
-def merge_fields_in_attrs(bases, attrs):
-    for base in bases:
-        if not issubclass(base, AbstractType):
-            continue
-        for name, field in base._meta.fields.items():
-            if name in attrs:
-                continue
-            attrs[name] = field
-    return attrs
+from .utils import get_fields_in_type, yank_fields_from_attrs, merge_fields_in_attrs
 
 
 class AbstractTypeMeta(type):
 
     def __new__(cls, name, bases, attrs):
-        options = attrs.get('_meta', Options())
+        # Also ensure initialization is only performed for subclasses of
+        # ObjectType
+        if not is_base_type(bases, AbstractTypeMeta):
+            return type.__new__(cls, name, bases, attrs)
+
+        for base in bases:
+            if not issubclass(base, AbstractType) and issubclass(type(base), AbstractTypeMeta):
+                # raise Exception('You can only')
+                return type.__new__(cls, name, bases, attrs)
 
         attrs = merge_fields_in_attrs(bases, attrs)
         fields = get_fields_in_type(cls, attrs)
-        options.fields = OrderedDict(sorted(fields, key=lambda f: f[1]))
+        yank_fields_from_attrs(attrs, fields)
 
-        attrs = attrs_without_fields(attrs, fields)
+        options = attrs.get('_meta', Options())
+        options.fields = fields
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
         return cls

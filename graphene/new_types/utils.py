@@ -1,5 +1,19 @@
+from collections import OrderedDict
+
 from .unmountedtype import UnmountedType
 from .field import Field
+
+
+def merge_fields_in_attrs(bases, attrs):
+    from ..new_types.abstracttype import AbstractType
+    for base in bases:
+        if base == AbstractType or not issubclass(base, AbstractType):
+            continue
+        for name, field in base._meta.fields.items():
+            if name in attrs:
+                continue
+            attrs[name] = field
+    return attrs
 
 
 def unmounted_field_in_type(attname, unmounted_field, type):
@@ -12,10 +26,10 @@ def unmounted_field_in_type(attname, unmounted_field, type):
     '''
     # from ..types.inputobjecttype import InputObjectType
     from ..new_types.objecttype import ObjectTypeMeta
-    from ..new_types.interface import Interface
+    from ..new_types.interface import InterfaceMeta
     from ..new_types.abstracttype import AbstractTypeMeta
 
-    if issubclass(type, (ObjectTypeMeta, Interface)):
+    if issubclass(type, (ObjectTypeMeta, InterfaceMeta)):
         return unmounted_field.as_field()
 
     elif issubclass(type, (AbstractTypeMeta)):
@@ -31,12 +45,23 @@ def unmounted_field_in_type(attname, unmounted_field, type):
 
 
 def get_fields_in_type(in_type, attrs):
+    fields_with_names = []
     for attname, value in list(attrs.items()):
         if isinstance(value, (Field)):  # , InputField
-            yield attname, value
+            fields_with_names.append(
+                (attname, value)
+            )
         elif isinstance(value, UnmountedType):
-            yield attname, unmounted_field_in_type(attname, value, in_type)
+            fields_with_names.append(
+                (attname, unmounted_field_in_type(attname, value, in_type))
+            )
+
+    return OrderedDict(sorted(fields_with_names, key=lambda f: f[1]))
 
 
-def attrs_without_fields(attrs, fields):
-    return {k: v for k, v in attrs.items() if k not in fields}
+def yank_fields_from_attrs(attrs, fields):
+    for name, field in fields.items():
+        # attrs.pop(name, None)
+        del attrs[name]
+    # return attrs
+    # return {k: v for k, v in attrs.items() if k not in fields}

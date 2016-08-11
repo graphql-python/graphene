@@ -3,6 +3,7 @@ import pytest
 from ..field import Field
 from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
+from ..abstracttype import AbstractType
 
 
 class MyType(object):
@@ -57,6 +58,27 @@ def test_ordered_fields_in_objecttype():
         asa = Field(MyType)
 
     assert list(MyObjectType._meta.fields.keys()) == ['b', 'a', 'field', 'asa']
+
+
+def test_generate_objecttype_inherit_abstracttype():
+    class MyAbstractType(AbstractType):
+        field1 = MyScalar(MyType)
+
+    class MyObjectType(ObjectType, MyAbstractType):
+        field2 = MyScalar(MyType)
+
+    assert MyObjectType._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyObjectType._meta.fields.values()] == [Field, Field]
+
+def test_generate_objecttype_inherit_abstracttype_reversed():
+    class MyAbstractType(AbstractType):
+        field1 = MyScalar(MyType)
+
+    class MyObjectType(MyAbstractType, ObjectType):
+        field2 = MyScalar(MyType)
+
+    assert MyObjectType._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyObjectType._meta.fields.values()] == [Field, Field]
 
 
 def test_generate_objecttype_unmountedtype():

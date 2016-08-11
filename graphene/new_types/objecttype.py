@@ -1,13 +1,13 @@
 import six
-from collections import OrderedDict
 
 from ..utils.is_base_type import is_base_type
 from .options import Options
 
-from .utils import get_fields_in_type, attrs_without_fields
+from .abstracttype import AbstractTypeMeta
+from .utils import get_fields_in_type, yank_fields_from_attrs, merge_fields_in_attrs
 
 
-class ObjectTypeMeta(type):
+class ObjectTypeMeta(AbstractTypeMeta):
 
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of
@@ -22,13 +22,11 @@ class ObjectTypeMeta(type):
             interfaces=(),
         )
 
-        fields = get_fields_in_type(ObjectType, attrs)
-        options.fields = OrderedDict(sorted(fields, key=lambda f: f[1]))
+        attrs = merge_fields_in_attrs(bases, attrs)
+        options.fields = get_fields_in_type(cls, attrs)
+        yank_fields_from_attrs(attrs, options.fields)
 
-        attrs = attrs_without_fields(attrs, fields)
-        cls = super(ObjectTypeMeta, cls).__new__(cls, name, bases, dict(attrs, _meta=options))
-
-        return cls
+        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):

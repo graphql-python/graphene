@@ -38,7 +38,8 @@ def test_generate_abstracttype_inheritance():
         field2 = UnmountedType(MyType)
 
     assert MyAbstractType2._meta.fields.keys() == ['field1', 'field2']
-
+    assert not hasattr(MyAbstractType1, 'field1')
+    assert not hasattr(MyAbstractType2, 'field2')
 
 # def test_ordered_fields_in_objecttype():
 #     class MyObjectType(ObjectType):
