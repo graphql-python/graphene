@@ -19,8 +19,8 @@ class ScalarTypeMeta(type):
 
         options = Options(
             attrs.pop('Meta', None),
-            name=None,
-            description=None,
+            name=name,
+            description=attrs.get('__doc__'),
         )
 
         return super_new(cls, name, bases, dict(attrs, _meta=options))
