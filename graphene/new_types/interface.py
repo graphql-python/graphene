@@ -23,7 +23,7 @@ class InterfaceMeta(AbstractTypeMeta):
         )
 
         attrs = merge_fields_in_attrs(bases, attrs)
-        options.fields = get_fields_in_type(cls, attrs)
+        options.fields = get_fields_in_type(Interface, attrs)
         yank_fields_from_attrs(attrs, options.fields)
 
         return type.__new__(cls, name, bases, dict(attrs, _meta=options))
@@ -35,6 +35,6 @@ class Interface(six.with_metaclass(InterfaceMeta)):
     def __init__(self, *args, **kwargs):
         raise Exception("An interface cannot be intitialized")
 
-    @classmethod
-    def implements(cls, objecttype):
-        pass
+    # @classmethod
+    # def implements(cls, objecttype):
+    #     pass

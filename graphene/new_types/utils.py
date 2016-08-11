@@ -25,14 +25,14 @@ def unmounted_field_in_type(attname, unmounted_field, type):
     InputObjectType -> InputField
     '''
     # from ..types.inputobjecttype import InputObjectType
-    from ..new_types.objecttype import ObjectTypeMeta
-    from ..new_types.interface import InterfaceMeta
-    from ..new_types.abstracttype import AbstractTypeMeta
+    from ..new_types.objecttype import ObjectType
+    from ..new_types.interface import Interface
+    from ..new_types.abstracttype import AbstractType
 
-    if issubclass(type, (ObjectTypeMeta, InterfaceMeta)):
+    if issubclass(type, (ObjectType, Interface)):
         return unmounted_field.as_field()
 
-    elif issubclass(type, (AbstractTypeMeta)):
+    elif issubclass(type, (AbstractType)):
         return unmounted_field
     # elif issubclass(type, (InputObjectType)):
     #     return unmounted_field.as_inputfield()

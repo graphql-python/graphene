@@ -23,7 +23,7 @@ class ObjectTypeMeta(AbstractTypeMeta):
         )
 
         attrs = merge_fields_in_attrs(bases, attrs)
-        options.fields = get_fields_in_type(cls, attrs)
+        options.fields = get_fields_in_type(ObjectType, attrs)
         yank_fields_from_attrs(attrs, options.fields)
 
         return type.__new__(cls, name, bases, dict(attrs, _meta=options))

@@ -10,7 +10,7 @@ class AbstractTypeMeta(type):
 
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of
-        # ObjectType
+        # AbstractType
         if not is_base_type(bases, AbstractTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
@@ -20,7 +20,7 @@ class AbstractTypeMeta(type):
                 return type.__new__(cls, name, bases, attrs)
 
         attrs = merge_fields_in_attrs(bases, attrs)
-        fields = get_fields_in_type(cls, attrs)
+        fields = get_fields_in_type(AbstractType, attrs)
         yank_fields_from_attrs(attrs, fields)
 
         options = attrs.get('_meta', Options())
