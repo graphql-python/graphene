@@ -1,4 +1,4 @@
-# import inspect
+import inspect
 from functools import partial
 from collections import OrderedDict
 
@@ -42,7 +42,7 @@ from .structures import NonNull
 
 def source_resolver(source, root, args, context, info):
     resolved = getattr(root, source, None)
-    if callable(resolved):
+    if inspect.isfunction(resolved):
         return resolved()
     return resolved
 
@@ -58,7 +58,7 @@ class Field(OrderedType):
         # self.parent = None
         if required:
             type = NonNull(type)
-        self.type = type
+        self._type = type
         self.args = args or OrderedDict()
         # self.args = to_arguments(args, extra_args)
         assert not (source and resolver), ('You cannot provide a source and a '
@@ -68,3 +68,9 @@ class Field(OrderedType):
         self.resolver = resolver
         self.deprecation_reason = deprecation_reason
         self.description = description
+
+    @property
+    def type(self):
+        if inspect.isfunction(self._type):
+            return self._type()
+        return self._type
