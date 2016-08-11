@@ -70,6 +70,7 @@ def test_generate_objecttype_inherit_abstracttype():
     assert MyObjectType._meta.fields.keys() == ['field1', 'field2']
     assert [type(x) for x in MyObjectType._meta.fields.values()] == [Field, Field]
 
+
 def test_generate_objecttype_inherit_abstracttype_reversed():
     class MyAbstractType(AbstractType):
         field1 = MyScalar(MyType)
