@@ -47,7 +47,7 @@ def test_field_not_source_and_resolver():
     MyType = object()
     with pytest.raises(Exception) as exc_info:
         Field(MyType, source='value', resolver=lambda: None)
-    assert str(exc_info.value) == 'You cannot provide a source and a resolver in a Field at the same time.'
+    assert str(exc_info.value) == 'A Field cannot have a source and a resolver in at the same time.'
 
 def test_field_source_func():
     MyType = object()

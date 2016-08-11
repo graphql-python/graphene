@@ -61,8 +61,8 @@ class Field(OrderedType):
         self._type = type
         self.args = args or OrderedDict()
         # self.args = to_arguments(args, extra_args)
-        assert not (source and resolver), ('You cannot provide a source and a '
-                                           'resolver in a Field at the same time.')
+        assert not (source and resolver), ('A Field cannot have a source and a '
+                                           'resolver in at the same time.')
         if source:
             resolver = partial(source_resolver, source)
         self.resolver = resolver
