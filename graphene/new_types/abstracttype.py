@@ -23,8 +23,9 @@ class AbstractTypeMeta(type):
         fields = get_fields_in_type(AbstractType, attrs)
         yank_fields_from_attrs(attrs, fields)
 
-        options = attrs.get('_meta', Options())
-        options.fields = fields
+        options = Options(
+            fields=fields
+        )
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
         return cls
