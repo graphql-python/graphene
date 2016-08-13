@@ -37,16 +37,17 @@ class UnmountedType(OrderedType):
             **self.kwargs
         )
 
-    # def as_inputfield(self):
-    #     '''
-    #     Mount the UnmountedType as InputField
-    #     '''
-    #     return InputField(
-    #         self.get_type(),
-    #         *self.args,
-    #         _creation_counter=self.creation_counter,
-    #         **self.kwargs
-    #     )
+    def as_inputfield(self):
+        '''
+        Mount the UnmountedType as InputField
+        '''
+        from .inputfield import InputField
+        return InputField(
+            self.get_type(),
+            *self.args,
+            _creation_counter=self.creation_counter,
+            **self.kwargs
+        )
 
     # def as_argument(self):
     #     '''

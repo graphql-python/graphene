@@ -7,12 +7,12 @@ from .abstracttype import AbstractTypeMeta
 from .utils import get_fields_in_type, yank_fields_from_attrs, merge_fields_in_attrs
 
 
-class InterfaceMeta(AbstractTypeMeta):
+class InputObjectTypeMeta(AbstractTypeMeta):
 
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of
-        # Interface
-        if not is_base_type(bases, InterfaceMeta):
+        # InputObjectType
+        if not is_base_type(bases, InputObjectTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
         options = Options(
@@ -22,7 +22,7 @@ class InterfaceMeta(AbstractTypeMeta):
         )
 
         attrs = merge_fields_in_attrs(bases, attrs)
-        options.fields = get_fields_in_type(Interface, attrs)
+        options.fields = get_fields_in_type(InputObjectType, attrs)
         yank_fields_from_attrs(attrs, options.fields)
 
         return type.__new__(cls, name, bases, dict(attrs, _meta=options))
@@ -31,12 +31,6 @@ class InterfaceMeta(AbstractTypeMeta):
         return cls._meta.name
 
 
-class Interface(six.with_metaclass(InterfaceMeta)):
-    resolve_type = None
-
+class InputObjectType(six.with_metaclass(InputObjectTypeMeta)):
     def __init__(self, *args, **kwargs):
-        raise Exception("An Interface cannot be intitialized")
-
-    # @classmethod
-    # def implements(cls, objecttype):
-    #     pass
+        raise Exception("An InputObjectType cannot be intitialized")

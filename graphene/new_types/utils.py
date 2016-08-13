@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from .unmountedtype import UnmountedType
 from .field import Field
+from .inputfield import InputField
 
 
 def merge_fields_in_attrs(bases, attrs):
@@ -28,14 +29,15 @@ def unmounted_field_in_type(attname, unmounted_field, type):
     from ..new_types.objecttype import ObjectType
     from ..new_types.interface import Interface
     from ..new_types.abstracttype import AbstractType
+    from ..new_types.inputobjecttype import InputObjectType
 
     if issubclass(type, (ObjectType, Interface)):
         return unmounted_field.as_field()
 
     elif issubclass(type, (AbstractType)):
         return unmounted_field
-    # elif issubclass(type, (InputObjectType)):
-    #     return unmounted_field.as_inputfield()
+    elif issubclass(type, (InputObjectType)):
+        return unmounted_field.as_inputfield()
 
     raise Exception(
         'Unmounted field "{}" cannot be mounted in {}.{}.'.format(
@@ -47,7 +49,7 @@ def unmounted_field_in_type(attname, unmounted_field, type):
 def get_fields_in_type(in_type, attrs):
     fields_with_names = []
     for attname, value in list(attrs.items()):
-        if isinstance(value, (Field)):  # , InputField
+        if isinstance(value, (Field, InputField)):
             fields_with_names.append(
                 (attname, value)
             )
