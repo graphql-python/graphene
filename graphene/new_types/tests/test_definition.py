@@ -8,6 +8,9 @@ from ..union import Union
 from ..scalars import String, Int, Boolean
 from ..field import Field
 from ..structures import List
+from ..enum import Enum
+from ..inputobjecttype import InputObjectType
+from ..structures import List, NonNull
 
 from ..schema import Schema
 
@@ -21,7 +24,7 @@ class Image(ObjectType):
 class Author(ObjectType):
     id = String()
     name = String()
-    pic = Field(Image)  # width=Int(), height=Int()
+    pic = Field(Image, width=Int(), height=Int())
     recent_article = Field(lambda: Article)
 
 
@@ -34,7 +37,7 @@ class Article(ObjectType):
 
 
 class Query(ObjectType):
-    article = Field(Article)  # id=String()
+    article = Field(Article, id=String())
     feed = List(Article)
 
 
@@ -43,7 +46,11 @@ class Mutation(ObjectType):
 
 
 class Subscription(ObjectType):
-    article_subscribe = Field(Article)  # id=String()
+    article_subscribe = Field(Article, id=String())
+
+
+class MyObjectType(ObjectType):
+    pass
 
 
 class MyInterface(Interface):
@@ -53,6 +60,14 @@ class MyInterface(Interface):
 class MyUnion(Union):
     class Meta:
         types = (Article, )
+
+
+class MyEnum(Enum):
+    foo = 'foo'
+
+
+class MyInputObjectType(InputObjectType):
+    pass
 
 
 def test_defines_a_query_only_schema():
@@ -193,13 +208,13 @@ def test_stringifies_simple_types():
     assert str(Article) == 'Article'
     assert str(MyInterface) == 'MyInterface'
     assert str(MyUnion) == 'MyUnion'
-    # assert str(EnumType) == 'Enum'
-    # assert str(InputObjectType) == 'InputObject'
-    # assert str(GraphQLNonNull(GraphQLInt)) == 'Int!'
-    # assert str(GraphQLList(GraphQLInt)) == '[Int]'
-    # assert str(GraphQLNonNull(GraphQLList(GraphQLInt))) == '[Int]!'
-    # assert str(GraphQLList(GraphQLNonNull(GraphQLInt))) == '[Int!]'
-    # assert str(GraphQLList(GraphQLList(GraphQLInt))) == '[[Int]]'
+    assert str(MyEnum) == 'MyEnum'
+    assert str(MyInputObjectType) == 'MyInputObjectType'
+    assert str(NonNull(Int)) == 'Int!'
+    assert str(List(Int)) == '[Int]'
+    assert str(NonNull(List(Int))) == '[Int]!'
+    assert str(List(NonNull(Int))) == '[Int!]'
+    assert str(List(List(Int))) == '[[Int]]'
 
 
 # def test_identifies_input_types():

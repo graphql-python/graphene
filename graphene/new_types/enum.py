@@ -46,6 +46,9 @@ class EnumTypeMeta(type):
         meta_class = type('Meta', (object,), {'enum': enum, 'description': description})
         return type(meta_class.enum.__name__, (Enum,), {'Meta': meta_class})
 
+    def __str__(cls):
+        return cls._meta.name
+
 
 class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
     pass
