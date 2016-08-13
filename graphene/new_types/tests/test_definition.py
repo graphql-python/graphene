@@ -182,6 +182,28 @@ def test_includes_types_in_union():
     assert schema.get_type_map()['SomeType'].graphene_type is SomeType
 
 
+def test_maps_enum():
+    class SomeType(ObjectType):
+        a = String()
+
+    class OtherType(ObjectType):
+        b = String()
+
+    class MyUnion(Union):
+        class Meta:
+            types = (SomeType, OtherType)
+
+    class Query(ObjectType):
+        union = Field(MyUnion)
+
+    schema = Schema(
+        query=Query,
+    )
+
+    assert schema.get_type_map()['OtherType'].graphene_type is OtherType
+    assert schema.get_type_map()['SomeType'].graphene_type is SomeType
+
+
 def test_includes_interfaces_subtypes_in_the_type_map():
     class SomeInterface(Interface):
         f = Int()

@@ -8,15 +8,17 @@ from .interface import Interface
 from .union import Union
 from .inputobjecttype import InputObjectType
 from .structures import List, NonNull
+from .enum import Enum
 from .scalars import Scalar, String, Boolean, Int, Float, ID
 
 from graphql import GraphQLString, GraphQLField, GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLFloat, GraphQLID, GraphQLNonNull, GraphQLInputObjectField
+from graphql.type import GraphQLEnumValue
 
 
 def is_graphene_type(_type):
     if isinstance(_type, (List, NonNull)):
         return True
-    if inspect.isclass(_type) and issubclass(_type, (ObjectType, InputObjectType, Scalar, Interface, Union)):
+    if inspect.isclass(_type) and issubclass(_type, (ObjectType, InputObjectType, Scalar, Interface, Union, Enum)):
         return True
 
 
@@ -48,6 +50,8 @@ class TypeMap(GraphQLTypeMap):
             return cls.construct_interface(map, type)
         if issubclass(type, Scalar):
             return cls.construct_scalar(map, type)
+        if issubclass(type, Enum):
+            return cls.construct_enum(map, type)
         if issubclass(type, Union):
             return cls.construct_union(map, type)
         return map
@@ -74,6 +78,25 @@ class TypeMap(GraphQLTypeMap):
                 parse_value=getattr(type, 'parse_value', None),
                 parse_literal=getattr(type, 'parse_literal', None),
             )
+        return map
+
+    @classmethod
+    def construct_enum(cls, map, type):
+        from ..generators.definitions import GrapheneEnumType
+        values = OrderedDict()
+        for name, value in type._meta.enum.__members__.items():
+            values[name] = GraphQLEnumValue(
+                name=name,
+                value=value.value,
+                description=getattr(value, 'description', None),
+                deprecation_reason=getattr(value, 'deprecation_reason', None)
+            )
+        map[type._meta.name] = GrapheneEnumType(
+            graphene_type=type,
+            values=values,
+            name=type._meta.name,
+            description=type._meta.description,
+        )
         return map
 
     @classmethod
