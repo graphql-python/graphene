@@ -62,10 +62,10 @@ def test_ordered_fields_in_objecttype():
 
 def test_generate_objecttype_inherit_abstracttype():
     class MyAbstractType(AbstractType):
-        field1 = MyScalar(MyType)
+        field1 = MyScalar()
 
     class MyObjectType(ObjectType, MyAbstractType):
-        field2 = MyScalar(MyType)
+        field2 = MyScalar()
 
     assert MyObjectType._meta.fields.keys() == ['field1', 'field2']
     assert [type(x) for x in MyObjectType._meta.fields.values()] == [Field, Field]
@@ -73,10 +73,10 @@ def test_generate_objecttype_inherit_abstracttype():
 
 def test_generate_objecttype_inherit_abstracttype_reversed():
     class MyAbstractType(AbstractType):
-        field1 = MyScalar(MyType)
+        field1 = MyScalar()
 
     class MyObjectType(MyAbstractType, ObjectType):
-        field2 = MyScalar(MyType)
+        field2 = MyScalar()
 
     assert MyObjectType._meta.fields.keys() == ['field1', 'field2']
     assert [type(x) for x in MyObjectType._meta.fields.values()] == [Field, Field]
@@ -84,7 +84,7 @@ def test_generate_objecttype_inherit_abstracttype_reversed():
 
 def test_generate_objecttype_unmountedtype():
     class MyObjectType(ObjectType):
-        field = MyScalar(MyType)
+        field = MyScalar()
 
     assert 'field' in MyObjectType._meta.fields
     assert isinstance(MyObjectType._meta.fields['field'], Field)

@@ -2,6 +2,7 @@ import pytest
 
 from ..field import Field
 from ..structures import NonNull
+from ..argument import Argument
 
 
 class MyInstance(object):
@@ -11,7 +12,7 @@ class MyInstance(object):
 
 def test_field_basic():
     MyType = object()
-    args = {}
+    args = {'my arg': Argument(True)}
     resolver = lambda: None
     deprecation_reason = 'Deprecated now'
     description = 'My Field'
@@ -49,7 +50,22 @@ def test_field_not_source_and_resolver():
         Field(MyType, source='value', resolver=lambda: None)
     assert str(exc_info.value) == 'A Field cannot have a source and a resolver in at the same time.'
 
+
 def test_field_source_func():
     MyType = object()
     field = Field(MyType, source='value_func')
     assert field.resolver(MyInstance(), {}, None, None) == MyInstance.value_func()
+
+
+def test_field_source_argument_as_kw():
+    MyType = object()
+    field = Field(MyType, b=NonNull(True), c=Argument(None), a=NonNull(False))
+    assert field.args.keys() == ['b', 'c', 'a']
+    assert isinstance(field.args['b'], Argument)
+    assert isinstance(field.args['b'].type, NonNull)
+    assert field.args['b'].type.of_type is True
+    assert isinstance(field.args['c'], Argument)
+    assert field.args['c'].type is None
+    assert isinstance(field.args['a'], Argument)
+    assert isinstance(field.args['a'].type, NonNull)
+    assert field.args['a'].type.of_type is False

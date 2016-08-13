@@ -49,13 +49,14 @@ class UnmountedType(OrderedType):
             **self.kwargs
         )
 
-    # def as_argument(self):
-    #     '''
-    #     Mount the UnmountedType as Argument
-    #     '''
-    #     return Argument(
-    #         self.get_type(),
-    #         *self.args,
-    #         _creation_counter=self.creation_counter,
-    #         **self.kwargs
-    #     )
+    def as_argument(self):
+        '''
+        Mount the UnmountedType as Argument
+        '''
+        from .argument import Argument
+        return Argument(
+            self.get_type(),
+            *self.args,
+            _creation_counter=self.creation_counter,
+            **self.kwargs
+        )

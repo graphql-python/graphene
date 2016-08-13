@@ -54,9 +54,13 @@ def get_fields_in_type(in_type, attrs):
                 (attname, value)
             )
         elif isinstance(value, UnmountedType):
-            fields_with_names.append(
-                (attname, unmounted_field_in_type(attname, value, in_type))
-            )
+            try:
+                value = unmounted_field_in_type(attname, value, in_type)
+                fields_with_names.append(
+                    (attname, value)
+                )
+            except Exception as e:
+                raise Exception('Exception while mounting the field "{}": {}'.format(attname, str(e)))
 
     return OrderedDict(sorted(fields_with_names, key=lambda f: f[1]))
 

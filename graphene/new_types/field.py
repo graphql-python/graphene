@@ -1,9 +1,10 @@
 import inspect
 from functools import partial
-from collections import OrderedDict
+from collections import OrderedDict, Mapping
 
 from ..utils.orderedtype import OrderedType
 from .structures import NonNull
+from .argument import to_arguments
 
 
 def source_resolver(source, root, args, context, info):
@@ -25,7 +26,9 @@ class Field(OrderedType):
         if required:
             type = NonNull(type)
         self._type = type
-        self.args = args or OrderedDict()
+        if args:
+            assert isinstance(args, Mapping), 'Arguments in a field have to be a mapping, received "{}".'.format(args)
+        self.args = to_arguments(args or OrderedDict(), extra_args)
         # self.args = to_arguments(args, extra_args)
         assert not (source and resolver), ('A Field cannot have a source and a '
                                            'resolver in at the same time.')
