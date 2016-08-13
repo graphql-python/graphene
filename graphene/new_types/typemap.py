@@ -11,7 +11,7 @@ from .structures import List, NonNull
 from .enum import Enum
 from .scalars import Scalar, String, Boolean, Int, Float, ID
 
-from graphql import GraphQLString, GraphQLField, GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLFloat, GraphQLID, GraphQLNonNull, GraphQLInputObjectField
+from graphql import GraphQLString, GraphQLField, GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLFloat, GraphQLID, GraphQLNonNull, GraphQLInputObjectField, GraphQLArgument
 from graphql.type import GraphQLEnumValue
 
 
@@ -115,7 +115,32 @@ class TypeMap(GraphQLTypeMap):
             map = cls.construct_interface(map, i)
             interfaces.append(map[i._meta.name])
         map[type._meta.name].interfaces = interfaces
-        map[type._meta.name].fields = cls.construct_fields_for_type(map, type)
+        map[type._meta.name]._fields = cls.construct_fields_for_type(map, type)
+        return map
+
+    @classmethod
+    def construct_interface(cls, map, type):
+        from ..generators.definitions import GrapheneInterfaceType
+        map[type._meta.name] = GrapheneInterfaceType(
+            graphene_type=type,
+            name=type._meta.name,
+            description=type._meta.description,
+            fields=None,
+            resolve_type=type.resolve_type,
+        )
+        map[type._meta.name]._fields = cls.construct_fields_for_type(map, type)
+        return map
+
+    @classmethod
+    def construct_inputobjecttype(cls, map, type):
+        from ..generators.definitions import GrapheneInputObjectType
+        map[type._meta.name] = GrapheneInputObjectType(
+            graphene_type=type,
+            name=type._meta.name,
+            description=type._meta.description,
+            fields=None,
+        )
+        map[type._meta.name]._fields = cls.construct_fields_for_type(map, type, is_input_type=True)
         return map
 
     @classmethod
@@ -135,31 +160,6 @@ class TypeMap(GraphQLTypeMap):
         return map
 
     @classmethod
-    def construct_interface(cls, map, type):
-        from ..generators.definitions import GrapheneInterfaceType
-        map[type._meta.name] = GrapheneInterfaceType(
-            graphene_type=type,
-            name=type._meta.name,
-            description=type._meta.description,
-            fields=None,
-            resolve_type=type.resolve_type,
-        )
-        map[type._meta.name].fields = cls.construct_fields_for_type(map, type)
-        return map
-
-    @classmethod
-    def construct_inputobjecttype(cls, map, type):
-        from ..generators.definitions import GrapheneInputObjectType
-        map[type._meta.name] = GrapheneInputObjectType(
-            graphene_type=type,
-            name=type._meta.name,
-            description=type._meta.description,
-            fields=None,
-        )
-        map[type._meta.name].fields = cls.construct_fields_for_type(map, type, is_input_type=True)
-        return map
-
-    @classmethod
     def construct_fields_for_type(cls, map, type, is_input_type=False):
         fields = OrderedDict()
         for name, field in type._meta.fields.items():
@@ -175,11 +175,21 @@ class TypeMap(GraphQLTypeMap):
                 args = OrderedDict()
                 for arg_name, arg in field.args.items():
                     map = cls.reducer(map, arg.type)
-                    args[arg_name] = cls.get_field_type(map, arg.type)
+                    arg_type = cls.get_field_type(map, arg.type)
+                    args[arg_name] = GraphQLArgument(
+                        arg_type,
+                        description=arg.description,
+                        default_value=arg.default_value
+                    )
+                resolver = field.resolver
+                resolver_type = getattr(type, 'resolve_{}'.format(name), None)
+                if resolver_type:
+                    resolver = resolver_type.__func__
+
                 _field = GraphQLField(
                     field_type,
                     args=args,
-                    resolver=field.resolver,
+                    resolver=resolver,
                     deprecation_reason=field.deprecation_reason,
                     description=field.description
                 )
