@@ -28,12 +28,15 @@ class InterfaceMeta(AbstractTypeMeta):
 
         return type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
+    def __str__(cls):
+        return cls._meta.name
+
 
 class Interface(six.with_metaclass(InterfaceMeta)):
     resolve_type = None
 
     def __init__(self, *args, **kwargs):
-        raise Exception("An interface cannot be intitialized")
+        raise Exception("An Interface cannot be intitialized")
 
     # @classmethod
     # def implements(cls, objecttype):

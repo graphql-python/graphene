@@ -3,6 +3,8 @@ from collections import OrderedDict
 from py.test import raises
 
 from ..objecttype import ObjectType
+from ..interface import Interface
+from ..union import Union
 from ..scalars import String, Int, Boolean
 from ..field import Field
 from ..structures import List
@@ -42,6 +44,15 @@ class Mutation(ObjectType):
 
 class Subscription(ObjectType):
     article_subscribe = Field(Article)  # id=String()
+
+
+class MyInterface(Interface):
+    pass
+
+
+class MyUnion(Union):
+    class Meta:
+        types = (Article, )
 
 
 def test_defines_a_query_only_schema():
@@ -177,18 +188,18 @@ def test_defines_a_subscription_schema():
 #     assert schema.get_type_map()['SomeSubtype'] == SomeSubtype
 
 
-# def test_stringifies_simple_types():
-#     assert str(GraphQLInt) == 'Int'
-#     assert str(BlogArticle) == 'Article'
-#     assert str(InterfaceType) == 'Interface'
-#     assert str(UnionType) == 'Union'
-#     assert str(EnumType) == 'Enum'
-#     assert str(InputObjectType) == 'InputObject'
-#     assert str(GraphQLNonNull(GraphQLInt)) == 'Int!'
-#     assert str(GraphQLList(GraphQLInt)) == '[Int]'
-#     assert str(GraphQLNonNull(GraphQLList(GraphQLInt))) == '[Int]!'
-#     assert str(GraphQLList(GraphQLNonNull(GraphQLInt))) == '[Int!]'
-#     assert str(GraphQLList(GraphQLList(GraphQLInt))) == '[[Int]]'
+def test_stringifies_simple_types():
+    assert str(Int) == 'Int'
+    assert str(Article) == 'Article'
+    assert str(MyInterface) == 'MyInterface'
+    assert str(MyUnion) == 'MyUnion'
+    # assert str(EnumType) == 'Enum'
+    # assert str(InputObjectType) == 'InputObject'
+    # assert str(GraphQLNonNull(GraphQLInt)) == 'Int!'
+    # assert str(GraphQLList(GraphQLInt)) == '[Int]'
+    # assert str(GraphQLNonNull(GraphQLList(GraphQLInt))) == '[Int]!'
+    # assert str(GraphQLList(GraphQLNonNull(GraphQLInt))) == '[Int!]'
+    # assert str(GraphQLList(GraphQLList(GraphQLInt))) == '[[Int]]'
 
 
 # def test_identifies_input_types():

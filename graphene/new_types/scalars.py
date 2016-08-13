@@ -25,6 +25,9 @@ class ScalarTypeMeta(type):
 
         return super_new(cls, name, bases, dict(attrs, _meta=options))
 
+    def __str__(cls):
+        return cls._meta.name
+
 
 class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
     serialize = None

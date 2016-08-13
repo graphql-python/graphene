@@ -1,6 +1,6 @@
 from graphql import (GraphQLEnumType, GraphQLInputObjectType,
                      GraphQLInterfaceType, GraphQLObjectType,
-                     GraphQLScalarType)
+                     GraphQLScalarType, GraphQLUnionType)
 
 
 class GrapheneGraphQLType(object):
@@ -15,6 +15,10 @@ class GrapheneGraphQLType(object):
 
 
 class GrapheneInterfaceType(GrapheneGraphQLType, GraphQLInterfaceType):
+    pass
+
+
+class GrapheneUnionType(GrapheneGraphQLType, GraphQLUnionType):
     pass
 
 

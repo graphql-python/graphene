@@ -28,6 +28,9 @@ class ObjectTypeMeta(AbstractTypeMeta):
 
         return type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
+    def __str__(cls):
+        return cls._meta.name
+
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
 
