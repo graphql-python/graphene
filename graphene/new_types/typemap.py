@@ -28,6 +28,7 @@ class TypeMap(GraphQLTypeMap):
     def reducer(cls, map, type):
         if not type:
             return map
+
         if is_graphene_type(type):
             return cls.graphene_reducer(map, type)
         return super(TypeMap, cls).reducer(map, type)
@@ -36,7 +37,6 @@ class TypeMap(GraphQLTypeMap):
     def graphene_reducer(cls, map, type):
         if isinstance(type, (List, NonNull)):
             return cls.reducer(map, type.of_type)
-            return map
         if type._meta.name in map:
             _type = map[type._meta.name]
             if is_graphene_type(_type):

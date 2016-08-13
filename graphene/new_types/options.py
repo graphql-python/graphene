@@ -13,9 +13,7 @@ class Options(object):
             assert inspect.isclass(meta), (
                 'Meta have to be a class, received "{}".'.format(repr(meta))
             )
-        self.add_attrs_from_meta(meta, defaults)
 
-    def add_attrs_from_meta(self, meta, defaults):
         meta_attrs = props(meta) if meta else {}
         for attr_name, value in defaults.items():
             if attr_name in meta_attrs:

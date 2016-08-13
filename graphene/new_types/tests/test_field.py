@@ -44,6 +44,12 @@ def test_field_source():
     assert field.resolver(MyInstance, {}, None, None) == MyInstance.value
 
 
+def test_field_with_lazy_type():
+    MyType = object()
+    field = Field(lambda: MyType)
+    assert field.type == MyType
+
+
 def test_field_not_source_and_resolver():
     MyType = object()
     with pytest.raises(Exception) as exc_info:
