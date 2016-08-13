@@ -1,3 +1,4 @@
+import inspect
 from ..utils.props import props
 
 
@@ -8,9 +9,11 @@ class Options(object):
     '''
 
     def __init__(self, meta=None, **defaults):
-        self.add_attrs_from_meta(meta, defaults)
+        if meta:
+            assert inspect.isclass(meta), (
+                'Meta have to be a class, received "{}".'.format(repr(meta))
+            )
 
-    def add_attrs_from_meta(self, meta, defaults):
         meta_attrs = props(meta) if meta else {}
         for attr_name, value in defaults.items():
             if attr_name in meta_attrs:
@@ -27,3 +30,6 @@ class Options(object):
                     ','.join(meta_attrs.keys())
                 )
             )
+
+    def __repr__(self):
+        return '<Meta \n{} >'.format(props(self))

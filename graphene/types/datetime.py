@@ -16,6 +16,11 @@ except:
 
 
 class DateTime(Scalar):
+    '''
+    The `DateTime` scalar type represents a DateTime
+    value as specified by
+    [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+    '''
 
     @staticmethod
     def serialize(dt):

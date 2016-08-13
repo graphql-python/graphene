@@ -1,57 +1,83 @@
+import pytest
 
-from graphql import GraphQLInputObjectType, GraphQLString
-from graphql.type.definition import GraphQLInputFieldDefinition
-
-from ..field import InputField
+from ..field import Field
+from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
-from ..scalars import String
+from ..unmountedtype import UnmountedType
+from ..abstracttype import AbstractType
+
+
+class MyType(object):
+    pass
+
+
+class MyScalar(UnmountedType):
+    def get_type(self):
+        return MyType
 
 
 def test_generate_inputobjecttype():
-    class MyObjectType(InputObjectType):
+    class MyInputObjectType(InputObjectType):
         '''Documentation'''
 
-    graphql_type = MyObjectType._meta.graphql_type
-    assert isinstance(graphql_type, GraphQLInputObjectType)
-    assert graphql_type.name == "MyObjectType"
-    assert graphql_type.description == "Documentation"
+    assert MyInputObjectType._meta.name == "MyInputObjectType"
+    assert MyInputObjectType._meta.description == "Documentation"
+    assert MyInputObjectType._meta.fields == {}
 
 
 def test_generate_inputobjecttype_with_meta():
-    class MyObjectType(InputObjectType):
+    class MyInputObjectType(InputObjectType):
 
         class Meta:
-            name = 'MyOtherObjectType'
+            name = 'MyOtherInputObjectType'
             description = 'Documentation'
 
-    graphql_type = MyObjectType._meta.graphql_type
-    assert isinstance(graphql_type, GraphQLInputObjectType)
-    assert graphql_type.name == "MyOtherObjectType"
-    assert graphql_type.description == "Documentation"
+    assert MyInputObjectType._meta.name == "MyOtherInputObjectType"
+    assert MyInputObjectType._meta.description == "Documentation"
 
 
-def test_empty_inputobjecttype_has_meta():
-    class MyObjectType(InputObjectType):
-        pass
+def test_generate_inputobjecttype_with_fields():
+    class MyInputObjectType(InputObjectType):
+        field = Field(MyType)
 
-    assert MyObjectType._meta
-
-
-def test_generate_objecttype_with_fields():
-    class MyObjectType(InputObjectType):
-        field = InputField(GraphQLString)
-
-    graphql_type = MyObjectType._meta.graphql_type
-    fields = graphql_type.get_fields()
-    assert 'field' in fields
-    assert isinstance(fields['field'], GraphQLInputFieldDefinition)
+    assert 'field' in MyInputObjectType._meta.fields
 
 
-def test_generate_objecttype_with_graphene_fields():
-    class MyObjectType(InputObjectType):
-        field = String()
+def test_ordered_fields_in_inputobjecttype():
+    class MyInputObjectType(InputObjectType):
+        b = InputField(MyType)
+        a = InputField(MyType)
+        field = MyScalar()
+        asa = InputField(MyType)
 
-    graphql_type = MyObjectType._meta.graphql_type
-    fields = graphql_type.get_fields()
-    assert 'field' in fields
-    assert isinstance(fields['field'], GraphQLInputFieldDefinition)
+    assert list(MyInputObjectType._meta.fields.keys()) == ['b', 'a', 'field', 'asa']
+
+
+def test_generate_inputobjecttype_unmountedtype():
+    class MyInputObjectType(InputObjectType):
+        field = MyScalar(MyType)
+
+    assert 'field' in MyInputObjectType._meta.fields
+    assert isinstance(MyInputObjectType._meta.fields['field'], InputField)
+
+
+def test_generate_inputobjecttype_inherit_abstracttype():
+    class MyAbstractType(AbstractType):
+        field1 = MyScalar(MyType)
+
+    class MyInputObjectType(InputObjectType, MyAbstractType):
+        field2 = MyScalar(MyType)
+
+    assert MyInputObjectType._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [InputField, InputField]
+
+
+def test_generate_inputobjecttype_inherit_abstracttype_reversed():
+    class MyAbstractType(AbstractType):
+        field1 = MyScalar(MyType)
+
+    class MyInputObjectType(MyAbstractType, InputObjectType):
+        field2 = MyScalar(MyType)
+
+    assert MyInputObjectType._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [InputField, InputField]

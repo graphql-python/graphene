@@ -16,31 +16,22 @@ except ImportError:
 class EnumTypeMeta(type):
 
     def __new__(cls, name, bases, attrs):
-        super_new = type.__new__
-
         # Also ensure initialization is only performed for subclasses of Model
         # (excluding Model class itself).
         if not is_base_type(bases, EnumTypeMeta):
-            return super_new(cls, name, bases, attrs)
+            return type.__new__(cls, name, bases, attrs)
 
         options = Options(
             attrs.pop('Meta', None),
-            name=None,
-            description=None,
+            name=name,
+            description=attrs.get('__doc__'),
             enum=None,
-            graphql_type=None
         )
         if not options.enum:
             options.enum = PyEnum(cls.__name__, attrs)
 
         new_attrs = OrderedDict(attrs, _meta=options, **options.enum.__members__)
-
-        cls = super_new(cls, name, bases, new_attrs)
-
-        if not options.graphql_type:
-            options.graphql_type = generate_enum(cls)
-
-        return cls
+        return type.__new__(cls, name, bases, new_attrs)
 
     def __prepare__(name, bases, **kwargs):  # noqa: N805
         return OrderedDict()
@@ -51,10 +42,13 @@ class EnumTypeMeta(type):
             return cls.from_enum(PyEnum(*args, **kwargs), description=description)
         return super(EnumTypeMeta, cls).__call__(*args, **kwargs)
 
-
-class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
-
-    @classmethod
     def from_enum(cls, enum, description=None):
         meta_class = type('Meta', (object,), {'enum': enum, 'description': description})
         return type(meta_class.enum.__name__, (Enum,), {'Meta': meta_class})
+
+    def __str__(cls):
+        return cls._meta.name
+
+
+class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
+    pass

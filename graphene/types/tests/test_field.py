@@ -1,67 +1,77 @@
-import copy
-
 import pytest
 
-from graphql import GraphQLField, GraphQLInt, GraphQLNonNull, GraphQLString
-
-from ..argument import Argument
 from ..field import Field
-from ..scalars import Int, String
+from ..structures import NonNull
+from ..argument import Argument
 
 
-def test_field():
-    field = Field(GraphQLString, name="name", description="description")
-    assert isinstance(field, GraphQLField)
-    assert field.name == "name"
-    assert field.description == "description"
-    assert field.type == GraphQLString
+class MyInstance(object):
+    value = 'value'
+    value_func = staticmethod(lambda: 'value_func')
+
+
+def test_field_basic():
+    MyType = object()
+    args = {'my arg': Argument(True)}
+    resolver = lambda: None
+    deprecation_reason = 'Deprecated now'
+    description = 'My Field'
+    field = Field(
+        MyType,
+        name='name',
+        args=args,
+        resolver=resolver,
+        description=description,
+        deprecation_reason=deprecation_reason
+    )
+    assert field.name == 'name'
+    assert field.args == args
+    assert field.resolver == resolver
+    assert field.deprecation_reason == deprecation_reason
+    assert field.description == description
 
 
 def test_field_required():
-    field = Field(GraphQLString, required=True)
-    assert isinstance(field, GraphQLField)
-    assert isinstance(field.type, GraphQLNonNull)
-    assert field.type.of_type == GraphQLString
+    MyType = object()
+    field = Field(MyType, required=True)
+    assert isinstance(field.type, NonNull)
+    assert field.type.of_type == MyType
 
 
-def test_field_wrong_name():
-    with pytest.raises(AssertionError) as excinfo:
-        Field(GraphQLString, name="a field")
-
-    assert """Names must match /^[_a-zA-Z][_a-zA-Z0-9]*$/ but "a field" does not.""" == str(excinfo.value)
-
-
-def test_not_source_and_resolver():
-    with pytest.raises(AssertionError) as excinfo:
-        Field(GraphQLString, source="a", resolver=lambda *_: None)
-
-    assert "You cannot have a source and a resolver at the same time" == str(excinfo.value)
+def test_field_source():
+    MyType = object()
+    field = Field(MyType, source='value')
+    assert field.resolver(MyInstance, {}, None, None) == MyInstance.value
 
 
-def test_copy_field_works():
-    field = Field(GraphQLString)
-    copy.copy(field)
+def test_field_with_lazy_type():
+    MyType = object()
+    field = Field(lambda: MyType)
+    assert field.type == MyType
 
 
-def test_field_callable_type():
-    field = Field(lambda: GraphQLString)
-    assert field.type == GraphQLString
+def test_field_not_source_and_resolver():
+    MyType = object()
+    with pytest.raises(Exception) as exc_info:
+        Field(MyType, source='value', resolver=lambda: None)
+    assert str(exc_info.value) == 'A Field cannot have a source and a resolver in at the same time.'
 
 
-def test_field_with_arguments():
-    field = Field(GraphQLString, name="name", description="description", input=Argument(GraphQLString))
-    assert isinstance(field, GraphQLField)
-    assert field.name == "name"
-    assert field.description == "description"
-    assert 'input' in field.args
-    assert field.args['input'].type == GraphQLString
+def test_field_source_func():
+    MyType = object()
+    field = Field(MyType, source='value_func')
+    assert field.resolver(MyInstance(), {}, None, None) == MyInstance.value_func()
 
 
-def test_field_with_argument_proxies():
-    field = Field(GraphQLString, name="name", description="description", int=Int(), string=String())
-    assert isinstance(field, GraphQLField)
-    assert field.name == "name"
-    assert field.description == "description"
-    assert list(field.args.keys()) == ['int', 'string']
-    assert field.args['string'].type == GraphQLString
-    assert field.args['int'].type == GraphQLInt
+def test_field_source_argument_as_kw():
+    MyType = object()
+    field = Field(MyType, b=NonNull(True), c=Argument(None), a=NonNull(False))
+    assert field.args.keys() == ['b', 'c', 'a']
+    assert isinstance(field.args['b'], Argument)
+    assert isinstance(field.args['b'].type, NonNull)
+    assert field.args['b'].type.of_type is True
+    assert isinstance(field.args['c'], Argument)
+    assert field.args['c'].type is None
+    assert isinstance(field.args['a'], Argument)
+    assert isinstance(field.args['a'].type, NonNull)
+    assert field.args['a'].type.of_type is False

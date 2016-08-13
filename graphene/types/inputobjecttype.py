@@ -1,49 +1,36 @@
 import six
 
-from ..generators import generate_inputobjecttype
-from ..utils.copy_fields import copy_fields
-from ..utils.get_fields import get_fields
 from ..utils.is_base_type import is_base_type
-from .field import InputField
-from .objecttype import attrs_without_fields
 from .options import Options
-from .unmountedtype import UnmountedType
+
+from .abstracttype import AbstractTypeMeta
+from .utils import get_fields_in_type, yank_fields_from_attrs, merge_fields_in_attrs
 
 
-class InputObjectTypeMeta(type):
+class InputObjectTypeMeta(AbstractTypeMeta):
 
     def __new__(cls, name, bases, attrs):
-        super_new = super(InputObjectTypeMeta, cls).__new__
-
-        # Also ensure initialization is only performed for subclasses of Model
-        # (excluding Model class itself).
+        # Also ensure initialization is only performed for subclasses of
+        # InputObjectType
         if not is_base_type(bases, InputObjectTypeMeta):
-            return super_new(cls, name, bases, attrs)
+            return type.__new__(cls, name, bases, attrs)
 
         options = Options(
             attrs.pop('Meta', None),
-            name=None,
-            description=None,
-            graphql_type=None,
+            name=name,
+            description=attrs.get('__doc__'),
         )
 
-        fields = get_fields(InputObjectType, attrs, bases)
-        attrs = attrs_without_fields(attrs, fields)
-        cls = super_new(cls, name, bases, dict(attrs, _meta=options))
+        attrs = merge_fields_in_attrs(bases, attrs)
+        options.fields = get_fields_in_type(InputObjectType, attrs)
+        yank_fields_from_attrs(attrs, options.fields)
 
-        if not options.graphql_type:
-            fields = copy_fields(InputField, fields, parent=cls)
-            options.get_fields = lambda: fields
-            options.graphql_type = generate_inputobjecttype(cls)
-        else:
-            assert not fields, "Can't mount InputFields in an InputObjectType with a defined graphql_type"
-            fields = copy_fields(InputField, options.graphql_type.get_fields(), parent=cls)
+        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
-        for name, field in fields.items():
-            setattr(cls, field.attname or name, field)
-
-        return cls
+    def __str__(cls):
+        return cls._meta.name
 
 
-class InputObjectType(six.with_metaclass(InputObjectTypeMeta, UnmountedType)):
-    pass
+class InputObjectType(six.with_metaclass(InputObjectTypeMeta)):
+    def __init__(self, *args, **kwargs):
+        raise Exception("An InputObjectType cannot be intitialized")

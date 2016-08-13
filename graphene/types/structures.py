@@ -1,7 +1,3 @@
-import inspect
-
-from graphql import GraphQLList, GraphQLNonNull
-
 from .unmountedtype import UnmountedType
 
 
@@ -18,21 +14,12 @@ class Structure(UnmountedType):
     def get_type(self):
         return self
 
-    @property
-    def of_type(self):
-        from ..utils.get_graphql_type import get_graphql_type
-        if inspect.isfunction(self._of_type):
-            return get_graphql_type(self._of_type())
-        return get_graphql_type(self._of_type)
 
-    @of_type.setter
-    def of_type(self, value):
-        self._of_type = value
+class List(Structure):
+    def __str__(self):
+        return '[{}]'.format(self.of_type)
 
 
-class List(Structure, GraphQLList):
-    pass
-
-
-class NonNull(Structure, GraphQLNonNull):
-    pass
+class NonNull(Structure):
+    def __str__(self):
+        return '{}!'.format(self.of_type)

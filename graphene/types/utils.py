@@ -6,7 +6,7 @@ from .inputfield import InputField
 
 
 def merge_fields_in_attrs(bases, attrs):
-    from ..new_types.abstracttype import AbstractType
+    from ..types.abstracttype import AbstractType
     for base in bases:
         if base == AbstractType or not issubclass(base, AbstractType):
             continue
@@ -26,10 +26,10 @@ def unmounted_field_in_type(attname, unmounted_field, type):
     InputObjectType -> InputField
     '''
     # from ..types.inputobjecttype import InputObjectType
-    from ..new_types.objecttype import ObjectType
-    from ..new_types.interface import Interface
-    from ..new_types.abstracttype import AbstractType
-    from ..new_types.inputobjecttype import InputObjectType
+    from ..types.objecttype import ObjectType
+    from ..types.interface import Interface
+    from ..types.abstracttype import AbstractType
+    from ..types.inputobjecttype import InputObjectType
 
     if issubclass(type, (ObjectType, Interface)):
         return unmounted_field.as_field()

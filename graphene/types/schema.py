@@ -1,8 +1,14 @@
-from graphql import GraphQLSchema, graphql
+import inspect
+
+from graphql import GraphQLSchema, graphql, is_type
 from graphql.utils.introspection_query import introspection_query
 from graphql.utils.schema_printer import print_schema
 
-from ..utils.get_graphql_type import get_graphql_type
+
+from .objecttype import ObjectType
+from .structures import List, NonNull
+from .scalars import Scalar, String
+# from ..utils.get_graphql_type import get_graphql_type
 
 
 # from graphql.type.schema import assert_object_implements_interface
@@ -10,32 +16,60 @@ from ..utils.get_graphql_type import get_graphql_type
 # from collections import defaultdict
 
 
+from graphql.type.directives import (GraphQLDirective, GraphQLIncludeDirective,
+                                     GraphQLSkipDirective)
+from graphql.type.introspection import IntrospectionSchema
+from .typemap import TypeMap, is_graphene_type
+
+
 class Schema(GraphQLSchema):
 
     def __init__(self, query=None, mutation=None, subscription=None, directives=None, types=None, executor=None):
-        if query:
-            query = get_graphql_type(query)
-        if mutation:
-            mutation = get_graphql_type(mutation)
-        if subscription:
-            subscription = get_graphql_type(subscription)
+        self._query = query
+        self._mutation = mutation
+        self._subscription = subscription
         self.types = types
         self._executor = executor
-        super(Schema, self).__init__(
-            query=query,
-            mutation=mutation,
-            subscription=subscription,
-            directives=directives,
-            types=self.types
+        if directives is None:
+            directives = [
+                GraphQLIncludeDirective,
+                GraphQLSkipDirective
+            ]
+
+        assert all(isinstance(d, GraphQLDirective) for d in directives), \
+            'Schema directives must be List[GraphQLDirective] if provided but got: {}.'.format(
+                directives
         )
 
-    @property
-    def types(self):
-        return map(get_graphql_type, self._types or [])
+        self._directives = directives
+        initial_types = [
+            query,
+            mutation,
+            subscription,
+            IntrospectionSchema
+        ]
+        if types:
+            initial_types += types
+        self._type_map = TypeMap(initial_types)
 
-    @types.setter
-    def types(self, value):
-        self._types = value
+    def get_query_type(self):
+        return self.get_graphql_type(self._query)
+
+    def get_mutation_type(self):
+        return self.get_graphql_type(self._mutation)
+
+    def get_subscription_type(self):
+        return self.get_graphql_type(self._subscription)
+
+    def get_graphql_type(self, _type):
+        if is_type(_type):
+            return _type
+        if is_graphene_type(_type):
+            graphql_type = self.get_type(_type._meta.name)
+            assert graphql_type, "Type {} not found in this schema.".format(_type._meta.name)
+            assert graphql_type.graphene_type == _type
+            return graphql_type
+        raise Exception("{} is not a valid GraphQL type.".format(_type))
 
     def execute(self, request_string='', root_value=None, variable_values=None,
                 context_value=None, operation_name=None, executor=None):
@@ -50,16 +84,13 @@ class Schema(GraphQLSchema):
         )
 
     def register(self, object_type):
-        self._types.append(object_type)
+        self.types.append(object_type)
 
     def introspect(self):
         return self.execute(introspection_query).data
 
     def __str__(self):
         return print_schema(self)
-
-    def get_type(self, _type):
-        return self._type_map[_type]
 
     def lazy(self, _type):
         return lambda: self.get_type(_type)

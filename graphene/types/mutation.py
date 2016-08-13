@@ -18,7 +18,7 @@ class MutationMeta(ObjectTypeMeta):
 
         input_class = attrs.pop('Input', None)
 
-        cls = cls._create_objecttype(cls, name, bases, attrs)
+        cls = ObjectTypeMeta.__new__(cls, name, bases, attrs)
         field_args = props(input_class) if input_class else {}
         resolver = getattr(cls, 'mutate', None)
         assert resolver, 'All mutations must define a mutate method in it'

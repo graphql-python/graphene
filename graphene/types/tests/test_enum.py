@@ -1,12 +1,9 @@
-from graphql.type import GraphQLEnumType
-
-from ..argument import Argument
 from ..enum import Enum, PyEnum
-from ..field import Field
 
 
 def test_enum_construction():
     class RGB(Enum):
+        '''Description'''
         RED = 1
         GREEN = 2
         BLUE = 3
@@ -15,8 +12,10 @@ def test_enum_construction():
         def description(self):
             return "Description {}".format(self.name)
 
-    assert isinstance(RGB._meta.graphql_type, GraphQLEnumType)
-    values = RGB._meta.graphql_type.get_values()
+    assert RGB._meta.name == 'RGB'
+    assert RGB._meta.description == 'Description'
+
+    values = RGB._meta.enum.__members__.values()
     assert sorted([v.name for v in values]) == [
         'BLUE',
         'GREEN',
@@ -27,37 +26,40 @@ def test_enum_construction():
         'Description GREEN',
         'Description RED'
     ]
-    assert isinstance(RGB(name='field_name').as_field(), Field)
-    assert isinstance(RGB(name='field_name').as_argument(), Argument)
+
+
+def test_enum_construction_meta():
+    class RGB(Enum):
+        class Meta:
+            name = 'RGBEnum'
+            description = 'Description'
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    assert RGB._meta.name == 'RGBEnum'
+    assert RGB._meta.description == 'Description'
 
 
 def test_enum_instance_construction():
     RGB = Enum('RGB', 'RED,GREEN,BLUE')
 
-    assert isinstance(RGB._meta.graphql_type, GraphQLEnumType)
-    values = RGB._meta.graphql_type.get_values()
+    values = RGB._meta.enum.__members__.values()
     assert sorted([v.name for v in values]) == [
         'BLUE',
         'GREEN',
         'RED'
     ]
-    assert isinstance(RGB(name='field_name').as_field(), Field)
-    assert isinstance(RGB(name='field_name').as_argument(), Argument)
 
 
 def test_enum_from_builtin_enum():
     PyRGB = PyEnum('RGB', 'RED,GREEN,BLUE')
 
     RGB = Enum.from_enum(PyRGB)
-    assert isinstance(RGB._meta.graphql_type, GraphQLEnumType)
-    values = RGB._meta.graphql_type.get_values()
-    assert sorted([v.name for v in values]) == [
-        'BLUE',
-        'GREEN',
-        'RED'
-    ]
-    assert isinstance(RGB(name='field_name').as_field(), Field)
-    assert isinstance(RGB(name='field_name').as_argument(), Argument)
+    assert RGB._meta.enum == PyRGB
+    assert RGB.RED
+    assert RGB.GREEN
+    assert RGB.BLUE
 
 
 def test_enum_value_from_class():
@@ -67,3 +69,5 @@ def test_enum_value_from_class():
         BLUE = 3
 
     assert RGB.RED.value == 1
+    assert RGB.GREEN.value == 2
+    assert RGB.BLUE.value == 3

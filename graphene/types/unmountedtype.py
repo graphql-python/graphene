@@ -1,6 +1,4 @@
 from ..utils.orderedtype import OrderedType
-from .argument import Argument
-from .field import Field, InputField
 
 
 class UnmountedType(OrderedType):
@@ -18,17 +16,18 @@ class UnmountedType(OrderedType):
     '''
 
     def __init__(self, *args, **kwargs):
+        super(UnmountedType, self).__init__()
         self.args = args
         self.kwargs = kwargs
-        super(UnmountedType, self).__init__()
 
     def get_type(self):
-        return self._meta.graphql_type
+        raise NotImplementedError("get_type not implemented in {}".format(self))
 
     def as_field(self):
         '''
         Mount the UnmountedType as Field
         '''
+        from .field import Field
         return Field(
             self.get_type(),
             *self.args,
@@ -40,6 +39,7 @@ class UnmountedType(OrderedType):
         '''
         Mount the UnmountedType as InputField
         '''
+        from .inputfield import InputField
         return InputField(
             self.get_type(),
             *self.args,
@@ -51,9 +51,20 @@ class UnmountedType(OrderedType):
         '''
         Mount the UnmountedType as Argument
         '''
+        from .argument import Argument
         return Argument(
             self.get_type(),
             *self.args,
             _creation_counter=self.creation_counter,
             **self.kwargs
+        )
+
+    def __eq__(self, other):
+        return (
+            self is other or (
+                isinstance(other, UnmountedType) and
+                self.get_type() == other.get_type() and
+                self.args == other.args and
+                self.kwargs == other.kwargs
+            )
         )

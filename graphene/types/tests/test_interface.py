@@ -1,19 +1,27 @@
 import pytest
 
-from graphql import GraphQLField, GraphQLInterfaceType, GraphQLString
-
 from ..field import Field
 from ..interface import Interface
+from ..unmountedtype import UnmountedType
+from ..abstracttype import AbstractType
+
+
+class MyType(object):
+    pass
+
+
+class MyScalar(UnmountedType):
+    def get_type(self):
+        return MyType
 
 
 def test_generate_interface():
     class MyInterface(Interface):
         '''Documentation'''
 
-    graphql_type = MyInterface._meta.graphql_type
-    assert isinstance(graphql_type, GraphQLInterfaceType)
-    assert graphql_type.name == "MyInterface"
-    assert graphql_type.description == "Documentation"
+    assert MyInterface._meta.name == "MyInterface"
+    assert MyInterface._meta.description == "Documentation"
+    assert MyInterface._meta.fields == {}
 
 
 def test_generate_interface_with_meta():
@@ -23,62 +31,52 @@ def test_generate_interface_with_meta():
             name = 'MyOtherInterface'
             description = 'Documentation'
 
-    graphql_type = MyInterface._meta.graphql_type
-    assert isinstance(graphql_type, GraphQLInterfaceType)
-    assert graphql_type.name == "MyOtherInterface"
-    assert graphql_type.description == "Documentation"
-
-
-def test_empty_interface_has_meta():
-    class MyInterface(Interface):
-        pass
-
-    assert MyInterface._meta
+    assert MyInterface._meta.name == "MyOtherInterface"
+    assert MyInterface._meta.description == "Documentation"
 
 
 def test_generate_interface_with_fields():
     class MyInterface(Interface):
-        field = Field(GraphQLString)
+        field = Field(MyType)
 
-    graphql_type = MyInterface._meta.graphql_type
-    fields = graphql_type.get_fields()
-    assert 'field' in fields
+    assert 'field' in MyInterface._meta.fields
 
 
-def test_interface_inheritance():
-    class MyInheritedInterface(Interface):
-        inherited = Field(GraphQLString)
-
-    class MyInterface(MyInheritedInterface):
-        field = Field(GraphQLString)
-
-    graphql_type = MyInterface._meta.graphql_type
-    fields = graphql_type.get_fields()
-    assert 'field' in fields
-    assert 'inherited' in fields
-    assert MyInterface.field > MyInheritedInterface.inherited
-
-
-def test_interface_instance():
+def test_ordered_fields_in_interface():
     class MyInterface(Interface):
-        inherited = Field(GraphQLString)
+        b = Field(MyType)
+        a = Field(MyType)
+        field = MyScalar()
+        asa = Field(MyType)
 
-    with pytest.raises(Exception) as excinfo:
-        MyInterface()
-
-    assert "An interface cannot be intitialized" in str(excinfo.value)
+    assert list(MyInterface._meta.fields.keys()) == ['b', 'a', 'field', 'asa']
 
 
-def test_interface_add_fields_in_reused_graphql_type():
-    MyGraphQLType = GraphQLInterfaceType('MyGraphQLType', fields={
-        'field': GraphQLField(GraphQLString)
-    })
+def test_generate_interface_unmountedtype():
+    class MyInterface(Interface):
+        field = MyScalar()
 
-    with pytest.raises(AssertionError) as excinfo:
-        class GrapheneInterface(Interface):
-            field = Field(GraphQLString)
+    assert 'field' in MyInterface._meta.fields
+    assert isinstance(MyInterface._meta.fields['field'], Field)
 
-            class Meta:
-                graphql_type = MyGraphQLType
 
-    assert """Can't mount Fields in an Interface with a defined graphql_type""" == str(excinfo.value)
+def test_generate_interface_inherit_abstracttype():
+    class MyAbstractType(AbstractType):
+        field1 = MyScalar()
+
+    class MyInterface(Interface, MyAbstractType):
+        field2 = MyScalar()
+
+    assert MyInterface._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
+
+
+def test_generate_interface_inherit_abstracttype_reversed():
+    class MyAbstractType(AbstractType):
+        field1 = MyScalar()
+
+    class MyInterface(MyAbstractType, Interface):
+        field2 = MyScalar()
+
+    assert MyInterface._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
