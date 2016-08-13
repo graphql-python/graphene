@@ -4,6 +4,8 @@ from collections import OrderedDict
 from graphql.type.typemap import GraphQLTypeMap
 
 from .objecttype import ObjectType
+from .interface import Interface
+from .union import Union
 from .inputobjecttype import InputObjectType
 from .structures import List, NonNull
 from .scalars import Scalar, String, Boolean, Int, Float, ID
@@ -14,7 +16,7 @@ from graphql import GraphQLString, GraphQLField, GraphQLList, GraphQLBoolean, Gr
 def is_graphene_type(_type):
     if isinstance(_type, (List, NonNull)):
         return True
-    if inspect.isclass(_type) and issubclass(_type, (ObjectType, InputObjectType, Scalar)):
+    if inspect.isclass(_type) and issubclass(_type, (ObjectType, InputObjectType, Scalar, Interface, Union)):
         return True
 
 
@@ -42,8 +44,12 @@ class TypeMap(GraphQLTypeMap):
             return cls.construct_objecttype(map, type)
         if issubclass(type, InputObjectType):
             return cls.construct_inputobjecttype(map, type)
+        if issubclass(type, Interface):
+            return cls.construct_interface(map, type)
         if issubclass(type, Scalar):
             return cls.construct_scalar(map, type)
+        if issubclass(type, Union):
+            return cls.construct_union(map, type)
         return map
 
     @classmethod
@@ -79,7 +85,41 @@ class TypeMap(GraphQLTypeMap):
             description=type._meta.description,
             fields=None,
             is_type_of=type.is_type_of,
-            interfaces=type._meta.interfaces
+            interfaces=None
+        )
+        interfaces = []
+        for i in type._meta.interfaces:
+            map = cls.construct_interface(map, i)
+            interfaces.append(map[i._meta.name])
+        map[type._meta.name].interfaces = interfaces
+        map[type._meta.name].fields = cls.construct_fields_for_type(map, type)
+        return map
+
+    @classmethod
+    def construct_union(cls, map, type):
+        from ..generators.definitions import GrapheneUnionType
+        types = []
+        for i in type._meta.types:
+            map = cls.construct_objecttype(map, i)
+            types.append(map[i._meta.name])
+        map[type._meta.name] = GrapheneUnionType(
+            graphene_type=type,
+            name=type._meta.name,
+            types=types,
+            resolve_type=type.resolve_type,
+        )
+        map[type._meta.name].types = types
+        return map
+
+    @classmethod
+    def construct_interface(cls, map, type):
+        from ..generators.definitions import GrapheneInterfaceType
+        map[type._meta.name] = GrapheneInterfaceType(
+            graphene_type=type,
+            name=type._meta.name,
+            description=type._meta.description,
+            fields=None,
+            resolve_type=type.resolve_type,
         )
         map[type._meta.name].fields = cls.construct_fields_for_type(map, type)
         return map
@@ -93,16 +133,16 @@ class TypeMap(GraphQLTypeMap):
             description=type._meta.description,
             fields=None,
         )
-        map[type._meta.name].fields = cls.construct_fields_for_type(map, type, is_input=True)
+        map[type._meta.name].fields = cls.construct_fields_for_type(map, type, is_input_type=True)
         return map
 
     @classmethod
-    def construct_fields_for_type(cls, map, type, is_input=False):
+    def construct_fields_for_type(cls, map, type, is_input_type=False):
         fields = OrderedDict()
         for name, field in type._meta.fields.items():
             map = cls.reducer(map, field.type)
             field_type = cls.get_field_type(map, field.type)
-            if is_input:
+            if is_input_type:
                 _field = GraphQLInputObjectField(
                     field_type,
                     default_value=field.default_value,

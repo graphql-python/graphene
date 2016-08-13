@@ -16,7 +16,7 @@ class AbstractTypeMeta(type):
 
         for base in bases:
             if not issubclass(base, AbstractType) and issubclass(type(base), AbstractTypeMeta):
-                # raise Exception('You can only')
+                # raise Exception('You can only extend AbstractTypes after the base definition.')
                 return type.__new__(cls, name, bases, attrs)
 
         attrs = merge_fields_in_attrs(bases, attrs)

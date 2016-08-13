@@ -31,7 +31,8 @@ class UnionMeta(type):
 
 
 class Union(six.with_metaclass(UnionMeta)):
-    resolve_type = None
+    def resolve_type(self, _type):
+        return type(_type)
 
     def __init__(self, *args, **kwargs):
         raise Exception("An Union cannot be intitialized")

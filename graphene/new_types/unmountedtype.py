@@ -1,6 +1,4 @@
 from ..utils.orderedtype import OrderedType
-# from .argument import Argument
-
 
 
 class UnmountedType(OrderedType):
@@ -59,4 +57,14 @@ class UnmountedType(OrderedType):
             *self.args,
             _creation_counter=self.creation_counter,
             **self.kwargs
+        )
+
+    def __eq__(self, other):
+        return (
+            self is other or (
+                isinstance(other, UnmountedType) and
+                self.get_type() == other.get_type() and
+                self.args == other.args and
+                self.kwargs == other.kwargs
+            )
         )

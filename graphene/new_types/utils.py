@@ -66,8 +66,5 @@ def get_fields_in_type(in_type, attrs):
 
 
 def yank_fields_from_attrs(attrs, fields):
-    for name, field in fields.items():
-        # attrs.pop(name, None)
+    for name in fields.keys():
         del attrs[name]
-    # return attrs
-    # return {k: v for k, v in attrs.items() if k not in fields}
