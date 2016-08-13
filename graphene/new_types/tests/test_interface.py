@@ -3,6 +3,7 @@ import pytest
 from ..field import Field
 from ..interface import Interface
 from ..unmountedtype import UnmountedType
+from ..abstracttype import AbstractType
 
 
 class MyType(object):
@@ -57,3 +58,25 @@ def test_generate_interface_unmountedtype():
 
     assert 'field' in MyInterface._meta.fields
     assert isinstance(MyInterface._meta.fields['field'], Field)
+
+
+def test_generate_interface_inherit_abstracttype():
+    class MyAbstractType(AbstractType):
+        field1 = MyScalar(MyType)
+
+    class MyInterface(Interface, MyAbstractType):
+        field2 = MyScalar(MyType)
+
+    assert MyInterface._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
+
+
+def test_generate_interface_inherit_abstracttype_reversed():
+    class MyAbstractType(AbstractType):
+        field1 = MyScalar(MyType)
+
+    class MyInterface(MyAbstractType, Interface):
+        field2 = MyScalar(MyType)
+
+    assert MyInterface._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]

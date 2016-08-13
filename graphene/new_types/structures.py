@@ -16,8 +16,10 @@ class Structure(UnmountedType):
 
 
 class List(Structure):
-    pass
+    def __str__(self):
+        return '[{}]'.format(self.of_type)
 
 
 class NonNull(Structure):
-    pass
+    def __str__(self):
+        return '{}!'.format(self.of_type)
