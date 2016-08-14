@@ -90,7 +90,9 @@ class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, ObjectType)):
         if isinstance(root, cls):
             return True
         if not is_valid_django_model(type(root)):
-            raise Exception('Received incompatible instance "{}"'.format(root))
+            raise Exception((
+                'Received incompatible instance "{}".'
+            ).format(root))
         model = root._meta.model
         return model == cls._meta.model
 
