@@ -51,4 +51,5 @@ class EnumTypeMeta(type):
 
 
 class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
-    pass
+    def get_type(self):
+        return type(self)
