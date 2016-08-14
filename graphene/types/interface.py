@@ -34,9 +34,7 @@ class InterfaceMeta(AbstractTypeMeta):
 
 
 class Interface(six.with_metaclass(InterfaceMeta)):
-    @classmethod
-    def resolve_type(cls, root, args, info):
-        return type(root)
+    resolve_type = None
 
     def __init__(self, *args, **kwargs):
         raise Exception("An Interface cannot be intitialized")

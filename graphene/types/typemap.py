@@ -139,12 +139,15 @@ class TypeMap(GraphQLTypeMap):
     @classmethod
     def construct_interface(cls, map, type):
         from .definitions import GrapheneInterfaceType
+        _resolve_type = None
+        if type.resolve_type:
+            _resolve_type = partial(resolve_type, type.resolve_type, map)
         map[type._meta.name] = GrapheneInterfaceType(
             graphene_type=type,
             name=type._meta.name,
             description=type._meta.description,
             fields=None,
-            resolve_type=partial(resolve_type, type.resolve_type, map),
+            resolve_type=_resolve_type,
         )
         map[type._meta.name]._fields = cls.construct_fields_for_type(map, type)
         # cls.reducer(map, map[type._meta.name])
@@ -165,6 +168,9 @@ class TypeMap(GraphQLTypeMap):
     @classmethod
     def construct_union(cls, map, type):
         from .definitions import GrapheneUnionType
+        _resolve_type = None
+        if type.resolve_type:
+            _resolve_type = partial(resolve_type, type.resolve_type, map)
         types = []
         for i in type._meta.types:
             map = cls.construct_objecttype(map, i)
@@ -173,7 +179,7 @@ class TypeMap(GraphQLTypeMap):
             graphene_type=type,
             name=type._meta.name,
             types=types,
-            resolve_type=type.resolve_type,
+            resolve_type=_resolve_type,
         )
         map[type._meta.name].types = types
         return map

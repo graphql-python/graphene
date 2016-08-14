@@ -17,7 +17,8 @@ class ObjectTypeMeta(AbstractTypeMeta):
         if not is_base_type(bases, ObjectTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
-        options = Options(
+        _meta = attrs.pop('_meta', None)
+        options = _meta or Options(
             attrs.pop('Meta', None),
             name=name,
             description=attrs.get('__doc__'),
@@ -49,8 +50,10 @@ class ObjectTypeMeta(AbstractTypeMeta):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
-
-    is_type_of = None
+    @classmethod
+    def is_type_of(cls, root, context, info):
+        if isinstance(root, cls):
+            return True
 
     def __init__(self, *args, **kwargs):
         # ObjectType acting as container
