@@ -33,12 +33,12 @@ def unmounted_field_in_type(attname, unmounted_field, type):
     from ..types.inputobjecttype import InputObjectType
 
     if issubclass(type, (ObjectType, Interface)):
-        return unmounted_field.as_field()
+        return unmounted_field.Field()
 
     elif issubclass(type, (AbstractType)):
         return unmounted_field
     elif issubclass(type, (InputObjectType)):
-        return unmounted_field.as_inputfield()
+        return unmounted_field.InputField()
 
     raise Exception(
         'Unmounted field "{}" cannot be mounted in {}.{}.'.format(

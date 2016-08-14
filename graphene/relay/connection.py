@@ -102,25 +102,11 @@ class ConnectionMeta(ObjectTypeMeta):
 
 
 class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
-    resolve_node = None
-    resolve_cursor = None
-
-    # def __init__(self, *args, **kwargs):
-    #     super(Connection, self).__init__(*args, **kwargs)
-    #     print args, kwargs
-    #     print dir(self.page_info)
-
+    pass
 
 class IterableConnectionField(Field):
 
     def __init__(self, type, *args, **kwargs):
-        # arguments = kwargs.pop('args', {})
-        # if not arguments:
-        #     arguments = connection_args
-        # else:
-        #     arguments = copy.copy(arguments)
-        #     arguments.update(connection_args)
-
         super(IterableConnectionField, self).__init__(
             type,
             *args,

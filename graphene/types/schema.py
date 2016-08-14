@@ -42,15 +42,7 @@ class Schema(GraphQLSchema):
         )
 
         self._directives = directives
-        initial_types = [
-            query,
-            mutation,
-            subscription,
-            IntrospectionSchema
-        ]
-        if types:
-            initial_types += types
-        self._type_map = TypeMap(initial_types)
+        self.build_typemap()
 
     def get_query_type(self):
         return self.get_graphql_type(self._query)
@@ -97,18 +89,13 @@ class Schema(GraphQLSchema):
     def lazy(self, _type):
         return lambda: self.get_type(_type)
 
-    # def rebuild(self):
-    #     self._possible_type_map = defaultdict(set)
-    #     self._type_map = self._build_type_map(self.types)
-    #     # Keep track of all implementations by interface name.
-    #     self._implementations = defaultdict(list)
-    #     for type in self._type_map.values():
-    #         if isinstance(type, GraphQLObjectType):
-    #             for interface in type.get_interfaces():
-    #                 self._implementations[interface.name].append(type)
-
-    #     # Enforce correct interface implementations.
-    #     for type in self._type_map.values():
-    #         if isinstance(type, GraphQLObjectType):
-    #             for interface in type.get_interfaces():
-    #                 assert_object_implements_interface(self, type, interface)
+    def build_typemap(self):
+        initial_types = [
+            self._query,
+            self._mutation,
+            self._subscription,
+            IntrospectionSchema
+        ]
+        if self.types:
+            initial_types += self.types
+        self._type_map = TypeMap(initial_types)

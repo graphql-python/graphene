@@ -53,7 +53,7 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
     is_type_of = None
 
     def __init__(self, *args, **kwargs):
-        # GraphQL ObjectType acting as container
+        # ObjectType acting as container
         args_len = len(args)
         fields = self._meta.fields.items()
         if args_len > len(fields):

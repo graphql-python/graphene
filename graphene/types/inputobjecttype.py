@@ -35,8 +35,7 @@ class InputObjectTypeMeta(AbstractTypeMeta):
 
 
 class InputObjectType(six.with_metaclass(InputObjectTypeMeta, UnmountedType)):
+
     @classmethod
     def get_type(cls):
         return cls
-    # def __init__(self, *args, **kwargs):
-    #     raise Exception("An InputObjectType cannot be intitialized")

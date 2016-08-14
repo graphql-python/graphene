@@ -26,7 +26,7 @@ def to_arguments(args, extra_args):
     arguments = OrderedDict()
     for default_name, arg in iter_arguments:
         if isinstance(arg, UnmountedType):
-            arg = arg.as_argument()
+            arg = arg.Argument()
 
         if not isinstance(arg, Argument):
             raise ValueError('Unknown argument "{}".'.format(default_name))

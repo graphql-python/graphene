@@ -27,8 +27,7 @@ class GlobalID(Field):
     @staticmethod
     def id_resolver(parent_resolver, node, root, args, context, info):
         id = parent_resolver(root, args, context, info)
-        # type_name = root._meta.name  # info.parent_type.name
-        return node.to_global_id(info.parent_type.name, id)
+        return node.to_global_id(info.parent_type.name, id)  # root._meta.name
 
     def get_resolver(self, parent_resolver):
         return partial(self.id_resolver, parent_resolver, self.node)
@@ -39,11 +38,6 @@ class NodeMeta(InterfaceMeta):
     def __new__(cls, name, bases, attrs):
         cls = InterfaceMeta.__new__(cls, name, bases, attrs)
         cls._meta.fields['id'] = GlobalID(cls, required=True, description='The ID of the object.')
-        # new_fields = OrderedDict([
-        #     ('id', GlobalID(cls, required=True, description='The ID of the object.'))
-        # ])
-        # new_fields.update(cls._meta.fields)
-        # cls._meta.fields = new_fields
         return cls
 
 
