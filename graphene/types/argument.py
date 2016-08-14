@@ -2,12 +2,17 @@ from collections import OrderedDict
 from itertools import chain
 
 from ..utils.orderedtype import OrderedType
+from .structures import NonNull
 
 
 class Argument(OrderedType):
 
-    def __init__(self, type, default_value=None, description=None, name=None, _creation_counter=None):
+    def __init__(self, type, default_value=None, description=None, name=None, required=False, _creation_counter=None):
         super(Argument, self).__init__(_creation_counter=_creation_counter)
+
+        if required:
+            type = NonNull(type)
+
         self.name = name
         self.type = type
         self.default_value = default_value
