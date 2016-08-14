@@ -1,69 +1,39 @@
-from functools import partial
-
-import six
-
-from graphql_relay import from_global_id, node_definitions, to_global_id
-
-from ..types.field import Field
-from ..types.interface import Interface
-from ..types.objecttype import ObjectType, ObjectTypeMeta
-from ..types.options import Options
-from ..utils.copy_fields import copy_fields
-from .connection import Connection
+from graphql_relay import from_global_id, to_global_id
+from ..types import Interface, ID, Field
 
 
-def get_default_connection(cls):
-    assert issubclass(cls, ObjectType), 'Can only get connection type on implemented Nodes.'
+class Node(Interface):
+    '''An object with an ID'''
 
-    class Meta:
-        node = cls
+    id = ID(required=True, description='The ID of the object.')
 
-    return type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
+    @classmethod
+    def resolve_id(cls, root, args, context, info):
+        type_name = root._meta.name  # info.parent_type.name
+        return cls.to_global_id(type_name, getattr(root, 'id', None))
 
+    @classmethod
+    def Field(cls):
+        def resolve_node(root, args, context, info):
+            return cls.get_node_from_global_id(args.get('id'), context, info)
 
-# We inherit from ObjectTypeMeta as we want to allow
-# inheriting from Node, and also ObjectType.
-# Like class MyNode(Node): pass
-# And class MyNodeImplementation(Node, ObjectType): pass
-class NodeMeta(ObjectTypeMeta):
-
-    @staticmethod
-    def _get_interface_options(meta):
-        return Options(
-            meta,
+        return Field(
+            cls,
+            description='The ID of the object',
+            id=ID(required=True),
+            resolver=resolve_node
         )
 
-    @staticmethod
-    def _create_interface(cls, name, bases, attrs):
-        options = cls._get_interface_options(attrs.pop('Meta', None))
-        cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
-        get_node_from_global_id = getattr(cls, 'get_node_from_global_id', None)
-        id_resolver = getattr(cls, 'id_resolver', None)
-        assert get_node_from_global_id, '{}.get_node_from_global_id method is required by the Node interface.'.format(
-            cls.__name__)
-        node_interface, node_field = node_definitions(
-            get_node_from_global_id,
-            id_resolver=id_resolver,
-            type_resolver=cls.resolve_type,
-        )
-        options.graphql_type = node_interface
-
-        fields = copy_fields(Field, options.graphql_type.get_fields(), parent=cls)
-        options.get_fields = lambda: fields
-
-        cls.Field = partial(
-            Field.copy_and_extend,
-            node_field,
-            type=node_field.type,
-            parent=cls,
-            _creation_counter=None)
-
-        return cls
-
-
-class Node(six.with_metaclass(NodeMeta, Interface)):
-    _connection = None
-    resolve_type = None
+    @classmethod
+    def get_node_from_global_id(cls, global_id, context, info):
+        try:
+            _type, _id = cls.from_global_id(global_id)
+            graphene_type = info.schema.get_type(_type).graphene_type
+            # We make sure the ObjectType implements the "Node" interface
+            assert cls in graphene_type._meta.interfaces
+        except:
+            return None
+        return graphene_type.get_node(_id, context, info)
 
     @classmethod
     def from_global_id(cls, global_id):
@@ -74,32 +44,13 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         return to_global_id(type, id)
 
     @classmethod
-    def resolve_id(cls, root, args, context, info):
-        return getattr(root, 'id', None)
-
-    @classmethod
-    def id_resolver(cls, root, args, context, info):
-        return cls.to_global_id(info.parent_type.name, cls.resolve_id(root, args, context, info))
-
-    @classmethod
-    def get_node_from_global_id(cls, global_id, context, info):
-        try:
-            _type, _id = cls.from_global_id(global_id)
-        except:
-            return None
-        graphql_type = info.schema.get_type(_type)
-        if cls._meta.graphql_type not in graphql_type.get_interfaces():
-            return
-        return graphql_type.graphene_type.get_node(_id, context, info)
-
-    @classmethod
     def implements(cls, objecttype):
-        require_get_node = Node._meta.graphql_type in objecttype._meta.get_interfaces
-        get_connection = getattr(objecttype, 'get_connection', None)
-        if not get_connection:
-            get_connection = partial(get_default_connection, objecttype)
+        require_get_node = Node in objecttype._meta.interfaces
+        # get_connection = getattr(objecttype, 'get_connection', None)
+        # if not get_connection:
+        #     get_connection = partial(get_default_connection, objecttype)
 
-        objecttype.Connection = get_connection()
+        # objecttype.Connection = get_connection()
         if require_get_node:
             assert hasattr(
                 objecttype, 'get_node'), '{}.get_node method is required by the Node interface.'.format(

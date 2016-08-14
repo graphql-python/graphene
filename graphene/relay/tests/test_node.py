@@ -2,15 +2,15 @@ import pytest
 
 from graphql_relay import to_global_id
 
-from ...types import ObjectType, Schema
-from ...types.scalars import String
-from ..connection import Connection
+from ...types import ObjectType, Schema, String
+# from ...types.scalars import String
+# from ..connection import Connection
 from ..node import Node
 
 
 class MyNode(ObjectType):
     class Meta:
-        interfaces = [Node]
+        interfaces = (Node, )
     name = String()
 
     @staticmethod
@@ -27,32 +27,33 @@ schema = Schema(query=RootQuery, types=[MyNode])
 
 def test_node_no_get_node():
     with pytest.raises(AssertionError) as excinfo:
-        class MyNode(Node, ObjectType):
-            pass
+        class MyNode(ObjectType):
+            class Meta:
+                interfaces = (Node, )
 
     assert "MyNode.get_node method is required by the Node interface." == str(excinfo.value)
 
 
 def test_node_no_get_node_with_meta():
     with pytest.raises(AssertionError) as excinfo:
-        class MyNode(Node, ObjectType):
-            pass
+        class MyNode(ObjectType):
+            class Meta:
+                interfaces = (Node, )
 
     assert "MyNode.get_node method is required by the Node interface." == str(excinfo.value)
 
 
 def test_node_good():
-    graphql_type = MyNode._meta.graphql_type
-    assert 'id' in graphql_type.get_fields()
+    assert 'id' in MyNode._meta.fields
 
 
-def test_node_get_connection():
-    connection = MyNode.Connection
-    assert issubclass(connection, Connection)
+# def test_node_get_connection():
+#     connection = MyNode.Connection
+#     assert issubclass(connection, Connection)
 
 
-def test_node_get_connection_dont_duplicate():
-    assert MyNode.Connection == MyNode.Connection
+# def test_node_get_connection_dont_duplicate():
+#     assert MyNode.Connection == MyNode.Connection
 
 
 def test_node_query():
