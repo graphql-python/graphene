@@ -8,6 +8,7 @@ from .enum import Enum
 from .field import Field
 from .inputfield import InputField
 from .argument import Argument
+from .dynamic import Dynamic
 from .inputobjecttype import InputObjectType
 
 __all__ = [

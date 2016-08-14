@@ -11,6 +11,7 @@ from .inputobjecttype import InputObjectType
 from .structures import List, NonNull
 from .enum import Enum
 from .scalars import Scalar, String, Boolean, Int, Float, ID
+from .dynamic import Dynamic
 
 from graphql import GraphQLString, GraphQLField, GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLFloat, GraphQLID, GraphQLNonNull, GraphQLInputObjectField, GraphQLArgument
 from graphql.type import GraphQLEnumValue
@@ -189,6 +190,10 @@ class TypeMap(GraphQLTypeMap):
     def construct_fields_for_type(cls, map, type, is_input_type=False):
         fields = OrderedDict()
         for name, field in type._meta.fields.items():
+            if isinstance(field, Dynamic):
+                field = field.get_type()
+                if not field:
+                    continue
             map = cls.reducer(map, field.type)
             field_type = cls.get_field_type(map, field.type)
             if is_input_type:

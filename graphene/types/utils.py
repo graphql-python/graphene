@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from .unmountedtype import UnmountedType
 from .field import Field
+from .dynamic import Dynamic
 from .inputfield import InputField
 
 
@@ -50,7 +51,7 @@ def unmounted_field_in_type(attname, unmounted_field, type):
 def get_fields_in_type(in_type, attrs):
     fields_with_names = []
     for attname, value in list(attrs.items()):
-        if isinstance(value, (Field, InputField)):
+        if isinstance(value, (Field, InputField, Dynamic)):
             fields_with_names.append(
                 (attname, value)
             )

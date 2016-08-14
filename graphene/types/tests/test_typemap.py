@@ -2,6 +2,8 @@ import pytest
 
 from ..objecttype import ObjectType
 from ..union import Union
+from ..field import Field
+from ..dynamic import Dynamic
 from ..enum import Enum
 from ..typemap import TypeMap
 from ..scalars import String
@@ -63,3 +65,18 @@ def test_objecttype():
     assert foo_field.args == {
         'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x')
     }
+
+
+def test_dynamic_objecttype():
+    class MyObjectType(ObjectType):
+        '''Description'''
+        bar = Dynamic(lambda: Field(String))
+
+    typemap = TypeMap([MyObjectType])
+    assert 'MyObjectType' in typemap
+    assert MyObjectType._meta.fields.keys() == ['bar']
+    graphql_type = typemap['MyObjectType']
+
+    fields = graphql_type.get_fields()
+    assert fields.keys() == ['bar']
+    assert fields['bar'].type == GraphQLString

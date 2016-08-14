@@ -9,7 +9,8 @@ from .types import (
     String, ID, Int, Float, Boolean,
     List, NonNull,
     Enum,
-    Argument
+    Argument,
+    Dynamic
 )
 from .utils.resolve_only_args import resolve_only_args
 
@@ -30,4 +31,5 @@ __all__ = [
     'List',
     'NonNull',
     'Argument',
+    'Dynamic',
     'resolve_only_args']
