@@ -42,10 +42,10 @@ class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, ObjectType)):
 
         def on_resolve(payload):
             try:
-                payload.clientMutationId = input['clientMutationId']
+                payload.client_mutation_id = input.get('clientMutationId')
             except:
                 raise Exception((
-                    'Cannot set clientMutationId in the payload object {}'
+                    'Cannot set client_mutation_id in the payload object {}'
                 ).format(repr(payload)))
             return payload
 
