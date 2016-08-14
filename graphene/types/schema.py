@@ -62,6 +62,8 @@ class Schema(GraphQLSchema):
         return self.get_graphql_type(self._subscription)
 
     def get_graphql_type(self, _type):
+        if not _type:
+            return _type
         if is_type(_type):
             return _type
         if is_graphene_type(_type):

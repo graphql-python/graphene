@@ -71,6 +71,18 @@ def test_generate_interface_inherit_abstracttype():
     assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
 
 
+def test_generate_interface_inherit_interface():
+    class MyBaseInterface(Interface):
+        field1 = MyScalar()
+
+    class MyInterface(MyBaseInterface):
+        field2 = MyScalar()
+
+    assert MyInterface._meta.name == 'MyInterface'
+    assert MyInterface._meta.fields.keys() == ['field1', 'field2']
+    assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
+
+
 def test_generate_interface_inherit_abstracttype_reversed():
     class MyAbstractType(AbstractType):
         field1 = MyScalar()

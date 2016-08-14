@@ -1,4 +1,5 @@
 import inspect
+from functools import partial
 from collections import OrderedDict
 
 from graphql.type.typemap import GraphQLTypeMap
@@ -14,6 +15,8 @@ from .scalars import Scalar, String, Boolean, Int, Float, ID
 from graphql import GraphQLString, GraphQLField, GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLFloat, GraphQLID, GraphQLNonNull, GraphQLInputObjectField, GraphQLArgument
 from graphql.type import GraphQLEnumValue
 
+from ..utils.str_converters import to_camel_case
+
 
 def is_graphene_type(_type):
     if isinstance(_type, (List, NonNull)):
@@ -22,13 +25,26 @@ def is_graphene_type(_type):
         return True
 
 
+def resolve_type(resolve_type_func, map, root, args, info):
+    _type = resolve_type_func(root, args, info)
+    # assert inspect.isclass(_type) and issubclass(_type, ObjectType), (
+    #     'Received incompatible type "{}".'.format(_type)
+    # )
+    if inspect.isclass(_type) and issubclass(_type, ObjectType):
+        graphql_type = map.get(_type._meta.name)
+        assert graphql_type and graphql_type.graphene_type == _type
+        return graphql_type
+    return _type
+
+
 class TypeMap(GraphQLTypeMap):
 
     @classmethod
     def reducer(cls, map, type):
         if not type:
             return map
-
+        if inspect.isfunction(type):
+            type = type()
         if is_graphene_type(type):
             return cls.graphene_reducer(map, type)
         return super(TypeMap, cls).reducer(map, type)
@@ -112,10 +128,11 @@ class TypeMap(GraphQLTypeMap):
         )
         interfaces = []
         for i in type._meta.interfaces:
-            map = cls.construct_interface(map, i)
+            map = cls.reducer(map, i)
             interfaces.append(map[i._meta.name])
-        map[type._meta.name].interfaces = interfaces
+        map[type._meta.name]._provided_interfaces = interfaces
         map[type._meta.name]._fields = cls.construct_fields_for_type(map, type)
+        # cls.reducer(map, map[type._meta.name])
         return map
 
     @classmethod
@@ -126,9 +143,10 @@ class TypeMap(GraphQLTypeMap):
             name=type._meta.name,
             description=type._meta.description,
             fields=None,
-            resolve_type=type.resolve_type,
+            resolve_type=partial(resolve_type, type.resolve_type, map),
         )
         map[type._meta.name]._fields = cls.construct_fields_for_type(map, type)
+        # cls.reducer(map, map[type._meta.name])
         return map
 
     @classmethod
@@ -160,6 +178,14 @@ class TypeMap(GraphQLTypeMap):
         return map
 
     @classmethod
+    def process_field_name(cls, name):
+        return to_camel_case(name)
+
+    @classmethod
+    def default_resolver(cls, attname, root, *_):
+        return getattr(root, attname, None)
+
+    @classmethod
     def construct_fields_for_type(cls, map, type, is_input_type=False):
         fields = OrderedDict()
         for name, field in type._meta.fields.items():
@@ -181,20 +207,35 @@ class TypeMap(GraphQLTypeMap):
                         description=arg.description,
                         default_value=arg.default_value
                     )
-                resolver = field.resolver
-                resolver_type = getattr(type, 'resolve_{}'.format(name), None)
-                if resolver_type:
-                    resolver = resolver_type.__func__
-
                 _field = GraphQLField(
                     field_type,
                     args=args,
-                    resolver=resolver,
+                    resolver=field.resolver or cls.get_resolver_for_type(type, name),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description
                 )
-            fields[name] = _field
+            processed_name = cls.process_field_name(name)
+            fields[processed_name] = _field
         return fields
+
+    @classmethod
+    def get_resolver_for_type(cls, type, name):
+        if not issubclass(type, ObjectType):
+            return
+        resolver = getattr(type, 'resolve_{}'.format(name), None)
+        if not resolver:
+            # If we don't find the resolver in the ObjectType class, then try to
+            # find it in each of the interfaces
+            interface_resolver = None
+            for interface in type._meta.interfaces:
+                interface_resolver = getattr(interface, 'resolve_{}'.format(name), None)
+                if interface_resolver:
+                    break
+            resolver = interface_resolver
+        # Only if is not decorated with classmethod
+        if resolver and not getattr(resolver, '__self__', True):
+            return resolver.__func__
+        return partial(cls.default_resolver, name)
 
     @classmethod
     def get_field_type(self, map, type):
@@ -202,4 +243,6 @@ class TypeMap(GraphQLTypeMap):
             return GraphQLList(self.get_field_type(map, type.of_type))
         if isinstance(type, NonNull):
             return GraphQLNonNull(self.get_field_type(map, type.of_type))
+        if inspect.isfunction(type):
+            type = type()
         return map.get(type._meta.name)

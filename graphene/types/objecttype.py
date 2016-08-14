@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import six
 
 from ..utils.is_base_type import is_base_type
@@ -5,6 +6,7 @@ from .options import Options
 
 from .abstracttype import AbstractTypeMeta
 from .utils import get_fields_in_type, yank_fields_from_attrs, merge_fields_in_attrs
+from .interface import Interface
 
 
 class ObjectTypeMeta(AbstractTypeMeta):
@@ -23,10 +25,22 @@ class ObjectTypeMeta(AbstractTypeMeta):
         )
 
         attrs = merge_fields_in_attrs(bases, attrs)
-        options.fields = get_fields_in_type(ObjectType, attrs)
-        yank_fields_from_attrs(attrs, options.fields)
+        options.local_fields = get_fields_in_type(ObjectType, attrs)
+        yank_fields_from_attrs(attrs, options.local_fields)
+        options.interface_fields = OrderedDict()
+        for interface in options.interfaces:
+            assert issubclass(interface, Interface), (
+                'All interfaces of {} must be a subclass of Interface. Received "{}".'
+            ).format(name, interface)
+            options.interface_fields.update(interface._meta.fields)
+        options.fields = OrderedDict(options.interface_fields)
+        options.fields.update(options.local_fields)
 
-        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
+        cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
+        for interface in options.interfaces:
+            interface.implements(cls)
+
+        return cls
 
     def __str__(cls):
         return cls._meta.name

@@ -21,4 +21,4 @@ class JSONString(Scalar):
 
     @staticmethod
     def parse_value(value):
-        return json.dumps(value)
+        return json.loads(value)

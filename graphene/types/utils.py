@@ -6,9 +6,10 @@ from .inputfield import InputField
 
 
 def merge_fields_in_attrs(bases, attrs):
-    from ..types.abstracttype import AbstractType
+    from ..types import AbstractType, Interface
+    inherited_bases = (AbstractType, Interface)
     for base in bases:
-        if base == AbstractType or not issubclass(base, AbstractType):
+        if base in inherited_bases or not issubclass(base, inherited_bases):
             continue
         for name, field in base._meta.fields.items():
             if name in attrs:

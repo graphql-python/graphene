@@ -4,13 +4,25 @@ from ..field import Field
 from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
 from ..abstracttype import AbstractType
+from ..interface import Interface
 
 
-class MyType(object):
+class MyType(Interface):
     pass
 
 
 class Container(ObjectType):
+    field1 = Field(MyType)
+    field2 = Field(MyType)
+
+
+class MyInterface(Interface):
+    ifield = Field(MyType)
+
+
+class ContainerWithInterface(ObjectType):
+    class Meta:
+        interfaces = (MyInterface, )
     field1 = Field(MyType)
     field2 = Field(MyType)
 
@@ -92,6 +104,10 @@ def test_generate_objecttype_unmountedtype():
 
 def test_parent_container_get_fields():
     assert list(Container._meta.fields.keys()) == ['field1', 'field2']
+
+
+def test_parent_container_interface_get_fields():
+    assert list(ContainerWithInterface._meta.fields.keys()) == ['ifield', 'field1', 'field2']
 
 
 def test_objecttype_as_container_only_args():
