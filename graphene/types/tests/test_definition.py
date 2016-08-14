@@ -137,7 +137,6 @@ def test_includes_nested_input_objects_in_the_map():
         subscription=SomeSubscription
     )
 
-    print schema.get_type_map()
     assert schema.get_type_map()['NestedInputObject'].graphene_type is NestedInputObject
 
 

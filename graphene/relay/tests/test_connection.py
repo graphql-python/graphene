@@ -34,7 +34,7 @@ schema = Schema(query=RootQuery)
 def test_connection():
     assert MyObjectConnection._meta.name == 'MyObjectConnection'
     fields = MyObjectConnection._meta.fields
-    assert fields.keys() == ['page_info', 'edges', 'extra']
+    assert list(fields.keys()) == ['page_info', 'edges', 'extra']
     edge_field = fields['edges']
     pageinfo_field = fields['page_info']
 
@@ -51,7 +51,7 @@ def test_edge():
     Edge = MyObjectConnection.Edge
     assert Edge._meta.name == 'MyObjectEdge'
     edge_fields = Edge._meta.fields
-    assert edge_fields.keys() == ['node', 'cursor', 'other']
+    assert list(edge_fields.keys()) == ['node', 'cursor', 'other']
 
     assert isinstance(edge_fields['node'], Field)
     assert edge_fields['node'].type == MyObject
@@ -63,4 +63,4 @@ def test_edge():
 def test_pageinfo():
     assert PageInfo._meta.name == 'PageInfo'
     fields = PageInfo._meta.fields
-    assert fields.keys() == ['has_next_page', 'has_previous_page', 'start_cursor', 'end_cursor']
+    assert list(fields.keys()) == ['has_next_page', 'has_previous_page', 'start_cursor', 'end_cursor']

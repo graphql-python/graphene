@@ -4,7 +4,6 @@ from py.test import raises
 import graphene
 from ..form_converter import convert_form_field
 from graphene import ID, List, NonNull
-from graphene.utils.get_graphql_type import get_graphql_type
 
 from .models import Reporter
 

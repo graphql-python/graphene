@@ -22,7 +22,7 @@ class Argument(OrderedType):
 def to_arguments(args, extra_args):
     from .unmountedtype import UnmountedType
     extra_args = sorted(extra_args.items(), key=lambda f: f[1])
-    iter_arguments = chain(args.items() + extra_args)
+    iter_arguments = chain(args.items(), extra_args)
     arguments = OrderedDict()
     for default_name, arg in iter_arguments:
         if isinstance(arg, UnmountedType):

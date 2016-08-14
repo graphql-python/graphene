@@ -79,8 +79,8 @@ def test_generate_objecttype_inherit_abstracttype():
     class MyObjectType(ObjectType, MyAbstractType):
         field2 = MyScalar()
 
-    assert MyObjectType._meta.fields.keys() == ['field1', 'field2']
-    assert [type(x) for x in MyObjectType._meta.fields.values()] == [Field, Field]
+    assert list(MyObjectType._meta.fields.keys()) == ['field1', 'field2']
+    assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
 
 
 def test_generate_objecttype_inherit_abstracttype_reversed():
@@ -90,8 +90,8 @@ def test_generate_objecttype_inherit_abstracttype_reversed():
     class MyObjectType(MyAbstractType, ObjectType):
         field2 = MyScalar()
 
-    assert MyObjectType._meta.fields.keys() == ['field1', 'field2']
-    assert [type(x) for x in MyObjectType._meta.fields.values()] == [Field, Field]
+    assert list(MyObjectType._meta.fields.keys()) == ['field1', 'field2']
+    assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
 
 
 def test_generate_objecttype_unmountedtype():

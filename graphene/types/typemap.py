@@ -244,8 +244,11 @@ class TypeMap(GraphQLTypeMap):
                     break
             resolver = interface_resolver
         # Only if is not decorated with classmethod
-        if resolver and not getattr(resolver, '__self__', True):
-            return resolver.__func__
+        if resolver:
+            if not getattr(resolver, '__self__', True):
+                return resolver.__func__
+            return resolver
+
         return partial(cls.default_resolver, name)
 
     @classmethod

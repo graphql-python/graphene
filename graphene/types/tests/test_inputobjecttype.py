@@ -68,7 +68,7 @@ def test_generate_inputobjecttype_inherit_abstracttype():
     class MyInputObjectType(InputObjectType, MyAbstractType):
         field2 = MyScalar(MyType)
 
-    assert MyInputObjectType._meta.fields.keys() == ['field1', 'field2']
+    assert list(MyInputObjectType._meta.fields.keys()) == ['field1', 'field2']
     assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [InputField, InputField]
 
 
@@ -79,5 +79,5 @@ def test_generate_inputobjecttype_inherit_abstracttype_reversed():
     class MyInputObjectType(MyAbstractType, InputObjectType):
         field2 = MyScalar(MyType)
 
-    assert MyInputObjectType._meta.fields.keys() == ['field1', 'field2']
+    assert list(MyInputObjectType._meta.fields.keys()) == ['field1', 'field2']
     assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [InputField, InputField]

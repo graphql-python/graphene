@@ -49,7 +49,6 @@ class DjangoDebugMiddleware(object):
                 raise Exception('DjangoDebug need the context to be writable, context received: {}.'.format(
                     context.__class__.__name__
                 ))
-        print info.schema.get_type('DjangoDebug'), info.return_type
         if info.schema.get_type('DjangoDebug') == info.return_type:
             return context.django_debug.get_debug_promise()
         promise = next(root, args, context, info)

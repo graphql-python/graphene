@@ -57,11 +57,12 @@ def test_objecttype():
     assert graphql_type.description == 'Description'
 
     fields = graphql_type.get_fields()
-    assert fields.keys() == ['foo', 'gizmo']
+    assert list(fields.keys()) == ['foo', 'gizmo']
     foo_field = fields['foo']
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == 'Field description'
-    assert foo_field.resolver == MyObjectType.resolve_foo.__func__
+    f = MyObjectType.resolve_foo
+    assert foo_field.resolver == getattr(f, '__func__', f)
     assert foo_field.args == {
         'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x')
     }
@@ -74,9 +75,9 @@ def test_dynamic_objecttype():
 
     typemap = TypeMap([MyObjectType])
     assert 'MyObjectType' in typemap
-    assert MyObjectType._meta.fields.keys() == ['bar']
+    assert list(MyObjectType._meta.fields.keys()) == ['bar']
     graphql_type = typemap['MyObjectType']
 
     fields = graphql_type.get_fields()
-    assert fields.keys() == ['bar']
+    assert list(fields.keys()) == ['bar']
     assert fields['bar'].type == GraphQLString

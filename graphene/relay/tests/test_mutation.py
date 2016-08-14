@@ -38,11 +38,11 @@ def test_no_mutate_and_get_payload():
 
 def test_mutation():
     fields = SaySomething._meta.fields
-    assert fields.keys() == ['phrase']
+    assert list(fields.keys()) == ['phrase']
     assert isinstance(fields['phrase'], Field)
     field = SaySomething.Field()
     assert field.type == SaySomething
-    assert field.args.keys() == ['input']
+    assert list(field.args.keys()) == ['input']
     assert isinstance(field.args['input'], Argument)
     assert field.args['input'].type == SaySomething.Input
 
@@ -51,7 +51,7 @@ def test_mutation_input():
     Input = SaySomething.Input
     assert issubclass(Input, InputObjectType)
     fields = Input._meta.fields
-    assert fields.keys() == ['what', 'client_mutation_id']
+    assert list(fields.keys()) == ['what', 'client_mutation_id']
     assert isinstance(fields['what'], InputField)
     assert fields['what'].type == String
     assert isinstance(fields['client_mutation_id'], InputField)
