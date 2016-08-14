@@ -11,10 +11,11 @@ from .models import (
 )
 
 
-class Ship(DjangoNode, DjangoObjectType):
+class Ship(DjangoObjectType):
 
     class Meta:
         model = ShipModel
+        interfaces = (DjangoNode, )
 
     @classmethod
     def get_node(cls, id, context, info):
@@ -29,10 +30,11 @@ class Character(DjangoObjectType):
         model = CharacterModel
 
 
-class Faction(DjangoNode, DjangoObjectType):
+class Faction(DjangoObjectType):
 
     class Meta:
         model = FactionModel
+        interfaces = (DjangoNode, )
 
     @classmethod
     def get_node(cls, id, context, info):
