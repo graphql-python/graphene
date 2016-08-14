@@ -1,6 +1,7 @@
 import six
 
-from graphql.language.ast import BooleanValue, FloatValue, IntValue, StringValue
+from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
+                                  StringValue)
 
 from ..utils.is_base_type import is_base_type
 from .options import Options
@@ -25,7 +26,7 @@ class ScalarTypeMeta(type):
 
         return super_new(cls, name, bases, dict(attrs, _meta=options))
 
-    def __str__(cls):
+    def __str__(cls):  # noqa: N802
         return cls._meta.name
 
 

@@ -1,10 +1,11 @@
 
-from ...types import ObjectType, Schema, List, Field, String, NonNull
+from ...types import Field, List, NonNull, ObjectType, Schema, String
 from ..connection import Connection, PageInfo
 from ..node import Node
 
 
 class MyObject(ObjectType):
+
     class Meta:
         interfaces = [Node]
     field = String()

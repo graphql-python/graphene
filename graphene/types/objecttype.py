@@ -1,12 +1,13 @@
 from collections import OrderedDict
+
 import six
 
 from ..utils.is_base_type import is_base_type
-from .options import Options
-
 from .abstracttype import AbstractTypeMeta
-from .utils import get_fields_in_type, yank_fields_from_attrs, merge_fields_in_attrs
 from .interface import Interface
+from .options import Options
+from .utils import (get_fields_in_type, merge_fields_in_attrs,
+                    yank_fields_from_attrs)
 
 
 class ObjectTypeMeta(AbstractTypeMeta):
@@ -45,11 +46,12 @@ class ObjectTypeMeta(AbstractTypeMeta):
 
         return cls
 
-    def __str__(cls):
+    def __str__(cls):  # noqa: N802
         return cls._meta.name
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
+
     @classmethod
     def is_type_of(cls, root, context, info):
         if isinstance(root, cls):

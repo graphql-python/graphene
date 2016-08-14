@@ -1,10 +1,10 @@
 import pytest
 
+from ..abstracttype import AbstractType
 from ..field import Field
+from ..interface import Interface
 from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
-from ..abstracttype import AbstractType
-from ..interface import Interface
 
 
 class MyType(Interface):
@@ -21,6 +21,7 @@ class MyInterface(Interface):
 
 
 class ContainerWithInterface(ObjectType):
+
     class Meta:
         interfaces = (MyInterface, )
     field1 = Field(MyType)
@@ -28,6 +29,7 @@ class ContainerWithInterface(ObjectType):
 
 
 class MyScalar(UnmountedType):
+
     def get_type(self):
         return MyType
 

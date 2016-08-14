@@ -1,20 +1,17 @@
-from collections import OrderedDict
 
-from py.test import raises
 
 from ..abstracttype import AbstractType
-from ..objecttype import ObjectType
-from ..interface import Interface
-from ..union import Union
-from ..scalars import String, Int, Boolean
+from ..argument import Argument
+from ..enum import Enum
 from ..field import Field
 from ..inputfield import InputField
-from ..structures import List, NonNull
-from ..enum import Enum
-from ..argument import Argument
 from ..inputobjecttype import InputObjectType
-
+from ..interface import Interface
+from ..objecttype import ObjectType
+from ..scalars import Boolean, Int, String
 from ..schema import Schema
+from ..structures import List, NonNull
+from ..union import Union
 
 
 class Image(ObjectType):
@@ -60,6 +57,7 @@ class MyInterface(Interface):
 
 
 class MyUnion(Union):
+
     class Meta:
         types = (Article, )
 
@@ -145,6 +143,7 @@ def test_includes_interfaces_thunk_subtypes_in_the_type_map():
         f = Int()
 
     class SomeSubtype(ObjectType):
+
         class Meta:
             interfaces = (SomeInterface, )
 
@@ -167,6 +166,7 @@ def test_includes_types_in_union():
         b = String()
 
     class MyUnion(Union):
+
         class Meta:
             types = (SomeType, OtherType)
 
@@ -189,6 +189,7 @@ def test_maps_enum():
         b = String()
 
     class MyUnion(Union):
+
         class Meta:
             types = (SomeType, OtherType)
 
@@ -208,6 +209,7 @@ def test_includes_interfaces_subtypes_in_the_type_map():
         f = Int()
 
     class SomeSubtype(ObjectType):
+
         class Meta:
             interfaces = (SomeInterface, )
 

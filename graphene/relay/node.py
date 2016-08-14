@@ -1,9 +1,10 @@
-import six
-from collections import OrderedDict
 from functools import partial
 
+import six
+
 from graphql_relay import from_global_id, to_global_id
-from ..types import ObjectType, Interface, ID, Field
+
+from ..types import ID, Field, Interface, ObjectType
 from ..types.interface import InterfaceMeta
 
 
@@ -27,6 +28,7 @@ def get_default_connection(cls):
 
 
 class GlobalID(Field):
+
     def __init__(self, node, *args, **kwargs):
         super(GlobalID, self).__init__(ID, *args, **kwargs)
         self.node = node
@@ -52,7 +54,7 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
     '''An object with an ID'''
 
     @classmethod
-    def Field(cls):
+    def Field(cls):  # noqa: N802
         def resolve_node(root, args, context, info):
             return cls.get_node_from_global_id(args.get('id'), context, info)
 

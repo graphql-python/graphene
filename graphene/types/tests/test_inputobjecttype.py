@@ -1,10 +1,9 @@
-import pytest
 
+from ..abstracttype import AbstractType
 from ..field import Field
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..unmountedtype import UnmountedType
-from ..abstracttype import AbstractType
 
 
 class MyType(object):
@@ -12,6 +11,7 @@ class MyType(object):
 
 
 class MyScalar(UnmountedType):
+
     def get_type(self):
         return MyType
 

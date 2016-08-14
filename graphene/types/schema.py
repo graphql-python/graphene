@@ -1,13 +1,14 @@
-import inspect
 
 from graphql import GraphQLSchema, MiddlewareManager, graphql, is_type
+from graphql.type.directives import (GraphQLDirective, GraphQLIncludeDirective,
+                                     GraphQLSkipDirective)
+from graphql.type.introspection import IntrospectionSchema
 from graphql.utils.introspection_query import introspection_query
 from graphql.utils.schema_printer import print_schema
 
+from .typemap import TypeMap, is_graphene_type
 
-from .objecttype import ObjectType
-from .structures import List, NonNull
-from .scalars import Scalar, String
+
 # from ..utils.get_graphql_type import get_graphql_type
 
 
@@ -16,15 +17,10 @@ from .scalars import Scalar, String
 # from collections import defaultdict
 
 
-from graphql.type.directives import (GraphQLDirective, GraphQLIncludeDirective,
-                                     GraphQLSkipDirective)
-from graphql.type.introspection import IntrospectionSchema
-from .typemap import TypeMap, is_graphene_type
-
-
 class Schema(GraphQLSchema):
 
-    def __init__(self, query=None, mutation=None, subscription=None, directives=None, types=None, executor=None, middlewares=None):
+    def __init__(self, query=None, mutation=None, subscription=None,
+                 directives=None, types=None, executor=None, middlewares=None):
         self._query = query
         self._mutation = mutation
         self._subscription = subscription

@@ -1,10 +1,10 @@
 import inspect
+from collections import Mapping, OrderedDict
 from functools import partial
-from collections import OrderedDict, Mapping
 
 from ..utils.orderedtype import OrderedType
-from .structures import NonNull
 from .argument import to_arguments
+from .structures import NonNull
 
 
 def source_resolver(source, root, args, context, info):

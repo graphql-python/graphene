@@ -1,11 +1,12 @@
 from graphql import graphql
 
-from ...types import ObjectType, Interface, Schema
+from ...types import Interface, ObjectType, Schema
 from ...types.scalars import Int, String
 from ..node import Node
 
 
 class CustomNode(Node):
+
     class Meta:
         name = 'Node'
 
@@ -27,12 +28,14 @@ class BasePhoto(Interface):
 
 
 class User(ObjectType):
+
     class Meta:
         interfaces = [CustomNode]
     name = String()
 
 
 class Photo(ObjectType):
+
     class Meta:
         interfaces = [CustomNode, BasePhoto]
 

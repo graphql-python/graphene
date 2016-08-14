@@ -1,9 +1,9 @@
 from collections import OrderedDict
 
-from .unmountedtype import UnmountedType
-from .field import Field
 from .dynamic import Dynamic
+from .field import Field
 from .inputfield import InputField
+from .unmountedtype import UnmountedType
 
 
 def merge_fields_in_attrs(bases, attrs):

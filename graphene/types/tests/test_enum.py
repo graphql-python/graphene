@@ -30,6 +30,7 @@ def test_enum_construction():
 
 def test_enum_construction_meta():
     class RGB(Enum):
+
         class Meta:
             name = 'RGBEnum'
             description = 'Description'

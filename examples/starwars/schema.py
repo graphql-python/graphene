@@ -22,12 +22,14 @@ class Character(graphene.Interface):
 
 
 class Human(graphene.ObjectType):
+
     class Meta:
         interfaces = (Character, )
     home_planet = graphene.String()
 
 
 class Droid(graphene.ObjectType):
+
     class Meta:
         interfaces = (Character, )
     primary_function = graphene.String()

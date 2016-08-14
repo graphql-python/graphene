@@ -1,15 +1,13 @@
-import pytest
 
-from ..objecttype import ObjectType
-from ..union import Union
-from ..field import Field
+from graphql.type import (GraphQLArgument, GraphQLEnumType, GraphQLEnumValue,
+                          GraphQLField, GraphQLObjectType, GraphQLString)
+
 from ..dynamic import Dynamic
 from ..enum import Enum
-from ..typemap import TypeMap
+from ..field import Field
+from ..objecttype import ObjectType
 from ..scalars import String
-
-
-from graphql.type import GraphQLEnumType, GraphQLEnumValue, GraphQLObjectType, GraphQLField, GraphQLArgument, GraphQLString
+from ..typemap import TypeMap
 
 
 def test_enum():

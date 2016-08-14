@@ -25,6 +25,7 @@ def test_generate_union():
 
 def test_generate_union_with_meta():
     class MyUnion(Union):
+
         class Meta:
             name = 'MyOtherUnion'
             description = 'Documentation'

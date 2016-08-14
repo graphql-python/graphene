@@ -23,7 +23,7 @@ class UnmountedType(OrderedType):
     def get_type(self):
         raise NotImplementedError("get_type not implemented in {}".format(self))
 
-    def Field(self):
+    def Field(self):  # noqa: N802
         '''
         Mount the UnmountedType as Field
         '''
@@ -35,7 +35,7 @@ class UnmountedType(OrderedType):
             **self.kwargs
         )
 
-    def InputField(self):
+    def InputField(self):  # noqa: N802
         '''
         Mount the UnmountedType as InputField
         '''
@@ -47,7 +47,7 @@ class UnmountedType(OrderedType):
             **self.kwargs
         )
 
-    def Argument(self):
+    def Argument(self):  # noqa: N802
         '''
         Mount the UnmountedType as Argument
         '''

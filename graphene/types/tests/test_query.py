@@ -1,13 +1,7 @@
-from collections import OrderedDict
 
-from py.test import raises
-from graphql import MiddlewareManager
 
 from ..objecttype import ObjectType
-from ..scalars import String, Int, Boolean
-from ..field import Field
-from ..structures import List
-
+from ..scalars import String
 from ..schema import Schema
 
 

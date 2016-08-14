@@ -1,8 +1,8 @@
 import pytest
 
+from ..argument import Argument
 from ..field import Field
 from ..structures import NonNull
-from ..argument import Argument
 
 
 class MyInstance(object):

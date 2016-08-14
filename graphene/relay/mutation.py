@@ -1,14 +1,13 @@
+import re
 from functools import partial
 
 import six
-import re
-
 from promise import Promise
 
+from ..types import Argument, Field, InputObjectType, String
+from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
-from ..types import Field, String, InputObjectType, Argument
-from ..types.objecttype import ObjectType, ObjectTypeMeta
 
 
 class ClientIDMutationMeta(ObjectTypeMeta):
@@ -23,7 +22,7 @@ class ClientIDMutationMeta(ObjectTypeMeta):
         base_name = re.sub('Payload$', '', name)
         cls = ObjectTypeMeta.__new__(cls, '{}Payload'.format(base_name), bases, attrs)
         mutate_and_get_payload = getattr(cls, 'mutate_and_get_payload', None)
-        if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__: 
+        if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:
             assert mutate_and_get_payload, (
                 "{}.mutate_and_get_payload method is required"
                 " in a ClientIDMutation."
@@ -36,6 +35,7 @@ class ClientIDMutationMeta(ObjectTypeMeta):
 
 
 class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, ObjectType)):
+
     @classmethod
     def mutate(cls, root, args, context, info):
         input = args.get('input')

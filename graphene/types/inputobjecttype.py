@@ -1,11 +1,11 @@
 import six
 
 from ..utils.is_base_type import is_base_type
-from .options import Options
-
 from .abstracttype import AbstractTypeMeta
-from .utils import get_fields_in_type, yank_fields_from_attrs, merge_fields_in_attrs
+from .options import Options
 from .unmountedtype import UnmountedType
+from .utils import (get_fields_in_type, merge_fields_in_attrs,
+                    yank_fields_from_attrs)
 
 
 class InputObjectTypeMeta(AbstractTypeMeta):
@@ -30,7 +30,7 @@ class InputObjectTypeMeta(AbstractTypeMeta):
 
         return type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
-    def __str__(cls):
+    def __str__(cls):  # noqa: N802
         return cls._meta.name
 
 

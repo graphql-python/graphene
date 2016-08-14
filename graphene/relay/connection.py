@@ -6,15 +6,14 @@ import six
 
 from graphql_relay import connection_from_list
 
-from ..types import Boolean, String, List, Int
+from ..types import Boolean, Int, List, String
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
+from ..types.utils import get_fields_in_type, yank_fields_from_attrs
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
 from .node import Node, is_node
-
-from ..types.utils import get_fields_in_type, yank_fields_from_attrs
 
 
 class PageInfo(ObjectType):
@@ -66,7 +65,6 @@ class ConnectionMeta(ObjectTypeMeta):
         if not options.name:
             options.name = '{}Connection'.format(base_name)
 
-
         edge_class = attrs.pop('Edge', None)
         edge_fields = OrderedDict([
             ('node', Field(options.node, description='The item at the end of the edge')),
@@ -75,27 +73,28 @@ class ConnectionMeta(ObjectTypeMeta):
         edge_attrs = props(edge_class) if edge_class else OrderedDict()
         extended_edge_fields = get_fields_in_type(ObjectType, edge_attrs)
         edge_fields.update(extended_edge_fields)
-        EdgeMeta = type('Meta', (object, ), {
+        edge_meta = type('Meta', (object, ), {
             'fields': edge_fields,
             'name': '{}Edge'.format(base_name)
         })
         yank_fields_from_attrs(edge_attrs, extended_edge_fields)
-        Edge = type('Edge', (ObjectType,), dict(edge_attrs, Meta=EdgeMeta))
+        edge = type('Edge', (ObjectType,), dict(edge_attrs, Meta=edge_meta))
 
         options.local_fields = OrderedDict([
             ('page_info', Field(PageInfo, name='pageInfo', required=True)),
-            ('edges', Field(List(Edge)))
+            ('edges', Field(List(edge)))
         ])
         typed_fields = get_fields_in_type(ObjectType, attrs)
         options.local_fields.update(typed_fields)
         options.fields = options.local_fields
         yank_fields_from_attrs(attrs, typed_fields)
 
-        return type.__new__(cls, name, bases, dict(attrs, _meta=options, Edge=Edge))
+        return type.__new__(cls, name, bases, dict(attrs, _meta=options, Edge=edge))
 
 
 class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
     pass
+
 
 class IterableConnectionField(Field):
 

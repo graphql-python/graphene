@@ -1,6 +1,7 @@
 import pytest
 
-from ...types import ObjectType, Schema, Field, InputField, InputObjectType, Argument
+from ...types import (Argument, Field, InputField, InputObjectType, ObjectType,
+                      Schema)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
 

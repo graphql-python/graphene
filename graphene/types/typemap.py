@@ -1,22 +1,22 @@
 import inspect
-from functools import partial
 from collections import OrderedDict
+from functools import partial
 
+from graphql import (GraphQLArgument, GraphQLBoolean, GraphQLField,
+                     GraphQLFloat, GraphQLID, GraphQLInputObjectField,
+                     GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLString)
+from graphql.type import GraphQLEnumValue
 from graphql.type.typemap import GraphQLTypeMap
 
-from .objecttype import ObjectType
-from .interface import Interface
-from .union import Union
-from .inputobjecttype import InputObjectType
-from .structures import List, NonNull
-from .enum import Enum
-from .scalars import Scalar, String, Boolean, Int, Float, ID
-from .dynamic import Dynamic
-
-from graphql import GraphQLString, GraphQLField, GraphQLList, GraphQLBoolean, GraphQLInt, GraphQLFloat, GraphQLID, GraphQLNonNull, GraphQLInputObjectField, GraphQLArgument
-from graphql.type import GraphQLEnumValue
-
 from ..utils.str_converters import to_camel_case
+from .dynamic import Dynamic
+from .enum import Enum
+from .inputobjecttype import InputObjectType
+from .interface import Interface
+from .objecttype import ObjectType
+from .scalars import ID, Boolean, Float, Int, Scalar, String
+from .structures import List, NonNull
+from .union import Union
 
 
 def is_graphene_type(_type):
@@ -252,11 +252,11 @@ class TypeMap(GraphQLTypeMap):
         return partial(cls.default_resolver, name)
 
     @classmethod
-    def get_field_type(self, map, type):
+    def get_field_type(cls, map, type):
         if isinstance(type, List):
-            return GraphQLList(self.get_field_type(map, type.of_type))
+            return GraphQLList(cls.get_field_type(map, type.of_type))
         if isinstance(type, NonNull):
-            return GraphQLNonNull(self.get_field_type(map, type.of_type))
+            return GraphQLNonNull(cls.get_field_type(map, type.of_type))
         if inspect.isfunction(type):
             type = type()
         return map.get(type._meta.name)

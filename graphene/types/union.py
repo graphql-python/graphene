@@ -26,7 +26,7 @@ class UnionMeta(type):
 
         return type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
-    def __str__(cls):
+    def __str__(cls):  # noqa: N805
         return cls._meta.name
 
 

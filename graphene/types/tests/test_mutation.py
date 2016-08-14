@@ -1,9 +1,7 @@
 import pytest
 
-from ..field import Field
 from ..mutation import Mutation
 from ..objecttype import ObjectType
-from ..scalars import String
 
 
 def test_generate_mutation_no_args():
