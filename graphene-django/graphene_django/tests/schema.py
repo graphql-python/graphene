@@ -1,6 +1,6 @@
 import graphene
-from graphene import Schema
-from ..types import DjangoNode, DjangoObjectType
+from graphene import Schema, relay
+from ..types import DjangoObjectType
 
 from .models import Article, Reporter
 
@@ -9,7 +9,7 @@ class Character(DjangoObjectType):
 
     class Meta:
         model = Reporter
-        interfaces = (DjangoNode, )
+        interfaces = (relay.Node, )
 
     def get_node(self, id, context, info):
         pass
@@ -20,7 +20,7 @@ class Human(DjangoObjectType):
 
     class Meta:
         model = Article
-        interfaces = (DjangoNode, )
+        interfaces = (relay.Node, )
 
     def resolve_raises(self, *args):
         raise Exception("This field should raise exception")

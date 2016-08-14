@@ -3,7 +3,7 @@ from mock import patch
 
 from graphene import ObjectType, Field, Int, ID, Schema, Interface
 from graphene.relay import Node, ConnectionField
-from ..types import DjangoNode, DjangoObjectType
+from ..types import DjangoObjectType
 
 from .models import Article as ArticleModel, Reporter as ReporterModel
 from ..registry import reset_global_registry, Registry
@@ -21,19 +21,19 @@ class Article(DjangoObjectType):
     '''Article description'''
     class Meta:
         model = ArticleModel
-        interfaces = (DjangoNode, )
+        interfaces = (Node, )
 
 
 class RootQuery(ObjectType):
-    node = DjangoNode.Field()
+    node = Node.Field()
 
 
 schema = Schema(query=RootQuery, types=[Article, Reporter])
 
 
 def test_django_interface():
-    assert issubclass(DjangoNode, Interface)
-    assert issubclass(DjangoNode, Node)
+    assert issubclass(Node, Interface)
+    assert issubclass(Node, Node)
 
 
 @patch('graphene_django.tests.models.Article.objects.get', return_value=Article(id=1))

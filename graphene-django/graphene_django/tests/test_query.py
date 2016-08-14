@@ -5,9 +5,10 @@ from django.db import models
 from py.test import raises
 
 import graphene
+from graphene.relay import Node
 
 from ..compat import MissingType, RangeField
-from ..types import DjangoNode, DjangoObjectType
+from ..types import DjangoObjectType
 from ..registry import reset_global_registry, get_global_registry
 from .models import Article, Reporter
 
@@ -119,13 +120,13 @@ def test_should_query_postgres_fields():
 
 def test_should_node():
     # reset_global_registry()
-    # DjangoNode._meta.registry = get_global_registry()
+    # Node._meta.registry = get_global_registry()
 
     class ReporterNode(DjangoObjectType):
 
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
 
         @classmethod
         def get_node(cls, id, context, info):
@@ -138,14 +139,14 @@ def test_should_node():
 
         class Meta:
             model = Article
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
 
         @classmethod
         def get_node(cls, id, context, info):
             return Article(id=1, headline='Article node', pub_date=datetime.date(2002, 3, 11))
 
     class Query(graphene.ObjectType):
-        node = DjangoNode.Field()
+        node = Node.Field()
         reporter = graphene.Field(ReporterNode)
         article = graphene.Field(ArticleNode)
 

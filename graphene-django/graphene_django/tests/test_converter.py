@@ -14,7 +14,7 @@ from ..compat import (ArrayField, HStoreField, JSONField, MissingType,
 from ..converter import convert_django_field, convert_django_field_with_choices
 from ..registry import Registry
 from .models import Article, Reporter, Film, FilmDetails, Pet
-from ..types import DjangoObjectType, DjangoNode
+from ..types import DjangoObjectType
 
 
 def assert_conversion(django_field, graphene_field, *args, **kwargs):
@@ -179,7 +179,7 @@ def test_should_manytomany_convert_connectionorlist_connection():
     class A(DjangoObjectType):
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
 
     graphene_field = convert_django_field(Reporter._meta.local_many_to_many[0], A._meta.registry)
     assert isinstance(graphene_field, graphene.Dynamic)

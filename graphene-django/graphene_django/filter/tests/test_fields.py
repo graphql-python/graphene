@@ -3,7 +3,8 @@ from datetime import datetime
 import pytest
 
 from graphene import ObjectType, Schema, Field
-from graphene_django import DjangoNode, DjangoObjectType
+from graphene.relay import Node
+from graphene_django import DjangoObjectType
 from graphene_django.forms import (GlobalIDFormField,
                                    GlobalIDMultipleChoiceField)
 from graphene_django.tests.models import Article, Pet, Reporter
@@ -25,21 +26,21 @@ class ArticleNode(DjangoObjectType):
 
     class Meta:
         model = Article
-        interfaces = (DjangoNode, )
+        interfaces = (Node, )
 
 
 class ReporterNode(DjangoObjectType):
 
     class Meta:
         model = Reporter
-        interfaces = (DjangoNode, )
+        interfaces = (Node, )
 
 
 class PetNode(DjangoObjectType):
 
     class Meta:
         model = Pet
-        interfaces = (DjangoNode, )
+        interfaces = (Node, )
 
 # schema = Schema()
 
@@ -138,7 +139,7 @@ def test_filter_filterset_information_on_meta():
 
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
@@ -152,7 +153,7 @@ def test_filter_filterset_information_on_meta_related():
 
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
@@ -160,7 +161,7 @@ def test_filter_filterset_information_on_meta_related():
 
         class Meta:
             model = Article
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
             filter_fields = ['headline', 'reporter']
             filter_order_by = True
 
@@ -181,14 +182,14 @@ def test_filter_filterset_related_results():
 
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
     class ArticleFilterNode(DjangoObjectType):
 
         class Meta:
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
             model = Article
             filter_fields = ['headline', 'reporter']
             filter_order_by = True

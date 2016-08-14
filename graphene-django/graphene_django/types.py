@@ -1,12 +1,9 @@
 from collections import OrderedDict
-from functools import partial
 
 import six
 
-from graphene import Field, Interface, ObjectType
+from graphene import ObjectType
 from graphene.types.objecttype import ObjectTypeMeta
-from graphene.relay import Node
-from graphene.relay.node import NodeMeta
 from .converter import convert_django_field_with_choices
 from graphene.types.options import Options
 from .utils import get_model_fields, is_valid_django_model, DJANGO_FILTER_INSTALLED
@@ -74,9 +71,6 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             'You need to pass a valid Django Model in {}.Meta, received "{}".'
         ).format(name, options.model)
 
-        # interfaces = tuple(options.interfaces)
-        # fields = get_fields(ObjectType, attrs, bases, interfaces)
-        # attrs = attrs_without_fields(attrs, fields)
         cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options))
 
         options.registry.register(cls)
@@ -106,24 +100,3 @@ class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, ObjectType)):
             return cls._meta.model.objects.get(id=id)
         except cls._meta.model.DoesNotExist:
             return None
-
-DjangoNode = Node
-
-# class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
-#     pass
-
-
-# class DjangoNode(six.with_metaclass(DjangoNodeMeta, Node)):
-#     @classmethod
-#     def get_node(cls, id, context, info):
-#         try:
-#             return cls._meta.model.objects.get(id=id)
-#         except cls._meta.model.DoesNotExist:
-#             return None
-
-    # @classmethod
-    # def resolve_type(cls, type, context, info):
-    #     # We get the model from the _meta in the Django class/instance
-    #     model = type._meta.model
-    #     graphene_type = cls._meta.registry.get_type_for_model(model)
-    #     return graphene_type

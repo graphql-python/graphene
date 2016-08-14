@@ -1,7 +1,8 @@
 import pytest
 
 import graphene
-from graphene_django import DjangoConnectionField, DjangoNode, DjangoObjectType
+from graphene.relay import Node
+from graphene_django import DjangoConnectionField, DjangoObjectType
 from graphene_django.utils import DJANGO_FILTER_INSTALLED
 
 from ...tests.models import Reporter
@@ -27,7 +28,7 @@ def test_should_query_field():
 
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
 
     class Query(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
@@ -74,7 +75,7 @@ def test_should_query_list():
 
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
 
     class Query(graphene.ObjectType):
         all_reporters = graphene.List(ReporterType)
@@ -123,7 +124,7 @@ def test_should_query_connection():
 
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
 
     class Query(graphene.ObjectType):
         all_reporters = DjangoConnectionField(ReporterType)
@@ -180,7 +181,7 @@ def test_should_query_connectionfilter():
 
         class Meta:
             model = Reporter
-            interfaces = (DjangoNode, )
+            interfaces = (Node, )
 
     class Query(graphene.ObjectType):
         all_reporters = DjangoFilterConnectionField(ReporterType)
