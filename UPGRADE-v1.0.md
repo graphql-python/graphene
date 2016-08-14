@@ -11,7 +11,7 @@ We have done our best to provide backwards compatibility with deprecated APIs.
 
 ## Interfaces
 
-For implementing an Interface in a ObjectType, you have to add also `ObjectType`.
+For implementing an Interface in a ObjectType, you have to it onto `Meta.interfaces`.
 
 Like:
 
@@ -21,11 +21,12 @@ from graphene import Interface, ObjectType, String
 class Character(Interface):
     name = String()
 
-class Human(Character): # Old way, not working anymore
+class Human(Character): # Old way, Human will still be an Interface
     pass
 
-class Droid(Character, ObjectType): # New way, you have to specify the ObjectType
-    pass
+class Droid(ObjectType): # New way, you have to specify the ObjectType
+    class Meta:
+        interfaces = (Character, )
 ```
 
 ## Mutations
@@ -49,7 +50,7 @@ class ReverseString(Mutation):
         return ReverseString(reversed=reversed)
 
 class Query(ObjectType):
-    reverse_string = graphene.Field(ReverseString) # Old way, not working anymore
+    reverse_string = graphene.Field(ReverseString) # Old way, will not include the mutation arguments by default
     reverse_string = ReverseString.Field()
 ```
 
@@ -64,7 +65,7 @@ Example:
 from graphene import ObjectType, relay
 
 class Query(ObjectType):
-    node = relay.NodeField() # Old way, NodeField no longer exists
+    node = relay.NodeField() # Old way, NodeField no longer exists. Use Node.Field
     node = relay.Node.Field() # New way
 ```
 
@@ -77,32 +78,31 @@ explicity.
 The Django integration with Graphene now have an independent package: `graphene-django`.
 For installing, you have to replace the old `graphene[django]` with `graphene-django`.
 
-### Importing
-
-As the package is now independent, you have to import now from `graphene_django`.
+* As the package is now independent, you have to import now from `graphene_django`.
+* **DjangoNode no longer exists**, please use `relay.Node` instead:
 
 ```python
-from graphene.contrib.django import DjangoObjectType  # Old way of importing
-from graphene_django import DjangoObjectType  # New way
+from graphene.relay import Node
+from graphene_django import DjangoObjectType
+
+class Droid(DjangoObjectType):
+    class Meta:
+        interfaces = (Node, )
 ```
-
-### Attributes
-
-Also, the `Meta` option attrs have changed:
-* `only_fields` is now `fields`.
-* `exclude_fields` is now `exclude`.
-
 
 ## SQLAlchemy
 
 The SQLAlchemy integration with Graphene now have an independent package: `graphene-sqlalchemy`.
 For installing, you have to replace the old `graphene[sqlalchemy]` with `graphene-sqlalchemy`.
 
-### Importing
-
-As the package is now independent, you have to import now from `graphene_sqlalchemy`.
+* As the package is now independent, you have to import now from `graphene_sqlalchemy`.
+* **SQLAlchemyNode no longer exists**, please use `relay.Node` instead:
 
 ```python
-from graphene.contrib.sqlalchemy import SQLAlchemyObjectType  # Old way of importing
-from graphene_sqlalchemy import SQLAlchemyObjectType  # New way
+from graphene.relay import Node
+from graphene_sqlalchemy import SQLAlchemyObjectType
+
+class Droid(SQLAlchemyObjectType):
+    class Meta:
+        interfaces = (Node, )
 ```
