@@ -35,6 +35,7 @@ setup(
         'six>=1.10.0',
         'graphene>=1.0',
         'Django>=1.6.0',
+        'iso8601',
         'singledispatch>=3.4.0.3',
         'graphql-django-view>=1.3',
     ],
