@@ -7,6 +7,13 @@ from ..types import ObjectType, Interface, ID, Field
 from ..types.interface import InterfaceMeta
 
 
+def is_node(objecttype):
+    for i in objecttype._meta.interfaces:
+        if issubclass(i, Node):
+            return True
+    return False
+
+
 def get_default_connection(cls):
     from .connection import Connection
     assert issubclass(cls, ObjectType), (

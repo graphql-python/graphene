@@ -12,16 +12,9 @@ from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
-from .node import Node
+from .node import Node, is_node
 
 from ..types.utils import get_fields_in_type, yank_fields_from_attrs
-
-
-def is_node(objecttype):
-    for i in objecttype._meta.interfaces:
-        if issubclass(i, Node):
-            return True
-    return False
 
 
 class PageInfo(ObjectType):
@@ -125,8 +118,8 @@ class IterableConnectionField(Field):
         else:
             connection_type = type
         assert issubclass(connection_type, Connection), (
-            '{} type have to be a subclass of Connection'
-        ).format(str(self))
+            '{} type have to be a subclass of Connection. Received "{}".'
+        ).format(str(self), connection_type)
         return connection_type
 
     @staticmethod
