@@ -1,7 +1,7 @@
 from ..fields import DjangoConnectionField
 from .utils import get_filtering_args_from_filterset, get_filterset_class
 
-from graphene.types.argument import to_arguments
+# from graphene.types.argument import to_arguments
 
 class DjangoFilterConnectionField(DjangoConnectionField):
 
@@ -19,7 +19,8 @@ class DjangoFilterConnectionField(DjangoConnectionField):
         self.filterset_class = get_filterset_class(filterset_class, **meta)
         self.filtering_args = get_filtering_args_from_filterset(self.filterset_class, type)
         kwargs.setdefault('args', {})
-        kwargs['args'].update(to_arguments(self.filtering_args))
+        kwargs['args'].update(self.filtering_args)
+        # kwargs['args'].update(to_arguments(self.filtering_args))
         super(DjangoFilterConnectionField, self).__init__(type, *args, **kwargs)
 
     def get_queryset(self, qs, args, info):

@@ -1,11 +1,11 @@
 from django.db import models
 from django.utils.encoding import force_text
 
-from graphene import Enum, List, ID, Boolean, Float, Int, String, Field, NonNull
+from graphene import Enum, List, ID, Boolean, Float, Int, String, Field, NonNull, Field, Dynamic
 from graphene.types.json import JSONString
 from graphene.types.datetime import DateTime
 from graphene.utils.str_converters import to_const
-from graphene.relay import Node
+from graphene.relay import is_node
 
 from .compat import (ArrayField, HStoreField, JSONField, RangeField,
                      RelatedObject, UUIDField)
@@ -92,7 +92,11 @@ def convert_date_to_string(field, registry=None):
 @convert_django_field.register(models.OneToOneRel)
 def convert_onetoone_field_to_djangomodel(field, registry=None):
     model = get_related_model(field)
-    return Field(registry.get_type_for_model(model))
+
+    def dynamic_type():
+        return Field(registry.get_type_for_model(model))
+
+    return Dynamic(dynamic_type)
 
 
 @convert_django_field.register(models.ManyToManyField)
@@ -100,31 +104,46 @@ def convert_onetoone_field_to_djangomodel(field, registry=None):
 @convert_django_field.register(models.ManyToOneRel)
 def convert_field_to_list_or_connection(field, registry=None):
     model = get_related_model(field)
-    _type = registry.get_type_for_model(model)
-    if not _type:
-        return
 
-    if issubclass(_type, Node):
-        return get_connection_field(_type)
-    return Field(List(_type))
+    def dynamic_type():
+        _type = registry.get_type_for_model(model)
+        if not _type:
+            return
+
+        if is_node(_type):
+            return get_connection_field(_type)
+        return Field(List(_type))
+
+    return Dynamic(dynamic_type)
 
 
 # For Django 1.6
 @convert_django_field.register(RelatedObject)
 def convert_relatedfield_to_djangomodel(field, registry=None):
     model = field.model
-    _type = registry.get_type_for_model(model)
-    if issubclass(_type, Node):
-        return get_connection_field(_type)
-    return List(_type)
+
+    def dynamic_type():
+        _type = registry.get_type_for_model(model)
+        if not _type:
+            return
+
+        if is_node(_type):
+            return get_connection_field(_type)
+        return Field(List(_type))
+
+    return Dynamic(dynamic_type)
 
 
 @convert_django_field.register(models.OneToOneField)
 @convert_django_field.register(models.ForeignKey)
 def convert_field_to_djangomodel(field, registry=None):
     model = get_related_model(field)
-    _type = registry.get_type_for_model(model)
-    return Field(_type, description=field.help_text)
+
+    def dynamic_type():
+        _type = registry.get_type_for_model(model)
+        return Field(_type, description=field.help_text)
+
+    return Dynamic(dynamic_type)
 
 
 @convert_django_field.register(ArrayField)

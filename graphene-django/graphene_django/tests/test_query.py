@@ -121,10 +121,11 @@ def test_should_node():
     # reset_global_registry()
     # DjangoNode._meta.registry = get_global_registry()
 
-    class ReporterNode(DjangoNode, DjangoObjectType):
+    class ReporterNode(DjangoObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
 
         @classmethod
         def get_node(cls, id, context, info):
@@ -133,10 +134,11 @@ def test_should_node():
         def resolve_articles(self, *args, **kwargs):
             return [Article(headline='Hi!')]
 
-    class ArticleNode(DjangoNode, DjangoObjectType):
+    class ArticleNode(DjangoObjectType):
 
         class Meta:
             model = Article
+            interfaces = (DjangoNode, )
 
         @classmethod
         def get_node(cls, id, context, info):

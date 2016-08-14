@@ -6,21 +6,22 @@ from graphene.relay import Node, ConnectionField
 from ..types import DjangoNode, DjangoObjectType
 
 from .models import Article as ArticleModel, Reporter as ReporterModel
+from ..registry import reset_global_registry, Registry
+
+reset_global_registry()
 
 
 class Reporter(DjangoObjectType):
-    '''Character description'''
+    '''Reporter description'''
     class Meta:
         model = ReporterModel
 
 
-class Article(DjangoNode, DjangoObjectType):
-    '''Human description'''
-
-    pub_date = Int()
-
+class Article(DjangoObjectType):
+    '''Article description'''
     class Meta:
         model = ArticleModel
+        interfaces = (DjangoNode, )
 
 
 class RootQuery(ObjectType):
@@ -43,13 +44,13 @@ def test_django_get_node(get):
 
 
 def test_django_objecttype_map_correct_fields():
-    graphql_type = Reporter._meta.graphql_type
-    assert list(graphql_type.get_fields().keys()) == ['id', 'firstName', 'lastName', 'email', 'pets', 'aChoice', 'articles']
+    fields = Reporter._meta.fields
+    assert list(fields.keys()) == ['id', 'first_name', 'last_name', 'email', 'pets', 'a_choice', 'articles', 'films']
 
 
 def test_django_objecttype_with_node_have_correct_fields():
-    graphql_type = Article._meta.graphql_type
-    assert list(graphql_type.get_fields().keys()) == ['id', 'pubDate', 'headline', 'reporter', 'lang', 'importance']
+    fields = Article._meta.fields
+    assert list(fields.keys()) == ['id', 'headline', 'pub_date', 'reporter', 'lang', 'importance']
 
 
 def test_schema_representation():
@@ -60,8 +61,8 @@ schema {
 
 type Article implements Node {
   id: ID!
-  pubDate: Int
   headline: String
+  pubDate: DateTime
   reporter: Reporter
   lang: ArticleLang
   importance: ArticleImportance
@@ -86,6 +87,8 @@ enum ArticleLang {
   SPANISH
   ENGLISH
 }
+
+scalar DateTime
 
 interface Node {
   id: ID!

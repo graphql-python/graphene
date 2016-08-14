@@ -3,7 +3,7 @@ from py.test import raises
 
 import graphene
 from ..form_converter import convert_form_field
-from graphene import ID, List
+from graphene import ID, List, NonNull
 from graphene.utils.get_graphql_type import get_graphql_type
 
 from .models import Reporter
@@ -13,7 +13,7 @@ def assert_conversion(django_field, graphene_field, *args):
     field = django_field(*args, help_text='Custom Help Text')
     graphene_type = convert_form_field(field)
     assert isinstance(graphene_type, graphene_field)
-    field = graphene_type.as_field()
+    field = graphene_type.Field()
     assert field.description == 'Custom Help Text'
     return field
 
@@ -75,12 +75,12 @@ def test_should_integer_convert_int():
 
 def test_should_boolean_convert_boolean():
     field = assert_conversion(forms.BooleanField, graphene.Boolean)
-    assert field.required is True
+    assert isinstance(field.type, NonNull)
 
 
 def test_should_nullboolean_convert_boolean():
     field = assert_conversion(forms.NullBooleanField, graphene.Boolean)
-    assert field.required is False
+    assert not isinstance(field.type, NonNull)
 
 
 def test_should_float_convert_float():
@@ -95,7 +95,7 @@ def test_should_multiple_choice_convert_connectionorlist():
     field = forms.ModelMultipleChoiceField(Reporter.objects.all())
     graphene_type = convert_form_field(field)
     assert isinstance(graphene_type, List)
-    assert graphene_type.of_type == get_graphql_type(ID)
+    assert graphene_type.of_type == ID
 
 
 def test_should_manytoone_convert_connectionorlist():

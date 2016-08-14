@@ -21,22 +21,25 @@ else:
 pytestmark.append(pytest.mark.django_db)
 
 
-class ArticleNode(DjangoNode, DjangoObjectType):
+class ArticleNode(DjangoObjectType):
 
     class Meta:
         model = Article
+        interfaces = (DjangoNode, )
 
 
-class ReporterNode(DjangoNode, DjangoObjectType):
+class ReporterNode(DjangoObjectType):
 
     class Meta:
         model = Reporter
+        interfaces = (DjangoNode, )
 
 
-class PetNode(DjangoNode, DjangoObjectType):
+class PetNode(DjangoObjectType):
 
     class Meta:
         model = Pet
+        interfaces = (DjangoNode, )
 
 # schema = Schema()
 
@@ -49,7 +52,7 @@ def get_args(field):
 
 
 def assert_arguments(field, *arguments):
-    ignore = ('after', 'before', 'first', 'last', 'orderBy')
+    ignore = ('after', 'before', 'first', 'last', 'order_by')
     args = get_args(field)
     actual = [
         name
@@ -65,21 +68,21 @@ def assert_arguments(field, *arguments):
 
 def assert_orderable(field):
     args = get_args(field)
-    assert 'orderBy' in args, \
+    assert 'order_by' in args, \
         'Field cannot be ordered'
 
 
 def assert_not_orderable(field):
     args = get_args(field)
-    assert 'orderBy' not in args, \
+    assert 'order_by' not in args, \
         'Field can be ordered'
 
 
 def test_filter_explicit_filterset_arguments():
     field = DjangoFilterConnectionField(ArticleNode, filterset_class=ArticleFilter)
     assert_arguments(field,
-                     'headline', 'headline_Icontains',
-                     'pubDate', 'pubDate_Gt', 'pubDate_Lt',
+                     'headline', 'headline__icontains',
+                     'pub_date', 'pub_date__gt', 'pub_date__lt',
                      'reporter',
                      )
 
@@ -87,7 +90,7 @@ def test_filter_explicit_filterset_arguments():
 def test_filter_shortcut_filterset_arguments_list():
     field = DjangoFilterConnectionField(ArticleNode, fields=['pub_date', 'reporter'])
     assert_arguments(field,
-                     'pubDate',
+                     'pub_date',
                      'reporter',
                      )
 
@@ -98,7 +101,7 @@ def test_filter_shortcut_filterset_arguments_dict():
         'reporter': ['exact'],
     })
     assert_arguments(field,
-                     'headline', 'headline_Icontains',
+                     'headline', 'headline__icontains',
                      'reporter',
                      )
 
@@ -131,30 +134,33 @@ def test_filter_shortcut_filterset_extra_meta():
 
 
 def test_filter_filterset_information_on_meta():
-    class ReporterFilterNode(DjangoNode, DjangoObjectType):
+    class ReporterFilterNode(DjangoObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
     field = DjangoFilterConnectionField(ReporterFilterNode)
-    assert_arguments(field, 'firstName', 'articles')
+    assert_arguments(field, 'first_name', 'articles')
     assert_orderable(field)
 
 
 def test_filter_filterset_information_on_meta_related():
-    class ReporterFilterNode(DjangoNode, DjangoObjectType):
+    class ReporterFilterNode(DjangoObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
-    class ArticleFilterNode(DjangoNode, DjangoObjectType):
+    class ArticleFilterNode(DjangoObjectType):
 
         class Meta:
             model = Article
+            interfaces = (DjangoNode, )
             filter_fields = ['headline', 'reporter']
             filter_order_by = True
 
@@ -165,22 +171,24 @@ def test_filter_filterset_information_on_meta_related():
         article = Field(ArticleFilterNode)
 
     schema = Schema(query=Query)
-    articles_field = ReporterFilterNode._meta.graphql_type.get_fields()['articles']
+    articles_field = ReporterFilterNode._meta.fields['articles'].get_type()
     assert_arguments(articles_field, 'headline', 'reporter')
     assert_orderable(articles_field)
 
 
 def test_filter_filterset_related_results():
-    class ReporterFilterNode(DjangoNode, DjangoObjectType):
+    class ReporterFilterNode(DjangoObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
             filter_fields = ['first_name', 'articles']
             filter_order_by = True
 
-    class ArticleFilterNode(DjangoNode, DjangoObjectType):
+    class ArticleFilterNode(DjangoObjectType):
 
         class Meta:
+            interfaces = (DjangoNode, )
             model = Article
             filter_fields = ['headline', 'reporter']
             filter_order_by = True

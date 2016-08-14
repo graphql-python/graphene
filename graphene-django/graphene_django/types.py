@@ -1,9 +1,10 @@
+from collections import OrderedDict
 from functools import partial
 
 import six
 
-from graphene import Field, Interface
-from graphene.types.objecttype import ObjectType, ObjectTypeMeta, attrs_without_fields, get_interfaces
+from graphene import Field, Interface, ObjectType
+from graphene.types.objecttype import ObjectTypeMeta
 from graphene.relay import Node
 from graphene.relay.node import NodeMeta
 from .converter import convert_django_field_with_choices
@@ -11,22 +12,18 @@ from graphene.types.options import Options
 from .utils import get_model_fields, is_valid_django_model, DJANGO_FILTER_INSTALLED
 from .registry import Registry, get_global_registry
 from graphene.utils.is_base_type import is_base_type
-from graphene.utils.copy_fields import copy_fields
-from graphene.utils.get_graphql_type import get_graphql_type
-from graphene.utils.get_fields import get_fields
-from graphene.utils.as_field import as_field
-from graphene.generators import generate_objecttype
+from graphene.types.utils import get_fields_in_type
 
 
 class DjangoObjectTypeMeta(ObjectTypeMeta):
-    def _construct_fields(cls, fields, options):
+    def _construct_fields(cls, all_fields, options):
         _model_fields = get_model_fields(options.model)
-
+        fields = OrderedDict()
         for field in _model_fields:
             name = field.name
-            is_not_in_only = options.fields and name not in options.fields
-            is_already_created = name in fields
-            is_excluded = field.name in options.exclude or is_already_created
+            is_not_in_only = options.only_fields and name not in options.only_fields
+            is_already_created = name in all_fields
+            is_excluded = name in options.exclude_fields or is_already_created
             if is_not_in_only or is_excluded:
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we exclude this field in exclude_fields
@@ -34,28 +31,24 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             converted = convert_django_field_with_choices(field, options.registry)
             if not converted:
                 continue
-            fields[name] = as_field(converted)
-
-        fields = copy_fields(Field, fields, parent=cls)
+            fields[name] = converted
 
         return fields
 
     @staticmethod
-    def _create_objecttype(cls, name, bases, attrs):
-        # super_new = super(DjangoObjectTypeMeta, cls).__new__
-        super_new = type.__new__
-
-        # Also ensure initialization is only performed for subclasses of Model
-        # (excluding Model class itself).
+    def __new__(cls, name, bases, attrs):
+        # Also ensure initialization is only performed for subclasses of
+        # DjangoObjectType
         if not is_base_type(bases, DjangoObjectTypeMeta):
-            return super_new(cls, name, bases, attrs)
+            return type.__new__(cls, name, bases, attrs)
 
         defaults = dict(
-            name=None,
-            description=None,
+            name=name,
+            description=attrs.pop('__doc__', None),
             model=None,
-            fields=(),
-            exclude=(),
+            fields=None,
+            only_fields=(),
+            exclude_fields=(),
             interfaces=(),
             registry=None
         )
@@ -73,52 +66,40 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
         )
         if not options.registry:
             options.registry = get_global_registry()
-        assert isinstance(options.registry, Registry), 'The attribute registry in {}.Meta needs to be an instance of Registry, received "{}".'.format(name, options.registry)
-        assert is_valid_django_model(options.model), 'You need to pass a valid Django Model in {}.Meta, received "{}".'.format(name, options.model)
+        assert isinstance(options.registry, Registry), (
+            'The attribute registry in {}.Meta needs to be an instance of '
+            'Registry, received "{}".'
+        ).format(name, options.registry)
+        assert is_valid_django_model(options.model), (
+            'You need to pass a valid Django Model in {}.Meta, received "{}".'
+        ).format(name, options.model)
 
-        interfaces = tuple(options.interfaces)
-        fields = get_fields(ObjectType, attrs, bases, interfaces)
-        attrs = attrs_without_fields(attrs, fields)
-        cls = super_new(cls, name, bases, dict(attrs, _meta=options))
+        # interfaces = tuple(options.interfaces)
+        # fields = get_fields(ObjectType, attrs, bases, interfaces)
+        # attrs = attrs_without_fields(attrs, fields)
+        cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options))
 
-        base_interfaces = tuple(b for b in bases if issubclass(b, Interface))
-        options.get_fields = partial(cls._construct_fields, fields, options)
-        options.get_interfaces = tuple(get_interfaces(interfaces + base_interfaces))
+        options.registry.register(cls)
 
-        options.graphql_type = generate_objecttype(cls)
-
-        if issubclass(cls, DjangoObjectType):
-            options.registry.register(cls)
+        options.django_fields = get_fields_in_type(
+            ObjectType,
+            cls._construct_fields(options.fields, options)
+        )
+        options.fields.update(options.django_fields)
 
         return cls
 
 
 class DjangoObjectType(six.with_metaclass(DjangoObjectTypeMeta, ObjectType)):
-    is_type_of = None
+    @classmethod
+    def is_type_of(cls, root, context, info):
+        if isinstance(root, cls):
+            return True
+        if not is_valid_django_model(type(root)):
+            raise Exception('Received incompatible instance "{}"'.format(root))
+        model = root._meta.model
+        return model == cls._meta.model
 
-
-class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
-
-    @staticmethod
-    def _get_interface_options(meta):
-        return Options(
-            meta,
-            name=None,
-            description=None,
-            graphql_type=None,
-            registry=False
-        )
-
-    @staticmethod
-    def _create_interface(cls, name, bases, attrs):
-        cls = super(DjangoNodeMeta, cls)._create_interface(cls, name, bases, attrs)
-        if not cls._meta.registry:
-            cls._meta.registry = get_global_registry()
-        assert isinstance(cls._meta.registry, Registry), 'The attribute registry in {}.Meta needs to be an instance of Registry.'.format(name)
-        return cls
-
-
-class DjangoNode(six.with_metaclass(DjangoNodeMeta, Node)):
     @classmethod
     def get_node(cls, id, context, info):
         try:
@@ -126,12 +107,23 @@ class DjangoNode(six.with_metaclass(DjangoNodeMeta, Node)):
         except cls._meta.model.DoesNotExist:
             return None
 
-    @classmethod
-    def resolve_type(cls, type, context, info):
-        # We get the model from the _meta in the Django class/instance
-        model = type._meta.model
-        graphene_type = cls._meta.registry.get_type_for_model(model)
-        if graphene_type:
-            return get_graphql_type(graphene_type)
+DjangoNode = Node
 
-        raise Exception("Type not found for model \"{}\"".format(model))
+# class DjangoNodeMeta(DjangoObjectTypeMeta, NodeMeta):
+#     pass
+
+
+# class DjangoNode(six.with_metaclass(DjangoNodeMeta, Node)):
+#     @classmethod
+#     def get_node(cls, id, context, info):
+#         try:
+#             return cls._meta.model.objects.get(id=id)
+#         except cls._meta.model.DoesNotExist:
+#             return None
+
+    # @classmethod
+    # def resolve_type(cls, type, context, info):
+    #     # We get the model from the _meta in the Django class/instance
+    #     model = type._meta.model
+    #     graphene_type = cls._meta.registry.get_type_for_model(model)
+    #     return graphene_type

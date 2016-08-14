@@ -27,7 +27,7 @@ def test_should_map_fields_correctly():
         class Meta:
             model = Reporter
             registry = Registry()
-    assert list(ReporterType2._meta.graphql_type.get_fields().keys()) == ['id', 'firstName', 'lastName', 'email', 'pets', 'aChoice']
+    assert list(ReporterType2._meta.fields.keys()) == ['id', 'first_name', 'last_name', 'email', 'pets', 'a_choice', 'articles', 'films']
 
 
 def test_should_map_only_few_fields():
@@ -35,6 +35,6 @@ def test_should_map_only_few_fields():
 
         class Meta:
             model = Reporter
-            fields = ('id', 'email')
+            only_fields = ('id', 'email')
 
-    assert list(Reporter2._meta.graphql_type.get_fields().keys()) == ['id', 'email']
+    assert list(Reporter2._meta.fields.keys()) == ['id', 'email']

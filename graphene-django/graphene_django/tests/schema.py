@@ -5,20 +5,22 @@ from ..types import DjangoNode, DjangoObjectType
 from .models import Article, Reporter
 
 
-class Character(DjangoNode, DjangoObjectType):
+class Character(DjangoObjectType):
 
     class Meta:
         model = Reporter
+        interfaces = (DjangoNode, )
 
     def get_node(self, id, context, info):
         pass
 
 
-class Human(DjangoNode, DjangoObjectType):
+class Human(DjangoObjectType):
     raises = graphene.String()
 
     class Meta:
         model = Article
+        interfaces = (DjangoNode, )
 
     def resolve_raises(self, *args):
         raise Exception("This field should raise exception")

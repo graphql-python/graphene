@@ -7,7 +7,6 @@ import graphene
 from graphene.relay import Node, ConnectionField
 from graphene.types.datetime import DateTime
 from graphene.types.json import JSONString
-from graphene.utils.get_graphql_type import get_graphql_type
 # from graphene.core.types.custom_scalars import DateTime, JSONString
 
 from ..compat import (ArrayField, HStoreField, JSONField, MissingType,
@@ -22,7 +21,7 @@ def assert_conversion(django_field, graphene_field, *args, **kwargs):
     field = django_field(help_text='Custom Help Text', *args, **kwargs)
     graphene_type = convert_django_field(field)
     assert isinstance(graphene_type, graphene_field)
-    field = graphene_type.as_field()
+    field = graphene_type.Field()
     assert field.description == 'Custom Help Text'
     return field
 
@@ -95,7 +94,7 @@ def test_should_integer_convert_int():
 
 def test_should_boolean_convert_boolean():
     field = assert_conversion(models.BooleanField, graphene.NonNull)
-    assert field.type.of_type == get_graphql_type(graphene.Boolean)
+    assert field.type.of_type == graphene.Boolean
 
 
 def test_should_nullboolean_convert_boolean():
@@ -116,7 +115,7 @@ def test_field_with_choices_convert_enum():
 
     graphene_type = convert_django_field_with_choices(field)
     assert isinstance(graphene_type, graphene.Enum)
-    assert graphene_type._meta.graphql_type.name == 'TranslatedModelLanguage'
+    assert graphene_type._meta.name == 'TranslatedModelLanguage'
     assert graphene_type._meta.enum.__members__['SPANISH'].value == 'es'
     assert graphene_type._meta.enum.__members__['ENGLISH'].value == 'en'
 
@@ -159,8 +158,8 @@ def test_should_float_convert_float():
 
 def test_should_manytomany_convert_connectionorlist():
     registry = Registry()
-    graphene_field = convert_django_field(Reporter._meta.local_many_to_many[0], registry)
-    assert not graphene_field
+    dynamic_field = convert_django_field(Reporter._meta.local_many_to_many[0], registry)
+    assert not dynamic_field.get_type()
 
 
 def test_should_manytomany_convert_connectionorlist_list():
@@ -169,19 +168,24 @@ def test_should_manytomany_convert_connectionorlist_list():
             model = Reporter
 
     graphene_field = convert_django_field(Reporter._meta.local_many_to_many[0], A._meta.registry)
-    assert isinstance(graphene_field, graphene.Field)
-    assert isinstance(graphene_field.type, graphene.List)
-    assert graphene_field.type.of_type == get_graphql_type(A)
+    assert isinstance(graphene_field, graphene.Dynamic)
+    dynamic_field = graphene_field.get_type()
+    assert isinstance(dynamic_field, graphene.Field)
+    assert isinstance(dynamic_field.type, graphene.List)
+    assert dynamic_field.type.of_type == A
 
 
 def test_should_manytomany_convert_connectionorlist_connection():
-    class A(DjangoNode, DjangoObjectType):
+    class A(DjangoObjectType):
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
 
     graphene_field = convert_django_field(Reporter._meta.local_many_to_many[0], A._meta.registry)
-    assert isinstance(graphene_field, ConnectionField)
-    assert graphene_field.type == get_graphql_type(A.get_default_connection())
+    assert isinstance(graphene_field, graphene.Dynamic)
+    dynamic_field = graphene_field.get_type()
+    assert isinstance(dynamic_field, ConnectionField)
+    assert dynamic_field.type == A.Connection
 
 
 def test_should_manytoone_convert_connectionorlist():
@@ -194,9 +198,11 @@ def test_should_manytoone_convert_connectionorlist():
             model = Article
 
     graphene_field = convert_django_field(related, A._meta.registry)
-    assert isinstance(graphene_field, graphene.Field)
-    assert isinstance(graphene_field.type, graphene.List)
-    assert graphene_field.type.of_type == get_graphql_type(A)
+    assert isinstance(graphene_field, graphene.Dynamic)
+    dynamic_field = graphene_field.get_type()
+    assert isinstance(dynamic_field, graphene.Field)
+    assert isinstance(dynamic_field.type, graphene.List)
+    assert dynamic_field.type.of_type == A
 
 
 def test_should_onetoone_reverse_convert_model():
@@ -209,8 +215,10 @@ def test_should_onetoone_reverse_convert_model():
             model = FilmDetails
 
     graphene_field = convert_django_field(related, A._meta.registry)
-    assert isinstance(graphene_field, graphene.Field)
-    assert graphene_field.type == get_graphql_type(A)
+    assert isinstance(graphene_field, graphene.Dynamic)
+    dynamic_field = graphene_field.get_type()
+    assert isinstance(dynamic_field, graphene.Field)
+    assert dynamic_field.type == A
 
 
 @pytest.mark.skipif(ArrayField is MissingType,
@@ -218,7 +226,7 @@ def test_should_onetoone_reverse_convert_model():
 def test_should_postgres_array_convert_list():
     field = assert_conversion(ArrayField, graphene.List, models.CharField(max_length=100))
     assert isinstance(field.type, graphene.List)
-    assert field.type.of_type == get_graphql_type(graphene.String)
+    assert field.type.of_type == graphene.String
 
 
 @pytest.mark.skipif(ArrayField is MissingType,
@@ -227,7 +235,7 @@ def test_should_postgres_array_multiple_convert_list():
     field = assert_conversion(ArrayField, graphene.List, ArrayField(models.CharField(max_length=100)))
     assert isinstance(field.type, graphene.List)
     assert isinstance(field.type.of_type, graphene.List)
-    assert field.type.of_type.of_type == get_graphql_type(graphene.String)
+    assert field.type.of_type.of_type == graphene.String
 
 
 @pytest.mark.skipif(HStoreField is MissingType,
@@ -248,4 +256,4 @@ def test_should_postgres_range_convert_list():
     from django.contrib.postgres.fields import IntegerRangeField
     field = assert_conversion(IntegerRangeField, graphene.List)
     assert isinstance(field.type, graphene.List)
-    assert field.type.of_type == get_graphql_type(graphene.Int)
+    assert field.type.of_type == graphene.Int
