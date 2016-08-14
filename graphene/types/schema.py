@@ -1,6 +1,6 @@
 import inspect
 
-from graphql import GraphQLSchema, graphql, is_type
+from graphql import GraphQLSchema, MiddlewareManager, graphql, is_type
 from graphql.utils.introspection_query import introspection_query
 from graphql.utils.schema_printer import print_schema
 
@@ -24,7 +24,7 @@ from .typemap import TypeMap, is_graphene_type
 
 class Schema(GraphQLSchema):
 
-    def __init__(self, query=None, mutation=None, subscription=None, directives=None, types=None, executor=None):
+    def __init__(self, query=None, mutation=None, subscription=None, directives=None, types=None, executor=None, middlewares=None):
         self._query = query
         self._mutation = mutation
         self._subscription = subscription
@@ -40,7 +40,10 @@ class Schema(GraphQLSchema):
             'Schema directives must be List[GraphQLDirective] if provided but got: {}.'.format(
                 directives
         )
-
+        if middlewares:
+            self.middlewares = MiddlewareManager(*middlewares)
+        else:
+            self.middlewares = None
         self._directives = directives
         self.build_typemap()
 
@@ -74,7 +77,8 @@ class Schema(GraphQLSchema):
             context_value=context_value,
             variable_values=variable_values,
             operation_name=operation_name,
-            executor=executor or self._executor
+            executor=executor or self._executor,
+            middlewares=self.middlewares
         )
 
     def register(self, object_type):
