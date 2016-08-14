@@ -1,3 +1,5 @@
+from functools import partial
+
 from django.db.models.query import QuerySet
 from graphene.relay import ConnectionField
 from graphql_relay.connection.arrayconnection import connection_from_list_slice
@@ -12,7 +14,7 @@ class DjangoConnectionField(ConnectionField):
 
     @property
     def model(self):
-        return self.connection._meta.node._meta.model
+        return self.type._meta.node._meta.model
 
     def get_manager(self):
         if self.on:
@@ -24,8 +26,10 @@ class DjangoConnectionField(ConnectionField):
         return getattr(root, self.source, self.get_manager())
 
     @staticmethod
-    def connection_resolver(resolver, connection, root, args, context, info):
+    def connection_resolver(resolver, connection, default_manager, root, args, context, info):
         iterable = resolver(root, args, context, info)
+        if iterable is None:
+            iterable = default_manager
         iterable = maybe_queryset(iterable)
         if isinstance(iterable, QuerySet):
             _len = iterable.count()
@@ -40,6 +44,9 @@ class DjangoConnectionField(ConnectionField):
             connection_type=connection,
             edge_type=connection.Edge,
         )
+
+    def get_resolver(self, parent_resolver):
+        return partial(self.connection_resolver, parent_resolver, self.type, self.get_manager())
 
 
 def get_connection_field(*args, **kwargs):
