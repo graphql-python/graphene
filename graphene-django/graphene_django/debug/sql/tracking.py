@@ -8,7 +8,7 @@ from time import time
 from django.utils import six
 from django.utils.encoding import force_text
 
-from .types import DjangoDebugSQL, DjangoDebugPostgreSQL
+from .types import DjangoDebugSQL
 
 
 class SQLQueryTriggered(Exception):
@@ -142,9 +142,8 @@ class NormalCursorWrapper(object):
                     'iso_level': iso_level,
                     'encoding': conn.encoding,
                 })
-                _sql = DjangoDebugPostgreSQL(**params)
-            else:
-                _sql = DjangoDebugSQL(**params)
+
+            _sql = DjangoDebugSQL(**params)
             # We keep `sql` to maintain backwards compatibility
             self.logger.object.sql.append(_sql)
 

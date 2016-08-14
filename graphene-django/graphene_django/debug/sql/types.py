@@ -1,7 +1,7 @@
 from graphene import Boolean, Float, ObjectType, String
 
 
-class DjangoDebugBaseSQL(ObjectType):
+class DjangoDebugSQL(ObjectType):
     vendor = String()
     alias = String()
     sql = String()
@@ -13,12 +13,7 @@ class DjangoDebugBaseSQL(ObjectType):
     is_slow = Boolean()
     is_select = Boolean()
 
-
-class DjangoDebugSQL(DjangoDebugBaseSQL):
-    pass
-
-
-class DjangoDebugPostgreSQL(DjangoDebugBaseSQL):
+    # Postgres
     trans_id = String()
     trans_status = String()
     iso_level = String()

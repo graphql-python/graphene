@@ -23,10 +23,11 @@ def test_should_query_field():
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoNode, DjangoObjectType):
+    class ReporterType(DjangoObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
 
     class Query(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
@@ -69,13 +70,14 @@ def test_should_query_list():
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoNode, DjangoObjectType):
+    class ReporterType(DjangoObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
 
     class Query(graphene.ObjectType):
-        all_reporters = ReporterType.List()
+        all_reporters = graphene.List(ReporterType)
         debug = graphene.Field(DjangoDebug, name='__debug')
 
         def resolve_all_reporters(self, *args, **kwargs):
@@ -117,10 +119,11 @@ def test_should_query_connection():
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoNode, DjangoObjectType):
+    class ReporterType(DjangoObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
 
     class Query(graphene.ObjectType):
         all_reporters = DjangoConnectionField(ReporterType)
@@ -173,13 +176,15 @@ def test_should_query_connectionfilter():
     r2 = Reporter(last_name='Griffin')
     r2.save()
 
-    class ReporterType(DjangoNode, DjangoObjectType):
+    class ReporterType(DjangoObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (DjangoNode, )
 
     class Query(graphene.ObjectType):
         all_reporters = DjangoFilterConnectionField(ReporterType)
+        s = graphene.String(resolver=lambda *_: "S")
         debug = graphene.Field(DjangoDebug, name='__debug')
 
         def resolve_all_reporters(self, *args, **kwargs):

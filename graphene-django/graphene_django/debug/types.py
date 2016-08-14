@@ -1,6 +1,6 @@
 from graphene import ObjectType, List
-from .sql.types import DjangoDebugBaseSQL
+from .sql.types import DjangoDebugSQL
 
 
 class DjangoDebug(ObjectType):
-    sql = List(DjangoDebugBaseSQL)
+    sql = List(DjangoDebugSQL)

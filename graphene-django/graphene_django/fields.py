@@ -22,9 +22,6 @@ class DjangoConnectionField(ConnectionField):
         else:
             return self.model._default_manager
 
-    def default_resolver(self, root, args, context, info):
-        return getattr(root, self.source, self.get_manager())
-
     @staticmethod
     def connection_resolver(resolver, connection, default_manager, root, args, context, info):
         iterable = resolver(root, args, context, info)
