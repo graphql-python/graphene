@@ -22,6 +22,7 @@ class ObjectTypeMeta(AbstractTypeMeta):
             name=name,
             description=attrs.get('__doc__'),
             interfaces=(),
+            fields=OrderedDict(),
         )
 
         attrs = merge_fields_in_attrs(bases, attrs)
@@ -33,7 +34,7 @@ class ObjectTypeMeta(AbstractTypeMeta):
                 'All interfaces of {} must be a subclass of Interface. Received "{}".'
             ).format(name, interface)
             options.interface_fields.update(interface._meta.fields)
-        options.fields = OrderedDict(options.interface_fields)
+        options.fields.update(options.interface_fields)
         options.fields.update(options.local_fields)
 
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))

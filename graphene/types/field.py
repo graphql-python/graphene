@@ -44,3 +44,6 @@ class Field(OrderedType):
         if inspect.isfunction(self._type):
             return self._type()
         return self._type
+
+    def get_resolver(self, parent_resolver):
+        return self.resolver or parent_resolver

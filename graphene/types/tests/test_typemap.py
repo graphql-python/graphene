@@ -42,6 +42,7 @@ def test_objecttype():
     class MyObjectType(ObjectType):
         '''Description'''
         foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
+        bar = String(name='gizmo')
 
         def resolve_foo(self, args, info):
             return args.get('bar')
@@ -54,7 +55,7 @@ def test_objecttype():
     assert graphql_type.description == 'Description'
 
     fields = graphql_type.get_fields()
-    assert 'foo' in fields
+    assert fields.keys() == ['foo', 'gizmo']
     foo_field = fields['foo']
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == 'Field description'

@@ -210,12 +210,12 @@ class TypeMap(GraphQLTypeMap):
                 _field = GraphQLField(
                     field_type,
                     args=args,
-                    resolver=field.resolver or cls.get_resolver_for_type(type, name),
+                    resolver=field.get_resolver(cls.get_resolver_for_type(type, name)),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description
                 )
-            processed_name = cls.process_field_name(name)
-            fields[processed_name] = _field
+            field_name = field.name or cls.process_field_name(name)
+            fields[field_name] = _field
         return fields
 
     @classmethod
