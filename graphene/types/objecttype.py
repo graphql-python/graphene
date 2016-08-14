@@ -22,20 +22,21 @@ class ObjectTypeMeta(AbstractTypeMeta):
             name=name,
             description=attrs.get('__doc__'),
             interfaces=(),
-            fields=OrderedDict(),
+            fields=None,
         )
 
         attrs = merge_fields_in_attrs(bases, attrs)
-        options.local_fields = get_fields_in_type(ObjectType, attrs)
-        yank_fields_from_attrs(attrs, options.local_fields)
-        options.interface_fields = OrderedDict()
-        for interface in options.interfaces:
-            assert issubclass(interface, Interface), (
-                'All interfaces of {} must be a subclass of Interface. Received "{}".'
-            ).format(name, interface)
-            options.interface_fields.update(interface._meta.fields)
-        options.fields.update(options.interface_fields)
-        options.fields.update(options.local_fields)
+        if not options.fields:
+            options.local_fields = get_fields_in_type(ObjectType, attrs)
+            yank_fields_from_attrs(attrs, options.local_fields)
+            options.interface_fields = OrderedDict()
+            for interface in options.interfaces:
+                assert issubclass(interface, Interface), (
+                    'All interfaces of {} must be a subclass of Interface. Received "{}".'
+                ).format(name, interface)
+                options.interface_fields.update(interface._meta.fields)
+            options.fields = OrderedDict(options.interface_fields)
+            options.fields.update(options.local_fields)
 
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
         for interface in options.interfaces:

@@ -5,9 +5,11 @@ from .data import create_ship, get_empire, get_faction, get_rebels, get_ship
 
 
 class Ship(graphene.ObjectType):
-    class Meta:
-        interfaces = [relay.Node]
     '''A ship in the Star Wars saga'''
+
+    class Meta:
+        interfaces = (relay.Node, )
+
     name = graphene.String(description='The name of the ship.')
 
     @classmethod
@@ -15,8 +17,12 @@ class Ship(graphene.ObjectType):
         return get_ship(id)
 
 
-class Faction(relay.Node, graphene.ObjectType):
+class Faction(graphene.ObjectType):
     '''A faction in the Star Wars saga'''
+
+    class Meta:
+        interfaces = (relay.Node, )
+
     name = graphene.String(description='The name of the faction.')
     ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
 

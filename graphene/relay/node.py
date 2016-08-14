@@ -1,16 +1,54 @@
+import six
+from collections import OrderedDict
+from functools import partial
+
 from graphql_relay import from_global_id, to_global_id
-from ..types import Interface, ID, Field
+from ..types import ObjectType, Interface, ID, Field
+from ..types.interface import InterfaceMeta
 
 
-class Node(Interface):
+def get_default_connection(cls):
+    from .connection import Connection
+    assert issubclass(cls, ObjectType), (
+        'Can only get connection type on implemented Nodes.'
+    )
+
+    class Meta:
+        node = cls
+
+    return type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
+
+
+class GlobalID(Field):
+    def __init__(self, node, *args, **kwargs):
+        super(GlobalID, self).__init__(ID, *args, **kwargs)
+        self.node = node
+
+    @staticmethod
+    def id_resolver(parent_resolver, node, root, args, context, info):
+        id = parent_resolver(root, args, context, info)
+        # type_name = root._meta.name  # info.parent_type.name
+        return node.to_global_id(info.parent_type.name, id)
+
+    def get_resolver(self, parent_resolver):
+        return partial(self.id_resolver, parent_resolver, self.node)
+
+
+class NodeMeta(InterfaceMeta):
+
+    def __new__(cls, name, bases, attrs):
+        cls = InterfaceMeta.__new__(cls, name, bases, attrs)
+        cls._meta.fields['id'] = GlobalID(cls, required=True, description='The ID of the object.')
+        # new_fields = OrderedDict([
+        #     ('id', GlobalID(cls, required=True, description='The ID of the object.'))
+        # ])
+        # new_fields.update(cls._meta.fields)
+        # cls._meta.fields = new_fields
+        return cls
+
+
+class Node(six.with_metaclass(NodeMeta, Interface)):
     '''An object with an ID'''
-
-    id = ID(required=True, description='The ID of the object.')
-
-    @classmethod
-    def resolve_id(cls, root, args, context, info):
-        type_name = root._meta.name  # info.parent_type.name
-        return cls.to_global_id(type_name, getattr(root, 'id', None))
 
     @classmethod
     def Field(cls):
@@ -45,13 +83,13 @@ class Node(Interface):
 
     @classmethod
     def implements(cls, objecttype):
-        require_get_node = Node in objecttype._meta.interfaces
-        # get_connection = getattr(objecttype, 'get_connection', None)
-        # if not get_connection:
-        #     get_connection = partial(get_default_connection, objecttype)
+        require_get_node = cls.get_node_from_global_id == Node.get_node_from_global_id
+        get_connection = getattr(objecttype, 'get_connection', None)
+        if not get_connection:
+            get_connection = partial(get_default_connection, objecttype)
 
-        # objecttype.Connection = get_connection()
+        objecttype.Connection = get_connection()
         if require_get_node:
-            assert hasattr(
-                objecttype, 'get_node'), '{}.get_node method is required by the Node interface.'.format(
-                objecttype.__name__)
+            assert hasattr(objecttype, 'get_node'), (
+                '{}.get_node method is required by the Node interface.'
+            ).format(objecttype.__name__)
