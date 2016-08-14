@@ -1,3 +1,4 @@
+from functools import partial
 from sqlalchemy.orm.query import Query
 
 from graphene.relay import ConnectionField
@@ -9,17 +10,13 @@ class SQLAlchemyConnectionField(ConnectionField):
 
     @property
     def model(self):
-        return self.connection._meta.node._meta.model
-
-    def get_query(self, context):
-        return get_query(self.model, context)
-
-    def default_resolver(self, root, args, context, info):
-        return getattr(root, self.source or self.attname, self.get_query(context))
+        return self.type._meta.node._meta.model
 
     @staticmethod
-    def connection_resolver(resolver, connection, root, args, context, info):
+    def connection_resolver(resolver, connection, model, root, args, context, info):
         iterable = resolver(root, args, context, info)
+        if iterable is None:
+            iterable = get_query(model, context)
         if isinstance(iterable, Query):
             _len = iterable.count()
         else:
@@ -33,3 +30,6 @@ class SQLAlchemyConnectionField(ConnectionField):
             connection_type=connection,
             edge_type=connection.Edge,
         )
+
+    def get_resolver(self, parent_resolver):
+        return partial(self.connection_resolver, parent_resolver, self.type, self.model)

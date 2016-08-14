@@ -3,8 +3,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import graphene
-from graphene import relay
-from ..types import (SQLAlchemyNode, SQLAlchemyObjectType)
+from graphene.relay import Node
+from ..types import SQLAlchemyObjectType
 from ..fields import SQLAlchemyConnectionField
 
 from .models import Article, Base, Editor, Reporter
@@ -93,10 +93,11 @@ def test_should_query_well(session):
 def test_should_node(session):
     setup_fixtures(session)
 
-    class ReporterNode(SQLAlchemyNode, SQLAlchemyObjectType):
+    class ReporterNode(SQLAlchemyObjectType):
 
         class Meta:
             model = Reporter
+            interfaces = (Node, )
 
         @classmethod
         def get_node(cls, id, info):
@@ -105,17 +106,18 @@ def test_should_node(session):
         def resolve_articles(self, *args, **kwargs):
             return [Article(headline='Hi!')]
 
-    class ArticleNode(SQLAlchemyNode, SQLAlchemyObjectType):
+    class ArticleNode(SQLAlchemyObjectType):
 
         class Meta:
             model = Article
+            interfaces = (Node, )
 
         # @classmethod
         # def get_node(cls, id, info):
         #     return Article(id=1, headline='Article node')
 
     class Query(graphene.ObjectType):
-        node = SQLAlchemyNode.Field()
+        node = Node.Field()
         reporter = graphene.Field(ReporterNode)
         article = graphene.Field(ArticleNode)
         all_articles = SQLAlchemyConnectionField(ArticleNode)
@@ -194,13 +196,14 @@ def test_should_node(session):
 def test_should_custom_identifier(session):
     setup_fixtures(session)
 
-    class EditorNode(SQLAlchemyNode, SQLAlchemyObjectType):
+    class EditorNode(SQLAlchemyObjectType):
 
         class Meta:
             model = Editor
+            interfaces = (Node, )
 
     class Query(graphene.ObjectType):
-        node = SQLAlchemyNode.Field()
+        node = Node.Field()
         all_editors = SQLAlchemyConnectionField(EditorNode)
 
     query = '''
