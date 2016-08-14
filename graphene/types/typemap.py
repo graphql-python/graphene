@@ -74,7 +74,7 @@ class TypeMap(GraphQLTypeMap):
 
     @classmethod
     def construct_scalar(cls, map, type):
-        from ..generators.definitions import GrapheneScalarType
+        from .definitions import GrapheneScalarType
         _scalars = {
             String: GraphQLString,
             Int: GraphQLInt,
@@ -98,7 +98,7 @@ class TypeMap(GraphQLTypeMap):
 
     @classmethod
     def construct_enum(cls, map, type):
-        from ..generators.definitions import GrapheneEnumType
+        from .definitions import GrapheneEnumType
         values = OrderedDict()
         for name, value in type._meta.enum.__members__.items():
             values[name] = GraphQLEnumValue(
@@ -117,7 +117,7 @@ class TypeMap(GraphQLTypeMap):
 
     @classmethod
     def construct_objecttype(cls, map, type):
-        from ..generators.definitions import GrapheneObjectType
+        from .definitions import GrapheneObjectType
         map[type._meta.name] = GrapheneObjectType(
             graphene_type=type,
             name=type._meta.name,
@@ -137,7 +137,7 @@ class TypeMap(GraphQLTypeMap):
 
     @classmethod
     def construct_interface(cls, map, type):
-        from ..generators.definitions import GrapheneInterfaceType
+        from .definitions import GrapheneInterfaceType
         map[type._meta.name] = GrapheneInterfaceType(
             graphene_type=type,
             name=type._meta.name,
@@ -151,7 +151,7 @@ class TypeMap(GraphQLTypeMap):
 
     @classmethod
     def construct_inputobjecttype(cls, map, type):
-        from ..generators.definitions import GrapheneInputObjectType
+        from .definitions import GrapheneInputObjectType
         map[type._meta.name] = GrapheneInputObjectType(
             graphene_type=type,
             name=type._meta.name,
@@ -163,7 +163,7 @@ class TypeMap(GraphQLTypeMap):
 
     @classmethod
     def construct_union(cls, map, type):
-        from ..generators.definitions import GrapheneUnionType
+        from .definitions import GrapheneUnionType
         types = []
         for i in type._meta.types:
             map = cls.construct_objecttype(map, i)

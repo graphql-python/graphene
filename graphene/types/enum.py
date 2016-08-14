@@ -2,7 +2,6 @@ from collections import OrderedDict
 
 import six
 
-from ..generators import generate_enum
 from ..utils.is_base_type import is_base_type
 from .options import Options
 from .unmountedtype import UnmountedType
