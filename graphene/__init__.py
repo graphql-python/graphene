@@ -1,4 +1,5 @@
 from .types import (
+    AbstractType,
     ObjectType,
     InputObjectType,
     Interface,
@@ -12,9 +13,17 @@ from .types import (
     Argument,
     Dynamic
 )
+from .relay import (
+    Node,
+    is_node,
+    ClientIDMutation,
+    Connection,
+    ConnectionField
+)
 from .utils.resolve_only_args import resolve_only_args
 
 __all__ = [
+    'AbstractType',
     'ObjectType',
     'InputObjectType',
     'Interface',
@@ -32,4 +41,9 @@ __all__ = [
     'NonNull',
     'Argument',
     'Dynamic',
-    'resolve_only_args']
+    'resolve_only_args',
+    'Node',
+    'is_node',
+    'ClientIDMutation',
+    'Connection',
+    'ConnectionField']
