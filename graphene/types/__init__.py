@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .objecttype import ObjectType
 from .abstracttype import AbstractType
 from .interface import Interface
