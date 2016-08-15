@@ -49,7 +49,7 @@ def test_sqlalchemy_interface():
 def test_objecttype_registered():
     assert issubclass(Character, ObjectType)
     assert Character._meta.model == Reporter
-    assert list(Character._meta.fields.keys()) == ['id', 'first_name', 'last_name', 'email', 'pets', 'articles']
+    assert list(Character._meta.fields.keys()) == ['id', 'first_name', 'last_name', 'email', 'pets', 'articles', 'favorite_article']
 
 
 # def test_sqlalchemynode_idfield():

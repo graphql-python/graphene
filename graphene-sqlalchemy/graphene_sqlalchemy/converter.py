@@ -23,7 +23,7 @@ def convert_sqlalchemy_relationship(relationship, registry):
         _type = registry.get_type_for_model(model)
         if not _type:
             return None
-        if direction == interfaces.MANYTOONE:
+        if (direction == interfaces.MANYTOONE or not relationship.uselist):
             return Field(_type)
         elif (direction == interfaces.ONETOMANY or
               direction == interfaces.MANYTOMANY):

@@ -171,6 +171,19 @@ def test_should_manytoone_convert_connectionorlist_connection():
     assert graphene_type.type == A
 
 
+def test_should_onetoone_convert_field():
+    class A(SQLAlchemyObjectType):
+        class Meta:
+            model = Article
+            interfaces = (Node, )
+
+    dynamic_field = convert_sqlalchemy_relationship(Reporter.favorite_article.property, A._meta.registry)
+    assert isinstance(dynamic_field, graphene.Dynamic)
+    graphene_type = dynamic_field.get_type()
+    assert isinstance(graphene_type, graphene.Field)
+    assert graphene_type.type == A
+
+
 def test_should_postgresql_uuid_convert():
     assert_column_conversion(postgresql.UUID(), graphene.String)
 

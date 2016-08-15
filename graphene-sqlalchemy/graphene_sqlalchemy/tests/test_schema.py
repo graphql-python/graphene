@@ -28,7 +28,7 @@ def test_should_map_fields_correctly():
             model = Reporter
             registry = Registry()
 
-    assert list(ReporterType2._meta.fields.keys()) == ['id', 'first_name', 'last_name', 'email', 'pets', 'articles']
+    assert list(ReporterType2._meta.fields.keys()) == ['id', 'first_name', 'last_name', 'email', 'pets', 'articles', 'favorite_article']
 
 
 def test_should_map_only_few_fields():

@@ -32,6 +32,7 @@ class Reporter(Base):
     email = Column(String())
     pets = relationship('Pet', secondary=association_table, backref='reporters')
     articles = relationship('Article', backref='reporter')
+    favorite_article = relationship("Article", uselist=False)
 
 
 class Article(Base):
