@@ -10,7 +10,7 @@ from ..types import Boolean, Int, List, String, AbstractType
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
-from ..types.utils import get_fields_in_type, yank_fields_from_attrs
+from ..types.utils import merge
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
 from .node import Node, is_node
@@ -76,16 +76,16 @@ class ConnectionMeta(ObjectTypeMeta):
         if edge_class and issubclass(edge_class, AbstractType):
             edge = type(edge_name, (EdgeBase, edge_class, ObjectType, ), {})
         else:
-            edge = type(edge_name, (EdgeBase, ObjectType, ), props(edge_class) if edge_class else {})
+            edge_attrs = props(edge_class) if edge_class else {}
+            edge = type(edge_name, (EdgeBase, ObjectType, ), edge_attrs)
 
-        cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options, Edge=edge))
-        base_fields = OrderedDict([
-            ('page_info', Field(PageInfo, name='pageInfo', required=True)),
-            ('edges', Field(List(edge)))
-        ])
-        base_fields.update(cls._meta.fields)
-        cls._meta.fields = base_fields
-        return cls
+        class ConnectionBase(AbstractType):
+            page_info = Field(PageInfo, name='pageInfo', required=True)
+            edges = List(edge)
+
+        bases = (ConnectionBase, ) + bases
+        attrs = dict(attrs, _meta=options, Edge=edge)
+        return ObjectTypeMeta.__new__(cls, name, bases, attrs)
 
 
 class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
