@@ -50,20 +50,29 @@ class NodeMeta(InterfaceMeta):
         return cls
 
 
+class NodeField(Field):
+    def __init__(self, node, type=False, deprecation_reason=None,
+                 name=None, **kwargs):
+        assert issubclass(node, Node), 'NodeField can only operate in Nodes'
+        type = type or node
+        super(NodeField, self).__init__(
+            type,
+            description='The ID of the object',
+            id=ID(required=True),
+            resolver=node.node_resolver
+        )
+
+
 class Node(six.with_metaclass(NodeMeta, Interface)):
     '''An object with an ID'''
 
     @classmethod
-    def Field(cls):  # noqa: N802
-        def resolve_node(root, args, context, info):
-            return cls.get_node_from_global_id(args.get('id'), context, info)
+    def Field(cls, *args, **kwargs):  # noqa: N802
+        return NodeField(cls, *args, **kwargs)
 
-        return Field(
-            cls,
-            description='The ID of the object',
-            id=ID(required=True),
-            resolver=resolve_node
-        )
+    @classmethod
+    def node_resolver(cls, root, args, context, info):
+        return cls.get_node_from_global_id(args.get('id'), context, info)
 
     @classmethod
     def get_node_from_global_id(cls, global_id, context, info):

@@ -239,6 +239,8 @@ class TypeMap(GraphQLTypeMap):
             # find it in each of the interfaces
             interface_resolver = None
             for interface in type._meta.interfaces:
+                if name not in interface._meta.fields:
+                    continue
                 interface_resolver = getattr(interface, 'resolve_{}'.format(name), None)
                 if interface_resolver:
                     break
