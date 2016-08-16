@@ -1,23 +1,20 @@
+from collections import OrderedDict
 import pytest
 
 from graphql_relay import to_global_id
 
-from ...types import ObjectType, Schema, String
+from ...types import ObjectType, Schema, String, AbstractType
 from ..connection import Connection
 from ..node import Node
 
 
-class SharedNodeFields(ObjectType):
-
-    class Meta:
-        interfaces = (Node, )
+class SharedNodeFields(AbstractType):
 
     shared = String()
     something_else = String()
 
-    @classmethod
-    def get_node(cls, id, *_):
-        return cls(shared=str(id))
+    def resolve_something_else(*_):
+        return '----'
 
 
 class MyNode(ObjectType):
@@ -31,11 +28,18 @@ class MyNode(ObjectType):
         return MyNode(name=str(id))
 
 
-class MyOtherNode(SharedNodeFields):
+class MyOtherNode(SharedNodeFields, ObjectType):
     extra_field = String()
+
+    class Meta:
+        interfaces = (Node, )
 
     def resolve_extra_field(self, *_):
         return 'extra field info.'
+
+    @staticmethod
+    def get_node(id, *_):
+        return MyOtherNode(shared=str(id))
 
 
 class RootQuery(ObjectType):
@@ -88,10 +92,10 @@ def test_node_query():
 
 def test_subclassed_node_query():
     executed = schema.execute(
-        '{ node(id:"%s") { ... on MyOtherNode { shared, extraField } } }' % to_global_id("MyOtherNode", 1)
+        '{ node(id:"%s") { ... on MyOtherNode { shared, extraField, somethingElse } } }' % to_global_id("MyOtherNode", 1)
     )
     assert not executed.errors
-    assert executed.data == {'node': {'shared': '1', 'extraField': 'extra field info'}}
+    assert executed.data == OrderedDict({'node': OrderedDict([('shared', '1'), ('extraField', 'extra field info.'), ('somethingElse', '----')])})
 
 
 def test_node_query_incorrect_id():
@@ -114,6 +118,7 @@ type MyNode implements Node {
 }
 
 type MyOtherNode implements Node {
+  id: ID!
   shared: String
   somethingElse: String
   extraField: String
