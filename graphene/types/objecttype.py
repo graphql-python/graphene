@@ -19,6 +19,10 @@ class ObjectTypeMeta(AbstractTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
         _meta = attrs.pop('_meta', None)
+        base_interfaces = ()
+        for base in bases:
+            if hasattr(base, '_meta') and hasattr(base._meta, 'interfaces'):
+                base_interfaces = base_interfaces + base._meta.interfaces
         options = _meta or Options(
             attrs.pop('Meta', None),
             name=name,
@@ -26,13 +30,27 @@ class ObjectTypeMeta(AbstractTypeMeta):
             interfaces=(),
             local_fields=OrderedDict(),
         )
+        options.interfaces = options.interfaces + base_interfaces
+        print('OPTIONS', options)
         options.base_fields = get_base_fields(ObjectType, bases)
+        print('-----> base fields: ', options.base_fields)
+        # from ..types import AbstractType
+        # inherited_bases = (AbstractType, Interface)
+        # for base in bases:
+        #     if base in inherited_bases or not issubclass(base, inherited_bases):
+        #         continue
+        #     print(base)
+        #     print(base())
+        #     print(dir(base()))
+        #     print(dir(base()._meta))
 
         if not options.local_fields:
             options.local_fields = get_fields_in_type(ObjectType, attrs)
             yank_fields_from_attrs(attrs, options.local_fields)
 
         options.interface_fields = OrderedDict()
+        print('interfaces')
+        print(options.interfaces)
         for interface in options.interfaces:
             assert issubclass(interface, Interface), (
                 'All interfaces of {} must be a subclass of Interface. Received "{}".'

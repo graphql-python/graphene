@@ -12,6 +12,10 @@ def merge_fields_in_attrs(bases, attrs):
     for base in bases:
         if base in inherited_bases or not issubclass(base, inherited_bases):
             continue
+        print('!!!!!!!!!!!')
+        print(base._meta)
+        print(dir(base._meta))
+        print(base._meta.fields.items())
         for name, field in base._meta.fields.items():
             if name in attrs:
                 continue

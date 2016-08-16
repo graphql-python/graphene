@@ -2,6 +2,7 @@ import pytest
 
 from ..abstracttype import AbstractType
 from ..field import Field
+from ..scalars import String
 from ..interface import Interface
 from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
@@ -57,6 +58,19 @@ def test_generate_objecttype_with_meta():
     assert MyObjectType._meta.interfaces == (MyType, )
 
 
+def test_generate_objecttype_with_interface():
+    class MyObjectType(ObjectType):
+
+        class Meta:
+            interfaces = (MyInterface, )
+
+        great_field = String()
+
+    assert MyObjectType._meta.interfaces == (MyInterface, )
+    assert list(MyObjectType._meta.fields.keys()) == ['ifield', 'great_field']
+    assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
+
+
 def test_generate_objecttype_with_fields():
     class MyObjectType(ObjectType):
         field = Field(MyType)
@@ -94,6 +108,20 @@ def test_generate_objecttype_inherit_abstracttype_reversed():
 
     assert list(MyObjectType._meta.fields.keys()) == ['field1', 'field2']
     assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
+
+
+def test_generate_objecttype_inherit_abstracttype_with_interface():
+    class MyAbstractType(AbstractType):
+        class Meta:
+            interfaces = (MyInterface, )
+        field1 = MyScalar()
+
+    class MyObjectType(ObjectType, MyAbstractType):
+        field2 = MyScalar()
+
+    assert MyObjectType._meta.interfaces == (MyInterface, )
+    assert list(MyObjectType._meta.fields.keys()) == ['ifield', 'field1', 'field2']
+    assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field, Field]
 
 
 def test_generate_objecttype_unmountedtype():
