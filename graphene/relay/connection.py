@@ -6,7 +6,7 @@ import six
 
 from graphql_relay import connection_from_list
 
-from ..types import Boolean, Int, List, String
+from ..types import Boolean, Int, List, String, AbstractType
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
@@ -55,6 +55,7 @@ class ConnectionMeta(ObjectTypeMeta):
             node=None,
         )
         options.interfaces = ()
+        options.local_fields = OrderedDict()
 
         assert options.node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
         assert issubclass(options.node, (Node, ObjectType)), (
@@ -66,30 +67,25 @@ class ConnectionMeta(ObjectTypeMeta):
             options.name = '{}Connection'.format(base_name)
 
         edge_class = attrs.pop('Edge', None)
-        edge_fields = OrderedDict([
-            ('node', Field(options.node, description='The item at the end of the edge')),
-            ('cursor', Field(String, required=True, description='A cursor for use in pagination'))
-        ])
-        edge_attrs = props(edge_class) if edge_class else OrderedDict()
-        extended_edge_fields = get_fields_in_type(ObjectType, edge_attrs)
-        edge_fields.update(extended_edge_fields)
-        edge_meta = type('Meta', (object, ), {
-            'fields': edge_fields,
-            'name': '{}Edge'.format(base_name)
-        })
-        yank_fields_from_attrs(edge_attrs, extended_edge_fields)
-        edge = type('Edge', (ObjectType,), dict(edge_attrs, Meta=edge_meta))
 
-        options.local_fields = OrderedDict([
+        class EdgeBase(AbstractType):
+            node = Field(options.node, description='The item at the end of the edge')
+            cursor = String(required=True, description='A cursor for use in pagination')
+
+        edge_name = '{}Edge'.format(base_name)
+        if edge_class and issubclass(edge_class, AbstractType):
+            edge = type(edge_name, (EdgeBase, edge_class, ObjectType, ), {})
+        else:
+            edge = type(edge_name, (EdgeBase, ObjectType, ), props(edge_class) if edge_class else {})
+
+        cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options, Edge=edge))
+        base_fields = OrderedDict([
             ('page_info', Field(PageInfo, name='pageInfo', required=True)),
             ('edges', Field(List(edge)))
         ])
-        typed_fields = get_fields_in_type(ObjectType, attrs)
-        options.local_fields.update(typed_fields)
-        options.fields = options.local_fields
-        yank_fields_from_attrs(attrs, typed_fields)
-
-        return type.__new__(cls, name, bases, dict(attrs, _meta=options, Edge=edge))
+        base_fields.update(cls._meta.fields)
+        cls._meta.fields = base_fields
+        return cls
 
 
 class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):

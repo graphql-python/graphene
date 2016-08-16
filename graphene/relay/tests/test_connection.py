@@ -1,5 +1,5 @@
 
-from ...types import Field, List, NonNull, ObjectType, Schema, String
+from ...types import Field, List, NonNull, ObjectType, String, AbstractType
 from ..connection import Connection, PageInfo
 from ..node import Node
 
@@ -15,24 +15,16 @@ class MyObject(ObjectType):
         pass
 
 
-class MyObjectConnection(Connection):
-    extra = String()
-
-    class Meta:
-        node = MyObject
-
-    class Edge:
-        other = String()
-
-
-class RootQuery(ObjectType):
-    my_connection = Field(MyObjectConnection)
-
-
-schema = Schema(query=RootQuery)
-
-
 def test_connection():
+    class MyObjectConnection(Connection):
+        extra = String()
+
+        class Meta:
+            node = MyObject
+
+        class Edge:
+            other = String()
+
     assert MyObjectConnection._meta.name == 'MyObjectConnection'
     fields = MyObjectConnection._meta.fields
     assert list(fields.keys()) == ['page_info', 'edges', 'extra']
@@ -48,11 +40,54 @@ def test_connection():
     assert pageinfo_field.type.of_type == PageInfo
 
 
+def test_connection_inherit_abstracttype():
+    class BaseConnection(AbstractType):
+        extra = String()
+
+    class MyObjectConnection(BaseConnection, Connection):
+        class Meta:
+            node = MyObject
+
+    assert MyObjectConnection._meta.name == 'MyObjectConnection'
+    fields = MyObjectConnection._meta.fields
+    assert list(fields.keys()) == ['page_info', 'edges', 'extra']
+
+
 def test_edge():
+    class MyObjectConnection(Connection):
+        class Meta:
+            node = MyObject
+
+        class Edge:
+            other = String()
+
     Edge = MyObjectConnection.Edge
     assert Edge._meta.name == 'MyObjectEdge'
     edge_fields = Edge._meta.fields
     assert list(edge_fields.keys()) == ['node', 'cursor', 'other']
+
+    assert isinstance(edge_fields['node'], Field)
+    assert edge_fields['node'].type == MyObject
+
+    assert isinstance(edge_fields['other'], Field)
+    assert edge_fields['other'].type == String
+
+
+def test_edge_with_bases():
+    class BaseEdge(AbstractType):
+        extra = String()
+
+    class MyObjectConnection(Connection):
+        class Meta:
+            node = MyObject
+
+        class Edge(BaseEdge):
+            other = String()
+
+    Edge = MyObjectConnection.Edge
+    assert Edge._meta.name == 'MyObjectEdge'
+    edge_fields = Edge._meta.fields
+    assert list(edge_fields.keys()) == ['node', 'cursor', 'extra', 'other']
 
     assert isinstance(edge_fields['node'], Field)
     assert edge_fields['node'].type == MyObject
