@@ -131,6 +131,7 @@ class IterableConnectionField(Field):
             edge_type=connection.Edge,
             pageinfo_type=PageInfo
         )
+        connection.iterable = iterable
         return connection
 
     def get_resolver(self, parent_resolver):
