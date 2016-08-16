@@ -10,7 +10,6 @@ from ..types import Boolean, Int, List, String, AbstractType
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
-from ..types.utils import merge
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
 from .node import Node, is_node
