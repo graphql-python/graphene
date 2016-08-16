@@ -43,7 +43,7 @@ class DjangoObjectTypeMeta(ObjectTypeMeta):
             name=name,
             description=attrs.pop('__doc__', None),
             model=None,
-            fields=None,
+            local_fields=None,
             only_fields=(),
             exclude_fields=(),
             interfaces=(),

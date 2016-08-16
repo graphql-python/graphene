@@ -94,7 +94,11 @@ def convert_onetoone_field_to_djangomodel(field, registry=None):
     model = get_related_model(field)
 
     def dynamic_type():
-        return Field(registry.get_type_for_model(model))
+        _type = registry.get_type_for_model(model)
+        if not _type:
+            return
+
+        return Field(_type)
 
     return Dynamic(dynamic_type)
 
@@ -141,6 +145,9 @@ def convert_field_to_djangomodel(field, registry=None):
 
     def dynamic_type():
         _type = registry.get_type_for_model(model)
+        if not _type:
+            return
+
         return Field(_type, description=field.help_text)
 
     return Dynamic(dynamic_type)
