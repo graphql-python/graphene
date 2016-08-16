@@ -3,8 +3,8 @@ import six
 from ..utils.is_base_type import is_base_type
 from .abstracttype import AbstractTypeMeta
 from .options import Options
-from .utils import (get_fields_in_type, merge_fields_in_attrs,
-                    yank_fields_from_attrs)
+from .utils import (get_fields_in_type, yank_fields_from_attrs,
+                    get_base_fields, merge)
 
 
 class InterfaceMeta(AbstractTypeMeta):
@@ -19,13 +19,19 @@ class InterfaceMeta(AbstractTypeMeta):
             attrs.pop('Meta', None),
             name=name,
             description=attrs.get('__doc__'),
-            fields=None,
+            local_fields=None,
         )
 
-        attrs = merge_fields_in_attrs(bases, attrs)
-        if not options.fields:
-            options.fields = get_fields_in_type(Interface, attrs)
-            yank_fields_from_attrs(attrs, options.fields)
+        options.base_fields = get_base_fields(Interface, bases)
+
+        if not options.local_fields:
+            options.local_fields = get_fields_in_type(Interface, attrs)
+            yank_fields_from_attrs(attrs, options.local_fields)
+
+        options.fields = merge(
+            options.base_fields,
+            options.local_fields
+        )
 
         return type.__new__(cls, name, bases, dict(attrs, _meta=options))
 

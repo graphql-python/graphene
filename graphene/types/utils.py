@@ -19,7 +19,20 @@ def merge_fields_in_attrs(bases, attrs):
     return attrs
 
 
-def unmounted_field_in_type(attname, unmounted_field, type):
+def merge(*dicts):
+    merged = OrderedDict()
+    for _dict in dicts:
+        merged.update(_dict)
+    return merged
+
+
+def get_base_fields(in_type, bases):
+    fields = OrderedDict()
+    fields = merge_fields_in_attrs(bases, fields)
+    return get_fields_in_type(in_type, fields, order=False)
+
+
+def unmounted_field_in_type(unmounted_field, type):
     '''
     Mount the UnmountedType dinamically as Field or InputField
     depending on where mounted in.
@@ -42,27 +55,29 @@ def unmounted_field_in_type(attname, unmounted_field, type):
         return unmounted_field.InputField()
 
     raise Exception(
-        'Unmounted field "{}" cannot be mounted in {}.{}.'.format(
-            unmounted_field, type, attname
+        'Unmounted field "{}" cannot be mounted in {}.'.format(
+            unmounted_field, type
         )
     )
 
 
-def get_fields_in_type(in_type, attrs):
+def get_field(in_type, value):
+    if isinstance(value, (Field, InputField, Dynamic)):
+        return value
+    elif isinstance(value, UnmountedType):
+        return unmounted_field_in_type(value, in_type)
+
+
+def get_fields_in_type(in_type, attrs, order=True):
     fields_with_names = []
     for attname, value in list(attrs.items()):
-        if isinstance(value, (Field, InputField, Dynamic)):
-            fields_with_names.append(
-                (attname, value)
-            )
-        elif isinstance(value, UnmountedType):
-            try:
-                value = unmounted_field_in_type(attname, value, in_type)
-                fields_with_names.append(
-                    (attname, value)
-                )
-            except Exception as e:
-                raise Exception('Exception while mounting the field "{}": {}'.format(attname, str(e)))
+        field = get_field(in_type, value)
+        if not field:
+            continue
+        fields_with_names.append((attname, field))
+
+    if not order:
+        return OrderedDict(fields_with_names)
 
     return OrderedDict(sorted(fields_with_names, key=lambda f: f[1]))
 

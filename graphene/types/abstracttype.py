@@ -2,8 +2,8 @@ import six
 
 from ..utils.is_base_type import is_base_type
 from .options import Options
-from .utils import (get_fields_in_type, merge_fields_in_attrs,
-                    yank_fields_from_attrs)
+from .utils import (get_fields_in_type, get_base_fields,
+                    yank_fields_from_attrs, merge)
 
 
 class AbstractTypeMeta(type):
@@ -19,12 +19,13 @@ class AbstractTypeMeta(type):
                 # raise Exception('You can only extend AbstractTypes after the base definition.')
                 return type.__new__(cls, name, bases, attrs)
 
-        attrs = merge_fields_in_attrs(bases, attrs)
+        base_fields = get_base_fields(AbstractType, bases)
+
         fields = get_fields_in_type(AbstractType, attrs)
         yank_fields_from_attrs(attrs, fields)
 
         options = Options(
-            fields=fields
+            fields=merge(base_fields, fields)
         )
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
 

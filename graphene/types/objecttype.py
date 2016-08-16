@@ -6,8 +6,8 @@ from ..utils.is_base_type import is_base_type
 from .abstracttype import AbstractTypeMeta
 from .interface import Interface
 from .options import Options
-from .utils import (get_fields_in_type, merge_fields_in_attrs,
-                    yank_fields_from_attrs)
+from .utils import (get_fields_in_type, yank_fields_from_attrs,
+                    get_base_fields, merge)
 
 
 class ObjectTypeMeta(AbstractTypeMeta):
@@ -24,23 +24,29 @@ class ObjectTypeMeta(AbstractTypeMeta):
             name=name,
             description=attrs.get('__doc__'),
             interfaces=(),
-            fields=None,
+            local_fields=OrderedDict(),
         )
+        options.base_fields = get_base_fields(ObjectType, bases)
 
-        attrs = merge_fields_in_attrs(bases, attrs)
-        if not options.fields:
+        if not options.local_fields:
             options.local_fields = get_fields_in_type(ObjectType, attrs)
             yank_fields_from_attrs(attrs, options.local_fields)
-            options.interface_fields = OrderedDict()
-            for interface in options.interfaces:
-                assert issubclass(interface, Interface), (
-                    'All interfaces of {} must be a subclass of Interface. Received "{}".'
-                ).format(name, interface)
-                options.interface_fields.update(interface._meta.fields)
-            options.fields = OrderedDict(options.interface_fields)
-            options.fields.update(options.local_fields)
+
+        options.interface_fields = OrderedDict()
+        for interface in options.interfaces:
+            assert issubclass(interface, Interface), (
+                'All interfaces of {} must be a subclass of Interface. Received "{}".'
+            ).format(name, interface)
+            options.interface_fields.update(interface._meta.fields)
+
+        options.fields = merge(
+            options.interface_fields,
+            options.base_fields,
+            options.local_fields
+        )
 
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
+
         for interface in options.interfaces:
             interface.implements(cls)
 
