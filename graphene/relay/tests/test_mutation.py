@@ -27,10 +27,13 @@ class OtherMutation(ClientIDMutation):
     class Input(SharedFields):
         additional_field = String()
 
+    name = String()
+
     @classmethod
     def mutate_and_get_payload(cls, args, context, info):
-        what = args.get('what')
-        return SaySomething(shared=str(what), additional_field='additional')
+        shared = args.get('shared', '')
+        additionalField = args.get('additionalField', '')
+        return SaySomething(name=shared + additionalField)
 
 
 class RootQuery(ObjectType):
@@ -73,6 +76,17 @@ def test_mutation_input():
     assert fields['what'].type == String
     assert isinstance(fields['client_mutation_id'], InputField)
     assert fields['client_mutation_id'].type == String
+
+
+def test_subclassed_mutation():
+    fields = OtherMutation._meta.fields
+    assert list(fields.keys()) == ['name']
+    assert isinstance(fields['name'], Field)
+    field = OtherMutation.Field()
+    assert field.type == OtherMutation
+    assert list(field.args.keys()) == ['input']
+    assert isinstance(field.args['input'], Argument)
+    assert field.args['input'].type == OtherMutation.Input
 
 
 def test_subclassed_mutation_input():
