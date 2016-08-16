@@ -55,7 +55,7 @@ def convert_sqlalchemy_type(type, column, registry=None):
 @convert_sqlalchemy_type.register(postgresql.ENUM)
 @convert_sqlalchemy_type.register(postgresql.UUID)
 def convert_column_to_string(type, column, registry=None):
-    return String(description=column.doc)
+    return String(description=column.doc, required=not(column.nullable))
 
 
 @convert_sqlalchemy_type.register(types.SmallInteger)
@@ -63,20 +63,20 @@ def convert_column_to_string(type, column, registry=None):
 @convert_sqlalchemy_type.register(types.Integer)
 def convert_column_to_int_or_id(type, column, registry=None):
     if column.primary_key:
-        return ID(description=column.doc)
+        return ID(description=column.doc, required=not(column.nullable))
     else:
-        return Int(description=column.doc)
+        return Int(description=column.doc, required=not(column.nullable))
 
 
 @convert_sqlalchemy_type.register(types.Boolean)
 def convert_column_to_boolean(type, column, registry=None):
-    return Boolean(description=column.doc)
+    return Boolean(description=column.doc, required=not(column.nullable))
 
 
 @convert_sqlalchemy_type.register(types.Float)
 @convert_sqlalchemy_type.register(types.Numeric)
 def convert_column_to_float(type, column, registry=None):
-    return Float(description=column.doc)
+    return Float(description=column.doc, required=not(column.nullable))
 
 
 @convert_sqlalchemy_type.register(ChoiceType)
@@ -88,11 +88,11 @@ def convert_column_to_enum(type, column, registry=None):
 @convert_sqlalchemy_type.register(postgresql.ARRAY)
 def convert_postgres_array_to_list(type, column, registry=None):
     graphene_type = convert_sqlalchemy_type(column.type.item_type, column)
-    return List(graphene_type, description=column.doc)
+    return List(graphene_type, description=column.doc, required=not(column.nullable))
 
 
 @convert_sqlalchemy_type.register(postgresql.HSTORE)
 @convert_sqlalchemy_type.register(postgresql.JSON)
 @convert_sqlalchemy_type.register(postgresql.JSONB)
 def convert_json_to_string(type, column, registry=None):
-    return JSONString(description=column.doc)
+    return JSONString(description=column.doc, required=not(column.nullable))

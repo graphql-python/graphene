@@ -13,43 +13,45 @@ from graphene.types.objecttype import ObjectTypeMeta
 from graphene.types.options import Options
 from .registry import Registry, get_global_registry
 from graphene.utils.is_base_type import is_base_type
-from graphene.types.utils import get_fields_in_type
+from graphene.types.utils import get_fields_in_type, merge
 from .utils import get_query
 
 
+def construct_fields(options):
+    only_fields = options.only_fields
+    exclude_fields = options.exclude_fields
+    inspected_model = sqlalchemyinspect(options.model)
+
+    fields = OrderedDict()
+
+    for name, column in inspected_model.columns.items():
+        is_not_in_only = only_fields and name not in only_fields
+        is_already_created = name in options.fields
+        is_excluded = name in exclude_fields or is_already_created
+        if is_not_in_only or is_excluded:
+            # We skip this field if we specify only_fields and is not
+            # in there. Or when we excldue this field in exclude_fields
+            continue
+        converted_column = convert_sqlalchemy_column(column, options.registry)
+        fields[name] = converted_column
+
+    # Get all the columns for the relationships on the model
+    for relationship in inspected_model.relationships:
+        is_not_in_only = only_fields and relationship.key not in only_fields
+        is_already_created = relationship.key in options.fields
+        is_excluded = relationship.key in exclude_fields or is_already_created
+        if is_not_in_only or is_excluded:
+            # We skip this field if we specify only_fields and is not
+            # in there. Or when we excldue this field in exclude_fields
+            continue
+        converted_relationship = convert_sqlalchemy_relationship(relationship, options.registry)
+        name = relationship.key
+        fields[name] = converted_relationship
+
+    return fields
+
+
 class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
-    def _construct_fields(cls, all_fields, options):
-        only_fields = cls._meta.only_fields
-        exclude_fields = cls._meta.exclude_fields
-        inspected_model = sqlalchemyinspect(cls._meta.model)
-
-        fields = OrderedDict()
-
-        for name, column in inspected_model.columns.items():
-            is_not_in_only = only_fields and name not in only_fields
-            is_already_created = name in all_fields
-            is_excluded = name in exclude_fields or is_already_created
-            if is_not_in_only or is_excluded:
-                # We skip this field if we specify only_fields and is not
-                # in there. Or when we excldue this field in exclude_fields
-                continue
-            converted_column = convert_sqlalchemy_column(column, options.registry)
-            fields[name] = converted_column
-
-        # Get all the columns for the relationships on the model
-        for relationship in inspected_model.relationships:
-            is_not_in_only = only_fields and relationship.key not in only_fields
-            is_already_created = relationship.key in all_fields
-            is_excluded = relationship.key in exclude_fields or is_already_created
-            if is_not_in_only or is_excluded:
-                # We skip this field if we specify only_fields and is not
-                # in there. Or when we excldue this field in exclude_fields
-                continue
-            converted_relationship = convert_sqlalchemy_relationship(relationship, options.registry)
-            name = relationship.key
-            fields[name] = converted_relationship
-
-        return fields
 
     @staticmethod
     def __new__(cls, name, bases, attrs):
@@ -89,9 +91,14 @@ class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
 
         options.sqlalchemy_fields = get_fields_in_type(
             ObjectType,
-            cls._construct_fields(options.fields, options)
+            construct_fields(options)
         )
-        options.fields.update(options.sqlalchemy_fields)
+        options.fields = merge(
+            options.interface_fields,
+            options.sqlalchemy_fields,
+            options.base_fields,
+            options.local_fields
+        )
 
         return cls
 

@@ -70,5 +70,5 @@ def test_node_replacedfield():
 
 def test_object_type():
     assert issubclass(Human, ObjectType)
-    assert list(Human._meta.fields.keys()) == ['id', 'pub_date', 'headline', 'reporter_id', 'reporter']
+    assert list(Human._meta.fields.keys()) == ['id', 'headline', 'reporter_id', 'reporter', 'pub_date']
     assert is_node(Human)
