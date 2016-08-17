@@ -40,6 +40,11 @@ class NonNull(Structure):
 
     Note: the enforcement of non-nullability occurs within the executor.
     '''
+    def __init__(self, *args, **kwargs):
+        super(NonNull, self).__init__(*args, **kwargs)
+        assert not isinstance(self.of_type, NonNull), (
+            'Can only create NonNull of a Nullable GraphQLType but got: {}.'
+        ).format(type)
 
     def __str__(self):
         return '{}!'.format(self.of_type)
