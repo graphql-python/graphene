@@ -4,7 +4,7 @@ from ..utils.orderedtype import OrderedType
 class UnmountedType(OrderedType):
     '''
     This class acts a proxy for a Graphene Type, so it can be mounted
-    as Field, InputField or Argument.
+    dynamically as Field, InputField or Argument.
 
     Instead of writing
     >>> class MyObjectType(ObjectType):

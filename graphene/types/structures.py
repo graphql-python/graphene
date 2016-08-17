@@ -16,12 +16,30 @@ class Structure(UnmountedType):
 
 
 class List(Structure):
+    '''
+    List Modifier
+
+    A list is a kind of type marker, a wrapping type which points to another
+    type. Lists are often created within the context of defining the fields of
+    an object type.
+    '''
 
     def __str__(self):
         return '[{}]'.format(self.of_type)
 
 
 class NonNull(Structure):
+    '''
+    Non-Null Modifier
+
+    A non-null is a kind of type marker, a wrapping type which points to another
+    type. Non-null types enforce that their values are never null and can ensure
+    an error is raised if this ever occurs during a request. It is useful for
+    fields which you can make a strong guarantee on non-nullability, for example
+    usually the id field of a database row will never be null.
+
+    Note: the enforcement of non-nullability occurs within the executor.
+    '''
 
     def __str__(self):
         return '{}!'.format(self.of_type)

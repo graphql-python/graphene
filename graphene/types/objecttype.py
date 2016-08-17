@@ -6,8 +6,8 @@ from ..utils.is_base_type import is_base_type
 from .abstracttype import AbstractTypeMeta
 from .interface import Interface
 from .options import Options
-from .utils import (get_fields_in_type, yank_fields_from_attrs,
-                    get_base_fields, merge)
+from .utils import yank_fields_from_attrs, get_base_fields, merge
+from .field import Field
 
 
 class ObjectTypeMeta(AbstractTypeMeta):
@@ -26,11 +26,10 @@ class ObjectTypeMeta(AbstractTypeMeta):
             interfaces=(),
             local_fields=OrderedDict(),
         )
-        options.base_fields = get_base_fields(ObjectType, bases)
+        options.base_fields = get_base_fields(bases, _as=Field)
 
         if not options.local_fields:
-            options.local_fields = get_fields_in_type(ObjectType, attrs)
-            yank_fields_from_attrs(attrs, options.local_fields)
+            options.local_fields = yank_fields_from_attrs(attrs=attrs, _as=Field)
 
         options.interface_fields = OrderedDict()
         for interface in options.interfaces:
@@ -57,6 +56,12 @@ class ObjectTypeMeta(AbstractTypeMeta):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
+    '''
+    Object Type Definition
+
+    Almost all of the GraphQL types you define will be object types. Object types
+    have a name, but most importantly describe their fields.
+    '''
 
     @classmethod
     def is_type_of(cls, root, context, info):

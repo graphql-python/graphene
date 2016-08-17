@@ -4,8 +4,8 @@ from ..utils.is_base_type import is_base_type
 from .abstracttype import AbstractTypeMeta
 from .options import Options
 from .unmountedtype import UnmountedType
-from .utils import (get_fields_in_type, yank_fields_from_attrs,
-                    get_base_fields, merge)
+from .utils import yank_fields_from_attrs, get_base_fields, merge
+from .inputfield import InputField
 
 
 class InputObjectTypeMeta(AbstractTypeMeta):
@@ -23,11 +23,10 @@ class InputObjectTypeMeta(AbstractTypeMeta):
             local_fields=None,
         )
 
-        options.base_fields = get_base_fields(InputObjectType, bases)
+        options.base_fields = get_base_fields(bases, _as=InputField)
 
         if not options.local_fields:
-            options.local_fields = get_fields_in_type(InputObjectType, attrs)
-            yank_fields_from_attrs(attrs, options.local_fields)
+            options.local_fields = yank_fields_from_attrs(attrs, _as=InputField)
 
         options.fields = merge(
             options.base_fields,
@@ -40,6 +39,14 @@ class InputObjectTypeMeta(AbstractTypeMeta):
 
 
 class InputObjectType(six.with_metaclass(InputObjectTypeMeta, UnmountedType)):
+    '''
+    Input Object Type Definition
+
+    An input object defines a structured collection of fields which may be
+    supplied to a field argument.
+
+    Using `NonNull` will ensure that a value must be provided by the query
+    '''
 
     @classmethod
     def get_type(cls):

@@ -3,8 +3,8 @@ import six
 from ..utils.is_base_type import is_base_type
 from .abstracttype import AbstractTypeMeta
 from .options import Options
-from .utils import (get_fields_in_type, yank_fields_from_attrs,
-                    get_base_fields, merge)
+from .utils import yank_fields_from_attrs, get_base_fields, merge
+from .field import Field
 
 
 class InterfaceMeta(AbstractTypeMeta):
@@ -22,11 +22,10 @@ class InterfaceMeta(AbstractTypeMeta):
             local_fields=None,
         )
 
-        options.base_fields = get_base_fields(Interface, bases)
+        options.base_fields = get_base_fields(bases, _as=Field)
 
         if not options.local_fields:
-            options.local_fields = get_fields_in_type(Interface, attrs)
-            yank_fields_from_attrs(attrs, options.local_fields)
+            options.local_fields = yank_fields_from_attrs(attrs, _as=Field)
 
         options.fields = merge(
             options.base_fields,
@@ -40,6 +39,15 @@ class InterfaceMeta(AbstractTypeMeta):
 
 
 class Interface(six.with_metaclass(InterfaceMeta)):
+    '''
+    Interface Type Definition
+
+    When a field can return one of a heterogeneous set of types, a Interface type
+    is used to describe what types are possible, what fields are in common across
+    all types, as well as a function to determine which type is actually used
+    when the field is resolved.
+    '''
+
     resolve_type = None
 
     def __init__(self, *args, **kwargs):

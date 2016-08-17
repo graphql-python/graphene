@@ -2,11 +2,19 @@ import six
 
 from ..utils.is_base_type import is_base_type
 from .options import Options
-from .utils import (get_fields_in_type, get_base_fields,
-                    yank_fields_from_attrs, merge)
+from .utils import (yank_fields_from_attrs, get_base_fields,
+                    merge)
 
 
 class AbstractTypeMeta(type):
+    '''
+    AbstractType Definition
+
+    When we want to share fields across multiple types, like a Interface,
+    a ObjectType and a Input ObjectType we can use AbstractTypes for defining
+    our fields that the other types will inherit from.
+    '''
+
 
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of
@@ -19,10 +27,9 @@ class AbstractTypeMeta(type):
                 # raise Exception('You can only extend AbstractTypes after the base definition.')
                 return type.__new__(cls, name, bases, attrs)
 
-        base_fields = get_base_fields(AbstractType, bases)
+        base_fields = get_base_fields(bases, _as=None)
 
-        fields = get_fields_in_type(AbstractType, attrs)
-        yank_fields_from_attrs(attrs, fields)
+        fields = yank_fields_from_attrs(attrs, _as=None)
 
         options = Options(
             fields=merge(base_fields, fields)
