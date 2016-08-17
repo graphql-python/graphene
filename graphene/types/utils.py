@@ -6,19 +6,6 @@ from .inputfield import InputField
 from .unmountedtype import UnmountedType
 
 
-def merge_fields_in_attrs(bases, attrs):
-    from ..types import AbstractType, Interface
-    inherited_bases = (AbstractType, Interface)
-    for base in bases:
-        if base in inherited_bases or not issubclass(base, inherited_bases):
-            continue
-        for name, field in base._meta.fields.items():
-            if name in attrs:
-                continue
-            attrs[name] = field
-    return attrs
-
-
 def merge(*dicts):
     merged = OrderedDict()
     for _dict in dicts:
@@ -26,62 +13,56 @@ def merge(*dicts):
     return merged
 
 
-def get_base_fields(in_type, bases):
+def get_base_fields(bases, _as=None):
     fields = OrderedDict()
-    fields = merge_fields_in_attrs(bases, fields)
-    return get_fields_in_type(in_type, fields, order=False)
+    from ..types import AbstractType, Interface
+    # We allow inheritance in AbstractTypes and Interfaces but not ObjectTypes
+    inherited_bases = (AbstractType, Interface)
+    for base in bases:
+        if base in inherited_bases or not issubclass(base, inherited_bases):
+            continue
+        for name, field in base._meta.fields.items():
+            if name in fields:
+                continue
+            fields[name] = get_field_as(field, _as=_as)
+
+    return fields
 
 
-def unmounted_field_in_type(unmounted_field, type):
+def mount_as(unmounted_field, _as):
     '''
     Mount the UnmountedType dinamically as Field or InputField
-    depending on where mounted in.
-
-    ObjectType -> Field
-    InputObjectType -> InputField
     '''
-    # from ..types.inputobjecttype import InputObjectType
-    from ..types.objecttype import ObjectType
-    from ..types.interface import Interface
-    from ..types.abstracttype import AbstractType
-    from ..types.inputobjecttype import InputObjectType
+    if _as is None:
+        return unmounted_field
 
-    if issubclass(type, (ObjectType, Interface)):
+    elif _as is Field:
         return unmounted_field.Field()
 
-    elif issubclass(type, (AbstractType)):
-        return unmounted_field
-    elif issubclass(type, (InputObjectType)):
+    elif _as is InputField:
         return unmounted_field.InputField()
 
     raise Exception(
         'Unmounted field "{}" cannot be mounted in {}.'.format(
-            unmounted_field, type
+            unmounted_field, _as
         )
     )
 
 
-def get_field(in_type, value):
+def get_field_as(value, _as=None):
     if isinstance(value, (Field, InputField, Dynamic)):
         return value
     elif isinstance(value, UnmountedType):
-        return unmounted_field_in_type(value, in_type)
+        return mount_as(value, _as)
 
 
-def get_fields_in_type(in_type, attrs, order=True):
+def yank_fields_from_attrs(attrs, _as=None):
     fields_with_names = []
     for attname, value in list(attrs.items()):
-        field = get_field(in_type, value)
+        field = get_field_as(value, _as)
         if not field:
             continue
         fields_with_names.append((attname, field))
-
-    if not order:
-        return OrderedDict(fields_with_names)
+        del attrs[attname]
 
     return OrderedDict(sorted(fields_with_names, key=lambda f: f[1]))
-
-
-def yank_fields_from_attrs(attrs, fields):
-    for name in fields.keys():
-        del attrs[name]
