@@ -7,6 +7,14 @@ from .utils import (yank_fields_from_attrs, get_base_fields,
 
 
 class AbstractTypeMeta(type):
+    '''
+    AbstractType Definition
+
+    When we want to share fields across multiple types, like a Interface,
+    a ObjectType and a Input ObjectType we can use AbstractTypes for defining
+    our fields that the other types will inherit from.
+    '''
+
 
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of

@@ -31,6 +31,14 @@ class UnionMeta(type):
 
 
 class Union(six.with_metaclass(UnionMeta)):
+    '''
+    Union Type Definition
+
+    When a field can return one of a heterogeneous set of types, a Union type
+    is used to describe what types are possible as well as providing a function
+    to determine which type is actually used when the field is resolved.
+    '''
+
     resolve_type = None
 
     def __init__(self, *args, **kwargs):

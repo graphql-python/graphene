@@ -39,6 +39,14 @@ class InputObjectTypeMeta(AbstractTypeMeta):
 
 
 class InputObjectType(six.with_metaclass(InputObjectTypeMeta, UnmountedType)):
+    '''
+    Input Object Type Definition
+
+    An input object defines a structured collection of fields which may be
+    supplied to a field argument.
+
+    Using `NonNull` will ensure that a value must be provided by the query
+    '''
 
     @classmethod
     def get_type(cls):

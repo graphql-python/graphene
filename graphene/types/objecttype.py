@@ -56,6 +56,12 @@ class ObjectTypeMeta(AbstractTypeMeta):
 
 
 class ObjectType(six.with_metaclass(ObjectTypeMeta)):
+    '''
+    Object Type Definition
+
+    Almost all of the GraphQL types you define will be object types. Object types
+    have a name, but most importantly describe their fields.
+    '''
 
     @classmethod
     def is_type_of(cls, root, context, info):

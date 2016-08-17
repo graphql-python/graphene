@@ -11,12 +11,10 @@ from .unmountedtype import UnmountedType
 class ScalarTypeMeta(type):
 
     def __new__(cls, name, bases, attrs):
-        super_new = super(ScalarTypeMeta, cls).__new__
-
         # Also ensure initialization is only performed for subclasses of Model
         # (excluding Model class itself).
         if not is_base_type(bases, ScalarTypeMeta):
-            return super_new(cls, name, bases, attrs)
+            return type.__new__(cls, name, bases, attrs)
 
         options = Options(
             attrs.pop('Meta', None),
@@ -24,13 +22,21 @@ class ScalarTypeMeta(type):
             description=attrs.get('__doc__'),
         )
 
-        return super_new(cls, name, bases, dict(attrs, _meta=options))
+        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
 
     def __str__(cls):  # noqa: N802
         return cls._meta.name
 
 
 class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
+    '''
+    Scalar Type Definition
+
+    The leaf values of any request and input values to arguments are
+    Scalars (or Enums) and are defined with a name and a series of functions
+    used to parse input from ast or variables and to ensure validity.
+    '''
+
     serialize = None
     parse_value = None
     parse_literal = None

@@ -7,6 +7,9 @@ from .unmountedtype import UnmountedType
 
 
 def merge(*dicts):
+    '''
+    Merge the dicts into one
+    '''
     merged = OrderedDict()
     for _dict in dicts:
         merged.update(_dict)
@@ -14,6 +17,9 @@ def merge(*dicts):
 
 
 def get_base_fields(bases, _as=None):
+    '''
+    Get all the fields in the given bases
+    '''
     fields = OrderedDict()
     from ..types import AbstractType, Interface
     # We allow inheritance in AbstractTypes and Interfaces but not ObjectTypes
@@ -50,6 +56,9 @@ def mount_as(unmounted_field, _as):
 
 
 def get_field_as(value, _as=None):
+    '''
+    Get type mounted
+    '''
     if isinstance(value, (Field, InputField, Dynamic)):
         return value
     elif isinstance(value, UnmountedType):
@@ -57,6 +66,10 @@ def get_field_as(value, _as=None):
 
 
 def yank_fields_from_attrs(attrs, _as=None):
+    '''
+    Extract all the fields in given attributes (dict)
+    and return them ordered
+    '''
     fields_with_names = []
     for attname, value in list(attrs.items()):
         field = get_field_as(value, _as)

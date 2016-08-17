@@ -39,6 +39,15 @@ class InterfaceMeta(AbstractTypeMeta):
 
 
 class Interface(six.with_metaclass(InterfaceMeta)):
+    '''
+    Interface Type Definition
+
+    When a field can return one of a heterogeneous set of types, a Interface type
+    is used to describe what types are possible, what fields are in common across
+    all types, as well as a function to determine which type is actually used
+    when the field is resolved.
+    '''
+
     resolve_type = None
 
     def __init__(self, *args, **kwargs):

@@ -9,15 +9,14 @@ from graphql.utils.schema_printer import print_schema
 from .typemap import TypeMap, is_graphene_type
 
 
-# from ..utils.get_graphql_type import get_graphql_type
-
-
-# from graphql.type.schema import assert_object_implements_interface
-
-# from collections import defaultdict
-
-
 class Schema(GraphQLSchema):
+    '''
+    Schema Definition
+
+    A Schema is created by supplying the root types of each type of operation,
+    query and mutation (optional). A schema definition is then supplied to the
+    validator and executor.
+    '''
 
     def __init__(self, query=None, mutation=None, subscription=None,
                  directives=None, types=None, executor=None, middlewares=None):

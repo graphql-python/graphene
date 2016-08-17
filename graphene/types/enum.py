@@ -50,6 +50,13 @@ class EnumTypeMeta(type):
 
 
 class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
+    '''
+    Enum Type Definition
+
+    Some leaf values of requests and input values are Enums. GraphQL serializes
+    Enum values as strings, however internally Enums can be represented by any
+    kind of type, often integers.
+    '''
 
     def get_type(self):
         return type(self)
