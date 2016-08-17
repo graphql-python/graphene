@@ -9,7 +9,7 @@ from .unmountedtype import UnmountedType
 try:
     from enum import Enum as PyEnum
 except ImportError:
-    from ..utils.enum import Enum as PyEnum
+    from ..pyutils.enum import Enum as PyEnum
 
 
 class EnumTypeMeta(type):
