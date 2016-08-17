@@ -1,12 +1,12 @@
 import pytest
 
 from ...types import (Argument, Field, InputField, InputObjectType, ObjectType,
-                      Schema)
+                      Schema, AbstractType)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
 
 
-class SharedFields(object):
+class SharedFields(AbstractType):
     shared = String()
 
 

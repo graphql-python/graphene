@@ -4,7 +4,7 @@ from functools import partial
 import six
 from promise import Promise
 
-from ..types import Argument, Field, InputObjectType, String
+from ..types import Argument, Field, InputObjectType, String, AbstractType
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
@@ -27,9 +27,14 @@ class ClientIDMutationMeta(ObjectTypeMeta):
                 "{}.mutate_and_get_payload method is required"
                 " in a ClientIDMutation."
             ).format(name)
-        input_attrs = props(input_class) if input_class else {}
+        input_attrs = {}
+        bases = ()
+        if not issubclass(input_class, AbstractType):
+            input_attrs = props(input_class) if input_class else {}
+        else:
+            bases += (input_class, )
         input_attrs['client_mutation_id'] = String(name='clientMutationId')
-        cls.Input = type('{}Input'.format(base_name), (InputObjectType,), input_attrs)
+        cls.Input = type('{}Input'.format(base_name), bases + (InputObjectType,), input_attrs)
         cls.Field = partial(Field, cls, resolver=cls.mutate, input=Argument(cls.Input))
         return cls
 

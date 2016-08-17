@@ -10,9 +10,6 @@ from ..node import Node
 
 class SharedNodeFields(AbstractType):
 
-    class Meta:
-        interfaces = (Node, )
-
     shared = String()
     something_else = String()
 
@@ -33,6 +30,9 @@ class MyNode(ObjectType):
 
 class MyOtherNode(SharedNodeFields, ObjectType):
     extra_field = String()
+
+    class Meta:
+        interfaces = (Node, )
 
     def resolve_extra_field(self, *_):
         return 'extra field info.'
