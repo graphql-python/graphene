@@ -15,7 +15,6 @@ class AbstractTypeMeta(type):
     our fields that the other types will inherit from.
     '''
 
-
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of
         # AbstractType
