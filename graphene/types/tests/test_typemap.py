@@ -1,11 +1,16 @@
 
 from graphql.type import (GraphQLArgument, GraphQLEnumType, GraphQLEnumValue,
-                          GraphQLField, GraphQLObjectType, GraphQLString)
+                          GraphQLField, GraphQLObjectType, GraphQLString,
+                          GraphQLInterfaceType, GraphQLInputObjectField,
+                          GraphQLInputObjectType)
 
 from ..dynamic import Dynamic
 from ..enum import Enum
 from ..field import Field
+from ..inputfield import InputField
 from ..objecttype import ObjectType
+from ..inputobjecttype import InputObjectType
+from ..interface import Interface
 from ..scalars import String
 from ..typemap import TypeMap
 
@@ -70,12 +75,68 @@ def test_dynamic_objecttype():
     class MyObjectType(ObjectType):
         '''Description'''
         bar = Dynamic(lambda: Field(String))
+        own = Field(lambda: MyObjectType)
 
     typemap = TypeMap([MyObjectType])
     assert 'MyObjectType' in typemap
-    assert list(MyObjectType._meta.fields.keys()) == ['bar']
+    assert list(MyObjectType._meta.fields.keys()) == ['bar', 'own']
     graphql_type = typemap['MyObjectType']
 
     fields = graphql_type.get_fields()
-    assert list(fields.keys()) == ['bar']
+    assert list(fields.keys()) == ['bar', 'own']
     assert fields['bar'].type == GraphQLString
+    assert fields['own'].type == graphql_type
+
+
+def test_interface():
+    class MyInterface(Interface):
+        '''Description'''
+        foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
+        bar = String(name='gizmo')
+        own = Field(lambda: MyInterface)
+
+        def resolve_foo(self, args, info):
+            return args.get('bar')
+
+    typemap = TypeMap([MyInterface])
+    assert 'MyInterface' in typemap
+    graphql_type = typemap['MyInterface']
+    assert isinstance(graphql_type, GraphQLInterfaceType)
+    assert graphql_type.name == 'MyInterface'
+    assert graphql_type.description == 'Description'
+
+    fields = graphql_type.get_fields()
+    assert list(fields.keys()) == ['foo', 'gizmo', 'own']
+    assert fields['own'].type == graphql_type
+    foo_field = fields['foo']
+    assert isinstance(foo_field, GraphQLField)
+    assert foo_field.description == 'Field description'
+    assert not foo_field.resolver # Resolver not attached in interfaces
+    assert foo_field.args == {
+        'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x')
+    }
+
+
+def test_inputobject():
+    class MyInputObjectType(InputObjectType):
+        '''Description'''
+        foo = String(description='Field description')
+        bar = String(name='gizmo')
+        own = InputField(lambda: MyInputObjectType)
+
+        def resolve_foo(self, args, info):
+            return args.get('bar')
+
+    typemap = TypeMap([MyInputObjectType])
+    assert 'MyInputObjectType' in typemap
+    graphql_type = typemap['MyInputObjectType']
+    assert isinstance(graphql_type, GraphQLInputObjectType)
+    assert graphql_type.name == 'MyInputObjectType'
+    assert graphql_type.description == 'Description'
+
+    fields = graphql_type.get_fields()
+    assert list(fields.keys()) == ['foo', 'gizmo', 'own']
+    assert fields['own'].type == graphql_type
+    foo_field = fields['foo']
+    assert isinstance(foo_field, GraphQLInputObjectField)
+    assert foo_field.description == 'Field description'
