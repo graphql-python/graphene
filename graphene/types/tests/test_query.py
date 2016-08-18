@@ -92,51 +92,49 @@ def test_big_list_query_compiled_query_benchmark(benchmark):
 
 
 def test_big_list_of_containers_query_benchmark(benchmark):
-    big_list = range(10000)
-
     class Container(ObjectType):
         x = Int()
+
+    big_container_list = [Container(x=x) for x in range(10000)]
 
     class Query(ObjectType):
         all_containers = List(Container)
 
         def resolve_all_containers(self, args, context, info):
-            return (Container(x=x) for x in big_list)
+            return big_container_list
 
     hello_schema = Schema(Query)
 
     big_list_query = partial(hello_schema.execute, '{ allContainers { x } }')
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allContainers': [{'x': x} for x in big_list]}
+    assert result.data == {'allContainers': [{'x': c.x} for c in big_container_list]}
 
 
 def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
-    big_list = range(10000)
-
     class Container(ObjectType):
         x = Int()
         y = Int()
         z = Int()
         o = Int()
 
+    big_container_list = [Container(x=x, y=x, z=x, o=x) for x in range(10000)]
+
     class Query(ObjectType):
         all_containers = List(Container)
 
         def resolve_all_containers(self, args, context, info):
-            return (Container(x=x, y=x, z=x, o=x) for x in big_list)
+            return big_container_list
 
     hello_schema = Schema(Query)
 
     big_list_query = partial(hello_schema.execute, '{ allContainers { x, y, z, o } }')
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allContainers': [{'x': x, 'y':x, 'z':x, 'o': x} for x in big_list]}
+    assert result.data == {'allContainers': [{'x': c.x, 'y': c.y, 'z': c.z, 'o': c.o} for c in big_container_list]}
 
 
 def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark(benchmark):
-    big_list = range(10000)
-
     class Container(ObjectType):
         x = Int()
         y = Int()
@@ -155,15 +153,17 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
         def resolve_o(self, args, context, info):
             return self.o
 
+    big_container_list = [Container(x=x, y=x, z=x, o=x) for x in range(10000)]
+
     class Query(ObjectType):
         all_containers = List(Container)
 
         def resolve_all_containers(self, args, context, info):
-            return (Container(x=x, y=x, z=x, o=x) for x in big_list)
+            return big_container_list
 
     hello_schema = Schema(Query)
 
     big_list_query = partial(hello_schema.execute, '{ allContainers { x, y, z, o } }')
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allContainers': [{'x': x, 'y':x, 'z':x, 'o': x} for x in big_list]}
+    assert result.data == {'allContainers': [{'x': c.x, 'y': c.y, 'z': c.z, 'o': c.o} for c in big_container_list]}
