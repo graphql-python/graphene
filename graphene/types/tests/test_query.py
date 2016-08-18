@@ -69,7 +69,7 @@ def test_big_list_query_benchmark(benchmark):
     big_list_query = partial(hello_schema.execute, '{ allInts }')
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allInts': big_list}
+    assert result.data == {'allInts': list(big_list)}
 
 
 def test_big_list_query_compiled_query_benchmark(benchmark):
@@ -88,7 +88,7 @@ def test_big_list_query_compiled_query_benchmark(benchmark):
     big_list_query = partial(execute, hello_schema, query_ast)
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allInts': big_list}
+    assert result.data == {'allInts': list(big_list)}
 
 
 def test_big_list_of_containers_query_benchmark(benchmark):
