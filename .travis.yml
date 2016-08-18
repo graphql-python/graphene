@@ -23,7 +23,7 @@ before_install:
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
-    pip install pytest pytest-cov coveralls six
+    pip install pytest pytest-cov pytest-benchmark coveralls six
     pip install -e .
     python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then

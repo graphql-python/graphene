@@ -76,6 +76,7 @@ setup(
     ],
     tests_require=[
         'pytest>=2.7.2',
+        'pytest-benchmark',
         'mock',
     ],
     extras_require={

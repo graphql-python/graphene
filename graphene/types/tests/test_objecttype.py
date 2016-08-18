@@ -153,3 +153,9 @@ def test_objecttype_as_container_invalid_kwargs():
         Container(unexisting_field="3")
 
     assert "'unexisting_field' is an invalid keyword argument for Container" == str(excinfo.value)
+
+
+def test_objecttype_container_benchmark(benchmark):
+    @benchmark
+    def create_objecttype():
+        Container(field1='field1', field2='field2')
