@@ -1,7 +1,7 @@
 from py.test import raises
 from sqlalchemy import Column, Table, types
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_utils.types.choice import ChoiceType
+from sqlalchemy_utils import ChoiceType, ScalarListType
 from sqlalchemy.dialects import postgresql
 
 import graphene
@@ -104,6 +104,10 @@ def test_should_choice_convert_enum():
     assert graphene_type._meta.description == 'Language'
     assert graphene_type.__enum__.__members__['es'].value == 'Spanish'
     assert graphene_type.__enum__.__members__['en'].value == 'English'
+
+
+def test_should_scalar_list_convert_list():
+    assert_column_conversion(ScalarListType(), graphene.List)
 
 
 def test_should_manytomany_convert_connectionorlist():
