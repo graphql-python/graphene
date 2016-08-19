@@ -5,9 +5,10 @@ from sqlalchemy.inspection import inspect as sqlalchemyinspect
 from sqlalchemy.orm.exc import NoResultFound
 
 from ...core.classtypes.objecttype import ObjectType, ObjectTypeMeta
-from ...relay.types import Node, NodeMeta
 from ...relay.connection import Connection
+from ...relay.types import Node, NodeMeta
 from .converter import (convert_sqlalchemy_column,
+                        convert_sqlalchemy_composite,
                         convert_sqlalchemy_relationship)
 from .options import SQLAlchemyOptions
 from .utils import get_query, is_mapped
@@ -34,16 +35,24 @@ class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
             converted_relationship = convert_sqlalchemy_relationship(relationship)
             cls.add_to_class(relationship.key, converted_relationship)
 
-        for name, column in inspected_model.columns.items():
-            is_not_in_only = only_fields and name not in only_fields
-            is_already_created = name in already_created_fields
-            is_excluded = name in exclude_fields or is_already_created
-            if is_not_in_only or is_excluded:
+        def filter_included(l):
+            for name, value in l.items():
+                is_not_in_only = only_fields and name not in only_fields
+                is_already_created = name in already_created_fields
+                is_excluded = name in exclude_fields or is_already_created
                 # We skip this field if we specify only_fields and is not
                 # in there. Or when we excldue this field in exclude_fields
-                continue
+                if is_not_in_only or is_excluded:
+                    continue
+                yield name, value
+
+        for name, column in filter_included(inspected_model.columns):
             converted_column = convert_sqlalchemy_column(column)
             cls.add_to_class(name, converted_column)
+
+        for name, composite in filter_included(inspected_model.composites):
+            converted_composite = convert_sqlalchemy_composite(composite)
+            cls.add_to_class(name, converted_composite)
 
     def construct(cls, *args, **kwargs):
         cls = super(SQLAlchemyObjectTypeMeta, cls).construct(*args, **kwargs)

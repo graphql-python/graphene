@@ -31,6 +31,30 @@ def convert_sqlalchemy_column(column):
     return convert_sqlalchemy_type(getattr(column, 'type', None), column)
 
 
+def convert_sqlalchemy_composite(composite):
+    try:
+        return convert_sqlalchemy_composite.registry[composite.composite_class](composite)
+    except KeyError:
+        try:
+            raise Exception(
+                "Don't know how to convert the composite field %s (%s)" %
+                (composite, composite.composite_class))
+        except AttributeError:
+            # handle fields that are not attached to a class yet (don't have a parent)
+            raise Exception(
+                "Don't know how to convert the composite field %r (%s)" %
+                (composite, composite.composite_class))
+
+
+def _register_composite_class(cls):
+    def inner(fn):
+        convert_sqlalchemy_composite.registry[cls] = fn
+    return inner
+
+convert_sqlalchemy_composite.registry = {}
+convert_sqlalchemy_composite.register = _register_composite_class
+
+
 @singledispatch
 def convert_sqlalchemy_type(type, column):
     raise Exception(
