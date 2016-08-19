@@ -1,18 +1,22 @@
+from graphql.type import GraphQLString
 from singledispatch import singledispatch
 from sqlalchemy import types
-from sqlalchemy.orm import interfaces
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.orm import interfaces
 
 from ...core.classtypes.enum import Enum
-from ...core.types.scalars import ID, Boolean, Float, Int, String
-from ...core.types.definitions import List
 from ...core.types.custom_scalars import JSONString
+from ...core.types.definitions import List
+from ...core.types.scalars import ID, Boolean, Float, Int, String
 from .fields import ConnectionOrListField, SQLAlchemyModelField
 
 try:
-    from sqlalchemy_utils.types.choice import ChoiceType
+    from sqlalchemy_utils import ChoiceType, ScalarListType
 except ImportError:
     class ChoiceType(object):
+        pass
+
+    class ScalarListType(object):
         pass
 
 
@@ -76,6 +80,11 @@ def convert_column_to_float(type, column):
 def convert_column_to_enum(type, column):
     name = '{}_{}'.format(column.table.name, column.name).upper()
     return Enum(name, type.choices, description=column.doc)
+
+
+@convert_sqlalchemy_type.register(ScalarListType)
+def convert_scalar_list_to_list(type, column):
+    return List(GraphQLString, description=column.doc)
 
 
 @convert_sqlalchemy_type.register(postgresql.ARRAY)
