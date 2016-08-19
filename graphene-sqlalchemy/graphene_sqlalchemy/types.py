@@ -123,6 +123,7 @@ class SQLAlchemyObjectType(six.with_metaclass(SQLAlchemyObjectTypeMeta, ObjectTy
         except NoResultFound:
             return None
 
+    @staticmethod
     def resolve_id(root, args, context, info):
         graphene_type = info.parent_type.graphene_type
         if is_node(graphene_type):
