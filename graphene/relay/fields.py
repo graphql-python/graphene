@@ -9,8 +9,10 @@ from ..core.types.scalars import ID, Int, String
 from ..utils.wrap_resolver_function import has_context, with_context
 from .connection import Connection, Edge
 
+
 def _is_thenable(obj):
     return callable(getattr(obj, "then", None))
+
 
 class ConnectionField(Field):
 
@@ -29,7 +31,7 @@ class ConnectionField(Field):
             **kwargs)
         self.connection_type = connection_type or Connection
         self.edge_type = edge_type or Edge
-    
+
     def _get_connection_type(self, connection_type, args, context, info, resolved):
         if isinstance(resolved, self.connection_type):
             return resolved
