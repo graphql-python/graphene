@@ -65,7 +65,7 @@ def get_field_as(value, _as=None):
         return mount_as(value, _as)
 
 
-def yank_fields_from_attrs(attrs, _as=None):
+def yank_fields_from_attrs(attrs, _as=None, delete=True, sort=True):
     '''
     Extract all the fields in given attributes (dict)
     and return them ordered
@@ -76,6 +76,9 @@ def yank_fields_from_attrs(attrs, _as=None):
         if not field:
             continue
         fields_with_names.append((attname, field))
-        del attrs[attname]
+        if delete:
+            del attrs[attname]
 
-    return OrderedDict(sorted(fields_with_names, key=lambda f: f[1]))
+    if sort:
+        fields_with_names = sorted(fields_with_names, key=lambda f: f[1])
+    return OrderedDict(fields_with_names)

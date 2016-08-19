@@ -3,7 +3,7 @@ import six
 from sqlalchemy.inspection import inspect as sqlalchemyinspect
 from sqlalchemy.orm.exc import NoResultFound
 
-from graphene import ObjectType
+from graphene import ObjectType, Field
 from graphene.relay import is_node
 from .converter import (convert_sqlalchemy_column,
                         convert_sqlalchemy_relationship)
@@ -13,7 +13,7 @@ from graphene.types.objecttype import ObjectTypeMeta
 from graphene.types.options import Options
 from .registry import Registry, get_global_registry
 from graphene.utils.is_base_type import is_base_type
-from graphene.types.utils import get_fields_in_type, merge
+from graphene.types.utils import yank_fields_from_attrs, merge
 from .utils import get_query
 
 
@@ -89,9 +89,9 @@ class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
 
         options.registry.register(cls)
 
-        options.sqlalchemy_fields = get_fields_in_type(
-            ObjectType,
-            construct_fields(options)
+        options.sqlalchemy_fields = yank_fields_from_attrs(
+            construct_fields(options),
+            _as=Field,
         )
         options.fields = merge(
             options.interface_fields,
