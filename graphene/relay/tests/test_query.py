@@ -4,6 +4,8 @@ from graphql.type import GraphQLID, GraphQLNonNull
 import graphene
 from graphene import relay, with_context
 
+from promise import Promise
+
 schema = graphene.Schema()
 
 
@@ -51,7 +53,7 @@ class Query(graphene.ObjectType):
 
     connection_type_nodes = relay.ConnectionField(
         MyNode, connection_type=MyConnection)
-    
+
     promise_connection_type = relay.ConnectionField(
         MyNode, connection_type=MyConnection)
 
@@ -78,7 +80,7 @@ class Query(graphene.ObjectType):
 
     def resolve_all_my_objects(self, args, info):
         return [MyObject(name='my_object')]
-    
+
     def resolve_promise_connection_type(self, args, info):
         return Promise.resolve('async name').then(lambda name: [MyNode(id='1', name=name)])
 
