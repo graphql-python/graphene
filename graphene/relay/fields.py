@@ -1,4 +1,5 @@
 import six
+import functools
 
 from graphql_relay.node.node import from_global_id
 
@@ -7,6 +8,10 @@ from ..core.types.definitions import NonNull
 from ..core.types.scalars import ID, Int, String
 from ..utils.wrap_resolver_function import has_context, with_context
 from .connection import Connection, Edge
+
+
+def _is_thenable(obj):
+    return callable(getattr(obj, "then", None))
 
 
 class ConnectionField(Field):
@@ -27,6 +32,11 @@ class ConnectionField(Field):
         self.connection_type = connection_type or Connection
         self.edge_type = edge_type or Edge
 
+    def _get_connection_type(self, connection_type, args, context, info, resolved):
+        if isinstance(resolved, self.connection_type):
+            return resolved
+        return self.from_list(connection_type, resolved, args, context, info)
+
     @with_context
     def resolver(self, instance, args, context, info):
         schema = info.schema.graphene_schema
@@ -38,9 +48,12 @@ class ConnectionField(Field):
         else:
             resolved = super(ConnectionField, self).resolver(instance, args, info)
 
-        if isinstance(resolved, self.connection_type):
-            return resolved
-        return self.from_list(connection_type, resolved, args, context, info)
+        get_connection_type = functools.partial(self._get_connection_type, connection_type, args, context, info)
+
+        if _is_thenable(resolved):
+            return resolved.then(get_connection_type)
+
+        return get_connection_type(resolved)
 
     def from_list(self, connection_type, resolved, args, context, info):
         return connection_type.from_list(resolved, args, context, info)

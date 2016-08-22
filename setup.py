@@ -66,6 +66,7 @@ setup(
         'sqlalchemy',
         'sqlalchemy_utils',
         'mock',
+        'promse',
         # Required for Django postgres fields testing
         'psycopg2',
     ],
