@@ -36,7 +36,7 @@ def test_enum():
     assert isinstance(graphql_enum, GraphQLEnumType)
     assert graphql_enum.name == 'MyEnum'
     assert graphql_enum.description == 'Description'
-    values = graphql_enum.get_values()
+    values = graphql_enum.values
     assert values == [
         GraphQLEnumValue(name='foo', value=1, description='Description foo=1', deprecation_reason='Is deprecated'),
         GraphQLEnumValue(name='bar', value=2, description='Description bar=2'),
@@ -59,7 +59,7 @@ def test_objecttype():
     assert graphql_type.name == 'MyObjectType'
     assert graphql_type.description == 'Description'
 
-    fields = graphql_type.get_fields()
+    fields = graphql_type.fields
     assert list(fields.keys()) == ['foo', 'gizmo']
     foo_field = fields['foo']
     assert isinstance(foo_field, GraphQLField)
@@ -82,7 +82,7 @@ def test_dynamic_objecttype():
     assert list(MyObjectType._meta.fields.keys()) == ['bar', 'own']
     graphql_type = typemap['MyObjectType']
 
-    fields = graphql_type.get_fields()
+    fields = graphql_type.fields
     assert list(fields.keys()) == ['bar', 'own']
     assert fields['bar'].type == GraphQLString
     assert fields['own'].type == graphql_type
@@ -92,7 +92,7 @@ def test_interface():
     class MyInterface(Interface):
         '''Description'''
         foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
-        bar = String(name='gizmo')
+        bar = String(name='gizmo', first_arg=String(), other_arg=String(name='oth_arg'))
         own = Field(lambda: MyInterface)
 
         def resolve_foo(self, args, info):
@@ -105,9 +105,10 @@ def test_interface():
     assert graphql_type.name == 'MyInterface'
     assert graphql_type.description == 'Description'
 
-    fields = graphql_type.get_fields()
+    fields = graphql_type.fields
     assert list(fields.keys()) == ['foo', 'gizmo', 'own']
     assert fields['own'].type == graphql_type
+    assert (fields['gizmo'].args.keys()) == ['firstArg', 'oth_arg']
     foo_field = fields['foo']
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == 'Field description'
@@ -134,7 +135,7 @@ def test_inputobject():
     assert graphql_type.name == 'MyInputObjectType'
     assert graphql_type.description == 'Description'
 
-    fields = graphql_type.get_fields()
+    fields = graphql_type.fields
     assert list(fields.keys()) == ['foo', 'gizmo', 'own']
     assert fields['own'].type == graphql_type
     foo_field = fields['foo']

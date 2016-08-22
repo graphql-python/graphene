@@ -8,7 +8,6 @@ from ..types import SQLAlchemyObjectType
 from ..registry import Registry
 
 from graphene import Field, Int
-# from tests.utils import assert_equal_lists
 
 from .models import Article, Reporter
 

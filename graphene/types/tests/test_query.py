@@ -73,7 +73,7 @@ def test_big_list_query_benchmark(benchmark):
 
 
 def test_big_list_query_compiled_query_benchmark(benchmark):
-    big_list = range(10000)
+    big_list = range(100000)
 
     class Query(ObjectType):
         all_ints = List(Int)
@@ -95,7 +95,7 @@ def test_big_list_of_containers_query_benchmark(benchmark):
     class Container(ObjectType):
         x = Int()
 
-    big_container_list = [Container(x=x) for x in range(10000)]
+    big_container_list = [Container(x=x) for x in range(1000)]
 
     class Query(ObjectType):
         all_containers = List(Container)
@@ -118,7 +118,7 @@ def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
         z = Int()
         o = Int()
 
-    big_container_list = [Container(x=x, y=x, z=x, o=x) for x in range(10000)]
+    big_container_list = [Container(x=x, y=x, z=x, o=x) for x in range(1000)]
 
     class Query(ObjectType):
         all_containers = List(Container)
@@ -153,7 +153,7 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
         def resolve_o(self, args, context, info):
             return self.o
 
-    big_container_list = [Container(x=x, y=x, z=x, o=x) for x in range(10000)]
+    big_container_list = [Container(x=x, y=x, z=x, o=x) for x in range(1000)]
 
     class Query(ObjectType):
         all_containers = List(Container)

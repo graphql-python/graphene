@@ -213,6 +213,7 @@ class TypeMap(GraphQLTypeMap):
                 for arg_name, arg in field.args.items():
                     map = cls.reducer(map, arg.type)
                     arg_type = cls.get_field_type(map, arg.type)
+                    arg_name = arg.name or cls.process_field_name(arg_name)
                     args[arg_name] = GraphQLArgument(
                         arg_type,
                         description=arg.description,
