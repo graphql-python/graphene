@@ -206,6 +206,7 @@ class TypeMap(GraphQLTypeMap):
                 _field = GraphQLInputObjectField(
                     field_type,
                     default_value=field.default_value,
+                    out_name=field.name or name,
                     description=field.description
                 )
             else:
@@ -213,9 +214,10 @@ class TypeMap(GraphQLTypeMap):
                 for arg_name, arg in field.args.items():
                     map = cls.reducer(map, arg.type)
                     arg_type = cls.get_field_type(map, arg.type)
-                    arg_name = arg.name or cls.process_field_name(arg_name)
-                    args[arg_name] = GraphQLArgument(
+                    processed_arg_name = arg.name or cls.process_field_name(arg_name)
+                    args[processed_arg_name] = GraphQLArgument(
                         arg_type,
+                        out_name=arg.name or arg_name,
                         description=arg.description,
                         default_value=arg.default_value
                     )

@@ -67,7 +67,7 @@ def test_objecttype():
     f = MyObjectType.resolve_foo
     assert foo_field.resolver == getattr(f, '__func__', f)
     assert foo_field.args == {
-        'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x')
+        'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x', out_name='bar')
     }
 
 
@@ -114,18 +114,18 @@ def test_interface():
     assert foo_field.description == 'Field description'
     assert not foo_field.resolver # Resolver not attached in interfaces
     assert foo_field.args == {
-        'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x')
+        'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x', out_name='bar')
     }
 
 
 def test_inputobject():
     class MyInputObjectType(InputObjectType):
         '''Description'''
-        foo = String(description='Field description')
+        foo_bar = String(description='Field description')
         bar = String(name='gizmo')
         own = InputField(lambda: MyInputObjectType)
 
-        def resolve_foo(self, args, info):
+        def resolve_foo_bar(self, args, info):
             return args.get('bar')
 
     typemap = TypeMap([MyInputObjectType])
@@ -136,8 +136,8 @@ def test_inputobject():
     assert graphql_type.description == 'Description'
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ['foo', 'gizmo', 'own']
+    assert list(fields.keys()) == ['fooBar', 'gizmo', 'own']
     assert fields['own'].type == graphql_type
-    foo_field = fields['foo']
+    foo_field = fields['fooBar']
     assert isinstance(foo_field, GraphQLInputObjectField)
     assert foo_field.description == 'Field description'

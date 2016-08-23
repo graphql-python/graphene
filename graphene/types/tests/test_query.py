@@ -1,8 +1,11 @@
+import json
 from functools import partial
 
 from graphql import execute, Source, parse
 
 from ..objecttype import ObjectType
+from ..inputfield import InputField
+from ..inputobjecttype import InputObjectType
 from ..scalars import String, Int
 from ..schema import Schema
 from ..structures import List
@@ -31,6 +34,57 @@ def test_query_resolve_function():
     executed = hello_schema.execute('{ hello }')
     assert not executed.errors
     assert executed.data == {'hello': 'World'}
+
+
+def test_query_arguments():
+    class Query(ObjectType):
+        test = String(a_str=String(), a_int=Int())
+
+        def resolve_test(self, args, context, info):
+            return json.dumps([self, args], separators=(',', ':'))
+
+    test_schema = Schema(Query)
+
+    result = test_schema.execute('{ test }', None)
+    assert not result.errors
+    assert result.data == {'test': '[null,{}]'}
+
+    result = test_schema.execute('{ test(aStr: "String!") }', 'Source!')
+    assert not result.errors
+    assert result.data == {'test': '["Source!",{"a_str":"String!"}]'}
+
+    result = test_schema.execute('{ test(aInt: -123, aStr: "String!") }', 'Source!')
+    assert not result.errors
+    assert result.data in [
+        {'test': '["Source!",{"a_str":"String!","a_int":-123}]'},
+        {'test': '["Source!",{"a_int":-123,"a_str":"String!"}]'}
+    ]
+
+
+def test_query_input_field():
+    class Input(InputObjectType):
+        a_field = String()
+        recursive_field = InputField(lambda: Input)
+
+    class Query(ObjectType):
+        test = String(a_input=Input())
+
+        def resolve_test(self, args, context, info):
+            return json.dumps([self, args], separators=(',', ':'))
+
+    test_schema = Schema(Query)
+
+    result = test_schema.execute('{ test }', None)
+    assert not result.errors
+    assert result.data == {'test': '[null,{}]'}
+
+    result = test_schema.execute('{ test(aInput: {aField: "String!"} ) }', 'Source!')
+    assert not result.errors
+    assert result.data == {'test': '["Source!",{"a_input":{"a_field":"String!"}}]'}
+
+    result = test_schema.execute('{ test(aInput: {recursiveField: {aField: "String!"}}) }', 'Source!')
+    assert not result.errors
+    assert result.data == {'test': '["Source!",{"a_input":{"recursive_field":{"a_field":"String!"}}}]'}
 
 
 def test_query_middlewares():
