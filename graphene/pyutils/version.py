@@ -21,7 +21,8 @@ def get_version(version=None):
         git_changeset = get_git_changeset()
         if git_changeset:
             sub = '.dev%s' % git_changeset
-
+        else:
+            sub = '.dev'
     elif version[3] != 'final':
         mapping = {'alpha': 'a', 'beta': 'b', 'rc': 'rc'}
         sub = mapping[version[3]] + str(version[4])
@@ -64,14 +65,14 @@ def get_git_changeset():
     so it's sufficient for generating the development version numbers.
     """
     repo_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    git_log = subprocess.Popen(
-        'git log --pretty=format:%ct --quiet -1 HEAD',
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        shell=True, cwd=repo_dir, universal_newlines=True,
-    )
-    timestamp = git_log.communicate()[0]
     try:
+        git_log = subprocess.Popen(
+            'git log --pretty=format:%ct --quiet -1 HEAD',
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            shell=True, cwd=repo_dir, universal_newlines=True,
+        )
+        timestamp = git_log.communicate()[0]
         timestamp = datetime.datetime.utcfromtimestamp(int(timestamp))
-    except ValueError:
+    except:
         return None
     return timestamp.strftime('%Y%m%d%H%M%S')
