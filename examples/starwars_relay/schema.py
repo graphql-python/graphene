@@ -47,8 +47,8 @@ class IntroduceShip(relay.ClientIDMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, input, context, info):
-        ship_name = input.get('shipName')
-        faction_id = input.get('factionId')
+        ship_name = input.get('ship_name')
+        faction_id = input.get('faction_id')
         ship = create_ship(ship_name, faction_id)
         faction = get_faction(faction_id)
         return IntroduceShip(ship=ship, faction=faction)
