@@ -108,7 +108,7 @@ def test_interface():
     fields = graphql_type.fields
     assert list(fields.keys()) == ['foo', 'gizmo', 'own']
     assert fields['own'].type == graphql_type
-    assert (fields['gizmo'].args.keys()) == ['firstArg', 'oth_arg']
+    assert list(fields['gizmo'].args.keys()) == ['firstArg', 'oth_arg']
     foo_field = fields['foo']
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == 'Field description'
