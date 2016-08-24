@@ -10,10 +10,6 @@ class MyObject(ObjectType):
         interfaces = [Node]
     field = String()
 
-    @classmethod
-    def get_node(cls, id):
-        pass
-
 
 def test_connection():
     class MyObjectConnection(Connection):

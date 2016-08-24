@@ -89,7 +89,9 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
             assert cls in graphene_type._meta.interfaces
         except:
             return None
-        return graphene_type.get_node(_id, context, info)
+        get_node = getattr(graphene_type, 'get_node', None)
+        if get_node:
+            return get_node(_id, context, info)
 
     @classmethod
     def from_global_id(cls, global_id):
@@ -101,13 +103,8 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
 
     @classmethod
     def implements(cls, objecttype):
-        require_get_node = cls.get_node_from_global_id == Node.get_node_from_global_id
         get_connection = getattr(objecttype, 'get_connection', None)
         if not get_connection:
             get_connection = partial(get_default_connection, objecttype)
 
         objecttype.Connection = get_connection()
-        if require_get_node:
-            assert hasattr(objecttype, 'get_node'), (
-                '{}.get_node method is required by the Node interface.'
-            ).format(objecttype.__name__)

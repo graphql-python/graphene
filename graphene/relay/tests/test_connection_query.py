@@ -11,10 +11,8 @@ letter_chars = ['A', 'B', 'C', 'D', 'E']
 class Letter(ObjectType):
     class Meta:
         interfaces = (Node, )
-    letter = String()
 
-    def get_node(*args, **kwargs):
-        pass
+    letter = String()
 
 
 class Query(ObjectType):
