@@ -57,9 +57,6 @@ class ConnectionMeta(ObjectTypeMeta):
         options.local_fields = OrderedDict()
 
         assert options.node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
-        assert issubclass(options.node, (Node, ObjectType)), (
-            'Received incompatible node "{}" for Connection {}.'
-        ).format(options.node, name)
 
         base_name = re.sub('Connection$', '', options.name) or options.node._meta.name
         if not options.name:
