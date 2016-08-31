@@ -119,6 +119,8 @@ class TypeMap(GraphQLTypeMap):
     @classmethod
     def construct_objecttype(cls, map, type):
         from .definitions import GrapheneObjectType
+        if type._meta.name in map:
+            return map
         map[type._meta.name] = GrapheneObjectType(
             graphene_type=type,
             name=type._meta.name,
