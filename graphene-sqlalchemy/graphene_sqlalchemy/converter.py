@@ -9,9 +9,12 @@ from graphene.types.json import JSONString
 from .fields import SQLAlchemyConnectionField
 
 try:
-    from sqlalchemy_utils.types.choice import ChoiceType
+    from sqlalchemy_utils import ChoiceType, ScalarListType
 except ImportError:
     class ChoiceType(object):
+        pass
+
+    class ScalarListType(object):
         pass
 
 
@@ -83,6 +86,11 @@ def convert_column_to_float(type, column, registry=None):
 def convert_column_to_enum(type, column, registry=None):
     name = '{}_{}'.format(column.table.name, column.name).upper()
     return Enum(name, type.choices, description=column.doc)
+
+
+@convert_sqlalchemy_type.register(ScalarListType)
+def convert_scalar_list_to_list(type, column, registry=None):
+    return List(String, description=column.doc)
 
 
 @convert_sqlalchemy_type.register(postgresql.ARRAY)
