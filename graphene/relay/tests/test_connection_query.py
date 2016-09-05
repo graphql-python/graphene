@@ -19,7 +19,7 @@ class Query(ObjectType):
     letters = ConnectionField(Letter)
 
     def resolve_letters(self, args, context, info):
-        return letters.values()
+        return list(letters.values())
 
     node = Node.Field()
 
