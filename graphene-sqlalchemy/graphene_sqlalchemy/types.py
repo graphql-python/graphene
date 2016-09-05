@@ -6,6 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from graphene import ObjectType, Field
 from graphene.relay import is_node
 from .converter import (convert_sqlalchemy_column,
+                        convert_sqlalchemy_composite,
                         convert_sqlalchemy_relationship)
 from .utils import is_mapped
 
@@ -34,6 +35,17 @@ def construct_fields(options):
             continue
         converted_column = convert_sqlalchemy_column(column, options.registry)
         fields[name] = converted_column
+
+    for name, composite in inspected_model.composites.items():
+        is_not_in_only = only_fields and name not in only_fields
+        is_already_created = name in options.fields
+        is_excluded = name in exclude_fields or is_already_created
+        if is_not_in_only or is_excluded:
+            # We skip this field if we specify only_fields and is not
+            # in there. Or when we excldue this field in exclude_fields
+            continue
+        converted_composite = convert_sqlalchemy_composite(composite, options.registry)
+        fields[name] = converted_composite
 
     # Get all the columns for the relationships on the model
     for relationship in inspected_model.relationships:

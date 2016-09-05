@@ -2,6 +2,7 @@ class Registry(object):
     def __init__(self):
         self._registry = {}
         self._registry_models = {}
+        self._registry_composites = {}
 
     def register(self, cls):
         from .types import SQLAlchemyObjectType
@@ -15,6 +16,12 @@ class Registry(object):
 
     def get_type_for_model(self, model):
         return self._registry.get(model)
+
+    def register_composite_converter(self, composite, converter):
+        self._registry_composites[composite] = converter
+
+    def get_converter_for_composite(self, composite):
+        return self._registry_composites.get(composite)
 
 
 registry = None

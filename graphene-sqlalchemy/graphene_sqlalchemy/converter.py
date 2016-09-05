@@ -9,9 +9,12 @@ from graphene.types.json import JSONString
 from .fields import SQLAlchemyConnectionField
 
 try:
-    from sqlalchemy_utils.types.choice import ChoiceType
+    from sqlalchemy_utils import ChoiceType, ScalarListType
 except ImportError:
     class ChoiceType(object):
+        pass
+
+    class ScalarListType(object):
         pass
 
 
@@ -32,6 +35,33 @@ def convert_sqlalchemy_relationship(relationship, registry):
             return Field(List(_type))
 
     return Dynamic(dynamic_type)
+
+
+def convert_sqlalchemy_composite(composite, registry):
+    converter = registry.get_converter_for_composite(composite.composite_class)
+    if not converter:
+        try:
+            raise Exception(
+                "Don't know how to convert the composite field %s (%s)" %
+                (composite, composite.composite_class))
+        except AttributeError:
+            # handle fields that are not attached to a class yet (don't have a parent)
+            raise Exception(
+                "Don't know how to convert the composite field %r (%s)" %
+                (composite, composite.composite_class))
+    return converter(composite, registry)
+
+
+def _register_composite_class(cls, registry=None):
+    if registry is None:
+        from .registry import get_global_registry
+        registry = get_global_registry()
+
+    def inner(fn):
+        registry.register_composite_converter(cls, fn)
+    return inner
+
+convert_sqlalchemy_composite.register = _register_composite_class
 
 
 def convert_sqlalchemy_column(column, registry=None):
@@ -83,6 +113,11 @@ def convert_column_to_float(type, column, registry=None):
 def convert_column_to_enum(type, column, registry=None):
     name = '{}_{}'.format(column.table.name, column.name).upper()
     return Enum(name, type.choices, description=column.doc)
+
+
+@convert_sqlalchemy_type.register(ScalarListType)
+def convert_scalar_list_to_list(type, column, registry=None):
+    return List(String, description=column.doc)
 
 
 @convert_sqlalchemy_type.register(postgresql.ARRAY)
