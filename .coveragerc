@@ -1,2 +1,2 @@
 [run]
-omit = graphene/utils/enum.py,*/tests/*
+omit = graphene/pyutils/*,*/tests/*
