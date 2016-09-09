@@ -1,3 +1,9 @@
+You are in the ``next`` unreleased version of Graphene (``1.0.dev``).
+Please read `UPGRADE-v1.0.md </UPGRADE-v1.0.md>`__ to learn how to
+upgrade.
+
+--------------
+
 |Graphene Logo| `Graphene <http://graphene-python.org>`__ |Build Status| |PyPI version| |Coverage Status|
 =========================================================================================================
 
@@ -33,6 +39,12 @@ For instaling graphene, just run this command in your shell
     pip install graphene[django]
     # Or in case of need SQLAlchemy support
     pip install graphene[sqlalchemy]
+
+1.0 Upgrade Guide
+-----------------
+
+Please read `UPGRADE-v1.0.md </UPGRADE-v1.0.md>`__ to learn how to
+upgrade.
 
 Examples
 --------
