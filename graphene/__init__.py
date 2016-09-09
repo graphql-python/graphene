@@ -65,5 +65,5 @@ if not __SETUP__:
         'is_node',
         'ClientIDMutation',
         'Connection',
-        'ConnectionField'
+        'ConnectionField',
         'PageInfo']
