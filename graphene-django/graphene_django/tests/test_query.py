@@ -9,6 +9,7 @@ from graphene.relay import Node
 
 from ..compat import MissingType, RangeField
 from ..types import DjangoObjectType
+from ..fields import DjangoConnectionField
 from ..registry import reset_global_registry, get_global_registry
 from .models import Article, Reporter
 
@@ -204,3 +205,48 @@ def test_should_node():
     result = schema.execute(query)
     assert not result.errors
     assert result.data == expected
+
+
+def test_should_query_connectionfields():
+    class ReporterType(DjangoObjectType):
+
+        class Meta:
+            model = Reporter
+            interfaces = (Node, )
+            only_fields = ('articles', )
+
+    class Query(graphene.ObjectType):
+        all_reporters = DjangoConnectionField(ReporterType)
+
+        def resolve_all_reporters(self, args, context, info):
+            return [Reporter(id=1)]
+
+    schema = graphene.Schema(query=Query)
+    query = '''
+        query ReporterConnectionQuery {
+          allReporters {
+            pageInfo {
+              hasNextPage
+            }
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+    '''
+    result = schema.execute(query)
+    assert not result.errors
+    assert result.data == {
+        'allReporters': {
+            'pageInfo': {
+                'hasNextPage': False,
+            },
+            'edges': [{
+                'node': {
+                    'id': 'UmVwb3J0ZXJUeXBlOjE='
+                }
+            }]
+        }
+    }

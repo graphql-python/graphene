@@ -1,7 +1,7 @@
 from functools import partial
 
 from django.db.models.query import QuerySet
-from graphene.relay import ConnectionField
+from graphene.relay import ConnectionField, PageInfo
 from graphql_relay.connection.arrayconnection import connection_from_list_slice
 from .utils import maybe_queryset, DJANGO_FILTER_INSTALLED
 
@@ -40,6 +40,7 @@ class DjangoConnectionField(ConnectionField):
             list_slice_length=_len,
             connection_type=connection,
             edge_type=connection.Edge,
+            pageinfo_type=PageInfo,
         )
         connection.iterable = iterable
         connection.length = _len
