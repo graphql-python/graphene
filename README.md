@@ -23,11 +23,11 @@ Graphene also supports *SQLAlchemy*!
 For instaling graphene, just run this command in your shell
 
 ```bash
-pip install graphene
+pip install graphene>=1.0.dev
 # In case of need Django model support
-pip install graphene[django]
+pip install graphene-django>=1.0.dev
 # Or in case of need SQLAlchemy support
-pip install graphene[sqlalchemy]
+pip install graphene-sqlalchemy>=1.0.dev
 ```
 
 ## 1.0 Upgrade Guide
@@ -70,8 +70,6 @@ If you want to learn even more, you can also check the following [examples](exam
 
 * **Basic Schema**: [Starwars example](examples/starwars)
 * **Relay Schema**: [Starwars Relay example](examples/starwars_relay)
-* **Django model mapping**: [Starwars Django example](examples/starwars_django)
-* **SQLAlchemy model mapping**: [Flask SQLAlchemy example](examples/flask_sqlalchemy)
 
 
 ## Contributing
