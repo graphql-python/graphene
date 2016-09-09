@@ -1,7 +1,7 @@
 import pytest
 
 from ...types import (Argument, Field, InputField, InputObjectType, ObjectType,
-                      Schema, AbstractType)
+                      Schema, AbstractType, NonNull)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
 
@@ -64,7 +64,8 @@ def test_mutation():
     assert field.type == SaySomething
     assert list(field.args.keys()) == ['input']
     assert isinstance(field.args['input'], Argument)
-    assert field.args['input'].type == SaySomething.Input
+    assert isinstance(field.args['input'].type, NonNull)
+    assert field.args['input'].type.of_type == SaySomething.Input
 
 
 def test_mutation_input():
@@ -86,7 +87,8 @@ def test_subclassed_mutation():
     assert field.type == OtherMutation
     assert list(field.args.keys()) == ['input']
     assert isinstance(field.args['input'], Argument)
-    assert field.args['input'].type == OtherMutation.Input
+    assert isinstance(field.args['input'].type, NonNull)
+    assert field.args['input'].type.of_type == OtherMutation.Input
 
 
 def test_subclassed_mutation_input():
