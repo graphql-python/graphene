@@ -57,5 +57,5 @@ class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, ObjectType)):
             return payload
 
         return Promise.resolve(
-            cls.mutate_and_get_payload(args, context, info)
+            cls.mutate_and_get_payload(input, context, info)
         ).then(on_resolve)
