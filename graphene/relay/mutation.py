@@ -29,13 +29,15 @@ class ClientIDMutationMeta(ObjectTypeMeta):
             ).format(name)
         input_attrs = {}
         bases = ()
-        if not issubclass(input_class, AbstractType):
-            input_attrs = props(input_class) if input_class else {}
+        if not input_class:
+            input_attrs = {}
+        elif not issubclass(input_class, AbstractType):
+            input_attrs = props(input_class)
         else:
             bases += (input_class, )
         input_attrs['client_mutation_id'] = String(name='clientMutationId')
         cls.Input = type('{}Input'.format(base_name), bases + (InputObjectType,), input_attrs)
-        cls.Field = partial(Field, cls, resolver=cls.mutate, input=Argument(cls.Input))
+        cls.Field = partial(Field, cls, resolver=cls.mutate, input=Argument(cls.Input, required=True))
         return cls
 
 
@@ -55,5 +57,5 @@ class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, ObjectType)):
             return payload
 
         return Promise.resolve(
-            cls.mutate_and_get_payload(input, context, info)
+            cls.mutate_and_get_payload(args, context, info)
         ).then(on_resolve)
