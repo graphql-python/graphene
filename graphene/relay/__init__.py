@@ -1,6 +1,6 @@
 from .node import Node, is_node
 from .mutation import ClientIDMutation
-from .connection import Connection, ConnectionField
+from .connection import Connection, ConnectionField, PageInfo
 
 __all__ = [
     'Node',
@@ -8,4 +8,5 @@ __all__ = [
     'ClientIDMutation',
     'Connection',
     'ConnectionField',
+    'PageInfo',
 ]

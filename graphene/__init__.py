@@ -36,7 +36,8 @@ if not __SETUP__:
         is_node,
         ClientIDMutation,
         Connection,
-        ConnectionField
+        ConnectionField,
+        PageInfo
     )
     from .utils.resolve_only_args import resolve_only_args
 
@@ -64,4 +65,5 @@ if not __SETUP__:
         'is_node',
         'ClientIDMutation',
         'Connection',
-        'ConnectionField']
+        'ConnectionField'
+        'PageInfo']
