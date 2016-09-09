@@ -40,6 +40,11 @@ def resolve_type(resolve_type_func, map, root, args, info):
 
 class TypeMap(GraphQLTypeMap):
 
+    def __init__(self, types, auto_camelcase=True):
+        if not auto_camelcase:
+            raise Exception("Disabling auto_camelcase is not *yet* supported, but will be soon!")
+        super(TypeMap, self).__init__(types)
+
     @classmethod
     def reducer(cls, map, type):
         if not type:

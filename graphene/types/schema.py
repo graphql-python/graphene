@@ -19,12 +19,14 @@ class Schema(GraphQLSchema):
     '''
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 directives=None, types=None, executor=None, middlewares=None):
+                 directives=None, types=None, executor=None, middlewares=None,
+                 auto_camelcase=True):
         self._query = query
         self._mutation = mutation
         self._subscription = subscription
         self.types = types
         self._executor = executor
+        self.auto_camelcase = auto_camelcase
         if directives is None:
             directives = [
                 GraphQLIncludeDirective,
@@ -97,4 +99,4 @@ class Schema(GraphQLSchema):
         ]
         if self.types:
             initial_types += self.types
-        self._type_map = TypeMap(initial_types)
+        self._type_map = TypeMap(initial_types, auto_camelcase=self.auto_camelcase)
