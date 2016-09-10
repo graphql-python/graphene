@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='graphene-sqlalchemy',
-    version='1.0.dev20160909000001',
+    version='1.0.dev20160909000002',
 
     description='Graphene SQLAlchemy integration',
     # long_description=open('README.rst').read(),
