@@ -127,11 +127,14 @@ class SQLAlchemyObjectType(six.with_metaclass(SQLAlchemyObjectTypeMeta, ObjectTy
         return type(root) == cls._meta.model
 
     @classmethod
+    def get_query(cls, context):
+        model = cls._meta.model
+        return get_query(model, context)
+
+    @classmethod
     def get_node(cls, id, context, info):
         try:
-            model = cls._meta.model
-            query = get_query(model, context)
-            return query.get(id)
+            return cls.get_query(context).get(id)
         except NoResultFound:
             return None
 

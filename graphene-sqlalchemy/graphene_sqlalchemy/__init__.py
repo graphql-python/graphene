@@ -4,6 +4,12 @@ from .types import (
 from .fields import (
     SQLAlchemyConnectionField
 )
+from .utils import (
+	get_query,
+	get_session
+)
 
 __all__ = ['SQLAlchemyObjectType',
-           'SQLAlchemyConnectionField']
+           'SQLAlchemyConnectionField',
+           'get_query',
+           'get_session']
