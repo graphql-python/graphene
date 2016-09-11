@@ -36,6 +36,7 @@ def setup_fixtures(session):
     reporter2 = Reporter(first_name='ABO', last_name='Y')
     session.add(reporter2)
     article = Article(headline='Hi!')
+    article.reporter = reporter
     session.add(article)
     editor = Editor(name="John")
     session.add(editor)
@@ -103,9 +104,6 @@ def test_should_node(session):
         def get_node(cls, id, info):
             return Reporter(id=2, first_name='Cookie Monster')
 
-        def resolve_articles(self, *args, **kwargs):
-            return [Article(headline='Hi!')]
-
     class ArticleNode(SQLAlchemyObjectType):
 
         class Meta:
@@ -123,10 +121,10 @@ def test_should_node(session):
         all_articles = SQLAlchemyConnectionField(ArticleNode)
 
         def resolve_reporter(self, *args, **kwargs):
-            return Reporter(id=1, first_name='ABA', last_name='X')
+            return session.query(Reporter).first()
 
         def resolve_article(self, *args, **kwargs):
-            return Article(id=1, headline='Article node')
+            return session.query(Article).first()
 
     query = '''
         query ReporterQuery {
@@ -238,6 +236,95 @@ def test_should_custom_identifier(session):
     }
 
     schema = graphene.Schema(query=Query)
+    result = schema.execute(query, context_value={'session': session})
+    assert not result.errors
+    assert result.data == expected
+
+
+def test_should_mutate_well(session):
+    setup_fixtures(session)
+
+    class EditorNode(SQLAlchemyObjectType):
+
+        class Meta:
+            model = Editor
+            interfaces = (Node, )
+
+
+    class ReporterNode(SQLAlchemyObjectType):
+
+        class Meta:
+            model = Reporter
+            interfaces = (Node, )
+
+        @classmethod
+        def get_node(cls, id, info):
+            return Reporter(id=2, first_name='Cookie Monster')
+
+    class ArticleNode(SQLAlchemyObjectType):
+
+        class Meta:
+            model = Article
+            interfaces = (Node, )
+
+    class CreateArticle(graphene.Mutation):
+        class Input:
+            headline = graphene.String()
+            reporter_id = graphene.ID()
+
+        ok = graphene.Boolean()
+        article = graphene.Field(ArticleNode)
+
+        @classmethod
+        def mutate(cls, instance, args, context, info):
+            new_article = Article(
+                headline=args.get('headline'),
+                reporter_id = args.get('reporter_id'),
+            )
+
+            session.add(new_article)
+            session.commit()
+            ok = True
+
+            return CreateArticle(article=new_article, ok=ok)
+
+    class Query(graphene.ObjectType):
+        node = Node.Field()
+
+    class Mutation(graphene.ObjectType):
+        create_article = CreateArticle.Field()
+
+    query = '''
+        mutation ArticleCreator {
+          createArticle(
+            headline: "My Article"
+            reporterId: "1"
+          ) {
+            ok
+            article {
+                headline
+                reporter {
+                    id
+                    firstName
+                }
+            }
+          }
+        }
+    '''
+    expected = {
+        'createArticle': {
+            'ok': True,
+            'article': {
+                'headline': 'My Article',
+                'reporter': {
+                    'id': 'UmVwb3J0ZXJOb2RlOjE=',
+                    'firstName': 'ABA'
+                }
+            }
+        },
+    }
+
+    schema = graphene.Schema(query=Query, mutation=Mutation)
     result = schema.execute(query, context_value={'session': session})
     assert not result.errors
     assert result.data == expected
