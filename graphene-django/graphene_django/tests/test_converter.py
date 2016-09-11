@@ -117,7 +117,9 @@ def test_field_with_choices_convert_enum():
     assert isinstance(graphene_type, graphene.Enum)
     assert graphene_type._meta.name == 'TranslatedModelLanguage'
     assert graphene_type._meta.enum.__members__['SPANISH'].value == 'es'
+    assert graphene_type._meta.enum.__members__['SPANISH'].description == 'Spanish'
     assert graphene_type._meta.enum.__members__['ENGLISH'].value == 'en'
+    assert graphene_type._meta.enum.__members__['ENGLISH'].description == 'English'
 
 
 def test_field_with_grouped_choices():

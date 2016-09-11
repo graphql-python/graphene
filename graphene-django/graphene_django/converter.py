@@ -15,13 +15,19 @@ from .fields import get_connection_field
 singledispatch = import_single_dispatch()
 
 
-def convert_choices(choices):
-    for value, name in choices:
-        if isinstance(name, (tuple, list)):
-            for choice in convert_choices(name):
+def convert_choice_name(name):
+    return to_const(force_text(name))
+
+
+def get_choices(choices):
+    for value, help_text in choices:
+        if isinstance(help_text, (tuple, list)):
+            for choice in get_choices(help_text):
                 yield choice
         else:
-            yield to_const(force_text(name)), value
+            name = convert_choice_name(help_text)
+            description = help_text
+            yield name, value, description
 
 
 def convert_django_field_with_choices(field, registry=None):
@@ -29,8 +35,16 @@ def convert_django_field_with_choices(field, registry=None):
     if choices:
         meta = field.model._meta
         name = '{}{}'.format(meta.object_name, field.name.capitalize())
-        graphql_choices = list(convert_choices(choices))
-        enum = Enum(name, list(graphql_choices))
+        choices = list(get_choices(choices))
+        named_choices = [(c[0], c[1]) for c in choices]
+        named_choices_descriptions = {c[0]:c[2] for c in choices}
+
+        class EnumWithDescriptionsType(object):
+            @property
+            def description(self):
+                return named_choices_descriptions[self.name]
+
+        enum = Enum(name, list(named_choices), type=EnumWithDescriptionsType)
         return enum(description=field.help_text)
     return convert_django_field(field, registry)
 
