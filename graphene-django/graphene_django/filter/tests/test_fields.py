@@ -302,3 +302,38 @@ def test_global_id_multiple_field_explicit_reverse():
     multiple_filter = filterset_class.base_filters['articles']
     assert isinstance(multiple_filter, GlobalIDMultipleChoiceFilter)
     assert multiple_filter.field_class == GlobalIDMultipleChoiceField
+
+
+def test_filter_filterset_related_results():
+    class ReporterFilterNode(DjangoObjectType):
+
+        class Meta:
+            model = Reporter
+            interfaces = (Node, )
+            filter_fields = {
+                'first_name': ['icontains']
+            }
+
+    class Query(ObjectType):
+        all_reporters = DjangoFilterConnectionField(ReporterFilterNode)
+
+    r1 = Reporter.objects.create(first_name='A test user', last_name='Last Name', email='test1@test.com')
+    r2 = Reporter.objects.create(first_name='Other test user', last_name='Other Last Name', email='test2@test.com')
+    r3 = Reporter.objects.create(first_name='Random', last_name='RandomLast', email='random@test.com')
+
+    query = '''
+    query {
+        allReporters(firstName_Icontains: "test") {
+            edges {
+                node {
+                    id
+                }
+            }
+        }
+    }
+    '''
+    schema = Schema(query=Query)
+    result = schema.execute(query)
+    assert not result.errors
+    # We should only get two reporters
+    assert len(result.data['allReporters']['edges']) == 2

@@ -1,7 +1,7 @@
+from functools import partial
 from ..fields import DjangoConnectionField
 from .utils import get_filtering_args_from_filterset, get_filterset_class
 
-# from graphene.types.argument import to_arguments
 
 class DjangoFilterConnectionField(DjangoConnectionField):
 
@@ -20,19 +20,20 @@ class DjangoFilterConnectionField(DjangoConnectionField):
         self.filtering_args = get_filtering_args_from_filterset(self.filterset_class, type)
         kwargs.setdefault('args', {})
         kwargs['args'].update(self.filtering_args)
-        # kwargs['args'].update(to_arguments(self.filtering_args))
         super(DjangoFilterConnectionField, self).__init__(type, *args, **kwargs)
 
-    def get_queryset(self, qs, args, info):
-        filterset_class = self.filterset_class
-        filter_kwargs = self.get_filter_kwargs(args)
-        order = self.get_order(args)
+    @staticmethod
+    def connection_resolver(resolver, connection, default_manager, filterset_class, filtering_args,
+                            root, args, context, info):
+        filter_kwargs = {k: v for k, v in args.items() if k in filtering_args}
+        order = args.get('order_by', None)
+        qs = default_manager.get_queryset()
         if order:
             qs = qs.order_by(order)
-        return filterset_class(data=filter_kwargs, queryset=qs)
+        qs = filterset_class(data=filter_kwargs, queryset=qs)
 
-    def get_filter_kwargs(self, args):
-        return {k: v for k, v in args.items() if k in self.filtering_args}
+        return DjangoConnectionField.connection_resolver(resolver, connection, qs, root, args, context, info)
 
-    def get_order(self, args):
-        return args.get('order_by', None)
+    def get_resolver(self, parent_resolver):
+        return partial(self.connection_resolver, parent_resolver, self.type, self.get_manager(),
+                       self.filterset_class, self.filtering_args)
