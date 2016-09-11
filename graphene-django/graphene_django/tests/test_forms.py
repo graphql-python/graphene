@@ -4,13 +4,12 @@ from py.test import raises
 from ..forms import GlobalIDFormField
 
 
-# 'TXlUeXBlOjEwMA==' -> 'MyType', 100
 # 'TXlUeXBlOmFiYw==' -> 'MyType', 'abc'
 
 
 def test_global_id_valid():
     field = GlobalIDFormField()
-    field.clean('TXlUeXBlOjEwMA==')
+    field.clean('TXlUeXBlOmFiYw==')
 
 
 def test_global_id_invalid():
@@ -28,9 +27,3 @@ def test_global_id_none():
 def test_global_id_none_optional():
     field = GlobalIDFormField(required=False)
     field.clean(None)
-
-
-def test_global_id_bad_int():
-    field = GlobalIDFormField()
-    with raises(ValidationError):
-        field.clean('TXlUeXBlOmFiYw==')
