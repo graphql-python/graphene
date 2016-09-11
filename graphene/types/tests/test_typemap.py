@@ -141,3 +141,45 @@ def test_inputobject():
     foo_field = fields['fooBar']
     assert isinstance(foo_field, GraphQLInputObjectField)
     assert foo_field.description == 'Field description'
+
+
+def test_objecttype_camelcase():
+    class MyObjectType(ObjectType):
+        '''Description'''
+        foo_bar = String(bar_foo=String())
+
+    typemap = TypeMap([MyObjectType])
+    assert 'MyObjectType' in typemap
+    graphql_type = typemap['MyObjectType']
+    assert isinstance(graphql_type, GraphQLObjectType)
+    assert graphql_type.name == 'MyObjectType'
+    assert graphql_type.description == 'Description'
+
+    fields = graphql_type.fields
+    assert list(fields.keys()) == ['fooBar']
+    foo_field = fields['fooBar']
+    assert isinstance(foo_field, GraphQLField)
+    assert foo_field.args == {
+        'barFoo': GraphQLArgument(GraphQLString, out_name='bar_foo')
+    }
+
+
+def test_objecttype_camelcase_disabled():
+    class MyObjectType(ObjectType):
+        '''Description'''
+        foo_bar = String(bar_foo=String())
+
+    typemap = TypeMap([MyObjectType], auto_camelcase=False)
+    assert 'MyObjectType' in typemap
+    graphql_type = typemap['MyObjectType']
+    assert isinstance(graphql_type, GraphQLObjectType)
+    assert graphql_type.name == 'MyObjectType'
+    assert graphql_type.description == 'Description'
+
+    fields = graphql_type.fields
+    assert list(fields.keys()) == ['foo_bar']
+    foo_field = fields['foo_bar']
+    assert isinstance(foo_field, GraphQLField)
+    assert foo_field.args == {
+        'bar_foo': GraphQLArgument(GraphQLString, out_name='bar_foo')
+    }
