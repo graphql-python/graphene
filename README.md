@@ -45,10 +45,10 @@ class Query(graphene.ObjectType):
     ping = graphene.String(description='Ping someone',
                            to=graphene.String())
 
-    def resolve_hello(self, args, info):
+    def resolve_hello(self, args, context, info):
         return 'World'
 
-    def resolve_ping(self, args, info):
+    def resolve_ping(self, args, context, info):
         return 'Pinging {}'.format(args.get('to'))
 
 schema = graphene.Schema(query=Query)
