@@ -64,6 +64,20 @@ def test_generate_objecttype_with_fields():
     assert 'field' in MyObjectType._meta.fields
 
 
+def test_generate_objecttype_with_private_attributes():
+    class MyObjectType(ObjectType):
+        _private_state = None
+
+    assert '_private_state' not in MyObjectType._meta.fields
+    assert hasattr(MyObjectType, '_private_state')
+
+    m = MyObjectType(_private_state='custom')
+    assert m._private_state == 'custom'
+
+    with pytest.raises(TypeError):
+        MyObjectType(_other_private_state='Wrong')
+
+
 def test_ordered_fields_in_objecttype():
     class MyObjectType(ObjectType):
         b = Field(MyType)
