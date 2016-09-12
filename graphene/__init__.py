@@ -30,7 +30,8 @@ if not __SETUP__:
         List, NonNull,
         Enum,
         Argument,
-        Dynamic
+        Dynamic,
+        Union,
     )
     from .relay import (
         Node,
@@ -62,6 +63,7 @@ if not __SETUP__:
         'NonNull',
         'Argument',
         'Dynamic',
+        'Union',
         'resolve_only_args',
         'Node',
         'is_node',
