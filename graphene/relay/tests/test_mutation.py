@@ -1,25 +1,39 @@
+from collections import OrderedDict
 import pytest
+
+from graphql_relay import to_global_id
 
 from ...types import (Argument, Field, InputField, InputObjectType, ObjectType,
                       Schema, AbstractType, NonNull)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
+from ..node import GlobalID, Node
 
 
 class SharedFields(AbstractType):
     shared = String()
 
 
+class MyNode(ObjectType):
+
+    class Meta:
+        interfaces = (Node, )
+
+    name = String()
+
+
 class SaySomething(ClientIDMutation):
 
     class Input:
         what = String()
+
     phrase = String()
+    my_node_id = GlobalID(parent_type=MyNode)
 
     @staticmethod
     def mutate_and_get_payload(args, context, info):
         what = args.get('what')
-        return SaySomething(phrase=str(what))
+        return SaySomething(phrase=str(what), my_node_id=1)
 
 
 class OtherMutation(ClientIDMutation):
@@ -58,8 +72,9 @@ def test_no_mutate_and_get_payload():
 
 def test_mutation():
     fields = SaySomething._meta.fields
-    assert list(fields.keys()) == ['phrase']
+    assert list(fields.keys()) == ['phrase', 'my_node_id', 'client_mutation_id']
     assert isinstance(fields['phrase'], Field)
+    assert isinstance(fields['my_node_id'], GlobalID)
     field = SaySomething.Field()
     assert field.type == SaySomething
     assert list(field.args.keys()) == ['input']
@@ -81,7 +96,7 @@ def test_mutation_input():
 
 def test_subclassed_mutation():
     fields = OtherMutation._meta.fields
-    assert list(fields.keys()) == ['name']
+    assert list(fields.keys()) == ['name', 'client_mutation_id']
     assert isinstance(fields['name'], Field)
     field = OtherMutation.Field()
     assert field.type == OtherMutation
@@ -104,9 +119,9 @@ def test_subclassed_mutation_input():
     assert fields['client_mutation_id'].type == String
 
 
-# def test_node_query():
-#     executed = schema.execute(
-#         'mutation a { say(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
-#     )
-#     assert not executed.errors
-#     assert executed.data == {'say': {'phrase': 'hello'}}
+def test_node_query():
+    executed = schema.execute(
+        'mutation a { say(input: {what:"hello", clientMutationId:"1"}) { phrase, clientMutationId, myNodeId} }'
+    )
+    assert not executed.errors
+    assert executed.data == OrderedDict({'say': OrderedDict({'phrase': 'hello', 'clientMutationId': '1', 'myNodeId': to_global_id('MyNode', '1')})})

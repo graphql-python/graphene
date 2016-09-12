@@ -20,6 +20,8 @@ class ClientIDMutationMeta(ObjectTypeMeta):
 
         input_class = attrs.pop('Input', None)
         base_name = re.sub('Payload$', '', name)
+        default_client_mutation_id = String(name='clientMutationId')
+        attrs['client_mutation_id'] = attrs.get('client_mutation_id', default_client_mutation_id)
         cls = ObjectTypeMeta.__new__(cls, '{}Payload'.format(base_name), bases, attrs)
         mutate_and_get_payload = getattr(cls, 'mutate_and_get_payload', None)
         if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:
@@ -35,7 +37,7 @@ class ClientIDMutationMeta(ObjectTypeMeta):
             input_attrs = props(input_class)
         else:
             bases += (input_class, )
-        input_attrs['client_mutation_id'] = String(name='clientMutationId')
+        input_attrs['client_mutation_id'] = default_client_mutation_id
         cls.Input = type('{}Input'.format(base_name), bases + (InputObjectType,), input_attrs)
         cls.Field = partial(Field, cls, resolver=cls.mutate, input=Argument(cls.Input, required=True))
         return cls

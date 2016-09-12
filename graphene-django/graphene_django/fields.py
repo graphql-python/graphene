@@ -46,7 +46,7 @@ class DjangoConnectionField(ConnectionField):
         connection.length = _len
         return connection
 
-    def get_resolver(self, parent_resolver, _):
+    def get_resolver(self, parent_resolver):
         return partial(self.connection_resolver, parent_resolver, self.type, self.get_manager())
 
 
