@@ -46,7 +46,8 @@ def test_field_default_value_not_callable():
     try:
         Field(MyType, default_value=lambda: True)
     except AssertionError as e:
-        assert str(e) == 'The default value can not be a function but received "<type \'function\'>".'
+        # substring comparison for py 2/3 compatibility
+        assert 'The default value can not be a function but received' in str(e)
 
 
 def test_field_source():
