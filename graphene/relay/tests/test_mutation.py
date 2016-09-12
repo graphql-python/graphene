@@ -124,4 +124,4 @@ def test_node_query():
         'mutation a { say(input: {what:"hello", clientMutationId:"1"}) { phrase, clientMutationId, myNodeId} }'
     )
     assert not executed.errors
-    assert executed.data == OrderedDict({'say': OrderedDict({'phrase': 'hello', 'clientMutationId': '1', 'myNodeId': to_global_id('MyNode', '1')})})
+    assert dict(executed.data) == {'say': {'myNodeId': to_global_id('MyNode', '1'), 'clientMutationId': '1', 'phrase': 'hello'}}
