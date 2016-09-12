@@ -133,8 +133,8 @@ class IterableConnectionField(Field):
         connection.iterable = iterable
         return connection
 
-    def get_resolver(self, parent_resolver):
-        resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)
+    def get_resolver(self, parent_resolver, _):
+        resolver = super(IterableConnectionField, self).get_resolver(parent_resolver, None)
         return partial(self.connection_resolver, resolver, self.type)
 
 ConnectionField = IterableConnectionField

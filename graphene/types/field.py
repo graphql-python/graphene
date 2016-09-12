@@ -45,5 +45,5 @@ class Field(OrderedType):
             return self._type()
         return self._type
 
-    def get_resolver(self, parent_resolver):
+    def get_resolver(self, parent_resolver, _):
         return self.resolver or parent_resolver

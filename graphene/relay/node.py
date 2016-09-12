@@ -35,8 +35,8 @@ def get_default_connection(cls):
 
 class GlobalID(Field):
 
-    def __init__(self, node, *args, **kwargs):
-        super(GlobalID, self).__init__(ID, *args, **kwargs)
+    def __init__(self, node=None, required=True, *args, **kwargs):
+        super(GlobalID, self).__init__(ID, required=required, *args, **kwargs)
         self.node = node
 
     @staticmethod
@@ -44,15 +44,15 @@ class GlobalID(Field):
         id = parent_resolver(root, args, context, info)
         return node.to_global_id(info.parent_type.name, id)  # root._meta.name
 
-    def get_resolver(self, parent_resolver):
-        return partial(self.id_resolver, parent_resolver, self.node)
+    def get_resolver(self, parent_resolver, parent_type):
+        return partial(self.id_resolver, parent_resolver, self.node or parent_type)
 
 
 class NodeMeta(InterfaceMeta):
 
     def __new__(cls, name, bases, attrs):
         cls = InterfaceMeta.__new__(cls, name, bases, attrs)
-        cls._meta.fields['id'] = GlobalID(cls, required=True, description='The ID of the object.')
+        cls._meta.fields['id'] = GlobalID(cls, description='The ID of the object.')
         return cls
 
 

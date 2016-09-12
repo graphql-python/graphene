@@ -33,5 +33,5 @@ class SQLAlchemyConnectionField(ConnectionField):
             edge_type=connection.Edge,
         )
 
-    def get_resolver(self, parent_resolver):
+    def get_resolver(self, parent_resolver, _):
         return partial(self.connection_resolver, parent_resolver, self.type, self.model)
