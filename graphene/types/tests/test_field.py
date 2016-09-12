@@ -16,19 +16,22 @@ def test_field_basic():
     resolver = lambda: None
     deprecation_reason = 'Deprecated now'
     description = 'My Field'
+    my_default='something'
     field = Field(
         MyType,
         name='name',
         args=args,
         resolver=resolver,
         description=description,
-        deprecation_reason=deprecation_reason
+        deprecation_reason=deprecation_reason,
+        default_value=my_default,
     )
     assert field.name == 'name'
     assert field.args == args
     assert field.resolver == resolver
     assert field.deprecation_reason == deprecation_reason
     assert field.description == description
+    assert field.default_value == my_default
 
 
 def test_field_required():
