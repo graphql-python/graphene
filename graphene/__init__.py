@@ -30,11 +30,13 @@ if not __SETUP__:
         List, NonNull,
         Enum,
         Argument,
-        Dynamic
+        Dynamic,
+        Union,
     )
     from .relay import (
         Node,
         is_node,
+        GlobalID,
         ClientIDMutation,
         Connection,
         ConnectionField,
@@ -62,9 +64,11 @@ if not __SETUP__:
         'NonNull',
         'Argument',
         'Dynamic',
+        'Union',
         'resolve_only_args',
         'Node',
         'is_node',
+        'GlobalID',
         'ClientIDMutation',
         'Connection',
         'ConnectionField',
