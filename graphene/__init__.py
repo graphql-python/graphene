@@ -36,6 +36,7 @@ if not __SETUP__:
     from .relay import (
         Node,
         is_node,
+        GlobalID,
         ClientIDMutation,
         Connection,
         ConnectionField,
@@ -67,6 +68,7 @@ if not __SETUP__:
         'resolve_only_args',
         'Node',
         'is_node',
+        'GlobalID',
         'ClientIDMutation',
         'Connection',
         'ConnectionField',
