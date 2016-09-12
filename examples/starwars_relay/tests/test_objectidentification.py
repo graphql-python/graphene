@@ -25,6 +25,7 @@ input IntroduceShipInput {
 type IntroduceShipPayload {
   ship: Ship
   faction: Faction
+  clientMutationId: String
 }
 
 type Mutation {
