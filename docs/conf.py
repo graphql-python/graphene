@@ -1,3 +1,7 @@
+import os
+
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
 # -*- coding: utf-8 -*-
 #
 # Graphene documentation build configuration file, created by
@@ -35,8 +39,11 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
 ]
+if not on_rtd:
+    extensions += [
+        'sphinx.ext.githubpages',
+    ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
