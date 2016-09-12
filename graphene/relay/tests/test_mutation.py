@@ -131,6 +131,4 @@ def test_edge_query():
         'mutation a { other(input: {clientMutationId:"1"}) { myNodeEdge { cursor node { name }} } }'
     )
     assert not executed.errors
-    assert executed.data == OrderedDict(
-        {'other': OrderedDict({'myNodeEdge': OrderedDict({'cursor': '1', 'node': OrderedDict({'name': 'name'})})})}
-    )
+    assert dict(executed.data) == {'other': {'myNodeEdge': {'cursor': '1', 'node': {'name': 'name'}}}}
