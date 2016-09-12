@@ -99,7 +99,7 @@ def test_mutation_input():
 
 def test_subclassed_mutation():
     fields = OtherMutation._meta.fields
-    assert list(fields.keys()) == ['name', 'client_mutation_id' 'my_node_edge']
+    assert list(fields.keys()) == ['name', 'my_node_edge', 'client_mutation_id']
     assert isinstance(fields['name'], Field)
     field = OtherMutation.Field()
     assert field.type == OtherMutation
