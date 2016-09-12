@@ -1,4 +1,3 @@
-from collections import OrderedDict
 import pytest
 
 from graphql_relay import to_global_id
@@ -42,12 +41,16 @@ class OtherMutation(ClientIDMutation):
         additional_field = String()
 
     name = String()
+    my_node_edge = Field(MyNode.Connection.Edge)
 
     @classmethod
     def mutate_and_get_payload(cls, args, context, info):
         shared = args.get('shared', '')
         additionalField = args.get('additionalField', '')
-        return SaySomething(name=shared + additionalField)
+        edge_type = MyNode.Connection.Edge
+        return OtherMutation(name=shared + additionalField,
+                             my_node_edge=edge_type(
+                                 cursor='1', node=MyNode(name='name')))
 
 
 class RootQuery(ObjectType):
@@ -96,7 +99,7 @@ def test_mutation_input():
 
 def test_subclassed_mutation():
     fields = OtherMutation._meta.fields
-    assert list(fields.keys()) == ['name', 'client_mutation_id']
+    assert list(fields.keys()) == ['name', 'client_mutation_id' 'my_node_edge']
     assert isinstance(fields['name'], Field)
     field = OtherMutation.Field()
     assert field.type == OtherMutation
@@ -125,3 +128,10 @@ def test_node_query():
     )
     assert not executed.errors
     assert dict(executed.data) == {'say': {'myNodeId': to_global_id('MyNode', '1'), 'clientMutationId': '1', 'phrase': 'hello'}}
+
+def test_edge_query():
+    executed = schema.execute(
+        'mutation a { other(input: {clientMutationId:"1"}) { myNodeEdge { cursor node { name }} } }'
+    )
+    assert not executed.errors
+    assert dict(executed.data) == {'other': {'myNodeEdge': {'cursor': '1', 'node': {'name': 'name'}}}}

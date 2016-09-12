@@ -92,6 +92,16 @@ def test_edge_with_bases():
     assert edge_fields['other'].type == String
 
 
+def test_edge_on_node():
+    Edge = MyObject.Connection.Edge
+    assert Edge._meta.name == 'MyObjectEdge'
+    edge_fields = Edge._meta.fields
+    assert list(edge_fields.keys()) == ['node', 'cursor']
+
+    assert isinstance(edge_fields['node'], Field)
+    assert edge_fields['node'].type == MyObject
+
+
 def test_pageinfo():
     assert PageInfo._meta.name == 'PageInfo'
     fields = PageInfo._meta.fields
