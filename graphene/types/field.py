@@ -18,7 +18,7 @@ def source_resolver(source, root, args, context, info):
 
 class Field(OrderedType):
 
-    def __init__(self, type, args=None, resolver=None, source=None,
+    def __init__(self, object_type, args=None, resolver=None, source=None,
                  deprecation_reason=None, name=None, description=None,
                  required=False, _creation_counter=None, default_value=None,
                  **extra_args):
@@ -29,12 +29,15 @@ class Field(OrderedType):
         assert not (source and resolver), (
             'A Field cannot have a source and a resolver in at the same time.'
         )
+        assert not callable(default_value), (
+            'The default value can not be a function but received "{}".'
+        ).format(type(default_value))
 
         if required or default_value is not None:
-            type = NonNull(type)
+            object_type = NonNull(object_type)
 
         self.name = name
-        self._type = type
+        self._type = object_type
         self.args = to_arguments(args or OrderedDict(), extra_args)
         if source:
             resolver = partial(source_resolver, source)

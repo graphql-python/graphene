@@ -41,6 +41,14 @@ def test_field_required():
     assert field.type.of_type == MyType
 
 
+def test_field_default_value_not_callable():
+    MyType = object()
+    try:
+        Field(MyType, default_value=lambda: True)
+    except AssertionError as e:
+        assert str(e) == 'The default value can not be a function but received "<type \'function\'>".'
+
+
 def test_field_source():
     MyType = object()
     field = Field(MyType, source='value')
