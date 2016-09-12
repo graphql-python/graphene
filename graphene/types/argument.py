@@ -32,7 +32,7 @@ def to_arguments(args, extra_args):
             raise ValueError('Unknown argument "{}".'.format(default_name))
 
         arg_name = default_name or arg.name
-        assert arg_name not in arguments, 'More than one Argument have same name "{}".'.format(arg.name)
+        assert arg_name not in arguments, 'More than one Argument have same name "{}".'.format(arg_name)
         arguments[arg_name] = arg
 
     return arguments
