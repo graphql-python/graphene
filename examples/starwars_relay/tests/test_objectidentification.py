@@ -59,8 +59,8 @@ type ShipConnection {
 }
 
 type ShipEdge {
-  node: Ship
   cursor: String!
+  node: Ship
 }
 '''
 

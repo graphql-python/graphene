@@ -52,7 +52,3 @@ class Interface(six.with_metaclass(InterfaceMeta)):
 
     def __init__(self, *args, **kwargs):
         raise Exception("An Interface cannot be intitialized")
-
-    @classmethod
-    def implements(cls, objecttype):
-        pass

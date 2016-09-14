@@ -39,13 +39,13 @@ class OtherMutation(ClientIDMutation):
         additional_field = String()
 
     name = String()
-    my_node_edge = Field(MyNode.Connection.Edge)
+    my_node_edge = Field(Connection.for_type(MyNode).Edge)
 
     @classmethod
     def mutate_and_get_payload(cls, args, context, info):
         shared = args.get('shared', '')
         additionalField = args.get('additionalField', '')
-        edge_type = MyNode.Connection.Edge
+        edge_type = Connection.for_type(MyNode).Edge
         return OtherMutation(name=shared + additionalField,
                              my_node_edge=edge_type(
                                  cursor='1', node=MyNode(name='name')))
