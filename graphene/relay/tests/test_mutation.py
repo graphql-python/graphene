@@ -1,4 +1,3 @@
-from collections import OrderedDict
 import pytest
 
 from ...types import (Argument, Field, InputField, InputObjectType, ObjectType,
