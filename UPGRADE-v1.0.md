@@ -9,6 +9,50 @@ This has been a community project from the start, we need your help making the u
 We have done our best to provide backwards compatibility with deprecated APIs.
 
 
+## Deprecations
+
+* `with_context` is no longer needed. Resolvers now always take the context argument.
+Before:
+
+```python
+def resolve_xxx(self, args, info):
+    # ...
+```
+
+With 1.0:
+```python
+def resolve_xxx(self, args, context, info):
+    # ...
+```
+
+* `ObjectType and `Interface` no longer accept the `abstract` option in the `Meta`.
+  Inheriting fields should be now achieved using `AbstractType` inheritance.
+
+Before:
+
+```python
+class MyBaseQuery(graphene.ObjectType):
+    my_field = String()
+    class Meta:
+        abstract = True
+
+class Query(MyBaseQuery):
+    pass
+
+```
+
+With 1.0:
+```python
+class MyBaseQuery(graphene.AbstractType):
+    my_field = String()
+
+class Query(MyBaseQuery, graphene.ObjectType):
+    pass
+```
+
+* The `type_name` option in the Meta in types is now `name`
+
+
 ## Interfaces
 
 For implementing an Interface in a ObjectType, you have to it onto `Meta.interfaces`.
