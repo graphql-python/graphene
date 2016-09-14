@@ -1,5 +1,5 @@
 from ...types import Field, List, NonNull, ObjectType, String, AbstractType
-from ..connection import Connection, PageInfo
+from ..connection import Connection, PageInfo, Edge
 from ..node import Node
 
 
@@ -10,7 +10,7 @@ class MyObject(ObjectType):
     field = String()
 
 
-def xtest_connection():
+def test_connection():
     class MyObjectConnection(Connection):
         extra = String()
 
@@ -22,7 +22,7 @@ def xtest_connection():
 
     assert MyObjectConnection._meta.name == 'MyObjectConnection'
     fields = MyObjectConnection._meta.fields
-    assert list(fields.keys()) == ['extra', 'page_info', 'edges']
+    assert list(fields.keys()) == ['extra', 'edges', 'page_info']
     edge_field = fields['edges']
     pageinfo_field = fields['page_info']
 
@@ -35,7 +35,52 @@ def xtest_connection():
     assert pageinfo_field.type.of_type == PageInfo
 
 
-def xtest_connection_inherit_abstracttype():
+def test_multiple_connection_edges_are_not_the_same():
+    class MyObjectConnection(Connection):
+        extra = String()
+
+        class Meta:
+            node = MyObject
+
+        class Edge:
+            other = String()
+
+    class MyOtherObjectConnection(Connection):
+        class Meta:
+            node = MyObject
+
+        class Edge:
+            other = String()
+
+    assert MyObjectConnection.Edge != MyOtherObjectConnection.Edge
+    assert MyObjectConnection.Edge._meta.name != MyOtherObjectConnection.Edge._meta.name
+
+
+def test_create_connection_with_custom_edge_type():
+    class MyEdge(Edge):
+        node = Field(MyObject)
+
+    class MyObjectConnection(Connection):
+        extra = String()
+        edges = List(MyEdge)
+
+    assert MyObjectConnection.Edge == MyEdge
+    assert MyObjectConnection._meta.name == 'MyObjectConnection'
+    fields = MyObjectConnection._meta.fields
+    assert list(fields.keys()) == ['extra', 'edges', 'page_info']
+    edge_field = fields['edges']
+    pageinfo_field = fields['page_info']
+
+    assert isinstance(edge_field, Field)
+    assert isinstance(edge_field.type, List)
+    assert edge_field.type.of_type == MyObjectConnection.Edge
+
+    assert isinstance(pageinfo_field, Field)
+    assert isinstance(pageinfo_field.type, NonNull)
+    assert pageinfo_field.type.of_type == PageInfo
+
+
+def test_connection_inherit_abstracttype():
     class BaseConnection(AbstractType):
         extra = String()
 
@@ -45,20 +90,21 @@ def xtest_connection_inherit_abstracttype():
 
     assert MyObjectConnection._meta.name == 'MyObjectConnection'
     fields = MyObjectConnection._meta.fields
-    assert list(fields.keys()) == ['extra', 'page_info', 'edges']
+    assert list(fields.keys()) == ['extra', 'edges', 'page_info']
 
 
-def xtest_defaul_connection_for_type():
+def test_defaul_connection_for_type():
     MyObjectConnection = Connection.for_type(MyObject)
     assert MyObjectConnection._meta.name == 'MyObjectConnection'
     fields = MyObjectConnection._meta.fields
-    assert list(fields.keys()) == ['page_info', 'edges']
+    assert list(fields.keys()) == ['edges', 'page_info']
 
 
-def xtest_defaul_connection_for_type_returns_same_Connection():
+def test_defaul_connection_for_type_returns_same_Connection():
     assert Connection.for_type(MyObject) == Connection.for_type(MyObject)
 
-def xtest_edge():
+
+def test_edge():
     class MyObjectConnection(Connection):
         class Meta:
             node = MyObject
@@ -101,13 +147,13 @@ def test_edge_with_bases():
     assert edge_fields['other'].type == String
 
 
-def xtest_pageinfo():
+def test_pageinfo():
     assert PageInfo._meta.name == 'PageInfo'
     fields = PageInfo._meta.fields
     assert list(fields.keys()) == ['has_next_page', 'has_previous_page', 'start_cursor', 'end_cursor']
 
 
-def xtest_edge_for_node_type():
+def test_edge_for_node_type():
     edge = Connection.for_type(MyObject).Edge
 
     assert edge._meta.name == 'MyObjectEdge'
@@ -118,7 +164,7 @@ def xtest_edge_for_node_type():
     assert edge_fields['node'].type == MyObject
 
 
-def xtest_edge_for_object_type():
+def test_edge_for_object_type():
     class MyObject(ObjectType):
         field = String()
 
@@ -132,5 +178,5 @@ def xtest_edge_for_object_type():
     assert edge_fields['node'].type == MyObject
 
 
-def xtest_edge_for_type_returns_same_edge():
+def test_edge_for_type_returns_same_edge():
     assert Connection.for_type(MyObject).Edge == Connection.for_type(MyObject).Edge

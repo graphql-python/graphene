@@ -2,6 +2,7 @@ import re
 from collections import Iterable, OrderedDict
 from functools import partial
 
+from promise import Promise
 import six
 
 from fastcache import clru_cache
@@ -56,37 +57,44 @@ class ConnectionMeta(ObjectTypeMeta):
         )
         options.interfaces = ()
         options.local_fields = OrderedDict()
-
-        assert options.node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
-        assert issubclass(options.node, (Node, ObjectType)), (
-            'Received incompatible node "{}" for Connection {}.'
-        ).format(options.node, name)
-
         base_name = re.sub('Connection$', '', name)
+
+        if attrs.get('edges'):
+            edges = attrs.get('edges')
+            edge = edges.of_type
+        else:
+            assert options.node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
+            assert issubclass(options.node, (Node, ObjectType)), (
+                'Received incompatible node "{}" for Connection {}.'
+            ).format(options.node, name)
+
+            base_name = re.sub('Connection$', '', name)
+
+            edge_class = attrs.pop('Edge', None)
+
+            edge_attrs = {
+                'node': Field(
+                    options.node, description='The item at the end of the edge'),
+                'cursor': Edge._meta.fields['cursor']
+            }
+
+            edge_name = '{}Edge'.format(base_name)
+            if edge_class and issubclass(edge_class, AbstractType):
+                edge = type(edge_name, (edge_class, ObjectType, ), edge_attrs)
+            else:
+                additional_attrs = props(edge_class) if edge_class else {}
+                edge_attrs.update(additional_attrs)
+                edge = type(edge_name, (ObjectType, ), edge_attrs)
+
+            edges = List(edge)
+
         if not options.name:
             options.name = '{}Connection'.format(base_name)
 
-        edge_class = attrs.pop('Edge', None)
-
-        edge_attrs = {
-            'node': Field(
-                options.node, description='The item at the end of the edge'),
-            'cursor': Edge._meta.fields['cursor']
-        }
-
-        edge_name = '{}Edge'.format(base_name)
-        if edge_class and issubclass(edge_class, AbstractType):
-            edge = type(edge_name, (edge_class, ObjectType, ), edge_attrs)
-        else:
-            additional_attrs = props(edge_class) if edge_class else {}
-            edge_attrs.update(additional_attrs)
-            edge = type(edge_name, (ObjectType, ), edge_attrs)
-
         attrs.update({
             'page_info': Field(PageInfo, name='pageInfo', required=True),
-            'edges': List(edge),
+            'edges': edges,
         })
-
         attrs = dict(attrs, _meta=options, Edge=edge)
         return ObjectTypeMeta.__new__(cls, name, bases, attrs)
 
@@ -111,7 +119,7 @@ class Edge(AbstractType):
 def is_connection(gql_type):
     '''Checks if a type is a connection. Taken directly from the spec definition:
     https://facebook.github.io/relay/graphql/connections.htm#sec-Connection-Types'''
-    return gql_type._meta.name.endswith('Connection')
+    return gql_type._meta.name.endswith('Connection') if hasattr(gql_type, '_meta') else False
 
 
 class IterableConnectionField(Field):
@@ -134,22 +142,28 @@ class IterableConnectionField(Field):
 
     @staticmethod
     def connection_resolver(resolver, connection, root, args, context, info):
-        iterable = resolver(root, args, context, info)
-        assert isinstance(iterable, Iterable), (
-            'Resolved value from the connection field have to be iterable. '
-            'Received "{}"'
-        ).format(iterable)
-        # raise Exception('sdsdfsdfsdfsdsdf')
-        connection = connection_from_list(
-            iterable,
-            args,
-            connection_type=connection,
-            edge_type=connection.Edge,
-            pageinfo_type=PageInfo
-        )
-        # print(connection)
-        connection.iterable = iterable
-        return connection
+        resolved = Promise.resolve(resolver(root, args, context, info))
+
+        def handle_connection_and_list(result):
+            if is_connection(result):
+                return result
+            else:
+                assert isinstance(result, Iterable), (
+                    'Resolved value from the connection field have to be iterable. '
+                    'Received "{}"'
+                ).format(result)
+
+                resolved_connection = connection_from_list(
+                    result,
+                    args,
+                    connection_type=connection,
+                    edge_type=connection.Edge,
+                    pageinfo_type=PageInfo
+                )
+                resolved_connection.iterable = result
+                return resolved_connection
+
+        return resolved.then(handle_connection_and_list)
 
     def get_resolver(self, parent_resolver):
         resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)
