@@ -25,7 +25,7 @@ def resolve_xxx(self, args, context, info):
     # ...
 ```
 
-* `ObjectType and `Interface` no longer accept the `abstract` option in the `Meta`.
+* `ObjectType` and `Interface` no longer accept the `abstract` option in the `Meta`.
   Inheriting fields should be now achieved using `AbstractType` inheritance.
 
 Before:

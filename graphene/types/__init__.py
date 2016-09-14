@@ -13,6 +13,7 @@ from .inputfield import InputField
 from .argument import Argument
 from .inputobjecttype import InputObjectType
 from .dynamic import Dynamic
+from .union import Union
 
 
 __all__ = [
@@ -33,5 +34,6 @@ __all__ = [
     'Boolean',
     'List',
     'NonNull',
-    'Argument'
-    'Dynamic']
+    'Argument',
+    'Dynamic',
+]
