@@ -53,6 +53,26 @@ class Query(MyBaseQuery, graphene.ObjectType):
 * The `type_name` option in the Meta in types is now `name`
 
 
+## Schema
+
+Schemas in graphene `1.0` are `Immutable`, that means that once you create a `graphene.Schema` any
+change in their attributes will not have any effect.
+Also the `name` argument is removed from the Schema.
+
+```python
+# Old way
+schema = graphene.Schema(name='My Schema')
+schema.query = Query
+schema.mutation = Mutation
+
+# New way
+schema = graphene.Schema(
+    query=Query,
+    mutation=Mutation
+)
+```
+
+
 ## Interfaces
 
 For implementing an Interface in a ObjectType, you have to it onto `Meta.interfaces`.
