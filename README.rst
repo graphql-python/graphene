@@ -34,11 +34,11 @@ For instaling graphene, just run this command in your shell
 
 .. code:: bash
 
-    pip install graphene>=1.0.dev
+    pip install "graphene>=1.0.dev"
     # In case of need Django model support
-    pip install graphene-django>=1.0.dev
+    pip install "graphene-django>=1.0.dev"
     # Or in case of need SQLAlchemy support
-    pip install graphene-sqlalchemy>=1.0.dev
+    pip install "graphene-sqlalchemy>=1.0.dev"
 
 1.0 Upgrade Guide
 -----------------
