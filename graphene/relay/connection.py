@@ -7,7 +7,7 @@ import six
 
 from graphql_relay import connection_from_list
 
-from ..types import Boolean, Int, List, String, AbstractType
+from ..types import Boolean, Int, List, String, AbstractType, Dynamic
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
@@ -123,7 +123,7 @@ def is_connection(gql_type):
 class IterableConnectionField(Field):
 
     def __init__(self, gql_type, *args, **kwargs):
-        assert is_connection(gql_type), (
+        assert is_connection(gql_type) or isinstance(gql_type, Dynamic), (
             'The provided type "{}" for this ConnectionField has to be a Connection as defined by the Relay'
             ' spec.'.format(gql_type)
         )
@@ -136,6 +136,14 @@ class IterableConnectionField(Field):
             last=Int(),
             **kwargs
         )
+
+    @property
+    def type(self):
+        gql_type = super(IterableConnectionField, self).type
+        if isinstance(gql_type, Dynamic):
+            return gql_type.get_type()
+        else:
+            return gql_type
 
     @staticmethod
     def connection_resolver(resolver, connection, root, args, context, info):

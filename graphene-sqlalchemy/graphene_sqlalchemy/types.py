@@ -24,6 +24,7 @@ def construct_fields(options, type_name):
     inspected_model = sqlalchemyinspect(options.model)
 
     fields = OrderedDict()
+    print('options in construct_fields', options)
 
     for name, column in inspected_model.columns.items():
         is_not_in_only = only_fields and name not in only_fields

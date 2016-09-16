@@ -7,7 +7,7 @@ from graphene.relay import Node, Connection
 from ..types import SQLAlchemyObjectType
 from ..fields import SQLAlchemyConnectionField
 
-from .models import Article, Base, Editor, Reporter
+from .models import Article, Base, Editor, Reporter, Pet
 
 db = create_engine('sqlite:///test_sqlalchemy.sqlite3')
 
@@ -46,10 +46,34 @@ def setup_fixtures(session):
 def test_should_query_well(session):
     setup_fixtures(session)
 
+    class ArticleType(SQLAlchemyObjectType):
+
+        class Meta:
+            model = Article
+
+    ArticleTypeConnection = Connection.for_type(ArticleType)
+
+    ReporterNodeConnection = graphene.Dynamic(lambda: Connection.for_type(ReporterType))
+
+    class A(SQLAlchemyObjectType):
+        class Meta:
+            model = Pet
+            connections = {
+                'reporters': ReporterNodeConnection,
+                'articles': ArticleTypeConnection,
+            }
+            interfaces = (Node, )
+
+    AConnection = Connection.for_type(A)
+
     class ReporterType(SQLAlchemyObjectType):
 
         class Meta:
             model = Reporter
+            connections = {
+                'pets': AConnection,
+                'articles': AConnection,
+            }
 
     class Query(graphene.ObjectType):
         reporter = graphene.Field(ReporterType)
@@ -106,12 +130,25 @@ def test_should_node(session):
 
     ArticleNodeConnection = Connection.for_type(ArticleNode)
 
+    ReporterNodeConnection = graphene.Dynamic(lambda: Connection.for_type(ReporterNode))
+
+    class A(SQLAlchemyObjectType):
+        class Meta:
+            model = Pet
+            connections = {
+                'reporters': ReporterNodeConnection
+            }
+            interfaces = (Node, )
+
+    AConnection = Connection.for_type(A)
+
     class ReporterNode(SQLAlchemyObjectType):
 
         class Meta:
             model = Reporter
             connections = {
-                'articles': ArticleNodeConnection
+                'articles': ArticleNodeConnection,
+                'pets': AConnection,
             }
             interfaces = (Node, )
 
@@ -264,12 +301,25 @@ def test_should_mutate_well(session):
 
     ArticleNodeConnection = Connection.for_type(ArticleNode)
 
+    ReporterNodeConnection = graphene.Dynamic(lambda: Connection.for_type(ReporterNode))
+
+    class A(SQLAlchemyObjectType):
+        class Meta:
+            model = Pet
+            connections = {
+                'reporters': ReporterNodeConnection
+            }
+            interfaces = (Node, )
+
+    AConnection = Connection.for_type(A)
+
     class ReporterNode(SQLAlchemyObjectType):
 
         class Meta:
             model = Reporter
             connections = {
-                'articles': ArticleNodeConnection
+                'articles': ArticleNodeConnection,
+                'pets': AConnection,
             }
             interfaces = (Node, )
 
