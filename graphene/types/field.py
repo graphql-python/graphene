@@ -16,7 +16,7 @@ def source_resolver(source, root, args, context, info):
 
 class Field(OrderedType):
 
-    def __init__(self, type, args=None, resolver=None, source=None,
+    def __init__(self, gql_type, args=None, resolver=None, source=None,
                  deprecation_reason=None, name=None, description=None,
                  required=False, _creation_counter=None, **extra_args):
         super(Field, self).__init__(_creation_counter=_creation_counter)
@@ -28,10 +28,10 @@ class Field(OrderedType):
         )
 
         if required:
-            type = NonNull(type)
+            gql_type = NonNull(gql_type)
 
         self.name = name
-        self._type = type
+        self._type = gql_type
         self.args = to_arguments(args or OrderedDict(), extra_args)
         if source:
             resolver = partial(source_resolver, source)

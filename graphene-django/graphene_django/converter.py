@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.encoding import force_text
 
-from graphene import Enum, List, ID, Boolean, Float, Int, String, Field, NonNull, Field, Dynamic
+from graphene import Enum, List, ID, Boolean, Float, Int, String, NonNull, Field, Dynamic
 from graphene.types.json import JSONString
 from graphene.types.datetime import DateTime
 from graphene.utils.str_converters import to_const
@@ -37,7 +37,7 @@ def convert_django_field_with_choices(field, registry=None):
         name = '{}{}'.format(meta.object_name, field.name.capitalize())
         choices = list(get_choices(choices))
         named_choices = [(c[0], c[1]) for c in choices]
-        named_choices_descriptions = {c[0]:c[2] for c in choices}
+        named_choices_descriptions = {c[0]: c[2] for c in choices}
 
         class EnumWithDescriptionsType(object):
             @property

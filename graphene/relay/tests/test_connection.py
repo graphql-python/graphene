@@ -100,8 +100,8 @@ def test_defaul_connection_for_type():
     assert list(fields.keys()) == ['edges', 'page_info']
 
 
-def test_defaul_connection_for_type_returns_same_Connection():
-    assert Connection.for_type(MyObject) == Connection.for_type(MyObject)
+def test_default_connection_for_type_does_not_returns_same_Connection():
+    assert Connection.for_type(MyObject) != Connection.for_type(MyObject)
 
 
 def test_edge():
@@ -179,4 +179,5 @@ def test_edge_for_object_type():
 
 
 def test_edge_for_type_returns_same_edge():
-    assert Connection.for_type(MyObject).Edge == Connection.for_type(MyObject).Edge
+    MyObjectConnection = Connection.for_type(MyObject)
+    assert MyObjectConnection.Edge == MyObjectConnection.Edge

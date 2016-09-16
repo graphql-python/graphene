@@ -72,7 +72,6 @@ setup(
         'six>=1.10.0',
         'graphql-core>=1.0.dev',
         'graphql-relay>=0.4.4',
-        'fastcache>=1.0.2',
         'promise',
     ],
     tests_require=[

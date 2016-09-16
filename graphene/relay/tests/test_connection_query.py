@@ -26,14 +26,20 @@ class MyLetterObjectConnection(Connection):
     class Edge:
         other = String()
 
+LetterConnection = Connection.for_type(Letter)
+
 
 class Query(ObjectType):
-    letters = ConnectionField(Letter)
-    letters_promise = ConnectionField(Letter)
+    letters = ConnectionField(LetterConnection)
+    letters_wrong_connection = ConnectionField(LetterConnection)
+    letters_promise = ConnectionField(LetterConnection)
     letters_connection = ConnectionField(MyLetterObjectConnection)
 
     def resolve_letters(self, *_):
         return list(letters.values())
+
+    def resolve_letters_wrong_connection(self, *_):
+        return MyLetterObjectConnection()
 
     def resolve_letters_connection(self, *_):
         return MyLetterObjectConnection(
@@ -119,6 +125,22 @@ def check(args, letters, has_previous_page=False, has_next_page=False):
     result = execute(args)
     assert not result.errors
     assert result.data == create_expexted_result(letters, has_previous_page, has_next_page)
+
+
+def test_resolver_throws_error_on_returning_wrong_connection_type():
+    result = schema.execute('''
+    {
+        lettersWrongConnection {
+            edges {
+                node {
+                    id
+                }
+            }
+        }
+    }
+    ''')
+    assert result.errors[0].message == ('Resolved value from the connection field has to be a LetterConnection. '
+                                        'Received MyLetterObjectConnection.')
 
 
 def test_resolver_handles_returned_connection_field_correctly():

@@ -5,7 +5,6 @@ from functools import partial
 from promise import Promise
 import six
 
-from fastcache import clru_cache
 from graphql_relay import connection_from_list
 
 from ..types import Boolean, Int, List, String, AbstractType
@@ -102,7 +101,6 @@ class ConnectionMeta(ObjectTypeMeta):
 class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
 
     @classmethod
-    @clru_cache(maxsize=None)
     def for_type(cls, gql_type):
         connection_name = '{}Connection'.format(gql_type._meta.name)
 
@@ -125,6 +123,10 @@ def is_connection(gql_type):
 class IterableConnectionField(Field):
 
     def __init__(self, gql_type, *args, **kwargs):
+        assert is_connection(gql_type), (
+            'The provided type "{}" for this ConnectionField has to be a Connection as defined by the Relay'
+            ' spec.'.format(gql_type)
+        )
         super(IterableConnectionField, self).__init__(
             gql_type,
             *args,
@@ -134,19 +136,17 @@ class IterableConnectionField(Field):
             last=Int(),
             **kwargs
         )
-        self._gql_type = gql_type
-
-    @property
-    def type(self):
-        return self._gql_type if is_connection(self._gql_type) else Connection.for_type(self._gql_type)
 
     @staticmethod
     def connection_resolver(resolver, connection, root, args, context, info):
         resolved = Promise.resolve(resolver(root, args, context, info))
 
         def handle_connection_and_list(result):
-            if is_connection(result):
+            if isinstance(result, connection):
                 return result
+            elif is_connection(result):
+                raise AssertionError('Resolved value from the connection field has to be a {}. '
+                                     'Received {}.'.format(connection, type(result)))
             else:
                 assert isinstance(result, Iterable), (
                     'Resolved value from the connection field have to be iterable. '

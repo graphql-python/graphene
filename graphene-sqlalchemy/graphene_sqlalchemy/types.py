@@ -18,7 +18,7 @@ from graphene.types.utils import yank_fields_from_attrs, merge
 from .utils import get_query
 
 
-def construct_fields(options):
+def construct_fields(options, type_name):
     only_fields = options.only_fields
     exclude_fields = options.exclude_fields
     inspected_model = sqlalchemyinspect(options.model)
@@ -56,7 +56,7 @@ def construct_fields(options):
             # We skip this field if we specify only_fields and is not
             # in there. Or when we excldue this field in exclude_fields
             continue
-        converted_relationship = convert_sqlalchemy_relationship(relationship, options.registry)
+        converted_relationship = convert_sqlalchemy_relationship(relationship, options.registry, options.connections, type_name)
         name = relationship.key
         fields[name] = converted_relationship
 
@@ -82,7 +82,8 @@ class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
             exclude_fields=(),
             id='id',
             interfaces=(),
-            registry=None
+            registry=None,
+            connections={},
         )
 
         if not options.registry:
@@ -96,13 +97,12 @@ class SQLAlchemyObjectTypeMeta(ObjectTypeMeta):
             '{}.Meta, received "{}".'
         ).format(name, options.model)
 
-
         cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options))
 
         options.registry.register(cls)
 
         options.sqlalchemy_fields = yank_fields_from_attrs(
-            construct_fields(options),
+            construct_fields(options, name),
             _as=Field,
         )
         options.fields = merge(
