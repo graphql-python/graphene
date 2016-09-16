@@ -1,9 +1,10 @@
 import json
 from functools import partial
 
-from graphql import execute, Source, parse
+from graphql import execute, Source, parse, GraphQLError
 
 from ..objecttype import ObjectType
+from ..field import Field
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..scalars import String, Int
@@ -20,6 +21,35 @@ def test_query():
     executed = hello_schema.execute('{ hello }')
     assert not executed.errors
     assert executed.data == {'hello': 'World'}
+
+
+def test_query_default_value():
+    class MyType(ObjectType):
+        field = String()
+
+    class Query(ObjectType):
+        hello = Field(MyType, default_value=MyType(field='something else!'))
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ hello { field } }')
+    assert not executed.errors
+    assert executed.data == {'hello': {'field': 'something else!'}}
+
+
+def test_query_wrong_default_value():
+    class MyType(ObjectType):
+        field = String()
+
+    class Query(ObjectType):
+        hello = Field(MyType, default_value='hello')
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ hello { field } }')
+    assert len(executed.errors) == 1
+    assert executed.errors[0].message == GraphQLError('Expected value of type "MyType" but got: str.').message
+    assert executed.data is None
 
 
 def test_query_resolve_function():
