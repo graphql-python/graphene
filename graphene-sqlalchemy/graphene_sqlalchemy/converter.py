@@ -4,7 +4,7 @@ from sqlalchemy.orm import interfaces
 from sqlalchemy.dialects import postgresql
 
 from graphene import Enum, ID, Boolean, Float, Int, String, List, Field, Dynamic
-from graphene.relay import is_node
+from graphene.relay import is_node, Connection
 from graphene.types.json import JSONString
 from .fields import SQLAlchemyConnectionField
 
@@ -18,9 +18,10 @@ except ImportError:
         pass
 
 
-def convert_sqlalchemy_relationship(relationship, registry):
+def convert_sqlalchemy_relationship(relationship, registry, connections, type_name):
     direction = relationship.direction
     model = relationship.mapper.entity
+    print(registry)
 
     def dynamic_type():
         _type = registry.get_type_for_model(model)
@@ -31,7 +32,13 @@ def convert_sqlalchemy_relationship(relationship, registry):
         elif (direction == interfaces.ONETOMANY or
               direction == interfaces.MANYTOMANY):
             if is_node(_type):
-                return SQLAlchemyConnectionField(_type)
+                try:
+                    connection_type = connections[relationship.key]
+                except KeyError:
+                    print(_type)
+                    raise KeyError("No Connection provided for relationship {} on type {}. Specify it in its Meta "
+                                   "class on the 'connections' dict.".format(relationship.key, type_name))
+                return SQLAlchemyConnectionField(connection_type)
             return Field(List(_type))
 
     return Dynamic(dynamic_type)

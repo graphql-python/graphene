@@ -16,6 +16,8 @@ class Ship(graphene.ObjectType):
     def get_node(cls, id, context, info):
         return get_ship(id)
 
+ShipConnection = relay.Connection.for_type(Ship)
+
 
 class Faction(graphene.ObjectType):
     '''A faction in the Star Wars saga'''
@@ -24,7 +26,7 @@ class Faction(graphene.ObjectType):
         interfaces = (relay.Node, )
 
     name = graphene.String(description='The name of the faction.')
-    ships = relay.ConnectionField(Ship, description='The ships used by the faction.')
+    ships = relay.ConnectionField(ShipConnection, description='The ships used by the faction.')
 
     @resolve_only_args
     def resolve_ships(self, **args):

@@ -30,8 +30,10 @@ class Role(SQLAlchemyObjectType):
 
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
-    all_employees = SQLAlchemyConnectionField(Employee)
-    all_roles = SQLAlchemyConnectionField(Role)
+    employee_connection = relay.Connection.for_type(Employee)
+    role_connection = relay.Connection.for_type(Role)
+    all_employees = SQLAlchemyConnectionField(employee_connection)
+    all_roles = SQLAlchemyConnectionField(role_connection)
     role = graphene.Field(Role)
 
 

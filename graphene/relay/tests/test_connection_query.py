@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
-from ..connection import ConnectionField
+from promise import Promise
+
+from ..connection import ConnectionField, Connection, PageInfo
 from ..node import Node
 from graphql_relay.utils import base64
 from ...types import ObjectType, String, Schema
@@ -15,11 +17,39 @@ class Letter(ObjectType):
     letter = String()
 
 
-class Query(ObjectType):
-    letters = ConnectionField(Letter)
+class MyLetterObjectConnection(Connection):
+    extra = String()
 
-    def resolve_letters(self, args, context, info):
+    class Meta:
+        node = Letter
+
+    class Edge:
+        other = String()
+
+LetterConnection = Connection.for_type(Letter)
+
+
+class Query(ObjectType):
+    letters = ConnectionField(LetterConnection)
+    letters_wrong_connection = ConnectionField(LetterConnection)
+    letters_promise = ConnectionField(LetterConnection)
+    letters_connection = ConnectionField(MyLetterObjectConnection)
+
+    def resolve_letters(self, *_):
         return list(letters.values())
+
+    def resolve_letters_wrong_connection(self, *_):
+        return MyLetterObjectConnection()
+
+    def resolve_letters_connection(self, *_):
+        return MyLetterObjectConnection(
+            extra='1',
+            page_info=PageInfo(has_next_page=True, has_previous_page=False),
+            edges=[MyLetterObjectConnection.Edge(cursor='1', node=Letter(letter='hello'))]
+        )
+
+    def resolve_letters_promise(self, *_):
+        return Promise.resolve(list(letters.values()))
 
     node = Node.Field()
 
@@ -75,8 +105,7 @@ def execute(args=''):
     ''' % args)
 
 
-def check(args, letters, has_previous_page=False, has_next_page=False):
-    result = execute(args)
+def create_expexted_result(letters, has_previous_page=False, has_next_page=False, field_name='letters'):
     expected_edges = edges(letters)
     expected_page_info = {
         'hasPreviousPage': has_previous_page,
@@ -84,14 +113,105 @@ def check(args, letters, has_previous_page=False, has_next_page=False):
         'endCursor': expected_edges[-1]['cursor'] if expected_edges else None,
         'startCursor': expected_edges[0]['cursor'] if expected_edges else None
     }
-
-    assert not result.errors
-    assert result.data == {
-        'letters': {
+    return {
+        field_name: {
             'edges': expected_edges,
             'pageInfo': expected_page_info
         }
     }
+
+
+def check(args, letters, has_previous_page=False, has_next_page=False):
+    result = execute(args)
+    assert not result.errors
+    assert result.data == create_expexted_result(letters, has_previous_page, has_next_page)
+
+
+def test_resolver_throws_error_on_returning_wrong_connection_type():
+    result = schema.execute('''
+    {
+        lettersWrongConnection {
+            edges {
+                node {
+                    id
+                }
+            }
+        }
+    }
+    ''')
+    assert result.errors[0].message == ('Resolved value from the connection field has to be a LetterConnection. '
+                                        'Received MyLetterObjectConnection.')
+
+
+def test_resolver_handles_returned_connection_field_correctly():
+    result = schema.execute('''
+    {
+        lettersConnection {
+            extra
+            edges {
+                node {
+                    id
+                    letter
+                }
+                cursor
+            }
+            pageInfo {
+                hasPreviousPage
+                hasNextPage
+                startCursor
+                endCursor
+            }
+        }
+    }
+    ''')
+
+    assert not result.errors
+    expected_result = {
+        'lettersConnection': {
+            'extra': '1',
+            'edges': [
+                {
+                    'node': {
+                        'id': 'TGV0dGVyOk5vbmU=',
+                        'letter': 'hello',
+                    },
+                    'cursor': '1'
+                }
+            ],
+            'pageInfo': {
+                'hasPreviousPage': False,
+                'hasNextPage': True,
+                'startCursor': None,
+                'endCursor': None,
+            }
+        }
+    }
+    assert result.data == expected_result
+
+
+def test_resolver_handles_returned_promise_correctly():
+    result = schema.execute('''
+    {
+        lettersPromise {
+            edges {
+                node {
+                    id
+                    letter
+                }
+                cursor
+            }
+            pageInfo {
+                hasPreviousPage
+                hasNextPage
+                startCursor
+                endCursor
+            }
+        }
+    }
+    ''')
+
+    assert not result.errors
+    assert result.data == create_expexted_result('ABCDE', field_name='lettersPromise')
 
 
 def test_returns_all_elements_without_filters():

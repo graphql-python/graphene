@@ -6,7 +6,7 @@ from sqlalchemy_utils import ChoiceType, ScalarListType
 from sqlalchemy.dialects import postgresql
 
 import graphene
-from graphene.relay import Node
+from graphene.relay import Node, Connection
 from graphene.types.json import JSONString
 from ..converter import (convert_sqlalchemy_column,
                          convert_sqlalchemy_composite,
@@ -129,7 +129,7 @@ def test_should_scalar_list_convert_list():
 
 def test_should_manytomany_convert_connectionorlist():
     registry = Registry()
-    dynamic_field = convert_sqlalchemy_relationship(Reporter.pets.property, registry)
+    dynamic_field = convert_sqlalchemy_relationship(Reporter.pets.property, registry, {}, '')
     assert isinstance(dynamic_field, graphene.Dynamic)
     assert not dynamic_field.get_type()
 
@@ -139,7 +139,7 @@ def test_should_manytomany_convert_connectionorlist_list():
         class Meta:
             model = Pet
 
-    dynamic_field = convert_sqlalchemy_relationship(Reporter.pets.property, A._meta.registry)
+    dynamic_field = convert_sqlalchemy_relationship(Reporter.pets.property, A._meta.registry, {}, 'A')
     assert isinstance(dynamic_field, graphene.Dynamic)
     graphene_type = dynamic_field.get_type()
     assert isinstance(graphene_type, graphene.Field)
@@ -153,14 +153,33 @@ def test_should_manytomany_convert_connectionorlist_connection():
             model = Pet
             interfaces = (Node, )
 
-    dynamic_field = convert_sqlalchemy_relationship(Reporter.pets.property, A._meta.registry)
+    connections = {'pets':  Connection.for_type(A)}
+
+    dynamic_field = convert_sqlalchemy_relationship(Reporter.pets.property, A._meta.registry, connections, 'A')
     assert isinstance(dynamic_field, graphene.Dynamic)
     assert isinstance(dynamic_field.get_type(), SQLAlchemyConnectionField)
+    assert issubclass(dynamic_field.get_type().type, Connection)
+
+
+def test_should_rais_when_no_connections_is_provided_for_manyto_many():
+    class A(SQLAlchemyObjectType):
+        class Meta:
+            model = Pet
+            interfaces = (Node, )
+
+    connections = {}
+
+    with raises(KeyError) as ctx:
+        dynamic_field = convert_sqlalchemy_relationship(Reporter.pets.property, A._meta.registry, connections, 'A')
+        dynamic_field.get_type()
+
+    assert str(ctx.value) == ('\"No Connection provided for relationship pets on type A. Specify it in its Meta '
+                              'class on the \'connections\' dict.\"')
 
 
 def test_should_manytoone_convert_connectionorlist():
     registry = Registry()
-    dynamic_field = convert_sqlalchemy_relationship(Article.reporter.property, registry)
+    dynamic_field = convert_sqlalchemy_relationship(Article.reporter.property, registry, {}, '')
     assert isinstance(dynamic_field, graphene.Dynamic)
     assert not dynamic_field.get_type()
 
@@ -170,7 +189,7 @@ def test_should_manytoone_convert_connectionorlist_list():
         class Meta:
             model = Reporter
 
-    dynamic_field = convert_sqlalchemy_relationship(Article.reporter.property, A._meta.registry)
+    dynamic_field = convert_sqlalchemy_relationship(Article.reporter.property, A._meta.registry, {}, 'A')
     assert isinstance(dynamic_field, graphene.Dynamic)
     graphene_type = dynamic_field.get_type()
     assert isinstance(graphene_type, graphene.Field)
@@ -183,7 +202,7 @@ def test_should_manytoone_convert_connectionorlist_connection():
             model = Reporter
             interfaces = (Node, )
 
-    dynamic_field = convert_sqlalchemy_relationship(Article.reporter.property, A._meta.registry)
+    dynamic_field = convert_sqlalchemy_relationship(Article.reporter.property, A._meta.registry, {}, 'A')
     assert isinstance(dynamic_field, graphene.Dynamic)
     graphene_type = dynamic_field.get_type()
     assert isinstance(graphene_type, graphene.Field)
@@ -196,7 +215,7 @@ def test_should_onetoone_convert_field():
             model = Article
             interfaces = (Node, )
 
-    dynamic_field = convert_sqlalchemy_relationship(Reporter.favorite_article.property, A._meta.registry)
+    dynamic_field = convert_sqlalchemy_relationship(Reporter.favorite_article.property, A._meta.registry, {}, 'A')
     assert isinstance(dynamic_field, graphene.Dynamic)
     graphene_type = dynamic_field.get_type()
     assert isinstance(graphene_type, graphene.Field)

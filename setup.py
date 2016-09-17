@@ -16,7 +16,7 @@ else:
 # machinery.
 builtins.__SETUP__ = True
 
-version = __import__('graphene').get_version()
+version = "1.0.beta-1"
 
 
 class PyTest(TestCommand):
