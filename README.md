@@ -10,13 +10,22 @@ Please read [UPGRADE-v1.0.md](/UPGRADE-v1.0.md) to learn how to upgrade.
 
 - **Easy to use:** Graphene helps you use GraphQL in Python without effort.
 - **Relay:** Graphene has builtin support for Relay
-- **Django:** Automatic *Django model* mapping to Graphene Types. Check a fully working [Django](http://github.com/graphql-python/swapi-graphene) implementation
+- **Data agnostic:** Graphene supports any kind of data source: SQL (Django, SQLAlchemy), NoSQL, custom Python objects...
+  We believe that by providing a complete API you could plug Graphene anywhere your data lives and make your data available
+  through GraphQL.
 
-Graphene also supports *SQLAlchemy*!
 
-*What is supported in this Python version?* **Everything**: Interfaces, ObjectTypes, Scalars, Unions and Relay (Nodes, Connections), in addition to queries, mutations and subscriptions.
+## Integrations
 
-**NEW**!: [Try graphene online](http://graphene-python.org/playground/)
+Graphene has multiple integrations with different frameworks:
+
+| integration   |   Package |
+|---------------|-------------------|
+| Django        |  [graphene-django](https://github.com/graphql-python/graphene-django/)  |
+| SQLAlchemy    |  [graphene-sqlalchemy](https://github.com/graphql-python/graphene-sqlalchemy/)  |
+| Google App Engine    |  [graphene-gae](https://github.com/graphql-python/graphene-gae/)  |
+| Peewee    |  *In progress* ([Tracking Issue](https://github.com/graphql-python/graphene/issues/289))  |
+
 
 ## Installation
 
@@ -24,10 +33,6 @@ For instaling graphene, just run this command in your shell
 
 ```bash
 pip install "graphene>=1.0.dev"
-# In case of need Django model support
-pip install "graphene-django>=1.0.dev"
-# Or in case of need SQLAlchemy support
-pip install "graphene-sqlalchemy>=1.0.dev"
 ```
 
 ## 1.0 Upgrade Guide
@@ -42,14 +47,9 @@ Here is one example for get you started:
 ```python
 class Query(graphene.ObjectType):
     hello = graphene.String(description='A typical hello world')
-    ping = graphene.String(description='Ping someone',
-                           to=graphene.String())
 
     def resolve_hello(self, args, context, info):
         return 'World'
-
-    def resolve_ping(self, args, context, info):
-        return 'Pinging {}'.format(args.get('to'))
 
 schema = graphene.Schema(query=Query)
 ```
@@ -60,7 +60,6 @@ Then Querying `graphene.Schema` is as simple as:
 query = '''
     query SayHello {
       hello
-      ping(to:"peter")
     }
 '''
 result = schema.execute(query)
