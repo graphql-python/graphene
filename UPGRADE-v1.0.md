@@ -52,6 +52,24 @@ We have done our best to provide backwards compatibility with deprecated APIs.
 
 * The `type_name` option in the Meta in types is now `name`
 
+* Type references no longer work with strings, but with functions.
+
+  Before:
+
+  ```python
+  class Query(graphene.ObjectType):
+      user = graphene.Field('User')
+      users = graphene.List('User')
+  ```
+
+  With 1.0:
+
+  ```python
+  class Query(graphene.ObjectType):
+      user = graphene.Field(lambda: User)
+      users = graphene.List(lambda: User)
+  ```
+
 
 ## Schema
 
