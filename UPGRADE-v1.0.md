@@ -12,43 +12,43 @@ We have done our best to provide backwards compatibility with deprecated APIs.
 ## Deprecations
 
 * `with_context` is no longer needed. Resolvers now always take the context argument.
-Before:
+  Before:
 
-```python
-def resolve_xxx(self, args, info):
-    # ...
-```
+  ```python
+  def resolve_xxx(self, args, info):
+      # ...
+  ```
 
-With 1.0:
-```python
-def resolve_xxx(self, args, context, info):
-    # ...
-```
+  With 1.0:
+  ```python
+  def resolve_xxx(self, args, context, info):
+      # ...
+  ```
 
 * `ObjectType` and `Interface` no longer accept the `abstract` option in the `Meta`.
   Inheriting fields should be now achieved using `AbstractType` inheritance.
 
-Before:
+  Before:
 
-```python
-class MyBaseQuery(graphene.ObjectType):
-    my_field = String()
-    class Meta:
-        abstract = True
+  ```python
+  class MyBaseQuery(graphene.ObjectType):
+      my_field = String()
+      class Meta:
+          abstract = True
 
-class Query(MyBaseQuery):
-    pass
+  class Query(MyBaseQuery):
+      pass
 
-```
+  ```
 
-With 1.0:
-```python
-class MyBaseQuery(graphene.AbstractType):
-    my_field = String()
+  With 1.0:
+  ```python
+  class MyBaseQuery(graphene.AbstractType):
+      my_field = String()
 
-class Query(MyBaseQuery, graphene.ObjectType):
-    pass
-```
+  class Query(MyBaseQuery, graphene.ObjectType):
+      pass
+  ```
 
 * The `type_name` option in the Meta in types is now `name`
 
@@ -145,14 +145,14 @@ For installing, you have to replace the old `graphene[django]` with `graphene-dj
 * As the package is now independent, you have to import now from `graphene_django`.
 * **DjangoNode no longer exists**, please use `relay.Node` instead:
 
-```python
-from graphene.relay import Node
-from graphene_django import DjangoObjectType
+  ```python
+  from graphene.relay import Node
+  from graphene_django import DjangoObjectType
 
-class Droid(DjangoObjectType):
-    class Meta:
-        interfaces = (Node, )
-```
+  class Droid(DjangoObjectType):
+      class Meta:
+          interfaces = (Node, )
+  ```
 
 ## SQLAlchemy
 
@@ -162,11 +162,11 @@ For installing, you have to replace the old `graphene[sqlalchemy]` with `graphen
 * As the package is now independent, you have to import now from `graphene_sqlalchemy`.
 * **SQLAlchemyNode no longer exists**, please use `relay.Node` instead:
 
-```python
-from graphene.relay import Node
-from graphene_sqlalchemy import SQLAlchemyObjectType
+  ```python
+  from graphene.relay import Node
+  from graphene_sqlalchemy import SQLAlchemyObjectType
 
-class Droid(SQLAlchemyObjectType):
-    class Meta:
-        interfaces = (Node, )
-```
+  class Droid(SQLAlchemyObjectType):
+      class Meta:
+          interfaces = (Node, )
+  ```
