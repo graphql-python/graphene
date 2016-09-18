@@ -6,7 +6,7 @@ import six
 
 from graphql_relay import connection_from_list
 
-from ..types import Boolean, Int, List, String, AbstractType
+from ..types import AbstractType, Boolean, Int, List, String
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options

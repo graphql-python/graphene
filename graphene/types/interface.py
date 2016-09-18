@@ -2,9 +2,9 @@ import six
 
 from ..utils.is_base_type import is_base_type
 from .abstracttype import AbstractTypeMeta
-from .options import Options
-from .utils import yank_fields_from_attrs, get_base_fields, merge
 from .field import Field
+from .options import Options
+from .utils import get_base_fields, merge, yank_fields_from_attrs
 
 
 class InterfaceMeta(AbstractTypeMeta):

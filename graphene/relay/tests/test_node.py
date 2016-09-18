@@ -1,9 +1,8 @@
 from collections import OrderedDict
-import pytest
 
 from graphql_relay import to_global_id
 
-from ...types import ObjectType, Schema, String, AbstractType
+from ...types import AbstractType, ObjectType, Schema, String
 from ..connection import Connection
 from ..node import Node
 
@@ -72,10 +71,11 @@ def test_node_query():
 
 def test_subclassed_node_query():
     executed = schema.execute(
-        '{ node(id:"%s") { ... on MyOtherNode { shared, extraField, somethingElse } } }' % to_global_id("MyOtherNode", 1)
-    )
+        '{ node(id:"%s") { ... on MyOtherNode { shared, extraField, somethingElse } } }' %
+        to_global_id("MyOtherNode", 1))
     assert not executed.errors
-    assert executed.data == OrderedDict({'node': OrderedDict([('shared', '1'), ('extraField', 'extra field info.'), ('somethingElse', '----')])})
+    assert executed.data == OrderedDict({'node': OrderedDict(
+        [('shared', '1'), ('extraField', 'extra field info.'), ('somethingElse', '----')])})
 
 
 def test_node_query_incorrect_id():

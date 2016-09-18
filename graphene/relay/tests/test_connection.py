@@ -1,5 +1,5 @@
 
-from ...types import Field, List, NonNull, ObjectType, String, AbstractType
+from ...types import AbstractType, Field, List, NonNull, ObjectType, String
 from ..connection import Connection, PageInfo
 from ..node import Node
 
@@ -41,6 +41,7 @@ def test_connection_inherit_abstracttype():
         extra = String()
 
     class MyObjectConnection(BaseConnection, Connection):
+
         class Meta:
             node = MyObject
 
@@ -51,6 +52,7 @@ def test_connection_inherit_abstracttype():
 
 def test_edge():
     class MyObjectConnection(Connection):
+
         class Meta:
             node = MyObject
 
@@ -74,6 +76,7 @@ def test_edge_with_bases():
         extra = String()
 
     class MyObjectConnection(Connection):
+
         class Meta:
             node = MyObject
 

@@ -1,12 +1,12 @@
 import json
 from functools import partial
 
-from graphql import execute, Source, parse
+from graphql import Source, execute, parse
 
-from ..objecttype import ObjectType
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
-from ..scalars import String, Int
+from ..objecttype import ObjectType
+from ..scalars import Int, String
 from ..schema import Schema
 from ..structures import List
 

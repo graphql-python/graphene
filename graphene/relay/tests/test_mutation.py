@@ -1,10 +1,8 @@
-from collections import OrderedDict
 import pytest
 
-from ...types import (Argument, Field, InputField, InputObjectType, ObjectType,
-                      Schema, AbstractType, NonNull)
+from ...types import (AbstractType, Argument, Field, InputField,
+                      InputObjectType, NonNull, ObjectType, Schema)
 from ...types.scalars import String
-from ..connection import Connection
 from ..mutation import ClientIDMutation
 from ..node import Node
 
