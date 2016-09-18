@@ -49,7 +49,7 @@ class ConnectionMeta(ObjectTypeMeta):
 
         options = Options(
             attrs.pop('Meta', None),
-            name=None,
+            name=name,
             description=None,
             node=None,
         )
@@ -61,7 +61,7 @@ class ConnectionMeta(ObjectTypeMeta):
             'Received incompatible node "{}" for Connection {}.'
         ).format(options.node, name)
 
-        base_name = re.sub('Connection$', '', name)
+        base_name = re.sub('Connection$', '', options.name) or options.node._meta.name
         if not options.name:
             options.name = '{}Connection'.format(base_name)
 
