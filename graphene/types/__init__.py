@@ -36,4 +36,5 @@ __all__ = [
     'NonNull',
     'Argument',
     'Dynamic',
+    'Union',
 ]

@@ -3,8 +3,9 @@ from collections import Mapping, OrderedDict
 from functools import partial
 
 from ..utils.orderedtype import OrderedType
-from .argument import to_arguments
+from .argument import Argument, to_arguments
 from .structures import NonNull
+from .unmountedtype import UnmountedType
 
 
 def source_resolver(source, root, args, context, info):
@@ -29,6 +30,16 @@ class Field(OrderedType):
 
         if required:
             type = NonNull(type)
+
+        # Check if name is actually an argument of the field
+        if isinstance(name, (Argument, UnmountedType)):
+            extra_args['name'] = name
+            name = None
+
+        # Check if source is actually an argument of the field
+        if isinstance(source, (Argument, UnmountedType)):
+            extra_args['source'] = source
+            source = None
 
         self.name = name
         self._type = type

@@ -1,31 +1,38 @@
 You are in the ``next`` unreleased version of Graphene (``1.0.dev``).
-Please read `UPGRADE-v1.0.md </UPGRADE-v1.0.md>`__ to learn how to
-upgrade.
+Please read `UPGRADE-v1.0.md`_ to learn how to upgrade.
 
 --------------
 
-|Graphene Logo| `Graphene <http://graphene-python.org>`__ |Build Status| |PyPI version| |Coverage Status|
-=========================================================================================================
+|Graphene Logo| `Graphene`_ |Build Status| |PyPI version| |Coverage Status|
+===========================================================================
 
-`Graphene <http://graphene-python.org>`__ is a Python library for
-building GraphQL schemas/types fast and easily.
+`Graphene`_ is a Python library for building GraphQL schemas/types fast
+and easily.
 
 -  **Easy to use:** Graphene helps you use GraphQL in Python without
    effort.
 -  **Relay:** Graphene has builtin support for Relay
--  **Django:** Automatic *Django model* mapping to Graphene Types. Check
-   a fully working
-   `Django <http://github.com/graphql-python/swapi-graphene>`__
-   implementation
+-  **Data agnostic:** Graphene supports any kind of data source: SQL
+   (Django, SQLAlchemy), NoSQL, custom Python objects… We believe that
+   by providing a complete API you could plug Graphene anywhere your
+   data lives and make your data available through GraphQL.
 
-Graphene also supports *SQLAlchemy*!
+Integrations
+------------
 
-*What is supported in this Python version?* **Everything**: Interfaces,
-ObjectTypes, Scalars, Unions and Relay (Nodes, Connections), in addition
-to queries, mutations and subscriptions.
+Graphene has multiple integrations with different frameworks:
 
-**NEW**!: `Try graphene
-online <http://graphene-python.org/playground/>`__
++---------------------+-------------------------------------+
+| integration         | Package                             |
++=====================+=====================================+
+| Django              | `graphene-django`_                  |
++---------------------+-------------------------------------+
+| SQLAlchemy          | `graphene-sqlalchemy`_              |
++---------------------+-------------------------------------+
+| Google App Engine   | `graphene-gae`_                     |
++---------------------+-------------------------------------+
+| Peewee              | *In progress* (`Tracking Issue`_)   |
++---------------------+-------------------------------------+
 
 Installation
 ------------
@@ -34,17 +41,12 @@ For instaling graphene, just run this command in your shell
 
 .. code:: bash
 
-    pip install graphene>=1.0.dev
-    # In case of need Django model support
-    pip install graphene-django>=1.0.dev
-    # Or in case of need SQLAlchemy support
-    pip install graphene-sqlalchemy>=1.0.dev
+    pip install "graphene>=1.0.dev"
 
 1.0 Upgrade Guide
 -----------------
 
-Please read `UPGRADE-v1.0.md </UPGRADE-v1.0.md>`__ to learn how to
-upgrade.
+Please read `UPGRADE-v1.0.md`_ to learn how to upgrade.
 
 Examples
 --------
@@ -55,14 +57,9 @@ Here is one example for get you started:
 
     class Query(graphene.ObjectType):
         hello = graphene.String(description='A typical hello world')
-        ping = graphene.String(description='Ping someone',
-                               to=graphene.String())
 
         def resolve_hello(self, args, context, info):
             return 'World'
-
-        def resolve_ping(self, args, context, info):
-            return 'Pinging {}'.format(args.get('to'))
 
     schema = graphene.Schema(query=Query)
 
@@ -73,17 +70,15 @@ Then Querying ``graphene.Schema`` is as simple as:
     query = '''
         query SayHello {
           hello
-          ping(to:"peter")
         }
     '''
     result = schema.execute(query)
 
 If you want to learn even more, you can also check the following
-`examples <examples/>`__:
+`examples`_:
 
--  **Basic Schema**: `Starwars example <examples/starwars>`__
--  **Relay Schema**: `Starwars Relay
-   example <examples/starwars_relay>`__
+-  **Basic Schema**: `Starwars example`_
+-  **Relay Schema**: `Starwars Relay example`_
 
 Contributing
 ------------
@@ -99,6 +94,16 @@ After developing, the full test suite can be evaluated by running:
 .. code:: sh
 
     python setup.py test # Use --pytest-args="-v -s" for verbose mode
+
+.. _UPGRADE-v1.0.md: /UPGRADE-v1.0.md
+.. _Graphene: http://graphene-python.org
+.. _graphene-django: https://github.com/graphql-python/graphene-django/
+.. _graphene-sqlalchemy: https://github.com/graphql-python/graphene-sqlalchemy/
+.. _graphene-gae: https://github.com/graphql-python/graphene-gae/
+.. _Tracking Issue: https://github.com/graphql-python/graphene/issues/289
+.. _examples: examples/
+.. _Starwars example: examples/starwars
+.. _Starwars Relay example: examples/starwars_relay
 
 .. |Graphene Logo| image:: http://graphene-python.org/favicon.png
 .. |Build Status| image:: https://travis-ci.org/graphql-python/graphene.svg?branch=master

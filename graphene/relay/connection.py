@@ -6,7 +6,7 @@ import six
 
 from graphql_relay import connection_from_list
 
-from ..types import Boolean, Int, List, String, AbstractType
+from ..types import AbstractType, Boolean, Int, List, String
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
@@ -49,7 +49,7 @@ class ConnectionMeta(ObjectTypeMeta):
 
         options = Options(
             attrs.pop('Meta', None),
-            name=None,
+            name=name,
             description=None,
             node=None,
         )
@@ -61,7 +61,7 @@ class ConnectionMeta(ObjectTypeMeta):
             'Received incompatible node "{}" for Connection {}.'
         ).format(options.node, name)
 
-        base_name = re.sub('Connection$', '', name)
+        base_name = re.sub('Connection$', '', options.name) or options.node._meta.name
         if not options.name:
             options.name = '{}Connection'.format(base_name)
 

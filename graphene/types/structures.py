@@ -40,6 +40,7 @@ class NonNull(Structure):
 
     Note: the enforcement of non-nullability occurs within the executor.
     '''
+
     def __init__(self, *args, **kwargs):
         super(NonNull, self).__init__(*args, **kwargs)
         assert not isinstance(self.of_type, NonNull), (
