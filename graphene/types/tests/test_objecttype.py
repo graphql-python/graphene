@@ -1,3 +1,4 @@
+from mock import patch, call
 import pytest
 
 from ..abstracttype import AbstractType
@@ -173,3 +174,17 @@ def test_objecttype_container_benchmark(benchmark):
     @benchmark
     def create_objecttype():
         Container(field1='field1', field2='field2')
+
+
+@patch('graphene.types.objecttype.object_type_to_string', return_value='')
+def test_repr_calls_right_implementation(mock_impl):
+    c1 = Container()
+    repr(c1)
+    assert mock_impl.call_count == 1
+
+
+@patch('graphene.types.objecttype.object_type_to_string', return_value='')
+def test_str_calls_right_implementation(mock_impl):
+    c1 = Container()
+    str(c1)
+    assert mock_impl.call_count == 1

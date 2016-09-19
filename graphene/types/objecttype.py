@@ -3,6 +3,7 @@ from collections import OrderedDict
 import six
 
 from ..utils.is_base_type import is_base_type
+from ..pyutils.type_to_string import object_type_to_string
 from .abstracttype import AbstractTypeMeta
 from .interface import Interface
 from .options import Options
@@ -106,3 +107,9 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
                         self.__class__.__name__
                     )
                 )
+
+    def __repr__(self):
+        return object_type_to_string(self, full_package_name=True)
+
+    def __str__(self):
+        return object_type_to_string(self)
