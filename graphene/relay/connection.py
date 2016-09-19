@@ -6,13 +6,14 @@ import six
 
 from graphql_relay import connection_from_list
 
-from ..types import AbstractType, Boolean, Int, List, String
+from ..types import (AbstractType, Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
+                     Union)
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
-from .node import Node, is_node
+from .node import is_node
 
 
 class PageInfo(ObjectType):
@@ -57,6 +58,9 @@ class ConnectionMeta(ObjectTypeMeta):
         options.local_fields = OrderedDict()
 
         assert options.node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
+        assert issubclass(options.node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)), (
+            'Received incompatible node "{}" for Connection {}.'
+        ).format(options.node, name)
 
         base_name = re.sub('Connection$', '', options.name) or options.node._meta.name
         if not options.name:
