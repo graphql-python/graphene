@@ -163,7 +163,7 @@ def test_fetch_some_id_query():
             'name': 'Luke Skywalker',
         }
     }
-    result = schema.execute(query, None, params)
+    result = schema.execute(query, None, variable_values=params)
     assert not result.errors
     assert result.data == expected
 
@@ -184,7 +184,7 @@ def test_fetch_some_id_query2():
             'name': 'Han Solo',
         }
     }
-    result = schema.execute(query, None, params)
+    result = schema.execute(query, None, variable_values=params)
     assert not result.errors
     assert result.data == expected
 
@@ -203,7 +203,7 @@ def test_invalid_id_query():
     expected = {
         'human': None
     }
-    result = schema.execute(query, None, params)
+    result = schema.execute(query, None, variable_values=params)
     assert not result.errors
     assert result.data == expected
 

@@ -75,7 +75,11 @@ We have done our best to provide backwards compatibility with deprecated APIs.
 
 Schemas in graphene `1.0` are `Immutable`, that means that once you create a `graphene.Schema` any
 change in their attributes will not have any effect.
-Also the `name` argument is removed from the Schema.
+The `name` argument is removed from the Schema.
+
+The arguments `executor` and `middlewares` are also removed from the `Schema` definition.
+You can still use them, but by calling explicitly in the `execute` method in `graphql`.
+
 
 ```python
 # Old way

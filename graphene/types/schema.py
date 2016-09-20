@@ -1,5 +1,5 @@
 
-from graphql import GraphQLSchema, MiddlewareManager, graphql, is_type
+from graphql import GraphQLSchema, graphql, is_type
 from graphql.type.directives import (GraphQLDirective, GraphQLIncludeDirective,
                                      GraphQLSkipDirective)
 from graphql.type.introspection import IntrospectionSchema
@@ -14,18 +14,15 @@ class Schema(GraphQLSchema):
     Schema Definition
 
     A Schema is created by supplying the root types of each type of operation,
-    query and mutation (optional). A schema definition is then supplied to the
-    validator and executor.
+    query and mutation (optional).
     '''
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 directives=None, types=None, executor=None, middlewares=None,
-                 auto_camelcase=True):
+                 directives=None, types=None, auto_camelcase=True):
         self._query = query
         self._mutation = mutation
         self._subscription = subscription
         self.types = types
-        self._executor = executor
         self.auto_camelcase = auto_camelcase
         if directives is None:
             directives = [
@@ -37,10 +34,6 @@ class Schema(GraphQLSchema):
             'Schema directives must be List[GraphQLDirective] if provided but got: {}.'.format(
                 directives
         )
-        if middlewares:
-            self.middlewares = MiddlewareManager(*middlewares)
-        else:
-            self.middlewares = None
         self._directives = directives
         self.build_typemap()
 
@@ -65,18 +58,8 @@ class Schema(GraphQLSchema):
             return graphql_type
         raise Exception("{} is not a valid GraphQL type.".format(_type))
 
-    def execute(self, request_string='', root_value=None, variable_values=None,
-                context_value=None, operation_name=None, executor=None):
-        return graphql(
-            schema=self,
-            request_string=request_string,
-            root_value=root_value,
-            context_value=context_value,
-            variable_values=variable_values,
-            operation_name=operation_name,
-            executor=executor or self._executor,
-            middlewares=self.middlewares
-        )
+    def execute(self, *args, **kwargs):
+        return graphql(self, *args, **kwargs)
 
     def register(self, object_type):
         self.types.append(object_type)

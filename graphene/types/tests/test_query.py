@@ -102,9 +102,9 @@ def test_query_middlewares():
         p = next(*args, **kwargs)
         return p.then(lambda x: x[::-1])
 
-    hello_schema = Schema(Query, middlewares=[reversed_middleware])
+    hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello, other }')
+    executed = hello_schema.execute('{ hello, other }', middleware=[reversed_middleware])
     assert not executed.errors
     assert executed.data == {'hello': 'dlroW', 'other': 'rehto'}
 
