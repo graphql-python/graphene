@@ -13,7 +13,7 @@ and easily.
    effort.
 -  **Relay:** Graphene has builtin support for Relay
 -  **Data agnostic:** Graphene supports any kind of data source: SQL
-   (Django, SQLAlchemy), NoSQL, custom Python objects… We believe that
+   (Django, SQLAlchemy), NoSQL, custom Python objects, etc. We believe that
    by providing a complete API you could plug Graphene anywhere your
    data lives and make your data available through GraphQL.
 
