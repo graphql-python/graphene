@@ -440,4 +440,10 @@ epub_exclude_files = ['search.html']
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {
+    'https://docs.python.org/': None,
+    'python': ('https://docs.python.org/', None),
+    'graphene_django': ('http://docs.graphene-python.org/projects/django/en/latest/', None),
+    'graphene_sqlalchemy': ('http://docs.graphene-python.org/projects/sqlalchemy/en/latest/', None),
+    'graphene_gae': ('http://docs.graphene-python.org/projects/gae/en/latest/', None),
+}
