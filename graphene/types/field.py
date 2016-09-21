@@ -17,7 +17,7 @@ def source_resolver(source, root, args, context, info):
 
 class Field(OrderedType):
 
-    def __init__(self, type, args=None, resolver=None, source=None,
+    def __init__(self, gql_type, args=None, resolver=None, source=None,
                  deprecation_reason=None, name=None, description=None,
                  required=False, _creation_counter=None, default_value=None,
                  **extra_args):
@@ -33,7 +33,7 @@ class Field(OrderedType):
         ).format(type(default_value))
 
         if required:
-            type = NonNull(type)
+            gql_type = NonNull(gql_type)
 
         # Check if name is actually an argument of the field
         if isinstance(name, (Argument, UnmountedType)):
@@ -46,7 +46,7 @@ class Field(OrderedType):
             source = None
 
         self.name = name
-        self._type = type
+        self._type = gql_type
         self.args = to_arguments(args or OrderedDict(), extra_args)
         if source:
             resolver = partial(source_resolver, source)
