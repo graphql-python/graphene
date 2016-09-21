@@ -8,6 +8,9 @@ from .structures import NonNull
 from .unmountedtype import UnmountedType
 
 
+base_type = type
+
+
 def source_resolver(source, root, args, context, info):
     resolved = getattr(root, source, None)
     if inspect.isfunction(resolved):
@@ -30,7 +33,7 @@ class Field(OrderedType):
         )
         assert not callable(default_value), (
             'The default value can not be a function but received "{}".'
-        ).format(type(default_value))
+        ).format(base_type(default_value))
 
         if required:
             type = NonNull(type)
