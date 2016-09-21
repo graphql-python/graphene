@@ -1,16 +1,16 @@
 
 from graphql.type import (GraphQLArgument, GraphQLEnumType, GraphQLEnumValue,
-                          GraphQLField, GraphQLObjectType, GraphQLString,
-                          GraphQLInterfaceType, GraphQLInputObjectField,
-                          GraphQLInputObjectType)
+                          GraphQLField, GraphQLInputObjectField,
+                          GraphQLInputObjectType, GraphQLInterfaceType,
+                          GraphQLObjectType, GraphQLString)
 
 from ..dynamic import Dynamic
 from ..enum import Enum
 from ..field import Field
 from ..inputfield import InputField
-from ..objecttype import ObjectType
 from ..inputobjecttype import InputObjectType
 from ..interface import Interface
+from ..objecttype import ObjectType
 from ..scalars import String
 from ..typemap import TypeMap
 
@@ -112,7 +112,7 @@ def test_interface():
     foo_field = fields['foo']
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == 'Field description'
-    assert not foo_field.resolver # Resolver not attached in interfaces
+    assert not foo_field.resolver  # Resolver not attached in interfaces
     assert foo_field.args == {
         'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x', out_name='bar')
     }

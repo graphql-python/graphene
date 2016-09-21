@@ -9,6 +9,92 @@ This has been a community project from the start, we need your help making the u
 We have done our best to provide backwards compatibility with deprecated APIs.
 
 
+## Deprecations
+
+* `with_context` is no longer needed. Resolvers now always take the context argument.
+  Before:
+
+  ```python
+  def resolve_xxx(self, args, info):
+      # ...
+  ```
+
+  With 1.0:
+  ```python
+  def resolve_xxx(self, args, context, info):
+      # ...
+  ```
+
+* `ObjectType` and `Interface` no longer accept the `abstract` option in the `Meta`.
+  Inheriting fields should be now achieved using `AbstractType` inheritance.
+
+  Before:
+
+  ```python
+  class MyBaseQuery(graphene.ObjectType):
+      my_field = String()
+      class Meta:
+          abstract = True
+
+  class Query(MyBaseQuery):
+      pass
+
+  ```
+
+  With 1.0:
+  ```python
+  class MyBaseQuery(graphene.AbstractType):
+      my_field = String()
+
+  class Query(MyBaseQuery, graphene.ObjectType):
+      pass
+  ```
+
+* The `type_name` option in the Meta in types is now `name`
+
+* Type references no longer work with strings, but with functions.
+
+  Before:
+
+  ```python
+  class Query(graphene.ObjectType):
+      user = graphene.Field('User')
+      users = graphene.List('User')
+  ```
+
+  With 1.0:
+
+  ```python
+  class Query(graphene.ObjectType):
+      user = graphene.Field(lambda: User)
+      users = graphene.List(lambda: User)
+  ```
+
+
+## Schema
+
+Schemas in graphene `1.0` are `Immutable`, that means that once you create a `graphene.Schema` any
+change in their attributes will not have any effect.
+The `name` argument is removed from the Schema.
+
+The arguments `executor` and `middlewares` are also removed from the `Schema` definition.
+You can still use them, but by calling explicitly in the `execute` method in `graphql`.
+
+
+```python
+# Old way
+schema = graphene.Schema(name='My Schema')
+schema.query = Query
+schema.mutation = Mutation
+
+# New way
+schema = graphene.Schema(
+    query=Query,
+    mutation=Mutation
+)
+```
+
+
 ## Interfaces
 
 For implementing an Interface in a ObjectType, you have to it onto `Meta.interfaces`.
@@ -81,14 +167,14 @@ For installing, you have to replace the old `graphene[django]` with `graphene-dj
 * As the package is now independent, you have to import now from `graphene_django`.
 * **DjangoNode no longer exists**, please use `relay.Node` instead:
 
-```python
-from graphene.relay import Node
-from graphene_django import DjangoObjectType
+  ```python
+  from graphene.relay import Node
+  from graphene_django import DjangoObjectType
 
-class Droid(DjangoObjectType):
-    class Meta:
-        interfaces = (Node, )
-```
+  class Droid(DjangoObjectType):
+      class Meta:
+          interfaces = (Node, )
+  ```
 
 ## SQLAlchemy
 
@@ -98,11 +184,11 @@ For installing, you have to replace the old `graphene[sqlalchemy]` with `graphen
 * As the package is now independent, you have to import now from `graphene_sqlalchemy`.
 * **SQLAlchemyNode no longer exists**, please use `relay.Node` instead:
 
-```python
-from graphene.relay import Node
-from graphene_sqlalchemy import SQLAlchemyObjectType
+  ```python
+  from graphene.relay import Node
+  from graphene_sqlalchemy import SQLAlchemyObjectType
 
-class Droid(SQLAlchemyObjectType):
-    class Meta:
-        interfaces = (Node, )
-```
+  class Droid(SQLAlchemyObjectType):
+      class Meta:
+          interfaces = (Node, )
+  ```

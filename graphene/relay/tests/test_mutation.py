@@ -2,8 +2,8 @@ import pytest
 
 from graphql_relay import to_global_id
 
-from ...types import (Argument, Field, InputField, InputObjectType, ObjectType,
-                      Schema, AbstractType, NonNull)
+from ...types import (AbstractType, Argument, Field, InputField,
+                      InputObjectType, NonNull, ObjectType, Schema)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
 from ..node import GlobalID, Node
@@ -128,6 +128,7 @@ def test_node_query():
     )
     assert not executed.errors
     assert dict(executed.data) == {'say': {'myNodeId': to_global_id('MyNode', '1'), 'clientMutationId': '1', 'phrase': 'hello'}}
+
 
 def test_edge_query():
     executed = schema.execute(

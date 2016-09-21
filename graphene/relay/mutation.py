@@ -2,9 +2,10 @@ import re
 from functools import partial
 
 import six
+
 from promise import Promise
 
-from ..types import Argument, Field, InputObjectType, String, AbstractType
+from ..types import AbstractType, Argument, Field, InputObjectType, String
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props

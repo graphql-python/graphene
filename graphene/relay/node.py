@@ -59,6 +59,7 @@ class NodeMeta(InterfaceMeta):
 
 
 class NodeField(Field):
+
     def __init__(self, node, type=False, deprecation_reason=None,
                  name=None, **kwargs):
         assert issubclass(node, Node), 'NodeField can only operate in Nodes'

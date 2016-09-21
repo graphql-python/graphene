@@ -2,10 +2,10 @@ import six
 
 from ..utils.is_base_type import is_base_type
 from .abstracttype import AbstractTypeMeta
+from .inputfield import InputField
 from .options import Options
 from .unmountedtype import UnmountedType
-from .utils import yank_fields_from_attrs, get_base_fields, merge
-from .inputfield import InputField
+from .utils import get_base_fields, merge, yank_fields_from_attrs
 
 
 class InputObjectTypeMeta(AbstractTypeMeta):

@@ -1,14 +1,16 @@
 from collections import OrderedDict
 
+from graphql_relay.utils import base64
+
+from ...types import ObjectType, Schema, String
 from ..connection import ConnectionField
 from ..node import Node
-from graphql_relay.utils import base64
-from ...types import ObjectType, String, Schema
 
 letter_chars = ['A', 'B', 'C', 'D', 'E']
 
 
 class Letter(ObjectType):
+
     class Meta:
         interfaces = (Node, )
 
@@ -163,7 +165,13 @@ def test_returns_all_elements_if_cursors_are_invalid():
 
 
 def test_returns_all_elements_if_cursors_are_on_the_outside():
-    check('before: "{}" after: "{}"'.format(base64('arrayconnection:%s' % 6), base64('arrayconnection:%s' % -1)), 'ABCDE')
+    check(
+        'before: "{}" after: "{}"'.format(
+            base64(
+                'arrayconnection:%s' % 6),
+            base64(
+                'arrayconnection:%s' % -1)),
+        'ABCDE')
 
 
 def test_returns_no_elements_if_cursors_cross():

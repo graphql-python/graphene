@@ -1,12 +1,12 @@
 import json
 from functools import partial
 
-from graphql import execute, Source, parse
+from graphql import Source, execute, parse
 
-from ..objecttype import ObjectType
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
-from ..scalars import String, Int
+from ..objecttype import ObjectType
+from ..scalars import Int, String
 from ..schema import Schema
 from ..structures import List
 
@@ -102,9 +102,9 @@ def test_query_middlewares():
         p = next(*args, **kwargs)
         return p.then(lambda x: x[::-1])
 
-    hello_schema = Schema(Query, middlewares=[reversed_middleware])
+    hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello, other }')
+    executed = hello_schema.execute('{ hello, other }', middleware=[reversed_middleware])
     assert not executed.errors
     assert executed.data == {'hello': 'dlroW', 'other': 'rehto'}
 
