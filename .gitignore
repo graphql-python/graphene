@@ -75,6 +75,7 @@ target/
 
 # PyCharm
 .idea
+*.iml
 
 # Databases
 *.sqlite3

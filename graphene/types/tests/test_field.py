@@ -16,19 +16,22 @@ def test_field_basic():
     resolver = lambda: None
     deprecation_reason = 'Deprecated now'
     description = 'My Field'
+    my_default='something'
     field = Field(
         MyType,
         name='name',
         args=args,
         resolver=resolver,
         description=description,
-        deprecation_reason=deprecation_reason
+        deprecation_reason=deprecation_reason,
+        default_value=my_default,
     )
     assert field.name == 'name'
     assert field.args == args
     assert field.resolver == resolver
     assert field.deprecation_reason == deprecation_reason
     assert field.description == description
+    assert field.default_value == my_default
 
 
 def test_field_required():
@@ -36,6 +39,15 @@ def test_field_required():
     field = Field(MyType, required=True)
     assert isinstance(field.type, NonNull)
     assert field.type.of_type == MyType
+
+
+def test_field_default_value_not_callable():
+    MyType = object()
+    try:
+        Field(MyType, default_value=lambda: True)
+    except AssertionError as e:
+        # substring comparison for py 2/3 compatibility
+        assert 'The default value can not be a function but received' in str(e)
 
 
 def test_field_source():
