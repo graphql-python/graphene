@@ -190,8 +190,8 @@ class TypeMap(GraphQLTypeMap):
             return to_camel_case(name)
         return name
 
-    def default_resolver(self, attname, root, *_):
-        return getattr(root, attname, None)
+    def default_resolver(self, attname, default_value, root, *_):
+        return getattr(root, attname, default_value)
 
     def construct_fields_for_type(self, map, type, is_input_type=False):
         fields = OrderedDict()
@@ -224,7 +224,7 @@ class TypeMap(GraphQLTypeMap):
                 _field = GraphQLField(
                     field_type,
                     args=args,
-                    resolver=field.get_resolver(self.get_resolver_for_type(type, name)),
+                    resolver=field.get_resolver(self.get_resolver_for_type(type, name, field.default_value)),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description
                 )
@@ -232,7 +232,7 @@ class TypeMap(GraphQLTypeMap):
             fields[field_name] = _field
         return fields
 
-    def get_resolver_for_type(self, type, name):
+    def get_resolver_for_type(self, type, name, default_value):
         if not issubclass(type, ObjectType):
             return
         resolver = getattr(type, 'resolve_{}'.format(name), None)
@@ -253,7 +253,7 @@ class TypeMap(GraphQLTypeMap):
                 return resolver.__func__
             return resolver
 
-        return partial(self.default_resolver, name)
+        return partial(self.default_resolver, name, default_value)
 
     def get_field_type(self, map, type):
         if isinstance(type, List):
