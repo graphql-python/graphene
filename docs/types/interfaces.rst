@@ -5,6 +5,7 @@ An Interface contains the essential fields that will be implemented among
 multiple ObjectTypes.
 
 The basics:
+
 - Each Interface is a Python class that inherits from ``graphene.Interface``.
 - Each attribute of the Interface represents a GraphQL field.
 
