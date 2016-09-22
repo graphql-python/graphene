@@ -21,6 +21,8 @@ class ClientIDMutationMeta(ObjectTypeMeta):
 
         input_class = attrs.pop('Input', None)
         base_name = re.sub('Payload$', '', name)
+        if 'client_mutation_id' not in attrs:
+            attrs['client_mutation_id'] = String(name='clientMutationId')
         cls = ObjectTypeMeta.__new__(cls, '{}Payload'.format(base_name), bases, attrs)
         mutate_and_get_payload = getattr(cls, 'mutate_and_get_payload', None)
         if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:

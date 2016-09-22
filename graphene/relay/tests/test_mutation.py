@@ -71,7 +71,7 @@ def test_no_mutate_and_get_payload():
 
 def test_mutation():
     fields = SaySomething._meta.fields
-    assert list(fields.keys()) == ['phrase']
+    assert list(fields.keys()) == ['phrase', 'client_mutation_id']
     assert isinstance(fields['phrase'], Field)
     field = SaySomething.Field()
     assert field.type == SaySomething
@@ -79,6 +79,9 @@ def test_mutation():
     assert isinstance(field.args['input'], Argument)
     assert isinstance(field.args['input'].type, NonNull)
     assert field.args['input'].type.of_type == SaySomething.Input
+    assert isinstance(fields['client_mutation_id'], Field)
+    assert fields['client_mutation_id'].name == 'clientMutationId'
+    assert fields['client_mutation_id'].type == String
 
 
 def test_mutation_input():
@@ -94,7 +97,7 @@ def test_mutation_input():
 
 def test_subclassed_mutation():
     fields = OtherMutation._meta.fields
-    assert list(fields.keys()) == ['name', 'my_node_edge']
+    assert list(fields.keys()) == ['name', 'my_node_edge', 'client_mutation_id']
     assert isinstance(fields['name'], Field)
     field = OtherMutation.Field()
     assert field.type == OtherMutation
@@ -126,7 +129,7 @@ def test_subclassed_mutation_input():
 
 def test_edge_query():
     executed = schema.execute(
-        'mutation a { other(input: {clientMutationId:"1"}) { myNodeEdge { cursor node { name }} } }'
+        'mutation a { other(input: {clientMutationId:"1"}) { clientMutationId, myNodeEdge { cursor node { name }} } }'
     )
     assert not executed.errors
-    assert dict(executed.data) == {'other': {'myNodeEdge': {'cursor': '1', 'node': {'name': 'name'}}}}
+    assert dict(executed.data) == {'other': {'clientMutationId': '1', 'myNodeEdge': {'cursor': '1', 'node': {'name': 'name'}}}}
