@@ -8,7 +8,7 @@ querying.
 The basics:
 
 - Each ObjectType is a Python class that inherits 
-  ``graphene.ObjectType`` or inherits an implemented `Interface`_.
+  ``graphene.ObjectType``.
 - Each attribute of the ObjectType represents a ``Field``.
 
 Quick example
@@ -36,7 +36,7 @@ Field.
 The above ``Person`` ObjectType would have the following representation
 in a schema:
 
-.. code:: graphql
+.. code::
 
     type Person {
       firstName: String

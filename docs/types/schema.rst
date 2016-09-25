@@ -62,7 +62,7 @@ would be converted to ``_other_Name`` (without any other transformation).
 
 So, you would need to query with:
 
-.. code:: graphql
+.. code::
 
     {
         lastName

@@ -53,7 +53,7 @@ Executing the Mutation
 
 Then, if we query (``schema.execute(query_str)``) the following:
 
-.. code:: graphql
+.. code::
 
     mutation myFirstMutation {
         createPerson(name:"Peter") {

@@ -14,7 +14,7 @@ Project setup
 
 .. code:: bash
 
-    pip install graphene --upgrade
+    pip install "graphene>=1.0.dev"
 
 Creating a basic Schema
 -----------------------

@@ -32,7 +32,7 @@ plus the ones defined in ``UserFields``.
         pass
 
 
-.. code:: graphql
+.. code::
 
     type User {
       name: String

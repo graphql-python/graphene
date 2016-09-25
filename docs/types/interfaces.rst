@@ -44,7 +44,7 @@ time.
 
 The above types would have the following representation in a schema:
 
-.. code:: graphql
+.. code::
 
     interface Character {
       name: String
