@@ -1,5 +1,4 @@
-This are the docs for Graphene ``1.0``. Please read
-Please read `UPGRADE-v1.0.md`_ to learn how to upgrade.
+Please read `UPGRADE-v1.0.md`_ to learn how to upgrade to Graphene ``1.0``.
 
 --------------
 
