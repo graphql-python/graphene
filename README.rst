@@ -1,4 +1,4 @@
-You are in the ``next`` unreleased version of Graphene (``1.0.dev``).
+This are the docs for Graphene ``1.0``. Please read
 Please read `UPGRADE-v1.0.md`_ to learn how to upgrade.
 
 --------------
@@ -41,7 +41,7 @@ For instaling graphene, just run this command in your shell
 
 .. code:: bash
 
-    pip install "graphene>=1.0.dev"
+    pip install "graphene>=1.0"
 
 1.0 Upgrade Guide
 -----------------
