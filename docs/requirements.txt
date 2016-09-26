@@ -1,0 +1,2 @@
+# Docs template
+https://github.com/graphql-python/graphene-python.org/archive/docs.zip
