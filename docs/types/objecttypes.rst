@@ -105,6 +105,7 @@ An ``ObjectType`` could be resolved within a object that is not an instance of t
 Let's see an example:
 
 .. code:: python
+
     import graphene
 
     class Ship:
