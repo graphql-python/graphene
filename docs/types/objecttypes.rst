@@ -121,7 +121,7 @@ Let's see an example:
             return self.name
 
     class Query(graphene.ObjectType):
-        ship = graphene.Field(ShipNode)
+        ship = graphene.Field(ShipType)
 
         def resolve_ship(self, context, args, info):
             return Ship(name='xwing')
