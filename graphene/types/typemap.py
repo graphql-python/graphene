@@ -6,6 +6,7 @@ from graphql import (GraphQLArgument, GraphQLBoolean, GraphQLField,
                      GraphQLFloat, GraphQLID, GraphQLInputObjectField,
                      GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLString)
 from graphql.type import GraphQLEnumValue
+from graphql.execution.executor import get_default_resolve_type_fn
 from graphql.type.typemap import GraphQLTypeMap
 
 from ..utils.str_converters import to_camel_case
@@ -26,11 +27,14 @@ def is_graphene_type(_type):
         return True
 
 
-def resolve_type(resolve_type_func, map, root, args, info):
-    _type = resolve_type_func(root, args, info)
+def resolve_type(resolve_type_func, map, root, context, info):
+    _type = resolve_type_func(root, context, info)
     # assert inspect.isclass(_type) and issubclass(_type, ObjectType), (
     #     'Received incompatible type "{}".'.format(_type)
     # )
+    if not _type:
+        return get_default_resolve_type_fn(root, context, info, info.return_type)
+
     if inspect.isclass(_type) and issubclass(_type, ObjectType):
         graphql_type = map.get(_type._meta.name)
         assert graphql_type and graphql_type.graphene_type == _type

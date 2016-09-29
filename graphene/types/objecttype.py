@@ -63,10 +63,7 @@ class ObjectType(six.with_metaclass(ObjectTypeMeta)):
     have a name, but most importantly describe their fields.
     '''
 
-    @classmethod
-    def is_type_of(cls, root, context, info):
-        if isinstance(root, cls):
-            return True
+    is_type_of = None
 
     def __init__(self, *args, **kwargs):
         # ObjectType acting as container

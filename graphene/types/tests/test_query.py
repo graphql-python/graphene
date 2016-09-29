@@ -41,6 +41,10 @@ def test_query_wrong_default_value():
     class MyType(ObjectType):
         field = String()
 
+        @classmethod
+        def is_type_of(cls, root, context, info):
+            return isinstance(root, MyType)
+
     class Query(ObjectType):
         hello = Field(MyType, default_value='hello')
 
@@ -151,6 +155,30 @@ def test_query_middlewares():
     executed = hello_schema.execute('{ hello, other }', middleware=[reversed_middleware])
     assert not executed.errors
     assert executed.data == {'hello': 'dlroW', 'other': 'rehto'}
+
+
+def test_objecttype_on_instances():
+    class Ship:
+        def __init__(self, name):
+            self.name = name
+
+    class ShipType(ObjectType):
+        name = String(description="Ship name", required=True)
+
+        def resolve_name(self, context, args, info):
+            # Here self will be the Ship instance returned in resolve_ship
+            return self.name
+
+    class Query(ObjectType):
+        ship = Field(ShipType)
+
+        def resolve_ship(self, context, args, info):
+            return Ship(name='xwing')
+
+    schema = Schema(query=Query)
+    executed = schema.execute('{ ship { name } }')
+    assert not executed.errors
+    assert executed.data == {'ship': {'name': 'xwing'}}
 
 
 def test_big_list_query_benchmark(benchmark):
