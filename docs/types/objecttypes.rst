@@ -57,8 +57,7 @@ arguments.
 
 NOTE: The class resolvers in a ``ObjectType`` are treated as ``staticmethod``s
 always, so the first argument in the resolver: ``self`` (or ``root``) doesn't
-need to be an actual instance of the ``ObjectType``. In the case this happens, please
-overwrite the ``is_type_of`` method.
+need to be an actual instance of the ``ObjectType``.
 
 
 Quick example
@@ -94,54 +93,6 @@ A field could also specify a custom resolver outside the class:
 
     class Query(graphene.ObjectType):
         reverse = graphene.String(word=graphene.String(), resolver=reverse)
-
-
-Is Type Of
-----------
-
-An ``ObjectType`` could be resolved within a object that is not an instance of this
-``ObjectType``. That means that the resolver of a ``Field`` could return any object.
-
-Let's see an example:
-
-.. code:: python
-
-    import graphene
-
-    class Ship:
-        def __init__(self, name):
-            self.name = name
-
-    class ShipType(graphene.ObjectType):
-        name = graphene.String(description="Ship name", required=True)
-
-        @resolve_only_args
-        def resolve_name(self):
-            # Here self will be the Ship instance returned in resolve_ship
-            return self.name
-
-    class Query(graphene.ObjectType):
-        ship = graphene.Field(ShipType)
-
-        def resolve_ship(self, context, args, info):
-            return Ship(name='xwing')
-
-    schema = graphene.Schema(query=Query)
-
-
-In this example, we are returning a ``Ship`` which is not an instance of ``ShipType``.
-If we execute a query on the ship, we would see this error:
-`"Expected value of type \"ShipType\" but got: instance."`
-
-That's happening because GraphQL have no idea what type ``Ship`` is. For solving this,
-we only have to add a ``is_type_of`` method in ``ShipType``
-
-.. code:: python
-
-    class ShipType(graphene.ObjectType):
-        @classmethod
-        def is_type_of(cls, root, context, info):
-            return isinstance(root, (Ship, ShipType))
 
 
 Instances as data containers
