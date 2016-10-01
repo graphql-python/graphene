@@ -1,6 +1,6 @@
 
-from ...types import AbstractType, Field, List, NonNull, ObjectType, String
-from ..connection import Connection, PageInfo
+from ...types import AbstractType, Field, List, NonNull, ObjectType, String, Argument, Int
+from ..connection import Connection, PageInfo, ConnectionField
 from ..node import Node
 
 
@@ -109,3 +109,32 @@ def test_pageinfo():
     assert PageInfo._meta.name == 'PageInfo'
     fields = PageInfo._meta.fields
     assert list(fields.keys()) == ['has_next_page', 'has_previous_page', 'start_cursor', 'end_cursor']
+
+
+def test_connectionfield():
+    class MyObjectConnection(Connection):
+        class Meta:
+            node = MyObject
+
+    field = ConnectionField(MyObjectConnection)
+    assert field.args == {
+        'before': Argument(String),
+        'after': Argument(String),
+        'first': Argument(Int),
+        'last': Argument(Int),
+    }
+
+
+def test_connectionfield_custom_args():
+    class MyObjectConnection(Connection):
+        class Meta:
+            node = MyObject
+
+    field = ConnectionField(MyObjectConnection, before=String(required=True), extra=String())
+    assert field.args == {
+        'before': Argument(NonNull(String)),
+        'after': Argument(String),
+        'first': Argument(Int),
+        'last': Argument(Int),
+        'extra': Argument(String),
+    }

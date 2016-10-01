@@ -95,13 +95,13 @@ class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
 class IterableConnectionField(Field):
 
     def __init__(self, type, *args, **kwargs):
+        kwargs.setdefault('before', String())
+        kwargs.setdefault('after', String())
+        kwargs.setdefault('first', Int())
+        kwargs.setdefault('last', Int())
         super(IterableConnectionField, self).__init__(
             type,
             *args,
-            before=String(),
-            after=String(),
-            first=Int(),
-            last=Int(),
             **kwargs
         )
 
