@@ -3,7 +3,7 @@ from collections import OrderedDict
 from graphql_relay.utils import base64
 
 from ...types import ObjectType, Schema, String
-from ..connection import ConnectionField
+from ..connection import ConnectionField, PageInfo
 from ..node import Node
 
 letter_chars = ['A', 'B', 'C', 'D', 'E']
@@ -19,11 +19,26 @@ class Letter(ObjectType):
 
 class Query(ObjectType):
     letters = ConnectionField(Letter)
+    connection_letters = ConnectionField(Letter)
+
+    node = Node.Field()
 
     def resolve_letters(self, args, context, info):
         return list(letters.values())
 
-    node = Node.Field()
+    def resolve_connection_letters(self, args, context, info):
+        return Letter.Connection(
+            page_info=PageInfo(
+                has_next_page=True,
+                has_previous_page=False
+            ),
+            edges=[
+                Letter.Connection.Edge(
+                    node=Letter(id=0, letter='A'),
+                    cursor='a-cursor'
+                ),
+            ]
+        )
 
 
 schema = Schema(Query)
@@ -176,3 +191,40 @@ def test_returns_all_elements_if_cursors_are_on_the_outside():
 
 def test_returns_no_elements_if_cursors_cross():
     check('before: "{}" after: "{}"'.format(base64('arrayconnection:%s' % 2), base64('arrayconnection:%s' % 4)), '')
+
+
+def test_connection_type_nodes():
+    result = schema.execute('''
+    {
+        connectionLetters {
+            edges {
+                node {
+                    id
+                    letter
+                }
+                cursor
+            }
+            pageInfo {
+                hasPreviousPage
+                hasNextPage
+            }
+        }
+    }
+    ''')
+
+    assert not result.errors
+    assert result.data == {
+        'connectionLetters': {
+            'edges': [{
+                'node': {
+                    'id': 'TGV0dGVyOjA=',
+                    'letter': 'A',
+                },
+                'cursor': 'a-cursor',
+            }],
+            'pageInfo': {
+                'hasPreviousPage': False,
+                'hasNextPage': True,
+            }
+        }
+    }
