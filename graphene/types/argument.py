@@ -18,6 +18,14 @@ class Argument(OrderedType):
         self.default_value = default_value
         self.description = description
 
+    def __eq__(self, other):
+        return isinstance(other, Argument) and (
+            self.name == other.name,
+            self.type == other.type,
+            self.default_value == other.default_value,
+            self.description == other.description
+        )
+
 
 def to_arguments(args, extra_args):
     from .unmountedtype import UnmountedType
