@@ -10,6 +10,7 @@ from graphql.execution.executor import get_default_resolve_type_fn
 from graphql.type.typemap import GraphQLTypeMap
 
 from ..utils.str_converters import to_camel_case
+from ..utils.get_unbound_function import get_unbound_function
 from .dynamic import Dynamic
 from .enum import Enum
 from .inputobjecttype import InputObjectType
@@ -251,11 +252,10 @@ class TypeMap(GraphQLTypeMap):
                 if interface_resolver:
                     break
             resolver = interface_resolver
+
         # Only if is not decorated with classmethod
         if resolver:
-            if not getattr(resolver, '__self__', True):
-                return resolver.__func__
-            return resolver
+            return get_unbound_function(resolver)
 
         return partial(self.default_resolver, name, default_value)
 
