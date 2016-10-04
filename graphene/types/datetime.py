@@ -36,4 +36,4 @@ class DateTime(Scalar):
 
     @staticmethod
     def parse_value(value):
-        return datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+        return iso8601.parse_date(value)
