@@ -78,6 +78,8 @@ setup(
         'pytest>=2.7.2',
         'pytest-benchmark',
         'mock',
+        'pytz',
+        'iso8601',
     ],
     extras_require={
         'django': [
