@@ -1,7 +1,7 @@
 Scalars
 =======
 
-Graphene define the following base Scalar Types:
+Graphene defines the following base Scalar Types:
 
 - ``graphene.String``
 - ``graphene.Int``
@@ -18,7 +18,7 @@ Graphene also provides custom scalars for Dates and JSON:
 Custom scalars
 --------------
 
-You can create a custom scalar for your schema.
+You can create custom scalars for your schema.
 The following is an example for creating a DateTime scalar:
 
 .. code:: python
@@ -47,8 +47,8 @@ The following is an example for creating a DateTime scalar:
 Mounting Scalars
 ----------------
 
-This scalars if are mounted in a ``ObjectType``, ``Interface`` or
-``Mutation``, would act as ``Field``\ s.
+Scalars mounted in a ``ObjectType``, ``Interface`` or ``Mutation`` act as
+``Field``\ s.
 
 .. code:: python
 
@@ -60,7 +60,7 @@ This scalars if are mounted in a ``ObjectType``, ``Interface`` or
         name = graphene.Field(graphene.String())
 
 
-If the types are mounted in a ``Field``, would act as ``Argument``\ s.
+Types mounted in a ``Field`` act as ``Argument``\ s.
 
 .. code:: python
 
