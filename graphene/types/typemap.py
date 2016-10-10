@@ -147,7 +147,11 @@ class TypeMap(GraphQLTypeMap):
             graphene_type=type,
             values=values,
             name=type._meta.name,
-            description=type_description, )
+            description=type_description,
+            serialize=getattr(type, 'serialize', None),
+            parse_value=getattr(type, 'parse_value', None),
+            parse_literal=getattr(type, 'parse_literal', None),
+        )
 
     def construct_objecttype(self, map, type):
         if type._meta.name in map:
