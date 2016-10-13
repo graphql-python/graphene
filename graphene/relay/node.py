@@ -13,8 +13,8 @@ def is_node(objecttype):
     Check if the given objecttype has Node as an interface
     '''
     assert issubclass(objecttype, ObjectType), (
-        'Only ObjectTypes can have a Node interface.'
-    )
+        'Only ObjectTypes can have a Node interface. Received %s'
+    ) % objecttype
     for i in objecttype._meta.interfaces:
         if issubclass(i, Node):
             return True
