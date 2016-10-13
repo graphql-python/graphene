@@ -56,6 +56,36 @@ def test_query_wrong_default_value():
     assert executed.data == {'hello': None}
 
 
+def test_query_unmounted_type_with_custom_attributes():
+    def set_custom_metadata(gql_type):
+        setattr(gql_type, 'metadata', 'some_key')
+        return gql_type
+
+    class MyType(ObjectType):
+        field = set_custom_metadata(String())
+
+        @classmethod
+        def from_metadata(cls):
+            my_type = cls()
+            external_data = {
+                'some_key': 'my_data'
+            }
+            for field_name, field_value in cls._meta.fields.items():
+                data = external_data[getattr(field_value, 'metadata')]
+                setattr(my_type, field_name, data)
+
+            return my_type
+
+    class Query(ObjectType):
+        hello = Field(MyType, resolver=lambda *_: MyType.from_metadata())
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ hello { field } }')
+    assert not executed.errors
+    assert executed.data == {'hello': {'field': 'my_data'}}
+
+
 def test_query_default_value_ignored_by_resolver():
     class MyType(ObjectType):
         field = String()

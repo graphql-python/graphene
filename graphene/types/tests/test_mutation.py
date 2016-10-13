@@ -44,15 +44,30 @@ def test_mutation_raises_exception_if_no_mutate():
 
 
 def test_mutation_execution():
+    def with_metadata(gql_type, data):
+        setattr(gql_type, 'metadata', data)
+        return gql_type
+
     class CreateUser(Mutation):
         class Input:
             name = String()
+            metadata = with_metadata(String(), 'service_key')
+
+        _Input = Input
 
         name = String()
+        external = String()
 
-        def mutate(self, args, context, info):
+        @classmethod
+        def mutate(cls, root, args, context, info):
             name = args.get('name')
-            return CreateUser(name=name)
+            external_data = {
+                'service_key': 'new_data'
+            }
+
+            metadata_type = dict(vars(cls._Input))['metadata']
+            data = external_data[getattr(metadata_type, 'metadata')]
+            return CreateUser(name=name, external=data)
 
     class Query(ObjectType):
         a = String()
@@ -64,12 +79,14 @@ def test_mutation_execution():
     result = schema.execute(''' mutation mymutation {
         createUser(name:"Peter") {
             name
+            external
         }
     }
     ''')
     assert not result.errors
     assert result.data == {
         'createUser': {
-            'name': "Peter"
+            'name': 'Peter',
+            'external': 'new_data',
         }
     }

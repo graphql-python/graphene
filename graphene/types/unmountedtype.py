@@ -19,33 +19,51 @@ class UnmountedType(OrderedType):
         super(UnmountedType, self).__init__()
         self.args = args
         self.kwargs = kwargs
+        self.custom_attributes = {}
 
     def get_type(self):
         raise NotImplementedError("get_type not implemented in {}".format(self))
+
+    def __setattr__(self, name, value):
+        if hasattr(self, 'custom_attributes'):
+            self.custom_attributes[name] = value
+        OrderedType.__setattr__(self, name, value)
 
     def Field(self):  # noqa: N802
         '''
         Mount the UnmountedType as Field
         '''
         from .field import Field
-        return Field(
+        f = Field(
             self.get_type(),
             *self.args,
             _creation_counter=self.creation_counter,
             **self.kwargs
         )
 
+        if hasattr(self, 'custom_attributes'):
+            for name, value in self.custom_attributes.items():
+                setattr(f, name, value)
+
+        return f
+
     def InputField(self):  # noqa: N802
         '''
         Mount the UnmountedType as InputField
         '''
         from .inputfield import InputField
-        return InputField(
+        f = InputField(
             self.get_type(),
             *self.args,
             _creation_counter=self.creation_counter,
             **self.kwargs
         )
+
+        if hasattr(self, 'custom_attributes'):
+            for name, value in self.custom_attributes.items():
+                setattr(f, name, value)
+
+        return f
 
     def Argument(self):  # noqa: N802
         '''
