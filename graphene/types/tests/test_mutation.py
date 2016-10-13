@@ -4,6 +4,7 @@ from ..mutation import Mutation
 from ..objecttype import ObjectType
 from ..schema import Schema
 from ..scalars import String
+from ..dynamic import Dynamic
 
 
 def test_generate_mutation_no_args():
@@ -47,12 +48,15 @@ def test_mutation_execution():
     class CreateUser(Mutation):
         class Input:
             name = String()
+            dynamic = Dynamic(lambda: String())
 
         name = String()
+        dynamic = Dynamic(lambda: String())
 
         def mutate(self, args, context, info):
             name = args.get('name')
-            return CreateUser(name=name)
+            dynamic = args.get('dynamic')
+            return CreateUser(name=name, dynamic=dynamic)
 
     class Query(ObjectType):
         a = String()
@@ -62,14 +66,16 @@ def test_mutation_execution():
 
     schema = Schema(query=Query, mutation=MyMutation)
     result = schema.execute(''' mutation mymutation {
-        createUser(name:"Peter") {
+        createUser(name:"Peter", dynamic: "dynamic") {
             name
+            dynamic
         }
     }
     ''')
     assert not result.errors
     assert result.data == {
         'createUser': {
-            'name': "Peter"
+            'name': 'Peter',
+            'dynamic': 'dynamic',
         }
     }
