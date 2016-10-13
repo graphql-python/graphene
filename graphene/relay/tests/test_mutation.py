@@ -84,6 +84,9 @@ def test_mutation():
     assert isinstance(field.args['input'], Argument)
     assert isinstance(field.args['input'].type, NonNull)
     assert field.args['input'].type.of_type == SaySomething.Input
+    assert isinstance(fields['client_mutation_id'], Field)
+    assert fields['client_mutation_id'].name == 'clientMutationId'
+    assert fields['client_mutation_id'].type == String
 
 
 def test_mutation_input():
@@ -132,7 +135,7 @@ def test_node_query():
 
 def test_edge_query():
     executed = schema.execute(
-        'mutation a { other(input: {clientMutationId:"1"}) { myNodeEdge { cursor node { name }} } }'
+        'mutation a { other(input: {clientMutationId:"1"}) { clientMutationId, myNodeEdge { cursor node { name }} } }'
     )
     assert not executed.errors
-    assert dict(executed.data) == {'other': {'myNodeEdge': {'cursor': '1', 'node': {'name': 'name'}}}}
+    assert dict(executed.data) == {'other': {'clientMutationId': '1', 'myNodeEdge': {'cursor': '1', 'node': {'name': 'name'}}}}

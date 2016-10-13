@@ -48,7 +48,11 @@ class Interface(six.with_metaclass(InterfaceMeta)):
     when the field is resolved.
     '''
 
-    resolve_type = None
+    @classmethod
+    def resolve_type(cls, instance, context, info):
+        from .objecttype import ObjectType
+        if isinstance(instance, ObjectType):
+            return type(instance)
 
     def __init__(self, *args, **kwargs):
         raise Exception("An Interface cannot be intitialized")

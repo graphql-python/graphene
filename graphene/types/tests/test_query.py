@@ -1,8 +1,9 @@
 import json
 from functools import partial
 
-from graphql import Source, execute, parse
+from graphql import Source, execute, parse, GraphQLError
 
+from ..field import Field
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..objecttype import ObjectType
@@ -20,6 +21,53 @@ def test_query():
     executed = hello_schema.execute('{ hello }')
     assert not executed.errors
     assert executed.data == {'hello': 'World'}
+
+
+def test_query_default_value():
+    class MyType(ObjectType):
+        field = String()
+
+    class Query(ObjectType):
+        hello = Field(MyType, default_value=MyType(field='something else!'))
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ hello { field } }')
+    assert not executed.errors
+    assert executed.data == {'hello': {'field': 'something else!'}}
+
+
+def test_query_wrong_default_value():
+    class MyType(ObjectType):
+        field = String()
+
+        @classmethod
+        def is_type_of(cls, root, context, info):
+            return isinstance(root, MyType)
+
+    class Query(ObjectType):
+        hello = Field(MyType, default_value='hello')
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ hello { field } }')
+    assert len(executed.errors) == 1
+    assert executed.errors[0].message == GraphQLError('Expected value of type "MyType" but got: str.').message
+    assert executed.data == {'hello': None}
+
+
+def test_query_default_value_ignored_by_resolver():
+    class MyType(ObjectType):
+        field = String()
+
+    class Query(ObjectType):
+        hello = Field(MyType, default_value='hello', resolver=lambda *_: MyType(field='no default.'))
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ hello { field } }')
+    assert not executed.errors
+    assert executed.data == {'hello': {'field': 'no default.'}}
 
 
 def test_query_resolve_function():
@@ -107,6 +155,30 @@ def test_query_middlewares():
     executed = hello_schema.execute('{ hello, other }', middleware=[reversed_middleware])
     assert not executed.errors
     assert executed.data == {'hello': 'dlroW', 'other': 'rehto'}
+
+
+def test_objecttype_on_instances():
+    class Ship:
+        def __init__(self, name):
+            self.name = name
+
+    class ShipType(ObjectType):
+        name = String(description="Ship name", required=True)
+
+        def resolve_name(self, context, args, info):
+            # Here self will be the Ship instance returned in resolve_ship
+            return self.name
+
+    class Query(ObjectType):
+        ship = Field(ShipType)
+
+        def resolve_ship(self, context, args, info):
+            return Ship(name='xwing')
+
+    schema = Schema(query=Query)
+    executed = schema.execute('{ ship { name } }')
+    assert not executed.errors
+    assert executed.data == {'ship': {'name': 'xwing'}}
 
 
 def test_big_list_query_benchmark(benchmark):

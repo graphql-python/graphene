@@ -2,6 +2,7 @@ Scalars
 =======
 
 Graphene define the following base Scalar Types:
+
 - ``graphene.String``
 - ``graphene.Int``
 - ``graphene.Float``
@@ -9,6 +10,7 @@ Graphene define the following base Scalar Types:
 - ``graphene.ID``
 
 Graphene also provides custom scalars for Dates and JSON:
+
 - ``graphene.types.datetime.DateTime``
 - ``graphene.types.json.JSONString``
 

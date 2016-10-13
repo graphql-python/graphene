@@ -27,6 +27,13 @@ class List(Structure):
     def __str__(self):
         return '[{}]'.format(self.of_type)
 
+    def __eq__(self, other):
+        return isinstance(other, List) and (
+            self.of_type == other.of_type and
+            self.args == other.args and
+            self.kwargs == other.kwargs
+        )
+
 
 class NonNull(Structure):
     '''
@@ -49,3 +56,10 @@ class NonNull(Structure):
 
     def __str__(self):
         return '{}!'.format(self.of_type)
+
+    def __eq__(self, other):
+        return isinstance(other, NonNull) and (
+            self.of_type == other.of_type and
+            self.args == other.args and
+            self.kwargs == other.kwargs
+        )

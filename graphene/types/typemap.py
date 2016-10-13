@@ -6,9 +6,11 @@ from graphql import (GraphQLArgument, GraphQLBoolean, GraphQLField,
                      GraphQLFloat, GraphQLID, GraphQLInputObjectField,
                      GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLString)
 from graphql.type import GraphQLEnumValue
+from graphql.execution.executor import get_default_resolve_type_fn
 from graphql.type.typemap import GraphQLTypeMap
 
 from ..utils.str_converters import to_camel_case
+from ..utils.get_unbound_function import get_unbound_function
 from .dynamic import Dynamic
 from .enum import Enum
 from .inputobjecttype import InputObjectType
@@ -26,11 +28,14 @@ def is_graphene_type(_type):
         return True
 
 
-def resolve_type(resolve_type_func, map, root, args, info):
-    _type = resolve_type_func(root, args, info)
+def resolve_type(resolve_type_func, map, root, context, info):
+    _type = resolve_type_func(root, context, info)
     # assert inspect.isclass(_type) and issubclass(_type, ObjectType), (
     #     'Received incompatible type "{}".'.format(_type)
     # )
+    if not _type:
+        return get_default_resolve_type_fn(root, context, info, info.return_type)
+
     if inspect.isclass(_type) and issubclass(_type, ObjectType):
         graphql_type = map.get(_type._meta.name)
         assert graphql_type and graphql_type.graphene_type == _type
@@ -190,8 +195,8 @@ class TypeMap(GraphQLTypeMap):
             return to_camel_case(name)
         return name
 
-    def default_resolver(self, attname, root, *_):
-        return getattr(root, attname, None)
+    def default_resolver(self, attname, default_value, root, *_):
+        return getattr(root, attname, default_value)
 
     def construct_fields_for_type(self, map, type, is_input_type=False):
         fields = OrderedDict()
@@ -224,7 +229,7 @@ class TypeMap(GraphQLTypeMap):
                 _field = GraphQLField(
                     field_type,
                     args=args,
-                    resolver=field.get_resolver(self.get_resolver_for_type(type, name)),
+                    resolver=field.get_resolver(self.get_resolver_for_type(type, name, field.default_value)),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description
                 )
@@ -232,7 +237,7 @@ class TypeMap(GraphQLTypeMap):
             fields[field_name] = _field
         return fields
 
-    def get_resolver_for_type(self, type, name):
+    def get_resolver_for_type(self, type, name, default_value):
         if not issubclass(type, ObjectType):
             return
         resolver = getattr(type, 'resolve_{}'.format(name), None)
@@ -247,13 +252,12 @@ class TypeMap(GraphQLTypeMap):
                 if interface_resolver:
                     break
             resolver = interface_resolver
+
         # Only if is not decorated with classmethod
         if resolver:
-            if not getattr(resolver, '__self__', True):
-                return resolver.__func__
-            return resolver
+            return get_unbound_function(resolver)
 
-        return partial(self.default_resolver, name)
+        return partial(self.default_resolver, name, default_value)
 
     def get_field_type(self, map, type):
         if isinstance(type, List):

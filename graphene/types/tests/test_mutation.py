@@ -2,6 +2,8 @@ import pytest
 
 from ..mutation import Mutation
 from ..objecttype import ObjectType
+from ..schema import Schema
+from ..scalars import String
 
 
 def test_generate_mutation_no_args():
@@ -15,26 +17,6 @@ def test_generate_mutation_no_args():
     assert MyMutation._meta.name == "MyMutation"
     assert MyMutation._meta.description == "Documentation"
     assert MyMutation.Field().resolver == MyMutation.mutate
-
-
-# def test_generate_mutation_with_args():
-#     class MyMutation(Mutation):
-#         '''Documentation'''
-#         class Input:
-#             s = String()
-
-#         @classmethod
-#         def mutate(cls, *args, **kwargs):
-#             pass
-
-#     graphql_type = MyMutation._meta.graphql_type
-#     field = MyMutation.Field()
-#     assert graphql_type.name == "MyMutation"
-#     assert graphql_type.description == "Documentation"
-#     assert isinstance(field, Field)
-#     assert field.type == MyMutation._meta.graphql_type
-#     assert 's' in field.args
-#     assert field.args['s'].type == String
 
 
 def test_generate_mutation_with_meta():
@@ -59,3 +41,35 @@ def test_mutation_raises_exception_if_no_mutate():
             pass
 
     assert "All mutations must define a mutate method in it" == str(excinfo.value)
+
+
+def test_mutation_execution():
+    class CreateUser(Mutation):
+        class Input:
+            name = String()
+
+        name = String()
+
+        def mutate(self, args, context, info):
+            name = args.get('name')
+            return CreateUser(name=name)
+
+    class Query(ObjectType):
+        a = String()
+
+    class MyMutation(ObjectType):
+        create_user = CreateUser.Field()
+
+    schema = Schema(query=Query, mutation=MyMutation)
+    result = schema.execute(''' mutation mymutation {
+        createUser(name:"Peter") {
+            name
+        }
+    }
+    ''')
+    assert not result.errors
+    assert result.data == {
+        'createUser': {
+            'name': "Peter"
+        }
+    }

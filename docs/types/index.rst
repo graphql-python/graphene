@@ -10,4 +10,5 @@ Types Reference
    interfaces
    abstracttypes
    objecttypes
+   schema
    mutations

@@ -95,13 +95,13 @@ class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
 class IterableConnectionField(Field):
 
     def __init__(self, type, *args, **kwargs):
+        kwargs.setdefault('before', String())
+        kwargs.setdefault('after', String())
+        kwargs.setdefault('first', Int())
+        kwargs.setdefault('last', Int())
         super(IterableConnectionField, self).__init__(
             type,
             *args,
-            before=String(),
-            after=String(),
-            first=Int(),
-            last=Int(),
             **kwargs
         )
 
@@ -117,21 +117,25 @@ class IterableConnectionField(Field):
         ).format(str(self), connection_type)
         return connection_type
 
-    @staticmethod
-    def connection_resolver(resolver, connection, root, args, context, info):
-        iterable = resolver(root, args, context, info)
-        assert isinstance(iterable, Iterable), (
-            'Resolved value from the connection field have to be iterable. '
+    @classmethod
+    def connection_resolver(cls, resolver, connection, root, args, context, info):
+        resolved = resolver(root, args, context, info)
+
+        if isinstance(resolved, connection):
+            return resolved
+
+        assert isinstance(resolved, Iterable), (
+            'Resolved value from the connection field have to be iterable or instance of {}. '
             'Received "{}"'
-        ).format(iterable)
+        ).format(connection, resolved)
         connection = connection_from_list(
-            iterable,
+            resolved,
             args,
             connection_type=connection,
             edge_type=connection.Edge,
             pageinfo_type=PageInfo
         )
-        connection.iterable = iterable
+        connection.iterable = resolved
         return connection
 
     def get_resolver(self, parent_resolver):

@@ -8,7 +8,7 @@ querying.
 The basics:
 
 - Each ObjectType is a Python class that inherits 
-  ``graphene.ObjectType`` or inherits an implemented `Interface`_.
+  ``graphene.ObjectType``.
 - Each attribute of the ObjectType represents a ``Field``.
 
 Quick example
@@ -36,7 +36,7 @@ Field.
 The above ``Person`` ObjectType would have the following representation
 in a schema:
 
-.. code:: graphql
+.. code::
 
     type Person {
       firstName: String
@@ -54,6 +54,11 @@ otherwise, the ``resolve_{field_name}`` within the ``ObjectType``.
 
 By default a resolver will take the ``args``, ``context`` and ``info``
 arguments.
+
+NOTE: The class resolvers in a ``ObjectType`` are treated as ``staticmethod``s
+always, so the first argument in the resolver: ``self`` (or ``root``) doesn't
+need to be an actual instance of the ``ObjectType``.
+
 
 Quick example
 ~~~~~~~~~~~~~
