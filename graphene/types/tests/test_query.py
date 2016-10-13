@@ -10,6 +10,7 @@ from ..objecttype import ObjectType
 from ..scalars import Int, String
 from ..schema import Schema
 from ..structures import List
+from ..dynamic import Dynamic
 
 
 def test_query():
@@ -21,6 +22,19 @@ def test_query():
     executed = hello_schema.execute('{ hello }')
     assert not executed.errors
     assert executed.data == {'hello': 'World'}
+
+
+def test_query_dynamic():
+    class Query(ObjectType):
+        hello = Dynamic(lambda: String(resolver=lambda *_: 'World'))
+        hellos = Dynamic(lambda: List(String, resolver=lambda *_: ['Worlds']))
+        hello_field = Dynamic(lambda: Field(String, resolver=lambda *_: 'Field World'))
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ hello hellos helloField }')
+    assert not executed.errors
+    assert executed.data == {'hello': 'World', 'hellos': ['Worlds'], 'helloField': 'Field World'}
 
 
 def test_query_default_value():
