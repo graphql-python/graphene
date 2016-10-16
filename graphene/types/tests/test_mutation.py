@@ -49,6 +49,7 @@ def test_mutation_execution():
         class Input:
             name = String()
             dynamic = Dynamic(lambda: String())
+            dynamic_none = Dynamic(lambda: None)
 
         name = String()
         dynamic = Dynamic(lambda: String())

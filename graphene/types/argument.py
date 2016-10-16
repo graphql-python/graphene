@@ -36,6 +36,10 @@ def to_arguments(args, extra_args):
     for default_name, arg in iter_arguments:
         if isinstance(arg, Dynamic):
             arg = arg.get_type()
+            if arg is None:
+                # If the Dynamic type returned None
+                # then we skip the Argument
+                continue
 
         if isinstance(arg, UnmountedType):
             arg = arg.Argument()
