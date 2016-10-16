@@ -3,6 +3,7 @@ from itertools import chain
 
 from ..utils.orderedtype import OrderedType
 from .structures import NonNull
+from .dynamic import Dynamic
 
 
 class Argument(OrderedType):
@@ -33,6 +34,9 @@ def to_arguments(args, extra_args):
     iter_arguments = chain(args.items(), extra_args)
     arguments = OrderedDict()
     for default_name, arg in iter_arguments:
+        if isinstance(arg, Dynamic):
+            arg = arg.get_type()
+
         if isinstance(arg, UnmountedType):
             arg = arg.Argument()
 

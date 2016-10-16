@@ -13,12 +13,14 @@ from ..utils.str_converters import to_camel_case
 from ..utils.get_unbound_function import get_unbound_function
 from .dynamic import Dynamic
 from .enum import Enum
+from .field import Field
 from .inputobjecttype import InputObjectType
 from .interface import Interface
 from .objecttype import ObjectType
 from .scalars import ID, Boolean, Float, Int, Scalar, String
 from .structures import List, NonNull
 from .union import Union
+from .utils import get_field_as
 
 
 def is_graphene_type(_type):
@@ -202,7 +204,7 @@ class TypeMap(GraphQLTypeMap):
         fields = OrderedDict()
         for name, field in type._meta.fields.items():
             if isinstance(field, Dynamic):
-                field = field.get_type()
+                field = get_field_as(field.get_type(), _as=Field)
                 if not field:
                     continue
             map = self.reducer(map, field.type)
