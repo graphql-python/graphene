@@ -1,4 +1,7 @@
 from ..enum import Enum, PyEnum
+from ..field import Field
+from ..inputfield import InputField
+from ..argument import Argument
 
 
 def test_enum_construction():
@@ -72,3 +75,39 @@ def test_enum_value_from_class():
     assert RGB.RED.value == 1
     assert RGB.GREEN.value == 2
     assert RGB.BLUE.value == 3
+
+
+def test_enum_value_as_unmounted_field():
+    class RGB(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    unmounted = RGB()
+    unmounted_field = unmounted.Field()
+    assert isinstance(unmounted_field, Field)
+    assert unmounted_field.type == RGB
+
+
+def test_enum_value_as_unmounted_inputfield():
+    class RGB(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    unmounted = RGB()
+    unmounted_field = unmounted.InputField()
+    assert isinstance(unmounted_field, InputField)
+    assert unmounted_field.type == RGB
+
+
+def test_enum_value_as_unmounted_argument():
+    class RGB(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    unmounted = RGB()
+    unmounted_field = unmounted.Argument()
+    assert isinstance(unmounted_field, Argument)
+    assert unmounted_field.type == RGB
