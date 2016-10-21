@@ -12,6 +12,10 @@ class Structure(UnmountedType):
         self.of_type = of_type
 
     def get_type(self):
+        '''
+        This function is called when the unmounted type (List or NonNull instance)
+        is mounted (as a Field, InputField or Argument)
+        '''
         return self
 
 

@@ -8,7 +8,7 @@ class UnmountedType(OrderedType):
 
     Instead of writing
     >>> class MyObjectType(ObjectType):
-    >>>     my_field = Field(String(), description='Description here')
+    >>>     my_field = Field(String, description='Description here')
 
     It let you write
     >>> class MyObjectType(ObjectType):
@@ -21,6 +21,10 @@ class UnmountedType(OrderedType):
         self.kwargs = kwargs
 
     def get_type(self):
+        '''
+        This function is called when the UnmountedType instance
+        is mounted (as a Field, InputField or Argument)
+        '''
         raise NotImplementedError("get_type not implemented in {}".format(self))
 
     def Field(self):  # noqa: N802
