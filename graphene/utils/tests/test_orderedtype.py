@@ -23,3 +23,19 @@ def test_orderedtype_hash():
 
     assert hash(one) == hash(one)
     assert hash(one) != hash(two)
+
+
+def test_orderedtype_resetcounter():
+    one = OrderedType()
+    two = OrderedType()
+    one.reset_counter()
+
+    assert one > two
+
+
+def test_orderedtype_non_orderabletypes():
+    one = OrderedType()
+
+    assert one.__lt__(1) == NotImplemented
+    assert one.__gt__(1) == NotImplemented
+    assert not one == 1
