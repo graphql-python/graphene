@@ -37,10 +37,16 @@ class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
     used to parse input from ast or variables and to ensure validity.
     '''
 
+    def  __init__(self):
+        def get_type(self):
+            return self
+        self.get_type = types.MethodType(get_type, self)
+
     serialize = None
     parse_value = None
     parse_literal = None
 
+    @classmethod
     def get_type(self):
         return self
 
