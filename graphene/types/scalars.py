@@ -1,4 +1,5 @@
 import six
+import types
 
 from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
                                   StringValue)
@@ -37,7 +38,7 @@ class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
     used to parse input from ast or variables and to ensure validity.
     '''
 
-    def  __init__(self):
+    def __init__(self):
         def get_type(self):
             return self
         self.get_type = types.MethodType(get_type, self)
