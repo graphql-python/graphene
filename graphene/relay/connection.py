@@ -118,25 +118,28 @@ class IterableConnectionField(Field):
         return connection_type
 
     @classmethod
-    def connection_resolver(cls, resolver, connection, root, args, context, info):
-        resolved = resolver(root, args, context, info)
+    def connection_resolver(cls, resolver, connection_type, root, args, context, info):
+        p = Promise.resolve(resolver(root, args, context, info))
 
-        if isinstance(resolved, connection):
-            return resolved
+        def resolve_connection(resolved):
+            if isinstance(resolved, connection_type):
+                return resolved
 
-        assert isinstance(resolved, Iterable), (
-            'Resolved value from the connection field have to be iterable or instance of {}. '
-            'Received "{}"'
-        ).format(connection, resolved)
-        connection = connection_from_list(
-            resolved,
-            args,
-            connection_type=connection,
-            edge_type=connection.Edge,
-            pageinfo_type=PageInfo
-        )
-        connection.iterable = resolved
-        return connection
+            assert isinstance(resolved, Iterable), (
+                'Resolved value from the connection field have to be iterable or instance of {}. '
+                'Received "{}"'
+            ).format(connection_type, resolved)
+            connection = connection_from_list(
+                resolved,
+                args,
+                connection_type=connection_type,
+                edge_type=connection_type.Edge,
+                pageinfo_type=PageInfo
+            )
+            connection.iterable = resolved
+            return connection
+
+        return p.then(resolve_connection)
 
     def get_resolver(self, parent_resolver):
         resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)
