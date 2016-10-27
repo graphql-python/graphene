@@ -28,8 +28,9 @@ def test_connection():
     pageinfo_field = fields['page_info']
 
     assert isinstance(edge_field, Field)
-    assert isinstance(edge_field.type, List)
-    assert edge_field.type.of_type == MyObjectConnection.Edge
+    assert isinstance(edge_field.type, NonNull)
+    assert isinstance(edge_field.type.of_type, List)
+    assert edge_field.type.of_type.of_type == MyObjectConnection.Edge
 
     assert isinstance(pageinfo_field, Field)
     assert isinstance(pageinfo_field.type, NonNull)

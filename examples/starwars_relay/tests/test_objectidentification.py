@@ -56,7 +56,7 @@ type Ship implements Node {
 
 type ShipConnection {
   pageInfo: PageInfo!
-  edges: [ShipEdge]
+  edges: [ShipEdge]!
 }
 
 type ShipEdge {
