@@ -82,7 +82,7 @@ class ConnectionMeta(ObjectTypeMeta):
 
         class ConnectionBase(AbstractType):
             page_info = Field(PageInfo, name='pageInfo', required=True)
-            edges = List(edge)
+            edges = NonNull(List(edge))
 
         bases = (ConnectionBase, ) + bases
         attrs = dict(attrs, _meta=options, Edge=edge)
