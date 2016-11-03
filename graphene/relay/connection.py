@@ -119,19 +119,14 @@ class ConnectionField(Field):
         kwargs.setdefault('after', String())
         kwargs.setdefault('first', Int())
         kwargs.setdefault('last', Int())
+        assert issubclass(type, Connection), (
+            '{} type have to be a subclass of Connection. Received "{}".'
+        ).format(str(self), type)
         super(ConnectionField, self).__init__(
             type,
             *args,
             **kwargs
         )
-
-    @property
-    def type(self):
-        type = super(ConnectionField, self).type
-        assert issubclass(type, Connection), (
-            '{} type have to be a subclass of Connection. Received "{}".'
-        ).format(str(self), type)
-        return type
 
     @classmethod
     def connection_resolver(cls, resolver, connection_type, root, args, context, info):
