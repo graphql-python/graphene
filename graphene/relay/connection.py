@@ -97,9 +97,6 @@ class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
 
     @classmethod
     def connection_resolver(cls, resolved, args, context, info):
-        if isinstance(resolved, cls):
-            return resolved
-
         assert isinstance(resolved, Iterable), (
             'Resolved value from the connection field have to be iterable or instance of {}. '
             'Received "{}"'
@@ -131,18 +128,17 @@ class ConnectionField(Field):
     @property
     def type(self):
         type = super(ConnectionField, self).type
-        if is_node(type):
-            connection_type = type.Connection
-        else:
-            connection_type = type
-        assert issubclass(connection_type, Connection), (
+        assert issubclass(type, Connection), (
             '{} type have to be a subclass of Connection. Received "{}".'
-        ).format(str(self), connection_type)
-        return connection_type
+        ).format(str(self), type)
+        return type
 
     @classmethod
     def connection_resolver(cls, resolver, connection_type, root, args, context, info):
         resolved = resolver(root, args, context, info)
+
+        if isinstance(resolved, connection_type):
+            return resolved
 
         on_resolve = partial(connection_type.connection_resolver, args=args, context=context, info=info)
         if isinstance(resolved, Promise):
