@@ -24,8 +24,8 @@ The following is an example for creating a DateTime scalar:
 .. code:: python
 
     import datetime
-    from graphene.core.classtypes import Scalar
-    from graphql.core.language import ast
+    from graphene.types import Scalar
+    from graphql.language import ast
 
     class DateTime(Scalar):
         '''DateTime Scalar Description'''
