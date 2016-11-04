@@ -5,7 +5,7 @@ from functools import partial
 import six
 
 from graphql_relay import connection_from_list
-from promise import Promise
+from promise import Promise, is_thenable, promisify
 
 from ..types import (AbstractType, Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
                      Union)
@@ -140,8 +140,8 @@ class ConnectionField(Field):
             return resolved
 
         on_resolve = partial(connection_type.connection_resolver, args=args, context=context, info=info)
-        if isinstance(resolved, Promise):
-            return resolved.then(on_resolve)
+        if is_thenable(resolved):
+            return promisify(resolved).then(on_resolve)
 
         return on_resolve(resolved)
 
