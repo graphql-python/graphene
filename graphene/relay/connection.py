@@ -96,6 +96,10 @@ class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
         return ConnectionField(cls, *args, **kwargs)
 
     @classmethod
+    def is_type_of(cls, root, context, info):
+        return isinstance(root, cls)
+
+    @classmethod
     def connection_resolver(cls, resolved, args, context, info):
         assert isinstance(resolved, Iterable), (
             'Resolved value from the connection field have to be iterable or instance of {}. '
@@ -132,7 +136,7 @@ class ConnectionField(Field):
     def connection_resolver(cls, resolver, connection_type, root, args, context, info):
         resolved = resolver(root, args, context, info)
 
-        if isinstance(resolved, connection_type):
+        if connection_type.is_type_of(resolved, context, info):
             return resolved
 
         on_resolve = partial(connection_type.connection_resolver, args=args, context=context, info=info)
