@@ -24,8 +24,8 @@ The following is an example for creating a DateTime scalar:
 .. code:: python
 
     import datetime
-    from graphene.core.classtypes import Scalar
-    from graphql.core.language import ast
+    from graphene.types import Scalar
+    from graphql.language import ast
 
     class DateTime(Scalar):
         '''DateTime Scalar Description'''
@@ -47,8 +47,8 @@ The following is an example for creating a DateTime scalar:
 Mounting Scalars
 ----------------
 
-These scalars, if are mounted in a ``ObjectType``, ``Interface`` or
-``Mutation``, act as ``Field``\ s. Note: when using the ``Field`` constructor directly, pass the type and not an instance.
+If a scalar is mounted in an ``ObjectType``, ``Interface`` or
+``Mutation``, they act as ``Field``\ s:
 
 .. code:: python
 
@@ -60,7 +60,11 @@ These scalars, if are mounted in a ``ObjectType``, ``Interface`` or
         name = graphene.Field(graphene.String)
 
 
-If the types are mounted in a ``Field``, would act as ``Argument``\ s.
+**Note:** when using the ``Field`` constructor directly, pass the type and
+not an instance.
+
+
+If the types are mounted in a ``Field``, they act as ``Argument``\ s:
 
 .. code:: python
 
