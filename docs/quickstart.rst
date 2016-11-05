@@ -1,6 +1,12 @@
 Getting started
 ===============
 
+What is GraphQL?
+----------------
+
+For an introduction to GraphQL and an overview of its concepts, please refer
+to `the official introduction <http://graphql.org/learn/>`.
+
 Let’s build a basic GraphQL schema from scratch.
 
 Requirements
