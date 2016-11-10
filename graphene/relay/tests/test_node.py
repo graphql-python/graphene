@@ -4,7 +4,7 @@ from graphql_relay import to_global_id
 
 from ...types import AbstractType, ObjectType, Schema, String
 from ..connection import Connection
-from ..node import Node
+from ..node import Node, GlobalID
 
 
 class SharedNodeFields(AbstractType):
@@ -27,6 +27,18 @@ class MyNode(ObjectType):
         return MyNode(name=str(id))
 
 
+class MyNodeImplementedId(ObjectType):
+
+    class Meta:
+        interfaces = (Node, )
+    id = GlobalID()
+    name = String()
+
+    @staticmethod
+    def get_node(id, *_):
+        return MyNodeImplementedId(name=str(id) + '!')
+
+
 class MyOtherNode(SharedNodeFields, ObjectType):
     extra_field = String()
 
@@ -45,7 +57,7 @@ class RootQuery(ObjectType):
     first = String()
     node = Node.Field()
 
-schema = Schema(query=RootQuery, types=[MyNode, MyOtherNode])
+schema = Schema(query=RootQuery, types=[MyNode, MyOtherNode, MyNodeImplementedId])
 
 
 def test_node_good():
@@ -78,6 +90,14 @@ def test_subclassed_node_query():
         [('shared', '1'), ('extraField', 'extra field info.'), ('somethingElse', '----')])})
 
 
+def test_node_query_implemented_id():
+    executed = schema.execute(
+        '{ node(id:"%s") { ... on MyNodeImplementedId { name } } }' % to_global_id("MyNodeImplementedId", 1)
+    )
+    assert not executed.errors
+    assert executed.data == {'node': {'name': '1!'}}
+
+
 def test_node_query_incorrect_id():
     executed = schema.execute(
         '{ node(id:"%s") { ... on MyNode { name } } }' % "something:2"
@@ -93,6 +113,11 @@ schema {
 }
 
 type MyNode implements Node {
+  id: ID!
+  name: String
+}
+
+type MyNodeImplementedId implements Node {
   id: ID!
   name: String
 }

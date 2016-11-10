@@ -35,24 +35,26 @@ def get_default_connection(cls):
 
 class GlobalID(Field):
 
-    def __init__(self, node, *args, **kwargs):
-        super(GlobalID, self).__init__(ID, *args, **kwargs)
-        self.node = node
+    def __init__(self, node=None, parent_type=None, required=True, *args, **kwargs):
+        super(GlobalID, self).__init__(ID, required=required, *args, **kwargs)
+        self._node = node or Node
+        self._parent_type_name = parent_type._meta.name if parent_type else None
 
     @staticmethod
-    def id_resolver(parent_resolver, node, root, args, context, info):
-        id = parent_resolver(root, args, context, info)
-        return node.to_global_id(info.parent_type.name, id)  # root._meta.name
+    def id_resolver(parent_resolver, node, root, args, context, info, parent_type_name=None):
+        type_id = parent_resolver(root, args, context, info)
+        parent_type_name = parent_type_name or info.parent_type.name  # root._meta.name
+        return node.to_global_id(parent_type_name, type_id)
 
     def get_resolver(self, parent_resolver):
-        return partial(self.id_resolver, parent_resolver, self.node)
+        return partial(self.id_resolver, parent_resolver, self._node, parent_type_name=self._parent_type_name)
 
 
 class NodeMeta(InterfaceMeta):
 
     def __new__(cls, name, bases, attrs):
         cls = InterfaceMeta.__new__(cls, name, bases, attrs)
-        cls._meta.fields['id'] = GlobalID(cls, required=True, description='The ID of the object.')
+        cls._meta.fields['id'] = GlobalID(cls, description='The ID of the object.')
         return cls
 
 

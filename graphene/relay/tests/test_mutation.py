@@ -1,10 +1,12 @@
 import pytest
 
+from graphql_relay import to_global_id
+
 from ...types import (AbstractType, Argument, Field, InputField,
                       InputObjectType, NonNull, ObjectType, Schema)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
-from ..node import Node
+from ..node import GlobalID, Node
 
 
 class SharedFields(AbstractType):
@@ -23,12 +25,14 @@ class SaySomething(ClientIDMutation):
 
     class Input:
         what = String()
+
     phrase = String()
+    my_node_id = GlobalID(parent_type=MyNode)
 
     @staticmethod
     def mutate_and_get_payload(args, context, info):
         what = args.get('what')
-        return SaySomething(phrase=str(what))
+        return SaySomething(phrase=str(what), my_node_id=1)
 
 
 class OtherMutation(ClientIDMutation):
@@ -71,8 +75,9 @@ def test_no_mutate_and_get_payload():
 
 def test_mutation():
     fields = SaySomething._meta.fields
-    assert list(fields.keys()) == ['phrase', 'client_mutation_id']
+    assert list(fields.keys()) == ['phrase', 'my_node_id', 'client_mutation_id']
     assert isinstance(fields['phrase'], Field)
+    assert isinstance(fields['my_node_id'], GlobalID)
     field = SaySomething.Field()
     assert field.type == SaySomething
     assert list(field.args.keys()) == ['input']
@@ -120,12 +125,13 @@ def test_subclassed_mutation_input():
     assert fields['client_mutation_id'].type == String
 
 
-# def test_node_query():
-#     executed = schema.execute(
-#         'mutation a { say(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
-#     )
-#     assert not executed.errors
-#     assert executed.data == {'say': {'phrase': 'hello'}}
+def test_node_query():
+    executed = schema.execute(
+        'mutation a { say(input: {what:"hello", clientMutationId:"1"}) { phrase, clientMutationId, myNodeId} }'
+    )
+    assert not executed.errors
+    assert dict(executed.data) == {'say': {'myNodeId': to_global_id('MyNode', '1'), 'clientMutationId': '1', 'phrase': 'hello'}}
+
 
 def test_edge_query():
     executed = schema.execute(
