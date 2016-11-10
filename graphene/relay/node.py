@@ -47,7 +47,7 @@ class GlobalID(Field):
         return node.to_global_id(parent_type_name, type_id)  # root._meta.name
 
     def get_resolver(self, parent_resolver):
-        return partial(self.id_resolver, parent_resolver, self.node, parent_type_name=self._parent_type_name)
+        return partial(self.id_resolver, parent_resolver, self.node, parent_type_name=self.parent_type_name)
 
 
 class NodeMeta(InterfaceMeta):
