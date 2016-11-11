@@ -24,7 +24,21 @@ class UnionMeta(type):
             len(options.types) > 0
         ), 'Must provide types for Union {}.'.format(options.name)
 
-        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
+        cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
+
+        get_connection = getattr(cls, 'get_connection', None)
+        if not get_connection:
+            from graphene.relay.connection import Connection
+
+            class DefaultUnionConnection(Connection):
+                class Meta:
+                    node = cls
+
+            cls.Connection = DefaultUnionConnection
+        else:
+            cls.Connection = get_connection()
+
+        return cls
 
     def __str__(cls):  # noqa: N805
         return cls._meta.name
