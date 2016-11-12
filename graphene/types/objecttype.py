@@ -45,10 +45,6 @@ class ObjectTypeMeta(AbstractTypeMeta):
         )
 
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
-
-        for interface in options.interfaces:
-            interface.implements(cls)
-
         return cls
 
     def __str__(cls):  # noqa: N802

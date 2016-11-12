@@ -52,15 +52,6 @@ def test_node_good():
     assert 'id' in MyNode._meta.fields
 
 
-def test_node_get_connection():
-    connection = MyNode.Connection
-    assert issubclass(connection, Connection)
-
-
-def test_node_get_connection_dont_duplicate():
-    assert MyNode.Connection == MyNode.Connection
-
-
 def test_node_query():
     executed = schema.execute(
         '{ node(id:"%s") { ... on MyNode { name } } }' % to_global_id("MyNode", 1)

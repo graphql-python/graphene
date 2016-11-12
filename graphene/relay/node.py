@@ -21,18 +21,6 @@ def is_node(objecttype):
     return False
 
 
-def get_default_connection(cls):
-    from .connection import Connection
-    assert issubclass(cls, ObjectType), (
-        'Can only get connection type on implemented Nodes.'
-    )
-
-    class Meta:
-        node = cls
-
-    return type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
-
-
 class GlobalID(Field):
 
     def __init__(self, node=None, required=True, *args, **kwargs):
@@ -101,11 +89,3 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
     @classmethod
     def to_global_id(cls, type, id):
         return to_global_id(type, id)
-
-    @classmethod
-    def implements(cls, objecttype):
-        get_connection = getattr(objecttype, 'get_connection', None)
-        if not get_connection:
-            get_connection = partial(get_default_connection, objecttype)
-
-        objecttype.Connection = get_connection()

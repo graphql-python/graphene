@@ -5,7 +5,7 @@ from functools import partial
 import six
 
 from graphql_relay import connection_from_list
-from promise import Promise
+from promise import Promise, is_thenable, promisify
 
 from ..types import (AbstractType, Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
                      Union)
@@ -90,65 +90,61 @@ class ConnectionMeta(ObjectTypeMeta):
 
 
 class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
-    pass
+
+    @classmethod
+    def Field(cls, *args, **kwargs):  # noqa: N802
+        return ConnectionField(cls, *args, **kwargs)
+
+    @classmethod
+    def is_type_of(cls, root, context, info):
+        return isinstance(root, cls)
+
+    @classmethod
+    def connection_resolver(cls, resolved, args, context, info):
+        assert isinstance(resolved, Iterable), (
+            'Resolved value from the connection field have to be iterable or instance of {}. '
+            'Received "{}"'
+        ).format(cls, resolved)
+        connection = connection_from_list(
+            resolved,
+            args,
+            connection_type=cls,
+            edge_type=cls.Edge,
+            pageinfo_type=PageInfo
+        )
+        connection.iterable = resolved
+        return connection
 
 
-class IterableConnectionField(Field):
+class ConnectionField(Field):
 
     def __init__(self, type, *args, **kwargs):
         kwargs.setdefault('before', String())
         kwargs.setdefault('after', String())
         kwargs.setdefault('first', Int())
         kwargs.setdefault('last', Int())
-        super(IterableConnectionField, self).__init__(
+        assert issubclass(type, Connection), (
+            '{} type have to be a subclass of Connection. Received "{}".'
+        ).format(str(self), type)
+        super(ConnectionField, self).__init__(
             type,
             *args,
             **kwargs
         )
 
-    @property
-    def type(self):
-        type = super(IterableConnectionField, self).type
-        if is_node(type):
-            connection_type = type.Connection
-        else:
-            connection_type = type
-        assert issubclass(connection_type, Connection), (
-            '{} type have to be a subclass of Connection. Received "{}".'
-        ).format(str(self), connection_type)
-        return connection_type
-
-    @classmethod
-    def resolve_connection(cls, connection_type, args, resolved):
-        if isinstance(resolved, connection_type):
-            return resolved
-
-        assert isinstance(resolved, Iterable), (
-            'Resolved value from the connection field have to be iterable or instance of {}. '
-            'Received "{}"'
-        ).format(connection_type, resolved)
-        connection = connection_from_list(
-            resolved,
-            args,
-            connection_type=connection_type,
-            edge_type=connection_type.Edge,
-            pageinfo_type=PageInfo
-        )
-        connection.iterable = resolved
-        return connection
-
     @classmethod
     def connection_resolver(cls, resolver, connection_type, root, args, context, info):
         resolved = resolver(root, args, context, info)
 
-        on_resolve = partial(cls.resolve_connection, connection_type, args)
-        if isinstance(resolved, Promise):
-            return resolved.then(on_resolve)
+        if connection_type.is_type_of(resolved, context, info):
+            return resolved
+
+        on_resolve = partial(connection_type.connection_resolver, args=args, context=context, info=info)
+        if is_thenable(resolved):
+            return promisify(resolved).then(on_resolve)
 
         return on_resolve(resolved)
 
     def get_resolver(self, parent_resolver):
-        resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)
+        resolver = super(ConnectionField, self).get_resolver(parent_resolver)
         return partial(self.connection_resolver, resolver, self.type)
-
-ConnectionField = IterableConnectionField

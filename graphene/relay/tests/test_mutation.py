@@ -3,6 +3,7 @@ import pytest
 from ...types import (AbstractType, Argument, Field, InputField,
                       InputObjectType, NonNull, ObjectType, Schema)
 from ...types.scalars import String
+from ..connection import Connection
 from ..mutation import ClientIDMutation
 from ..node import Node
 
@@ -17,6 +18,11 @@ class MyNode(ObjectType):
         interfaces = (Node, )
 
     name = String()
+
+
+class MyNodeConnection(Connection):
+    class Meta:
+        node = MyNode
 
 
 class SaySomething(ClientIDMutation):
@@ -37,13 +43,13 @@ class OtherMutation(ClientIDMutation):
         additional_field = String()
 
     name = String()
-    my_node_edge = Field(MyNode.Connection.Edge)
+    my_node_edge = Field(MyNodeConnection.Edge)
 
     @classmethod
     def mutate_and_get_payload(cls, args, context, info):
         shared = args.get('shared', '')
         additionalField = args.get('additionalField', '')
-        edge_type = MyNode.Connection.Edge
+        edge_type = MyNodeConnection.Edge
         return OtherMutation(name=shared + additionalField,
                              my_node_edge=edge_type(
                                  cursor='1', node=MyNode(name='name')))

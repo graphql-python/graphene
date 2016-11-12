@@ -97,7 +97,11 @@ def test_edge_with_bases():
 
 
 def test_edge_on_node():
-    Edge = MyObject.Connection.Edge
+    class MyObjectConnection(Connection):
+        class Meta:
+            node = MyObject
+
+    Edge = MyObjectConnection.Edge
     assert Edge._meta.name == 'MyObjectEdge'
     edge_fields = Edge._meta.fields
     assert list(edge_fields.keys()) == ['node', 'cursor']
