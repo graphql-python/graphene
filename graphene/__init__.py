@@ -60,6 +60,7 @@ if not __SETUP__:
         'Float',
         'Enum',
         'Boolean',
+        'OmniScalar',
         'List',
         'NonNull',
         'Argument',
