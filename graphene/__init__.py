@@ -26,7 +26,7 @@ if not __SETUP__:
         InputField,
         Schema,
         Scalar,
-        String, ID, Int, Float, Boolean,
+        String, ID, Int, Float, Boolean, OmniScalar,
         List, NonNull,
         Enum,
         Argument,
