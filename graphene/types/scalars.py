@@ -175,11 +175,13 @@ class OmniScalar(Scalar):
 
     _scalar_type_map = {
         str: String,
-        unicode: String,
         bool: Boolean,
         int: Int,
         float: Float,
     }
+
+    if six.PY2:
+        _scalar_type_map[unicode] = String
 
     @staticmethod
     def serialize(value):
