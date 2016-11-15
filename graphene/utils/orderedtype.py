@@ -5,8 +5,9 @@ from functools import total_ordering
 class OrderedType(object):
     creation_counter = 1
 
-    def __init__(self, _creation_counter=None):
+    def __init__(self, _creation_counter=None, _metadata=None):
         self.creation_counter = _creation_counter or self.gen_counter()
+        self.metadata = _metadata
 
     @staticmethod
     def gen_counter():
