@@ -28,9 +28,14 @@ class Argument(OrderedType):
         )
 
 
-def to_arguments(args, extra_args):
+def to_arguments(args, extra_args=None):
     from .unmountedtype import UnmountedType
-    extra_args = sorted(extra_args.items(), key=lambda f: f[1])
+    from .field import Field
+    from .inputfield import InputField
+    if extra_args:
+        extra_args = sorted(extra_args.items(), key=lambda f: f[1])
+    else:
+        extra_args = []
     iter_arguments = chain(args.items(), extra_args)
     arguments = OrderedDict()
     for default_name, arg in iter_arguments:
@@ -43,6 +48,13 @@ def to_arguments(args, extra_args):
 
         if isinstance(arg, UnmountedType):
             arg = arg.Argument()
+
+        if isinstance(arg, (InputField, Field)):
+            raise ValueError('Expected {} to be Argument, but received {}. Try using Argument({}).'.format(
+                default_name,
+                type(arg).__name__,
+                arg.type
+            ))
 
         if not isinstance(arg, Argument):
             raise ValueError('Unknown argument "{}".'.format(default_name))
