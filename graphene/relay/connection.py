@@ -115,7 +115,7 @@ class IterableConnectionField(Field):
             connection_type = type
         assert issubclass(connection_type, Connection), (
             '{} type have to be a subclass of Connection. Received "{}".'
-        ).format(str(self), connection_type)
+        ).format(self.__class__.__name__, connection_type)
         return connection_type
 
     @classmethod
