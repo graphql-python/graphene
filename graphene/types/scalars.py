@@ -49,6 +49,7 @@ class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
         '''
         return cls
 
+
 # As per the GraphQL Spec, Integers are only treated as valid when a valid
 # 32-bit signed integer, providing the broadest support across platforms.
 #
