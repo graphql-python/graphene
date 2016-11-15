@@ -1,7 +1,17 @@
 import six
+from functools import partial
 
 from ..utils.is_base_type import is_base_type
 from .options import Options
+
+
+def get_default_connection(cls):
+    from graphene.relay.connection import Connection
+
+    class Meta:
+        node = cls
+
+    return type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
 
 
 class UnionMeta(type):
@@ -28,15 +38,9 @@ class UnionMeta(type):
 
         get_connection = getattr(cls, 'get_connection', None)
         if not get_connection:
-            from graphene.relay.connection import Connection
+            get_connection = partial(get_default_connection, cls)
 
-            class DefaultUnionConnection(Connection):
-                class Meta:
-                    node = cls
-
-            cls.Connection = DefaultUnionConnection
-        else:
-            cls.Connection = get_connection()
+        cls.Connection = get_connection()
 
         return cls
 
