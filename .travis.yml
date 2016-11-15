@@ -6,19 +6,19 @@ python:
 - 3.5
 - pypy
 before_install:
-  - |
-      if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
-        export PYENV_ROOT="$HOME/.pyenv"
-        if [ -f "$PYENV_ROOT/bin/pyenv" ]; then
-          cd "$PYENV_ROOT" && git pull
-        else
-          rm -rf "$PYENV_ROOT" && git clone --depth 1 https://github.com/yyuu/pyenv.git "$PYENV_ROOT"
-        fi
-        export PYPY_VERSION="4.0.1"
-        "$PYENV_ROOT/bin/pyenv" install "pypy-$PYPY_VERSION"
-        virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
-        source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
-      fi
+- |
+  if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    if [ -f "$PYENV_ROOT/bin/pyenv" ]; then
+      cd "$PYENV_ROOT" && git pull
+    else
+      rm -rf "$PYENV_ROOT" && git clone --depth 1 https://github.com/yyuu/pyenv.git "$PYENV_ROOT"
+    fi
+    export PYPY_VERSION="4.0.1"
+    "$PYENV_ROOT/bin/pyenv" install "pypy-$PYPY_VERSION"
+    virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
+    source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
+  fi
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
@@ -52,3 +52,10 @@ matrix:
   include:
   - python: '2.7'
     env: TEST_TYPE=lint
+deploy:
+  provider: pypi
+  user: syrusakbary
+  on:
+    tags: true
+  password:
+    secure: LHOp9DvYR+70vj4YVY8+JRNCKUOfYZREEUY3+4lMUpY7Zy5QwDfgEMXG64ybREH9dFldpUqVXRj53eeU3spfudSfh8NHkgqW7qihez2AhSnRc4dK6ooNfB+kLcSoJ4nUFGxdYImABc4V1hJvflGaUkTwDNYVxJF938bPaO797IvSbuI86llwqkvuK2Vegv9q/fy9sVGaF9VZIs4JgXwR5AyDR7FBArl+S84vWww4vTFD33hoE88VR4QvFY3/71BwRtQrnCMm7AOm31P9u29yi3bpzQpiOR2rHsgrsYdm597QzFKVxYwsmf9uAx2bpbSPy2WibunLePIvOFwm8xcfwnz4/J4ONBc5PSFmUytTWpzEnxb0bfUNLuYloIS24V6OZ8BfAhiYZ1AwySeJCQDM4Vk1V8IF6trTtyx5EW/uV9jsHCZ3LFsAD7UnFRTosIgN3SAK3ZWCEk5oF2IvjecsolEfkRXB3q9EjMkkuXRUeFDH2lWJLgNE27BzY6myvZVzPmfwZUsPBlPD/6w+WLSp97Rjgr9zS3T1d4ddqFM4ZYu04f2i7a/UUQqG+itzzuX5DWLPvzuNt37JB45mB9IsvxPyXZ6SkAcLl48NGyKok1f3vQnvphkfkl4lni29woKhaau8xlsuEDrcwOoeAsVcZXiItg+l+z2SlIwM0A06EvQ=
