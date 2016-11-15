@@ -119,9 +119,9 @@ Using the above mutation your new query would look like this:
     mutation myFirstMutation {
         createPerson(personData: {name:"Peter", age: 24}) {
             person {
-                name
+                name,
+                age
             }
-            ok
         }
     }
 
