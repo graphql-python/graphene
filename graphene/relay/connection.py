@@ -116,7 +116,7 @@ class IterableConnectionField(Field):
             connection_type = type
         assert issubclass(connection_type, Connection), (
             '{} type have to be a subclass of Connection. Received "{}".'
-        ).format(str(self), connection_type)
+        ).format(self.__class__.__name__, connection_type)
         return connection_type
 
     @classmethod
@@ -151,5 +151,6 @@ class IterableConnectionField(Field):
     def get_resolver(self, parent_resolver):
         resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)
         return partial(self.connection_resolver, resolver, self.type)
+
 
 ConnectionField = IterableConnectionField
