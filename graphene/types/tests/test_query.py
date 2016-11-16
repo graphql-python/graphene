@@ -4,12 +4,14 @@ from functools import partial
 from graphql import Source, execute, parse, GraphQLError
 
 from ..field import Field
+from ..interface import Interface
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..objecttype import ObjectType
 from ..scalars import Int, String
 from ..schema import Schema
 from ..structures import List
+from ..union import Union
 from ..dynamic import Dynamic
 
 
@@ -22,6 +24,99 @@ def test_query():
     executed = hello_schema.execute('{ hello }')
     assert not executed.errors
     assert executed.data == {'hello': 'World'}
+
+
+def test_query_union():
+    class one_object(object):
+        pass
+
+    class two_object(object):
+        pass
+
+    class One(ObjectType):
+        one = String()
+
+        @classmethod
+        def is_type_of(cls, root, context, info):
+            return isinstance(root, one_object)
+
+    class Two(ObjectType):
+        two = String()
+
+        @classmethod
+        def is_type_of(cls, root, context, info):
+            return isinstance(root, two_object)
+
+    class MyUnion(Union):
+        class Meta:
+            types = (One, Two)
+
+    class Query(ObjectType):
+        unions = List(MyUnion)
+
+        def resolve_unions(self, args, context, info):
+            return [one_object(), two_object()]
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ unions { __typename } }')
+    assert not executed.errors
+    assert executed.data == {
+        'unions': [{
+            '__typename': 'One'
+        }, {
+            '__typename': 'Two'
+        }]
+    }
+
+
+def test_query_interface():
+    class one_object(object):
+        pass
+
+    class two_object(object):
+        pass
+
+    class MyInterface(Interface):
+        base = String()
+
+    class One(ObjectType):
+        class Meta:
+            interfaces = (MyInterface, )
+
+        one = String()
+
+        @classmethod
+        def is_type_of(cls, root, context, info):
+            return isinstance(root, one_object)
+
+    class Two(ObjectType):
+        class Meta:
+            interfaces = (MyInterface, )
+
+        two = String()
+
+        @classmethod
+        def is_type_of(cls, root, context, info):
+            return isinstance(root, two_object)
+
+    class Query(ObjectType):
+        interfaces = List(MyInterface)
+
+        def resolve_interfaces(self, args, context, info):
+            return [one_object(), two_object()]
+
+    hello_schema = Schema(Query, types=[One, Two])
+
+    executed = hello_schema.execute('{ interfaces { __typename } }')
+    assert not executed.errors
+    assert executed.data == {
+        'interfaces': [{
+            '__typename': 'One'
+        }, {
+            '__typename': 'Two'
+        }]
+    }
 
 
 def test_query_dynamic():

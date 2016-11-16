@@ -30,18 +30,18 @@ def is_graphene_type(_type):
         return True
 
 
-def resolve_type(resolve_type_func, map, root, context, info):
+def resolve_type(resolve_type_func, map, type_name, root, context, info):
     _type = resolve_type_func(root, context, info)
-    # assert inspect.isclass(_type) and issubclass(_type, ObjectType), (
-    #     'Received incompatible type "{}".'.format(_type)
-    # )
+
     if not _type:
-        return get_default_resolve_type_fn(root, context, info, info.return_type)
+        return_type = map[type_name]
+        return get_default_resolve_type_fn(root, context, info, return_type)
 
     if inspect.isclass(_type) and issubclass(_type, ObjectType):
         graphql_type = map.get(_type._meta.name)
         assert graphql_type and graphql_type.graphene_type == _type
         return graphql_type
+
     return _type
 
 
@@ -151,7 +151,7 @@ class TypeMap(GraphQLTypeMap):
         from .definitions import GrapheneInterfaceType
         _resolve_type = None
         if type.resolve_type:
-            _resolve_type = partial(resolve_type, type.resolve_type, map)
+            _resolve_type = partial(resolve_type, type.resolve_type, map, type._meta.name)
         map[type._meta.name] = GrapheneInterfaceType(
             graphene_type=type,
             name=type._meta.name,
@@ -178,7 +178,7 @@ class TypeMap(GraphQLTypeMap):
         from .definitions import GrapheneUnionType
         _resolve_type = None
         if type.resolve_type:
-            _resolve_type = partial(resolve_type, type.resolve_type, map)
+            _resolve_type = partial(resolve_type, type.resolve_type, map, type._meta.name)
         types = []
         for i in type._meta.types:
             map = self.construct_objecttype(map, i)
