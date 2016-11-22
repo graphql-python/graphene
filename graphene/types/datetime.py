@@ -61,5 +61,5 @@ class Time(Scalar):
 
     @classmethod
     def parse_value(cls, value):
-        dt = iso8601.parse_date('{}T{}'.format(cls.epocj_time, value))
+        dt = iso8601.parse_date('{}T{}'.format(cls.epoch_time, value))
         return datetime.time(dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)
