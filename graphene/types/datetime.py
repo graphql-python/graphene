@@ -29,11 +29,37 @@ class DateTime(Scalar):
         )
         return dt.isoformat()
 
-    @staticmethod
-    def parse_literal(node):
+    @classmethod
+    def parse_literal(cls, node):
         if isinstance(node, ast.StringValue):
-            return iso8601.parse_date(node.value)
+            return cls.parse_value(node.value)
 
     @staticmethod
     def parse_value(value):
         return iso8601.parse_date(value)
+
+
+class Time(Scalar):
+    '''
+    The `Time` scalar type represents a Time value as
+    specified by
+    [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+    '''
+    epoch_date = '1970-01-01'
+
+    @staticmethod
+    def serialize(time):
+        assert isinstance(time, datetime.time), (
+            'Received not compatible time "{}"'.format(repr(time))
+        )
+        return time.isoformat()
+
+    @classmethod
+    def parse_literal(cls, node):
+        if isinstance(node, ast.StringValue):
+            return cls.parse_value(node.value)
+
+    @classmethod
+    def parse_value(cls, value):
+        dt = iso8601.parse_date('{}T{}'.format(cls.epocj_time, value))
+        return datetime.time(dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)

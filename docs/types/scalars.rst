@@ -9,9 +9,10 @@ Graphene defines the following base Scalar Types:
 - ``graphene.Boolean``
 - ``graphene.ID``
 
-Graphene also provides custom scalars for Dates and JSON:
+Graphene also provides custom scalars for Dates, Times, and JSON:
 
 - ``graphene.types.datetime.DateTime``
+- ``graphene.types.datetime.Time``
 - ``graphene.types.json.JSONString``
 
 
