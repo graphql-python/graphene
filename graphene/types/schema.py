@@ -6,6 +6,7 @@ from graphql.type.introspection import IntrospectionSchema
 from graphql.utils.introspection_query import introspection_query
 from graphql.utils.schema_printer import print_schema
 
+from .definitions import GrapheneGraphQLType
 from .typemap import TypeMap, is_graphene_type
 
 
@@ -45,6 +46,20 @@ class Schema(GraphQLSchema):
 
     def get_subscription_type(self):
         return self.get_graphql_type(self._subscription)
+
+    def __getattr__(self, type_name):
+        '''
+        This function let the developer select a type in a given schema
+        by accessing its attrs.
+
+        Example: using schema.Query for accessing the "Query" type in the Schema
+        '''
+        _type = super(Schema, self).get_type(type_name)
+        if _type is None:
+            raise AttributeError('Type "{}" not found in the Schema'.format(type_name))
+        if isinstance(_type, GrapheneGraphQLType):
+            return _type.graphene_type
+        return _type
 
     def get_graphql_type(self, _type):
         if not _type:

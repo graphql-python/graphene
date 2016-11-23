@@ -13,7 +13,8 @@ from ..utils.get_unbound_function import get_unbound_function
 from ..utils.str_converters import to_camel_case
 from .definitions import (GrapheneEnumType, GrapheneInputObjectType,
                           GrapheneInterfaceType, GrapheneObjectType,
-                          GrapheneScalarType, GrapheneUnionType)
+                          GrapheneScalarType, GrapheneUnionType,
+                          GrapheneGraphQLType)
 from .dynamic import Dynamic
 from .enum import Enum
 from .field import Field
@@ -68,7 +69,7 @@ class TypeMap(GraphQLTypeMap):
             return self.reducer(map, type.of_type)
         if type._meta.name in map:
             _type = map[type._meta.name]
-            if is_graphene_type(_type):
+            if isinstance(_type, GrapheneGraphQLType):
                 assert _type.graphene_type == type
             return map
         if issubclass(type, ObjectType):
@@ -127,7 +128,7 @@ class TypeMap(GraphQLTypeMap):
     def construct_objecttype(self, map, type):
         if type._meta.name in map:
             _type = map[type._meta.name]
-            if is_graphene_type(_type):
+            if isinstance(_type, GrapheneGraphQLType):
                 assert _type.graphene_type == type
             return map
         map[type._meta.name] = GrapheneObjectType(
