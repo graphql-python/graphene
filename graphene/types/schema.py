@@ -61,9 +61,6 @@ class Schema(GraphQLSchema):
     def execute(self, *args, **kwargs):
         return graphql(self, *args, **kwargs)
 
-    def register(self, object_type):
-        self.types.append(object_type)
-
     def introspect(self):
         return self.execute(introspection_query).data
 
