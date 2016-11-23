@@ -5,12 +5,15 @@ from functools import partial
 from graphql import (GraphQLArgument, GraphQLBoolean, GraphQLField,
                      GraphQLFloat, GraphQLID, GraphQLInputObjectField,
                      GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLString)
-from graphql.type import GraphQLEnumValue
 from graphql.execution.executor import get_default_resolve_type_fn
+from graphql.type import GraphQLEnumValue
 from graphql.type.typemap import GraphQLTypeMap
 
-from ..utils.str_converters import to_camel_case
 from ..utils.get_unbound_function import get_unbound_function
+from ..utils.str_converters import to_camel_case
+from .definitions import (GrapheneEnumType, GrapheneInputObjectType,
+                          GrapheneInterfaceType, GrapheneObjectType,
+                          GrapheneScalarType, GrapheneUnionType)
 from .dynamic import Dynamic
 from .enum import Enum
 from .field import Field
@@ -83,7 +86,6 @@ class TypeMap(GraphQLTypeMap):
         return map
 
     def construct_scalar(self, map, type):
-        from .definitions import GrapheneScalarType
         _scalars = {
             String: GraphQLString,
             Int: GraphQLInt,
@@ -106,7 +108,6 @@ class TypeMap(GraphQLTypeMap):
         return map
 
     def construct_enum(self, map, type):
-        from .definitions import GrapheneEnumType
         values = OrderedDict()
         for name, value in type._meta.enum.__members__.items():
             values[name] = GraphQLEnumValue(
@@ -124,7 +125,6 @@ class TypeMap(GraphQLTypeMap):
         return map
 
     def construct_objecttype(self, map, type):
-        from .definitions import GrapheneObjectType
         if type._meta.name in map:
             _type = map[type._meta.name]
             if is_graphene_type(_type):
@@ -148,7 +148,6 @@ class TypeMap(GraphQLTypeMap):
         return map
 
     def construct_interface(self, map, type):
-        from .definitions import GrapheneInterfaceType
         _resolve_type = None
         if type.resolve_type:
             _resolve_type = partial(resolve_type, type.resolve_type, map, type._meta.name)
@@ -164,7 +163,6 @@ class TypeMap(GraphQLTypeMap):
         return map
 
     def construct_inputobjecttype(self, map, type):
-        from .definitions import GrapheneInputObjectType
         map[type._meta.name] = GrapheneInputObjectType(
             graphene_type=type,
             name=type._meta.name,
@@ -175,7 +173,6 @@ class TypeMap(GraphQLTypeMap):
         return map
 
     def construct_union(self, map, type):
-        from .definitions import GrapheneUnionType
         _resolve_type = None
         if type.resolve_type:
             _resolve_type = partial(resolve_type, type.resolve_type, map, type._meta.name)
