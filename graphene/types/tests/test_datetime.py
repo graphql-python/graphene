@@ -62,7 +62,7 @@ def test_time_query_variable():
     isoformat = time.isoformat()
 
     result = schema.execute(
-        '''query Test($date: Time){ time(at: $time) }''',
+        '''query Test($time: Time){ time(at: $time) }''',
         variable_values={'time': isoformat}
     )
     assert not result.errors
