@@ -5,7 +5,7 @@ from functools import partial
 import six
 
 from graphql_relay import connection_from_list
-from promise import Promise, is_thenable, promisify
+from promise import is_thenable, promisify
 
 from ..types import (AbstractType, Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
                      Union)
