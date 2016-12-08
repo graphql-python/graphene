@@ -70,7 +70,8 @@ def test_json_parse_literal_query():
                 nested_dict: {
                     key_a: "a",
                     key_b: "b"
-                }
+                },
+                empty_key: null
             })
         }
         '''
@@ -89,6 +90,7 @@ def test_json_parse_literal_query():
             'nested_dict': {
                 'key_a': 'a',
                 'key_b': 'b'
-            }
+            },
+            'empty_key': None
         }
     }
