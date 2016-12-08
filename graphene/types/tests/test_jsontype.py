@@ -71,7 +71,7 @@ def test_json_parse_literal_query():
                     key_a: "a",
                     key_b: "b"
                 },
-                empty_key: null
+                empty_key: undefined
             })
         }
         '''
