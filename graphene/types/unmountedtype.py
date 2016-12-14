@@ -15,10 +15,11 @@ class UnmountedType(OrderedType):
     >>>     my_field = String(description='Description here')
     '''
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, _metadata=None, *args, **kwargs):
         super(UnmountedType, self).__init__()
         self.args = args
         self.kwargs = kwargs
+        self.metadata = _metadata
 
     def get_type(self):
         '''
@@ -36,6 +37,7 @@ class UnmountedType(OrderedType):
             self.get_type(),
             *self.args,
             _creation_counter=self.creation_counter,
+            _metadata=self.metadata,
             **self.kwargs
         )
 
@@ -48,6 +50,7 @@ class UnmountedType(OrderedType):
             self.get_type(),
             *self.args,
             _creation_counter=self.creation_counter,
+            _metadata=self.metadata,
             **self.kwargs
         )
 
@@ -60,6 +63,7 @@ class UnmountedType(OrderedType):
             self.get_type(),
             *self.args,
             _creation_counter=self.creation_counter,
+            _metadata=self.metadata,
             **self.kwargs
         )
 

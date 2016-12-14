@@ -6,8 +6,8 @@ class InputField(OrderedType):
 
     def __init__(self, type, name=None, default_value=None,
                  deprecation_reason=None, description=None,
-                 required=False, _creation_counter=None, **extra_args):
-        super(InputField, self).__init__(_creation_counter=_creation_counter)
+                 required=False, _creation_counter=None, _metadata=None, **extra_args):
+        super(InputField, self).__init__(_creation_counter=_creation_counter, _metadata=_metadata)
         self.name = name
         if required:
             type = NonNull(type)

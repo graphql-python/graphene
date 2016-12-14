@@ -39,3 +39,15 @@ def test_orderedtype_non_orderabletypes():
     assert one.__lt__(1) == NotImplemented
     assert one.__gt__(1) == NotImplemented
     assert not one == 1
+
+
+def test_orderedtype_has_metadata():
+    one = OrderedType(_metadata='Test')
+
+    assert one.metadata == 'Test'
+
+
+def test_orderedtype_metadata_defaults_to_none():
+    one = OrderedType()
+
+    assert one.metadata == None

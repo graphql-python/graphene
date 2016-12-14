@@ -8,8 +8,9 @@ from .dynamic import Dynamic
 
 class Argument(OrderedType):
 
-    def __init__(self, type, default_value=None, description=None, name=None, required=False, _creation_counter=None):
-        super(Argument, self).__init__(_creation_counter=_creation_counter)
+    def __init__(self, type, default_value=None, description=None, name=None, required=False,
+                 _creation_counter=None, _metadata=None):
+        super(Argument, self).__init__(_creation_counter=_creation_counter, _metadata=_metadata)
 
         if required:
             type = NonNull(type)

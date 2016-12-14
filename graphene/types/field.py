@@ -23,8 +23,8 @@ class Field(OrderedType):
     def __init__(self, type, args=None, resolver=None, source=None,
                  deprecation_reason=None, name=None, description=None,
                  required=False, _creation_counter=None, default_value=None,
-                 **extra_args):
-        super(Field, self).__init__(_creation_counter=_creation_counter)
+                 _metadata=None, **extra_args):
+        super(Field, self).__init__(_creation_counter=_creation_counter, _metadata=_metadata)
         assert not args or isinstance(args, Mapping), (
             'Arguments in a field have to be a mapping, received "{}".'
         ).format(args)
