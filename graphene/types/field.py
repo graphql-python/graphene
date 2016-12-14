@@ -60,7 +60,7 @@ class Field(OrderedType):
 
     @property
     def type(self):
-        if inspect.isfunction(self._type):
+        if inspect.isfunction(self._type) or type(self._type) is partial:
             return self._type()
         return self._type
 
