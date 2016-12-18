@@ -39,7 +39,11 @@ class Union(six.with_metaclass(UnionMeta)):
     to determine which type is actually used when the field is resolved.
     '''
 
-    resolve_type = None
+    @classmethod
+    def resolve_type(cls, instance, context, info):
+        from .objecttype import ObjectType
+        if isinstance(instance, ObjectType):
+            return type(instance)
 
     def __init__(self, *args, **kwargs):
-        raise Exception("An Union cannot be intitialized")
+        raise Exception("A Union cannot be intitialized")

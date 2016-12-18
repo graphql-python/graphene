@@ -58,5 +58,10 @@ class Enum(six.with_metaclass(EnumTypeMeta, UnmountedType)):
     kind of type, often integers.
     '''
 
-    def get_type(self):
-        return type(self)
+    @classmethod
+    def get_type(cls):
+        '''
+        This function is called when the unmounted type (Enum instance)
+        is mounted (as a Field, InputField or Argument)
+        '''
+        return cls

@@ -43,7 +43,12 @@ class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
 
     @classmethod
     def get_type(cls):
+        '''
+        This function is called when the unmounted type (Scalar instance)
+        is mounted (as a Field, InputField or Argument)
+        '''
         return cls
+
 
 # As per the GraphQL Spec, Integers are only treated as valid when a valid
 # 32-bit signed integer, providing the broadest support across platforms.

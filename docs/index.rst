@@ -8,6 +8,7 @@ Contents:
 
    quickstart
    types/index
+   execution/index
    relay/index
 
 Integrations

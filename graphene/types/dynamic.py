@@ -1,9 +1,9 @@
 import inspect
 
-from ..utils.orderedtype import OrderedType
+from .mountedtype import MountedType
 
 
-class Dynamic(OrderedType):
+class Dynamic(MountedType):
     '''
     A Dynamic Type let us get the type in runtime when we generate
     the schema. So we can have lazy fields.

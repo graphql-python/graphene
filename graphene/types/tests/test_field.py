@@ -3,6 +3,7 @@ import pytest
 from ..argument import Argument
 from ..field import Field
 from ..structures import NonNull
+from ..scalars import String
 
 
 class MyInstance(object):
@@ -73,6 +74,20 @@ def test_field_source_func():
     MyType = object()
     field = Field(MyType, source='value_func')
     assert field.resolver(MyInstance(), {}, None, None) == MyInstance.value_func()
+
+
+def test_field_source_as_argument():
+    MyType = object()
+    field = Field(MyType, source=String())
+    assert 'source' in field.args
+    assert field.args['source'].type == String
+
+
+def test_field_name_as_argument():
+    MyType = object()
+    field = Field(MyType, name=String())
+    assert 'name' in field.args
+    assert field.args['name'].type == String
 
 
 def test_field_source_argument_as_kw():

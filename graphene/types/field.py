@@ -2,8 +2,8 @@ import inspect
 from collections import Mapping, OrderedDict
 from functools import partial
 
-from ..utils.orderedtype import OrderedType
 from .argument import Argument, to_arguments
+from .mountedtype import MountedType
 from .structures import NonNull
 from .unmountedtype import UnmountedType
 
@@ -18,7 +18,7 @@ def source_resolver(source, root, args, context, info):
     return resolved
 
 
-class Field(OrderedType):
+class Field(MountedType):
 
     def __init__(self, type, args=None, resolver=None, source=None,
                  deprecation_reason=None, name=None, description=None,
@@ -60,7 +60,7 @@ class Field(OrderedType):
 
     @property
     def type(self):
-        if inspect.isfunction(self._type):
+        if inspect.isfunction(self._type) or type(self._type) is partial:
             return self._type()
         return self._type
 

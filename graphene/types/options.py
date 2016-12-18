@@ -19,18 +19,18 @@ class Options(object):
         for attr_name, value in defaults.items():
             if attr_name in meta_attrs:
                 value = meta_attrs.pop(attr_name)
-            elif hasattr(meta, attr_name):
-                value = getattr(meta, attr_name)
             setattr(self, attr_name, value)
 
-        # If meta_attrs is not empty, it implicit means
+        # If meta_attrs is not empty, it implicitly means
         # it received invalid attributes
         if meta_attrs:
             raise TypeError(
                 "Invalid attributes: {}".format(
-                    ','.join(meta_attrs.keys())
+                    ', '.join(sorted(meta_attrs.keys()))
                 )
             )
 
     def __repr__(self):
-        return '<Meta \n{} >'.format(props(self))
+        options_props = props(self)
+        props_as_attrs = ' '.join(['{}={}'.format(key, value) for key, value in options_props.items()])
+        return '<Options {}>'.format(props_as_attrs)

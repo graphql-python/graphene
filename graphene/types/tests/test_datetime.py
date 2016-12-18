@@ -1,17 +1,21 @@
 import datetime
 import pytz
 
-from ..datetime import DateTime
+from ..datetime import DateTime, Time
 from ..objecttype import ObjectType
 from ..schema import Schema
 
 
 class Query(ObjectType):
     datetime = DateTime(_in=DateTime(name='in'))
+    time = Time(_at=Time(name='at'))
 
     def resolve_datetime(self, args, context, info):
         _in = args.get('in')
         return _in
+
+    def resolve_time(self, args, context, info):
+        return args.get('at')
 
 schema = Schema(query=Query)
 
@@ -27,6 +31,17 @@ def test_datetime_query():
     }
 
 
+def test_time_query():
+    now = datetime.datetime.now().replace(tzinfo=pytz.utc)
+    time = datetime.time(now.hour, now.minute, now.second, now.microsecond, now.tzinfo)
+    isoformat = time.isoformat()
+
+    result = schema.execute('''{ time(at: "%s") }'''%isoformat)
+    assert not result.errors
+    assert result.data == {
+        'time': isoformat
+    }
+
 def test_datetime_query_variable():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc)
     isoformat = now.isoformat()
@@ -38,4 +53,19 @@ def test_datetime_query_variable():
     assert not result.errors
     assert result.data == {
         'datetime': isoformat
+    }
+
+
+def test_time_query_variable():
+    now = datetime.datetime.now().replace(tzinfo=pytz.utc)
+    time = datetime.time(now.hour, now.minute, now.second, now.microsecond, now.tzinfo)
+    isoformat = time.isoformat()
+
+    result = schema.execute(
+        '''query Test($time: Time){ time(at: $time) }''',
+        variable_values={'time': isoformat}
+    )
+    assert not result.errors
+    assert result.data == {
+        'time': isoformat
     }

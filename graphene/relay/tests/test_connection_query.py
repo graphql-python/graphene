@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from graphql_relay.utils import base64
+from promise import Promise
 
 from ...types import ObjectType, Schema, String
 from ..connection import ConnectionField, PageInfo
@@ -20,11 +21,15 @@ class Letter(ObjectType):
 class Query(ObjectType):
     letters = ConnectionField(Letter)
     connection_letters = ConnectionField(Letter)
+    promise_letters = ConnectionField(Letter)
 
     node = Node.Field()
 
     def resolve_letters(self, args, context, info):
         return list(letters.values())
+
+    def resolve_promise_letters(self, args, context, info):
+        return Promise.resolve(list(letters.values()))
 
     def resolve_connection_letters(self, args, context, info):
         return Letter.Connection(
@@ -221,6 +226,41 @@ def test_connection_type_nodes():
                     'letter': 'A',
                 },
                 'cursor': 'a-cursor',
+            }],
+            'pageInfo': {
+                'hasPreviousPage': False,
+                'hasNextPage': True,
+            }
+        }
+    }
+
+
+def test_connection_promise():
+    result = schema.execute('''
+    {
+        promiseLetters(first:1) {
+            edges {
+                node {
+                    id
+                    letter
+                }
+            }
+            pageInfo {
+                hasPreviousPage
+                hasNextPage
+            }
+        }
+    }
+    ''')
+
+    assert not result.errors
+    assert result.data == {
+        'promiseLetters': {
+            'edges': [{
+                'node': {
+                    'id': 'TGV0dGVyOjA=',
+                    'letter': 'A',
+                },
             }],
             'pageInfo': {
                 'hasPreviousPage': False,

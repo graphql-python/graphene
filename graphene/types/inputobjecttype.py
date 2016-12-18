@@ -50,4 +50,8 @@ class InputObjectType(six.with_metaclass(InputObjectTypeMeta, UnmountedType)):
 
     @classmethod
     def get_type(cls):
+        '''
+        This function is called when the unmounted type (InputObjectType instance)
+        is mounted (as a Field, InputField or Argument)
+        '''
         return cls

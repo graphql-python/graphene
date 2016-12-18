@@ -23,14 +23,14 @@ and ``Droid`` are two implementations of that interface.
         name = graphene.String()
 
     # Human is a Character implementation
-    class Human(ObjectType):
+    class Human(graphene.ObjectType):
         class Meta:
             interfaces = (Character, )
 
         born_in = graphene.String()
 
     # Droid is a Character implementation
-    class Droid(Character):
+    class Droid(graphene.ObjectType):
         class Meta:
             interfaces = (Character, )
 
