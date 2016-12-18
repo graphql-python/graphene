@@ -7,15 +7,14 @@ querying.
 
 The basics:
 
-- Each ObjectType is a Python class that inherits 
+- Each ObjectType is a Python class that inherits from
   ``graphene.ObjectType``.
 - Each attribute of the ObjectType represents a ``Field``.
 
 Quick example
 -------------
 
-This example model defines a Person, which has a first\_name and
-last\_name:
+This example model defines a Person, with a first and a last name:
 
 .. code:: python
 
@@ -33,8 +32,7 @@ last\_name:
 field is specified as a class attribute, and each attribute maps to a
 Field.
 
-The above ``Person`` ObjectType would have the following representation
-in a schema:
+The above ``Person`` ObjectType has the following schema representation:
 
 .. code::
 
@@ -48,16 +46,15 @@ in a schema:
 Resolvers
 ---------
 
-A resolver is a method that resolves certain field within a
-``ObjectType``. The resolver of a field will be, if not specified
-otherwise, the ``resolve_{field_name}`` within the ``ObjectType``.
+A resolver is a method that resolves certain fields within a
+``ObjectType``. If not specififed otherwise, the resolver of a
+field is the ``resolve_{field_name}`` method on the ``ObjectType``.
 
-By default a resolver will take the ``args``, ``context`` and ``info``
-arguments.
+By default resolvers take the arguments ``args``, ``context`` and ``info``.
 
-NOTE: The class resolvers in a ``ObjectType`` are treated as ``staticmethod``s
-always, so the first argument in the resolver: ``self`` (or ``root``) doesn't
-need to be an actual instance of the ``ObjectType``.
+NOTE: The resolvers on a ``ObjectType`` are always treated as ``staticmethod``s,
+so the first argument to the resolver method ``self`` (or ``root``) need
+not be an actual instance of the ``ObjectType``.
 
 
 Quick example
@@ -81,7 +78,7 @@ method in the class.
 Resolvers outside the class
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A field could also specify a custom resolver outside the class:
+A field can use a custom resolver from outside the class:
 
 .. code:: python
 
@@ -98,8 +95,8 @@ A field could also specify a custom resolver outside the class:
 Instances as data containers
 ----------------------------
 
-Graphene ``ObjectType``\ s could act as containers too. So with the
-previous example you could do.
+Graphene ``ObjectType``\ s can act as containers too. So with the
+previous example you could do:
 
 .. code:: python
 

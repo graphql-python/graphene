@@ -19,7 +19,7 @@ Graphene also provides custom scalars for Dates, Times, and JSON:
 Custom scalars
 --------------
 
-You can create a custom scalar for your schema.
+You can create custom scalars for your schema.
 The following is an example for creating a DateTime scalar:
 
 .. code:: python
@@ -48,8 +48,8 @@ The following is an example for creating a DateTime scalar:
 Mounting Scalars
 ----------------
 
-If a scalar is mounted in an ``ObjectType``, ``Interface`` or
-``Mutation``, they act as ``Field``\ s:
+Scalars mounted in a ``ObjectType``, ``Interface`` or ``Mutation`` act as
+``Field``\ s.
 
 .. code:: python
 
@@ -64,8 +64,8 @@ If a scalar is mounted in an ``ObjectType``, ``Interface`` or
 **Note:** when using the ``Field`` constructor directly, pass the type and
 not an instance.
 
+Types mounted in a ``Field`` act as ``Argument``\ s.
 
-If the types are mounted in a ``Field``, they act as ``Argument``\ s:
 
 .. code:: python
 

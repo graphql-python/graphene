@@ -1,7 +1,7 @@
 Interfaces
 ==========
 
-An Interface contains the essential fields that will be implemented among
+An Interface contains the essential fields that will be implemented by
 multiple ObjectTypes.
 
 The basics:
@@ -12,8 +12,8 @@ The basics:
 Quick example
 -------------
 
-This example model defines a Character, which has a name. ``Human`` and
-``Droid`` are two of the Interface implementations.
+This example model defines a ``Character`` interface with a name. ``Human``
+and ``Droid`` are two implementations of that interface.
 
 .. code:: python
 
@@ -37,12 +37,11 @@ This example model defines a Character, which has a name. ``Human`` and
         function = graphene.String()
 
 
-**name** is a field in the ``Character`` interface that will be in both
-``Human`` and ``Droid`` ObjectTypes (as those implement the ``Character``
-interface). Each ObjectType also define extra fields at the same
-time.
+``name`` is a field on the ``Character`` interface that will also exist on both
+the ``Human`` and ``Droid`` ObjectTypes (as those implement the ``Character``
+interface). Each ObjectType may define additional fields.
 
-The above types would have the following representation in a schema:
+The above types have the following representation in a schema:
 
 .. code::
 

@@ -5,6 +5,7 @@ A Schema is created by supplying the root types of each type of operation, query
 A schema definition is then supplied to the validator and executor.
 
 .. code:: python
+
     my_schema = Schema(
         query=MyRootQuery,
         mutation=MyRootMutation,
@@ -13,11 +14,11 @@ A schema definition is then supplied to the validator and executor.
 Types
 -----
 
-There are some cases where the schema could not access all the types that we plan to have.
-For example, when a field returns an ``Interface``, the schema doesn't know any of the
+There are some cases where the schema cannot access all of the types that we plan to have.
+For example, when a field returns an ``Interface``, the schema doesn't know about any of the
 implementations.
 
-In this case, we would need to use the ``types`` argument when creating the Schema.
+In this case, we need to use the ``types`` argument when creating the Schema.
 
 
 .. code:: python
@@ -31,22 +32,22 @@ In this case, we would need to use the ``types`` argument when creating the Sche
 Querying
 --------
 
-If you need to query a schema, you can directly call the ``execute`` method on it.
+To query a schema, call the ``execute`` method on it.
 
 
 .. code:: python
-    
+
     my_schema.execute('{ lastName }')
 
 
 Auto CamelCase field names
 --------------------------
 
-By default all field and argument names (that are not 
+By default all field and argument names (that are not
 explicitly set with the ``name`` arg) will be converted from
-`snake_case` to `camelCase` (`as the API is usually being consumed by a js/mobile client`)
+``snake_case`` to ``camelCase`` (as the API is usually being consumed by a js/mobile client)
 
-So, for example if we have the following ObjectType
+For example with the ObjectType
 
 .. code:: python
 
@@ -54,13 +55,12 @@ So, for example if we have the following ObjectType
         last_name = graphene.String()
         other_name = graphene.String(name='_other_Name')
 
-Then the ``last_name`` field name is converted to ``lastName``.
+the ``last_name`` field name is converted to ``lastName``.
 
-In the case we don't want to apply any transformation, we can specify
-the field name with the ``name`` argument. So ``other_name`` field name
-would be converted to ``_other_Name`` (without any other transformation).
+In case you don't want to apply this transformation, provide a ``name`` argument to the field constructor.
+``other_name`` converts to ``_other_Name`` (without further transformations).
 
-So, you would need to query with:
+Your query should look like
 
 .. code::
 
@@ -70,8 +70,7 @@ So, you would need to query with:
     }
 
 
-If you want to disable this behavior, you set use the ``auto_camelcase`` argument
-to ``False`` when you create the Schema.
+To disable this behavior, set the ``auto_camelcase`` to ``False`` upon schema instantiation.
 
 .. code:: python
 

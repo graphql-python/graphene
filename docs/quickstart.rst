@@ -30,7 +30,7 @@ server with an associated set of resolve methods that know how to fetch
 data.
 
 We are going to create a very simple schema, with a ``Query`` with only
-one field: ``hello``. And when we query it should return ``"World"``.
+one field: ``hello``. And when we query it, it should return ``"World"``.
 
 .. code:: python
 
@@ -47,7 +47,7 @@ one field: ``hello``. And when we query it should return ``"World"``.
 Querying
 --------
 
-Then, we can start querying our schema:
+Then we can start querying our schema:
 
 .. code:: python
 

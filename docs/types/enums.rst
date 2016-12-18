@@ -47,7 +47,7 @@ needs to have the ``description`` property on it.
 Usage with Python Enums
 -----------------------
 
-In case that the Enums are already defined it's possible to reuse them using
+In case the Enums are already defined it's possible to reuse them using
 the ``Enum.from_enum`` function.
 
 .. code:: python
@@ -58,10 +58,8 @@ the ``Enum.from_enum`` function.
 Notes
 -----
 
-Internally, ``graphene.Enum`` uses `enum.Enum`_ Python
-implementation if available, or a backport if not.
+``graphene.Enum`` uses |enum.Enum|_ internally (or a backport if
+that's not available) and can be used in the exact same way.
 
-So you can use it in the same way as you would do with Python
-``enum.Enum``.
-
-.. _``enum.Enum``: https://docs.python.org/3/library/enum.html
+.. |enum.Enum| replace:: ``enum.Enum``
+.. _enum.Enum: https://docs.python.org/3/library/enum.html
