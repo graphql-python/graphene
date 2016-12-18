@@ -47,7 +47,7 @@ def to_arguments(args, extra_args=None):
                 continue
 
         if isinstance(arg, UnmountedType):
-            arg = Argument.mount(arg)
+            arg = Argument.mounted(arg)
 
         if isinstance(arg, (InputField, Field)):
             raise ValueError('Expected {} to be Argument, but received {}. Try using Argument({}).'.format(

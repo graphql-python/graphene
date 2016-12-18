@@ -13,14 +13,14 @@ class CustomField(Field):
 
 def test_mounted_type():
     unmounted = String()
-    mounted = Field.mount(unmounted)
+    mounted = Field.mounted(unmounted)
     assert isinstance(mounted, Field)
     assert mounted.type == String
 
 
 def test_mounted_type_custom():
     unmounted = String(metadata={'hey': 'yo!'})
-    mounted = CustomField.mount(unmounted)
+    mounted = CustomField.mounted(unmounted)
     assert isinstance(mounted, CustomField)
     assert mounted.type == String
     assert mounted.metadata == {'hey': 'yo!'}

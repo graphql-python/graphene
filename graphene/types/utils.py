@@ -42,7 +42,7 @@ def get_field_as(value, _as=None):
     elif isinstance(value, UnmountedType):
         if _as is None:
             return value
-        return _as.mount(value)
+        return _as.mounted(value)
 
 
 def yank_fields_from_attrs(attrs, _as=None, delete=True, sort=True):

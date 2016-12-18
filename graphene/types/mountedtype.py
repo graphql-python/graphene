@@ -5,7 +5,7 @@ from .unmountedtype import UnmountedType
 class MountedType(OrderedType):
 
     @classmethod
-    def mount(cls, unmounted):  # noqa: N802
+    def mounted(cls, unmounted):  # noqa: N802
         '''
         Mount the UnmountedType instance
         '''
