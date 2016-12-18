@@ -27,41 +27,29 @@ class UnmountedType(OrderedType):
         '''
         raise NotImplementedError("get_type not implemented in {}".format(self))
 
+    def mount_as(self, _as):
+        return _as.mount(self)
+
     def Field(self):  # noqa: N802
         '''
         Mount the UnmountedType as Field
         '''
         from .field import Field
-        return Field(
-            self.get_type(),
-            *self.args,
-            _creation_counter=self.creation_counter,
-            **self.kwargs
-        )
+        return self.mount_as(Field)
 
     def InputField(self):  # noqa: N802
         '''
         Mount the UnmountedType as InputField
         '''
         from .inputfield import InputField
-        return InputField(
-            self.get_type(),
-            *self.args,
-            _creation_counter=self.creation_counter,
-            **self.kwargs
-        )
+        return self.mount_as(InputField)
 
     def Argument(self):  # noqa: N802
         '''
         Mount the UnmountedType as Argument
         '''
         from .argument import Argument
-        return Argument(
-            self.get_type(),
-            *self.args,
-            _creation_counter=self.creation_counter,
-            **self.kwargs
-        )
+        return self.mount_as(Argument)
 
     def __eq__(self, other):
         return (

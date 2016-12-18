@@ -1,8 +1,8 @@
-from ..utils.orderedtype import OrderedType
+from .mountedtype import MountedType
 from .structures import NonNull
 
 
-class InputField(OrderedType):
+class InputField(MountedType):
 
     def __init__(self, type, name=None, default_value=None,
                  deprecation_reason=None, description=None,
