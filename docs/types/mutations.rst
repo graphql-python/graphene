@@ -139,6 +139,5 @@ as complex of input data as you need
     #A location has a latlng associated to it
     class LocationInput(graphene.InputObjectType):
         name = graphene.String()
-        latlng = graphene.InputField(LatLngInputType)
-
+        latlng = graphene.InputField(LatLngInput)
 
