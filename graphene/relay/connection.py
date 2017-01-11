@@ -12,6 +12,7 @@ from ..types import (AbstractType, Boolean, Enum, Int, Interface, List, NonNull,
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeMeta
 from ..types.options import Options
+from ..types import Union
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
 from .node import is_node
@@ -109,7 +110,7 @@ class IterableConnectionField(Field):
     @property
     def type(self):
         type = super(IterableConnectionField, self).type
-        if is_node(type):
+        if issubclass(type, Union) or is_node(type):
             connection_type = type.Connection
         else:
             connection_type = type
