@@ -2,6 +2,7 @@ import six
 
 from ..utils.is_base_type import is_base_type
 from .options import Options
+from .unmountedtype import UnmountedType
 
 
 class UnionMeta(type):
@@ -30,7 +31,7 @@ class UnionMeta(type):
         return cls._meta.name
 
 
-class Union(six.with_metaclass(UnionMeta)):
+class Union(six.with_metaclass(UnionMeta, UnmountedType)):
     '''
     Union Type Definition
 
@@ -40,10 +41,15 @@ class Union(six.with_metaclass(UnionMeta)):
     '''
 
     @classmethod
+    def get_type(cls):
+        '''
+        This function is called when the unmounted type (Union instance)
+        is mounted (as a Field, InputField or Argument)
+        '''
+        return cls
+
+    @classmethod
     def resolve_type(cls, instance, context, info):
         from .objecttype import ObjectType
         if isinstance(instance, ObjectType):
             return type(instance)
-
-    def __init__(self, *args, **kwargs):
-        raise Exception("A Union cannot be intitialized")
