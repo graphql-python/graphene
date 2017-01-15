@@ -1,5 +1,10 @@
 language: python
 sudo: false
+addons:
+  apt:
+    packages:
+      - libgeos-3.2.2
+      - libgeos-dev
 python:
 - 2.7
 - 3.4
@@ -19,7 +24,6 @@ before_install:
     virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
     source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
   fi
-  sudo apt-get install -q libgeos-dev libgeos
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
