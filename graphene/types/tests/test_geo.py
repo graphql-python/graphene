@@ -1,5 +1,7 @@
 import pytest
 
+pytest.importorskip("shapely")
+
 from ..geo import Point
 from ..objecttype import ObjectType
 from ..schema import Schema

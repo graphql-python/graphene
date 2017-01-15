@@ -19,10 +19,11 @@ before_install:
     virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
     source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
   fi
+  sudo apt-get install -q libgeos-dev libgeos
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
-    pip install pytest pytest-cov pytest-benchmark coveralls six pytz iso8601
+    pip install pytest pytest-cov pytest-benchmark coveralls six pytz iso8601 shapely
     pip install -e .
     python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
