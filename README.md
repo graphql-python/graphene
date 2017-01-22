@@ -41,7 +41,7 @@ Please read [UPGRADE-v1.0.md](/UPGRADE-v1.0.md) to learn how to upgrade.
 
 ## Examples
 
-Here is one example for get you started:
+Here is one example for you to get started:
 
 ```python
 class Query(graphene.ObjectType):
