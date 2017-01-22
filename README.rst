@@ -52,7 +52,7 @@ upgrade.
 Examples
 --------
 
-Here is one example for get you started:
+Here is one example for you to get started:
 
 .. code:: python
 
