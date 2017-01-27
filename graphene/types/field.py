@@ -13,7 +13,7 @@ base_type = type
 
 def source_resolver(source, root, args, context, info):
     resolved = getattr(root, source, None)
-    if inspect.isfunction(resolved):
+    if inspect.isfunction(resolved) or inspect.ismethod(resolved):
         return resolved()
     return resolved
 
