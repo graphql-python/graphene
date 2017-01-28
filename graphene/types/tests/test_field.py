@@ -10,6 +10,9 @@ class MyInstance(object):
     value = 'value'
     value_func = staticmethod(lambda: 'value_func')
 
+    def value_method(self):
+        return 'value_method'
+
 
 def test_field_basic():
     MyType = object()
@@ -74,6 +77,12 @@ def test_field_source_func():
     MyType = object()
     field = Field(MyType, source='value_func')
     assert field.resolver(MyInstance(), {}, None, None) == MyInstance.value_func()
+
+
+def test_field_source_method():
+    MyType = object()
+    field = Field(MyType, source='value_method')
+    assert field.resolver(MyInstance(), {}, None, None) == MyInstance().value_method()
 
 
 def test_field_source_as_argument():
