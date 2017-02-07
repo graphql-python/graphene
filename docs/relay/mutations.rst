@@ -27,3 +27,29 @@ subclass of ``relay.ClientIDMutation``.
             ship = create_ship(ship_name, faction_id)
             faction = get_faction(faction_id)
             return IntroduceShip(ship=ship, faction=faction)
+
+
+
+Accepting Files
+-------------
+
+Mutations can also accept files, they will be in the context variable.
+
+.. code:: python
+
+    class UploadFile(graphene.ClientIDMutation):
+         class Input:
+             pass
+             # nothing needed for uploading file
+     
+         # your return fields
+         success = graphene.String()
+
+        @classmethod
+        def mutate_and_get_payload(cls, input, context, info):
+            files = context.FILES
+            print(files)
+
+            # do something with files
+
+            return UploadFile(success=True)

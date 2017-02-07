@@ -78,7 +78,7 @@ We should receive:
     }
 
 InputFields and InputObjectTypes
-----------------------
+----------------------------------
 InputFields are used in mutations to allow nested input data for mutations
 
 To use an InputField you define an InputObjectType that specifies the structure of your input data
@@ -114,7 +114,7 @@ Note that  **name** and **age** are part of **person_data** now
 
 Using the above mutation your new query would look like this:
 
-.. code:: graphql
+.. code:: json
 
     mutation myFirstMutation {
         createPerson(personData: {name:"Peter", age: 24}) {
