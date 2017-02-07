@@ -31,9 +31,9 @@ subclass of ``relay.ClientIDMutation``.
 
 
 Accepting Files
--------------
+---------------
 
-Mutations can also accept files, they will be in the context variable.
+Mutations can also accept files, that's how it will work with different integrations:
 
 .. code:: python
 
@@ -47,8 +47,10 @@ Mutations can also accept files, they will be in the context variable.
 
         @classmethod
         def mutate_and_get_payload(cls, input, context, info):
+            # When using it in Django, context will be the request
             files = context.FILES
-            print(files)
+            # Or, if used in Flask, context will be the flask global request
+            # files = context.files
 
             # do something with files
 
