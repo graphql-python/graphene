@@ -33,7 +33,7 @@ subclass of ``relay.ClientIDMutation``.
 Accepting Files
 -------------
 
-Mutations can also accept files, they will be in the context varibale
+Mutations can also accept files, they will be in the context variable.
 
 .. code:: python
 
