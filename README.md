@@ -75,13 +75,19 @@ If you want to learn even more, you can also check the following [examples](exam
 After cloning this repo, ensure dependencies are installed by running:
 
 ```sh
-python setup.py install
+pip install .[test]
 ```
 
 After developing, the full test suite can be evaluated by running:
 
 ```sh
-python setup.py test # Use --pytest-args="-v -s" for verbose mode
+py.test graphene --cov=graphene --benchmark-skip # Use -v -s for verbose mode
+```
+
+You can also run the benchmarks with:
+
+```sh
+py.test graphene --benchmark-only
 ```
 
 

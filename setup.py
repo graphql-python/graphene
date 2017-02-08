@@ -37,6 +37,17 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
+tests_require = [
+    'pytest>=2.7.2',
+    'pytest-benchmark',
+    'pytest-cov',
+    'coveralls',
+    'six',
+    'mock',
+    'pytz',
+    'iso8601',
+]
+
 setup(
     name='graphene',
     version=version,
@@ -74,14 +85,9 @@ setup(
         'graphql-relay>=0.4.5',
         'promise>=1.0.1',
     ],
-    tests_require=[
-        'pytest>=2.7.2',
-        'pytest-benchmark',
-        'mock',
-        'pytz',
-        'iso8601',
-    ],
+    tests_require=tests_require,
     extras_require={
+        'test': tests_require,
         'django': [
             'graphene-django',
         ],

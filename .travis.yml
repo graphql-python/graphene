@@ -22,8 +22,7 @@ before_install:
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
-    pip install pytest pytest-cov pytest-benchmark coveralls six pytz iso8601
-    pip install -e .
+    pip install -e .[test]
     python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
     pip install flake8
