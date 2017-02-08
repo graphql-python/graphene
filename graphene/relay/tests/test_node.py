@@ -44,6 +44,7 @@ class MyOtherNode(SharedNodeFields, ObjectType):
 class RootQuery(ObjectType):
     first = String()
     node = Node.Field()
+    only_node = Node.Field(MyNode)
 
 schema = Schema(query=RootQuery, types=[MyNode, MyOtherNode])
 
@@ -63,7 +64,7 @@ def test_node_get_connection_dont_duplicate():
 
 def test_node_query():
     executed = schema.execute(
-        '{ node(id:"%s") { ... on MyNode { name } } }' % to_global_id("MyNode", 1)
+        '{ node(id:"%s") { ... on MyNode { name } } }' % Node.to_global_id("MyNode", 1)
     )
     assert not executed.errors
     assert executed.data == {'node': {'name': '1'}}
@@ -84,6 +85,35 @@ def test_node_query_incorrect_id():
     )
     assert not executed.errors
     assert executed.data == {'node': None}
+
+
+def test_node_field():
+    node_field = Node.Field()
+    assert node_field.type == Node
+    assert node_field.node_type == Node
+
+
+def test_node_field_custom():
+    node_field = Node.Field(MyNode)
+    assert node_field.type == MyNode
+    assert node_field.node_type == Node
+
+
+def test_node_field_only_type():
+    executed = schema.execute(
+        '{ onlyNode(id:"%s") { __typename, name } } ' % Node.to_global_id("MyNode", 1)
+    )
+    assert not executed.errors
+    assert executed.data == {'onlyNode': {'__typename': 'MyNode', 'name': '1'}}
+
+
+def test_node_field_only_type_wrong():
+    executed = schema.execute(
+        '{ onlyNode(id:"%s") { __typename, name } } ' % Node.to_global_id("MyOtherNode", 1)
+    )
+    assert len(executed.errors) == 1
+    assert str(executed.errors[0]) == 'Must receive an MyOtherNode id.'
+    assert executed.data == { 'onlyNode': None }
 
 
 def test_str_schema():
@@ -111,5 +141,6 @@ interface Node {
 type RootQuery {
   first: String
   node(id: ID!): Node
+  onlyNode(id: ID!): MyNode
 }
 """.lstrip()

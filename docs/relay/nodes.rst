@@ -55,8 +55,13 @@ Example of a custom node:
             return '{}:{}'.format(type, id)
 
         @staticmethod
-        def get_node_from_global_id(global_id, context, info):
+        def get_node_from_global_id(global_id, context, info, only_type=None):
             type, id = global_id.split(':')
+            if only_node:
+                # We assure that the node type that we want to retrieve
+                # is the same that was indicated in the field type
+                assert type == only_node._meta.name, 'Received not compatible node.'
+
             if type == 'User':
                 return get_user(id)
             elif type == 'Photo':
@@ -64,6 +69,17 @@ Example of a custom node:
 
 
 The ``get_node_from_global_id`` method will be called when ``CustomNode.Field`` is resolved.
+
+
+Accessing node types
+--------------------
+
+If we want to retrieve node instances from a ``global_id`` (scalar that identifies an instance by it's type name and id),
+we can simply do ``Node.get_node_from_global_id(global_id, contet, info)``.
+
+In the case we want to restric the instnance retrieval to an specific type, we can do:
+``Node.get_node_from_global_id(global_id, contet, info, only_type=Ship)``. This will raise an error
+if the global_id doesn't correspond to a Ship type.
 
 
 Node Root field

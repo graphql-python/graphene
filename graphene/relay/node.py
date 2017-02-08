@@ -63,12 +63,16 @@ class NodeField(Field):
     def __init__(self, node, type=False, deprecation_reason=None,
                  name=None, **kwargs):
         assert issubclass(node, Node), 'NodeField can only operate in Nodes'
-        type = type or node
+        self.node_type = node
+
+        # If we don's specify a type, the field type will be the node interface
+        field_type = type or node
+
         super(NodeField, self).__init__(
-            type,
+            field_type,
             description='The ID of the object',
             id=ID(required=True),
-            resolver=node.node_resolver
+            resolver=partial(node.node_resolver, only_type=type)
         )
 
 
@@ -80,18 +84,26 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         return NodeField(cls, *args, **kwargs)
 
     @classmethod
-    def node_resolver(cls, root, args, context, info):
-        return cls.get_node_from_global_id(args.get('id'), context, info)
+    def node_resolver(cls, root, args, context, info, only_type=None):
+        return cls.get_node_from_global_id(args.get('id'), context, info, only_type)
 
     @classmethod
-    def get_node_from_global_id(cls, global_id, context, info):
+    def get_node_from_global_id(cls, global_id, context, info, only_type=None):
         try:
             _type, _id = cls.from_global_id(global_id)
             graphene_type = info.schema.get_type(_type).graphene_type
-            # We make sure the ObjectType implements the "Node" interface
-            assert cls in graphene_type._meta.interfaces
         except:
             return None
+
+        if only_type:
+            assert graphene_type == only_type, (
+                'Must receive an {} id.'
+            ).format(graphene_type._meta.name)
+
+        # We make sure the ObjectType implements the "Node" interface
+        if cls not in graphene_type._meta.interfaces:
+            return None
+
         get_node = getattr(graphene_type, 'get_node', None)
         if get_node:
             return get_node(_id, context, info)
