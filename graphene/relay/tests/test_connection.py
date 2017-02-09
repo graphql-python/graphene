@@ -69,7 +69,7 @@ def test_edge():
     assert edge_fields['node'].type == MyObject
 
     assert isinstance(edge_fields['other'], Field)
-    assert edge_fields['other'].type == String
+    assert edge_fields['other'].type.__class__ == String
 
 
 def test_edge_with_bases():
@@ -93,7 +93,7 @@ def test_edge_with_bases():
     assert edge_fields['node'].type == MyObject
 
     assert isinstance(edge_fields['other'], Field)
-    assert edge_fields['other'].type == String
+    assert edge_fields['other'].type.__class__ == String
 
 
 def test_edge_on_node():

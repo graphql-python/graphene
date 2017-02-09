@@ -55,7 +55,8 @@ class UnmountedType(OrderedType):
         return (
             self is other or (
                 isinstance(other, UnmountedType) and
-                self.get_type() == other.get_type() and
+                self.get_type()._meta == other.get_type()._meta and
+                # self.get_type()._meta.name == other.get_type()._meta.name and
                 self.args == other.args and
                 self.kwargs == other.kwargs
             )

@@ -1,4 +1,5 @@
 import six
+import types
 
 from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
                                   StringValue)
@@ -36,6 +37,13 @@ class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
     Scalars (or Enums) and are defined with a name and a series of functions
     used to parse input from ast or variables and to ensure validity.
     '''
+
+    def __init__(self, *args, **kwargs):
+        super(Scalar, self).__init__(*args, **kwargs)
+
+        def get_type(self):
+            return self
+        self.get_type = types.MethodType(get_type, self)
 
     serialize = None
     parse_value = None

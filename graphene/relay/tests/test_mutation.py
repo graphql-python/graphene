@@ -81,7 +81,7 @@ def test_mutation():
     assert field.args['input'].type.of_type == SaySomething.Input
     assert isinstance(fields['client_mutation_id'], Field)
     assert fields['client_mutation_id'].name == 'clientMutationId'
-    assert fields['client_mutation_id'].type == String
+    assert fields['client_mutation_id'].type.__class__ == String
 
 
 def test_mutation_input():
@@ -90,9 +90,9 @@ def test_mutation_input():
     fields = Input._meta.fields
     assert list(fields.keys()) == ['what', 'client_mutation_id']
     assert isinstance(fields['what'], InputField)
-    assert fields['what'].type == String
+    assert fields['what'].type.__class__ == String
     assert isinstance(fields['client_mutation_id'], InputField)
-    assert fields['client_mutation_id'].type == String
+    assert fields['client_mutation_id'].type.__class__ == String
 
 
 def test_subclassed_mutation():
@@ -113,11 +113,11 @@ def test_subclassed_mutation_input():
     fields = Input._meta.fields
     assert list(fields.keys()) == ['shared', 'additional_field', 'client_mutation_id']
     assert isinstance(fields['shared'], InputField)
-    assert fields['shared'].type == String
+    assert fields['shared'].type.__class__ == String
     assert isinstance(fields['additional_field'], InputField)
-    assert fields['additional_field'].type == String
+    assert fields['additional_field'].type.__class__ == String
     assert isinstance(fields['client_mutation_id'], InputField)
-    assert fields['client_mutation_id'].type == String
+    assert fields['client_mutation_id'].type.__class__ == String
 
 
 # def test_node_query():

@@ -28,7 +28,7 @@ from .utils import get_field_as
 
 
 def is_graphene_type(_type):
-    if isinstance(_type, (List, NonNull)):
+    if isinstance(_type, (List, NonNull, Scalar)):
         return True
     if inspect.isclass(_type) and issubclass(_type, (ObjectType, InputObjectType, Scalar, Interface, Union, Enum)):
         return True
@@ -72,6 +72,8 @@ class TypeMap(GraphQLTypeMap):
             if isinstance(_type, GrapheneGraphQLType):
                 assert _type.graphene_type == type
             return map
+        if isinstance(type, Scalar):
+            return self.construct_scalar(map, type.__class__)
         if issubclass(type, ObjectType):
             return self.construct_objecttype(map, type)
         if issubclass(type, InputObjectType):

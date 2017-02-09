@@ -83,7 +83,7 @@ def test_defines_a_query_only_schema():
     assert issubclass(article_field_type, ObjectType)
 
     title_field = article_field_type._meta.fields['title']
-    assert title_field.type == String
+    assert title_field.type.__class__ == String
 
     author_field = article_field_type._meta.fields['author']
     author_field_type = author_field.type
