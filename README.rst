@@ -11,7 +11,7 @@ building GraphQL schemas/types fast and easily.
 
 -  **Easy to use:** Graphene helps you use GraphQL in Python without
    effort.
--  **Relay:** Graphene has builtin support for Relay
+-  **Relay:** Graphene has builtin support for both Relay.
 -  **Data agnostic:** Graphene supports any kind of data source: SQL
    (Django, SQLAlchemy), NoSQL, custom Python objects, etc. We believe
    that by providing a complete API you could plug Graphene anywhere
@@ -33,6 +33,12 @@ Graphene has multiple integrations with different frameworks:
 +---------------------+----------------------------------------------------------------------------------------------+
 | Peewee              | *In progress* (`Tracking Issue <https://github.com/graphql-python/graphene/issues/289>`__)   |
 +---------------------+----------------------------------------------------------------------------------------------+
+
+Also, Graphene is fully compatible with the GraphQL spec, working
+seamlessly with all GraphQL clients, such as
+`Relay <https://github.com/facebook/relay>`__,
+`Apollo <https://github.com/apollographql/apollo-client>`__ and
+`gql <https://github.com/graphql-python/gql>`__.
 
 Installation
 ------------

@@ -8,7 +8,7 @@ Please read [UPGRADE-v1.0.md](/UPGRADE-v1.0.md) to learn how to upgrade to Graph
 [Graphene](http://graphene-python.org) is a Python library for building GraphQL schemas/types fast and easily.
 
 - **Easy to use:** Graphene helps you use GraphQL in Python without effort.
-- **Relay & Apollo:** Graphene has builtin support for both [Apollo](https://github.com/apollographql/apollo-client) and [Relay](https://github.com/facebook/relay)
+- **Relay:** Graphene has builtin support for both Relay.
 - **Data agnostic:** Graphene supports any kind of data source: SQL (Django, SQLAlchemy), NoSQL, custom Python objects, etc.
   We believe that by providing a complete API you could plug Graphene anywhere your data lives and make your data available
   through GraphQL.
@@ -25,6 +25,7 @@ Graphene has multiple integrations with different frameworks:
 | Google App Engine    |  [graphene-gae](https://github.com/graphql-python/graphene-gae/)  |
 | Peewee    |  *In progress* ([Tracking Issue](https://github.com/graphql-python/graphene/issues/289))  |
 
+Also, Graphene is fully compatible with the GraphQL spec, working seamlessly with all GraphQL clients, such as [Relay](https://github.com/facebook/relay), [Apollo](https://github.com/apollographql/apollo-client) and [gql](https://github.com/graphql-python/gql).
 
 ## Installation
 
