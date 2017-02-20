@@ -7,11 +7,11 @@ from graphene.types.scalars import MIN_INT, MAX_INT
 from .scalars import Scalar
 
 
-class JSON(Scalar):
+class Generic(Scalar):
     """
-    The `JSON` scalar type represents JSON values as specified by
-    [ECMA-404](http://www.ecma-international.org/
-    publications/files/ECMA-ST/ECMA-404.pdf).
+    The `Generic` scalar type represents a generic
+    GraphQL scalar value that could be:
+    String, Boolean, Int, Float, List or Object.
     """
 
     @staticmethod
@@ -32,8 +32,8 @@ class JSON(Scalar):
         elif isinstance(ast, FloatValue):
             return float(ast.value)
         elif isinstance(ast, ListValue):
-            return [JSON.parse_literal(value) for value in ast.values]
+            return [Generic.parse_literal(value) for value in ast.values]
         elif isinstance(ast, ObjectValue):
-            return {field.name.value: JSON.parse_literal(field.value) for field in ast.fields}
+            return {field.name.value: Generic.parse_literal(field.value) for field in ast.fields}
         else:
             return None

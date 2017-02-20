@@ -1,12 +1,12 @@
-from ..jsontype import JSON
+from ..generic import Generic
 from ..objecttype import ObjectType
 from ..schema import Schema
 
 
 class Query(ObjectType):
-    json = JSON(input=JSON())
+    generic = Generic(input=Generic())
 
-    def resolve_json(self, args, context, info):
+    def resolve_generic(self, args, context, info):
         input = args.get('input')
         return input
 
@@ -14,8 +14,8 @@ class Query(ObjectType):
 schema = Schema(query=Query)
 
 
-def test_json_query_variable():
-    for json_value in [
+def test_generic_query_variable():
+    for generic_value in [
         1,
         1.1,
         True,
@@ -45,20 +45,20 @@ def test_json_query_variable():
         None
     ]:
         result = schema.execute(
-            '''query Test($json: JSON){ json(input: $json) }''',
-            variable_values={'json': json_value}
+            '''query Test($generic: Generic){ generic(input: $generic) }''',
+            variable_values={'generic': generic_value}
         )
         assert not result.errors
         assert result.data == {
-            'json': json_value
+            'generic': generic_value
         }
 
 
-def test_json_parse_literal_query():
+def test_generic_parse_literal_query():
     result = schema.execute(
         '''
         query {
-            json(input: {
+            generic(input: {
                 int: 1,
                 float: 1.1
                 boolean: true,
@@ -78,7 +78,7 @@ def test_json_parse_literal_query():
     )
     assert not result.errors
     assert result.data == {
-        'json': {
+        'generic': {
             'int': 1,
             'float': 1.1,
             'boolean': True,
