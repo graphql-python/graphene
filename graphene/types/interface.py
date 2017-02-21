@@ -1,6 +1,7 @@
 import six
 
 from ..utils.is_base_type import is_base_type
+from ..utils.trim_docstring import trim_docstring
 from .abstracttype import AbstractTypeMeta
 from .field import Field
 from .options import Options
@@ -18,7 +19,7 @@ class InterfaceMeta(AbstractTypeMeta):
         options = Options(
             attrs.pop('Meta', None),
             name=name,
-            description=attrs.get('__doc__'),
+            description=trim_docstring(attrs.get('__doc__')),
             local_fields=None,
         )
 
