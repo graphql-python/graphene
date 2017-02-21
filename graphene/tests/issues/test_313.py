@@ -3,6 +3,9 @@
 import graphene
 from graphene import resolve_only_args
 
+class Query(graphene.ObjectType):
+    rand = graphene.String()
+
 class Success(graphene.ObjectType):
     yeah = graphene.String()
 
@@ -45,7 +48,7 @@ def test_create_post():
     }
     '''
 
-    schema = graphene.Schema(mutation=Mutations)
+    schema = graphene.Schema(query=Query, mutation=Mutations)
     result = schema.execute(query_string)
 
     assert not result.errors
