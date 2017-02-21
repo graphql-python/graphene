@@ -43,6 +43,7 @@ if not __SETUP__:
         PageInfo
     )
     from .utils.resolve_only_args import resolve_only_args
+    from .utils.module_loading import lazy_import
 
     __all__ = [
         'AbstractType',
@@ -72,4 +73,6 @@ if not __SETUP__:
         'ClientIDMutation',
         'Connection',
         'ConnectionField',
-        'PageInfo']
+        'PageInfo',
+        'lazy_import',
+    ]
