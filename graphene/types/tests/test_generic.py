@@ -1,10 +1,10 @@
-from ..generic import Generic
+from ..generic import GenericScalar
 from ..objecttype import ObjectType
 from ..schema import Schema
 
 
 class Query(ObjectType):
-    generic = Generic(input=Generic())
+    generic = GenericScalar(input=GenericScalar())
 
     def resolve_generic(self, args, context, info):
         input = args.get('input')
@@ -45,7 +45,7 @@ def test_generic_query_variable():
         None
     ]:
         result = schema.execute(
-            '''query Test($generic: Generic){ generic(input: $generic) }''',
+            '''query Test($generic: GenericScalar){ generic(input: $generic) }''',
             variable_values={'generic': generic_value}
         )
         assert not result.errors

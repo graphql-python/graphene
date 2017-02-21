@@ -7,9 +7,9 @@ from graphene.types.scalars import MIN_INT, MAX_INT
 from .scalars import Scalar
 
 
-class Generic(Scalar):
+class GenericScalar(Scalar):
     """
-    The `Generic` scalar type represents a generic
+    The `GenericScalar` scalar type represents a generic
     GraphQL scalar value that could be:
     String, Boolean, Int, Float, List or Object.
     """
@@ -32,8 +32,8 @@ class Generic(Scalar):
         elif isinstance(ast, FloatValue):
             return float(ast.value)
         elif isinstance(ast, ListValue):
-            return [Generic.parse_literal(value) for value in ast.values]
+            return [GenericScalar.parse_literal(value) for value in ast.values]
         elif isinstance(ast, ObjectValue):
-            return {field.name.value: Generic.parse_literal(field.value) for field in ast.fields}
+            return {field.name.value: GenericScalar.parse_literal(field.value) for field in ast.fields}
         else:
             return None
