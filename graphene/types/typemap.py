@@ -43,7 +43,9 @@ def resolve_type(resolve_type_func, map, type_name, root, context, info):
 
     if inspect.isclass(_type) and issubclass(_type, ObjectType):
         graphql_type = map.get(_type._meta.name)
-        assert graphql_type and graphql_type.graphene_type == _type
+        assert graphql_type and graphql_type.graphene_type == _type, (
+            'The type {} does not match with the associated graphene type {}.'
+        ).format(_type, graphql_type.graphene_type)
         return graphql_type
 
     return _type
@@ -71,7 +73,9 @@ class TypeMap(GraphQLTypeMap):
         if type._meta.name in map:
             _type = map[type._meta.name]
             if isinstance(_type, GrapheneGraphQLType):
-                assert _type.graphene_type == type
+                assert _type.graphene_type == type, (
+                    'Found different types with the same name in the schema: {}, {}.'
+                ).format(_type.graphene_type, type)
             return map
 
         if issubclass(type, ObjectType):
@@ -132,7 +136,9 @@ class TypeMap(GraphQLTypeMap):
         if type._meta.name in map:
             _type = map[type._meta.name]
             if isinstance(_type, GrapheneGraphQLType):
-                assert _type.graphene_type == type
+                assert _type.graphene_type == type, (
+                    'Found different types with the same name in the schema: {}, {}.'
+                ).format(_type.graphene_type, type)
             return _type
 
         def interfaces():
@@ -155,7 +161,9 @@ class TypeMap(GraphQLTypeMap):
         if type._meta.name in map:
             _type = map[type._meta.name]
             if isinstance(_type, GrapheneInterfaceType):
-                assert _type.graphene_type == type
+                assert _type.graphene_type == type, (
+                    'Found different types with the same name in the schema: {}, {}.'
+                ).format(_type.graphene_type, type)
             return _type
 
         _resolve_type = None
