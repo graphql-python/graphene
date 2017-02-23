@@ -1,6 +1,7 @@
 import six
 
 from ..utils.is_base_type import is_base_type
+from ..utils.trim_docstring import trim_docstring
 from .options import Options
 from .unmountedtype import UnmountedType
 
@@ -16,7 +17,7 @@ class UnionMeta(type):
         options = Options(
             attrs.pop('Meta', None),
             name=name,
-            description=attrs.get('__doc__'),
+            description=trim_docstring(attrs.get('__doc__')),
             types=(),
         )
 

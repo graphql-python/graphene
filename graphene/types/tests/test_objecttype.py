@@ -173,3 +173,14 @@ def test_objecttype_container_benchmark(benchmark):
     @benchmark
     def create_objecttype():
         Container(field1='field1', field2='field2')
+
+
+def test_generate_objecttype_description():
+    class MyObjectType(ObjectType):
+        '''
+        Documentation
+
+        Documentation line 2
+        '''
+
+    assert MyObjectType._meta.description == "Documentation\n\nDocumentation line 2"
