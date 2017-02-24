@@ -21,6 +21,7 @@ from .field import Field
 from .inputobjecttype import InputObjectType
 from .interface import Interface
 from .objecttype import ObjectType
+from .resolver import get_default_resolver
 from .scalars import ID, Boolean, Float, Int, Scalar, String
 from .structures import List, NonNull
 from .union import Union
@@ -205,9 +206,6 @@ class TypeMap(GraphQLTypeMap):
             return to_camel_case(name)
         return name
 
-    def default_resolver(self, attname, default_value, root, *_):
-        return getattr(root, attname, default_value)
-
     def construct_fields_for_type(self, map, type, is_input_type=False):
         fields = OrderedDict()
         for name, field in type._meta.fields.items():
@@ -267,7 +265,8 @@ class TypeMap(GraphQLTypeMap):
         if resolver:
             return get_unbound_function(resolver)
 
-        return partial(self.default_resolver, name, default_value)
+        default_resolver = type._meta.default_resolver or get_default_resolver()
+        return partial(default_resolver, name, default_value)
 
     def get_field_type(self, map, type):
         if isinstance(type, List):

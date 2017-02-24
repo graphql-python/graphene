@@ -19,12 +19,13 @@ class ObjectTypeMeta(AbstractTypeMeta):
         if not is_base_type(bases, ObjectTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
-        _meta = attrs.pop('_meta', None)
-        options = _meta or Options(
+        attrs.pop('_meta', None)
+        options = Options(
             attrs.pop('Meta', None),
             name=name,
             description=trim_docstring(attrs.get('__doc__')),
             interfaces=(),
+            default_resolver=None,
             local_fields=OrderedDict(),
         )
         options.base_fields = get_base_fields(bases, _as=Field)
