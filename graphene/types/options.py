@@ -30,6 +30,13 @@ class Options(object):
                 )
             )
 
+    def extend_with_meta(self, meta):
+        if not meta:
+            return
+        meta_attrs = props(meta)
+        for attr_name, value in meta_attrs.items():
+            setattr(self, attr_name, value)
+
     def __repr__(self):
         options_props = props(self)
         props_as_attrs = ' '.join(['{}={}'.format(key, value) for key, value in options_props.items()])

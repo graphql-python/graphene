@@ -19,7 +19,7 @@ class ObjectTypeMeta(AbstractTypeMeta):
         if not is_base_type(bases, ObjectTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
-        attrs.pop('_meta', None)
+        _meta = attrs.pop('_meta', None)
         options = Options(
             attrs.pop('Meta', None),
             name=name,
@@ -28,6 +28,7 @@ class ObjectTypeMeta(AbstractTypeMeta):
             default_resolver=None,
             local_fields=OrderedDict(),
         )
+        options.extend_with_meta(_meta)
         options.base_fields = get_base_fields(bases, _as=Field)
 
         if not options.local_fields:
