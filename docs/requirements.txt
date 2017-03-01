@@ -1,2 +1,4 @@
+# Required library
+Sphinx==1.5.3
 # Docs template
 https://github.com/graphql-python/graphene-python.org/archive/docs.zip
