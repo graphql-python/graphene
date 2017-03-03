@@ -54,9 +54,10 @@ def resolve_type(resolve_type_func, map, type_name, root, context, info):
 
 class TypeMap(GraphQLTypeMap):
 
-    def __init__(self, types, auto_camelcase=True, schema=None):
+    def __init__(self, types, auto_camelcase=True, schema=None, resolvers=None):
         self.auto_camelcase = auto_camelcase
         self.schema = schema
+        self.resolvers = resolvers
         super(TypeMap, self).__init__(types)
 
     def reducer(self, map, type):
@@ -245,10 +246,16 @@ class TypeMap(GraphQLTypeMap):
             fields[field_name] = _field
         return fields
 
+    def get_resolver_from_type(self, type, name):
+        if self.resolvers and type._meta.name in self.resolvers:
+            resolver_type = self.resolvers[type._meta.name]
+            return getattr(resolver_type, 'resolve_{}'.format(name), None)
+        return getattr(type, 'resolve_{}'.format(name), None)
+
     def get_resolver_for_type(self, type, name, default_value):
         if not issubclass(type, ObjectType):
             return
-        resolver = getattr(type, 'resolve_{}'.format(name), None)
+        resolver = self.get_resolver_from_type(type, name)
         if not resolver:
             # If we don't find the resolver in the ObjectType class, then try to
             # find it in each of the interfaces
@@ -256,7 +263,7 @@ class TypeMap(GraphQLTypeMap):
             for interface in type._meta.interfaces:
                 if name not in interface._meta.fields:
                     continue
-                interface_resolver = getattr(interface, 'resolve_{}'.format(name), None)
+                interface_resolver = self.get_resolver_from_type(interface, name)
                 if interface_resolver:
                     break
             resolver = interface_resolver

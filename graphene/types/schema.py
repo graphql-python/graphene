@@ -21,7 +21,8 @@ class Schema(GraphQLSchema):
     '''
 
     def __init__(self, query=None, mutation=None, subscription=None,
-                 directives=None, types=None, auto_camelcase=True):
+                 directives=None, types=None, auto_camelcase=True,
+                 resolvers=None):
         assert inspect.isclass(query) and issubclass(query, ObjectType), (
             'Schema query must be Object Type but got: {}.'
         ).format(query)
@@ -41,6 +42,7 @@ class Schema(GraphQLSchema):
                 directives
         )
         self._directives = directives
+        self._resolvers = resolvers
         self.build_typemap()
 
     def get_query_type(self):
@@ -102,4 +104,4 @@ class Schema(GraphQLSchema):
         ]
         if self.types:
             initial_types += self.types
-        self._type_map = TypeMap(initial_types, auto_camelcase=self.auto_camelcase, schema=self)
+        self._type_map = TypeMap(initial_types, auto_camelcase=self.auto_camelcase, schema=self, resolvers=self._resolvers)

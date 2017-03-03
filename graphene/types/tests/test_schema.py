@@ -6,12 +6,12 @@ from ..scalars import String
 from ..field import Field
 
 
-class MyOtherType(ObjectType):
+class InnerType(ObjectType):
     field = String()
 
 
 class Query(ObjectType):
-    inner = Field(MyOtherType)
+    inner = Field(InnerType)
 
 
 def test_schema():
@@ -22,7 +22,7 @@ def test_schema():
 def test_schema_get_type():
     schema = Schema(Query)
     assert schema.Query == Query
-    assert schema.MyOtherType == MyOtherType
+    assert schema.InnerType == InnerType
 
 
 def test_schema_get_type_error():
@@ -39,12 +39,12 @@ def test_schema_str():
   query: Query
 }
 
-type MyOtherType {
+type InnerType {
   field: String
 }
 
 type Query {
-  inner: MyOtherType
+  inner: InnerType
 }
 """
 
@@ -52,3 +52,26 @@ type Query {
 def test_schema_introspect():
     schema = Schema(Query)
     assert '__schema' in schema.introspect()
+
+
+def test_schema_external_resolution():
+    class InnerTypeResolvers(object):
+        def resolve_field(self, args, context, info):
+            return self['key']
+
+    class QueryResolvers(object):
+        def resolve_inner(self, args, context, info):
+            return {'key': 'value'}
+
+    schema = Schema(Query, resolvers={
+        'Query': QueryResolvers,
+        'InnerType': InnerTypeResolvers,
+    })
+
+    result = schema.execute('{ inner { field } }')
+    assert not result.errors
+    assert result.data == {
+        'inner': {
+            'field': 'value'
+        }
+    }
