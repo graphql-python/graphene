@@ -104,4 +104,10 @@ class Schema(GraphQLSchema):
         ]
         if self.types:
             initial_types += self.types
-        self._type_map = TypeMap(initial_types, auto_camelcase=self.auto_camelcase, schema=self, resolvers=self._resolvers)
+
+        self._type_map = TypeMap(
+            initial_types,
+            auto_camelcase=self.auto_camelcase,
+            schema=self,
+            resolvers=self._resolvers
+        )
