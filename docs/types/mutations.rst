@@ -10,20 +10,20 @@ This example defines a Mutation:
 
 .. code:: python
 
-import graphene
+    import graphene
 
-class CreatePerson(graphene.Mutation):
-    class Input:
-        name = graphene.String()
+    class CreatePerson(graphene.Mutation):
+        class Input:
+            name = graphene.String()
 
-    ok = graphene.Boolean()
-    person = graphene.Field(lambda: Person)
+        ok = graphene.Boolean()
+        person = graphene.Field(lambda: Person)
 
-    @staticmethod
-    def mutate(root, args, context, info):
-        person = Person(name=args.get('name'))
-        ok = True
-        return CreatePerson(person=person, ok=ok)
+        @staticmethod
+        def mutate(root, args, context, info):
+            person = Person(name=args.get('name'))
+            ok = True
+            return CreatePerson(person=person, ok=ok)
 
 **person** and **ok** are the output fields of the Mutation when is
 resolved.
