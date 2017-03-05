@@ -30,12 +30,11 @@ class Options(object):
                 )
             )
 
-    def extend_with_meta(self, meta):
-        if not meta:
-            return
-        meta_attrs = props(meta)
-        for attr_name, value in meta_attrs.items():
-            setattr(self, attr_name, value)
+    def extend_with_defaults(self, defaults):
+        for attr_name, value in defaults.items():
+            if not hasattr(self, attr_name):
+                setattr(self, attr_name, value)
+        return self
 
     def __repr__(self):
         options_props = props(self)

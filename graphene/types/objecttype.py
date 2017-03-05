@@ -20,15 +20,21 @@ class ObjectTypeMeta(AbstractTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
         _meta = attrs.pop('_meta', None)
-        options = Options(
-            attrs.pop('Meta', None),
+        defaults = dict(
             name=name,
             description=trim_docstring(attrs.get('__doc__')),
             interfaces=(),
             default_resolver=None,
             local_fields=OrderedDict(),
         )
-        options.extend_with_meta(_meta)
+        if not _meta:
+            options = Options(
+                attrs.pop('Meta', None),
+                **defaults
+            )
+        else:
+            options = _meta.extend_with_defaults(defaults)
+
         options.base_fields = get_base_fields(bases, _as=Field)
 
         if not options.local_fields:

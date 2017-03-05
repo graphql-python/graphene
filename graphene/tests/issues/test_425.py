@@ -20,8 +20,8 @@ class SpecialObjectTypeMeta(ObjectTypeMeta):
             other_attr='default',
         )
 
-        return ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options))
-
+        cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options))
+        assert cls._meta is options
         return cls
 
 
