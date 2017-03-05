@@ -76,7 +76,7 @@ If you want to learn even more, you can also check the following [examples](exam
 After cloning this repo, ensure dependencies are installed by running:
 
 ```sh
-pip install .[test]
+pip install -e ".[test]"
 ```
 
 After developing, the full test suite can be evaluated by running:

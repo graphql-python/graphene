@@ -95,7 +95,7 @@ After cloning this repo, ensure dependencies are installed by running:
 
 .. code:: sh
 
-    pip install .[test]
+    pip install -e ".[test]"
 
 After developing, the full test suite can be evaluated by running:
 
