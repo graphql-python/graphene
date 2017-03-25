@@ -81,16 +81,18 @@ class TypeMap(GraphQLTypeMap):
 
         if issubclass(type, ObjectType):
             internal_type = self.construct_objecttype(map, type)
-        if issubclass(type, InputObjectType):
+        elif issubclass(type, InputObjectType):
             internal_type = self.construct_inputobjecttype(map, type)
-        if issubclass(type, Interface):
+        elif issubclass(type, Interface):
             internal_type = self.construct_interface(map, type)
-        if issubclass(type, Scalar):
+        elif issubclass(type, Scalar):
             internal_type = self.construct_scalar(map, type)
-        if issubclass(type, Enum):
+        elif issubclass(type, Enum):
             internal_type = self.construct_enum(map, type)
-        if issubclass(type, Union):
+        elif issubclass(type, Union):
             internal_type = self.construct_union(map, type)
+        else:
+            raise Exception("Expected Graphene type, but received: {}.".format(type))
 
         return GraphQLTypeMap.reducer(map, internal_type)
 
@@ -145,8 +147,10 @@ class TypeMap(GraphQLTypeMap):
         def interfaces():
             interfaces = []
             for interface in type._meta.interfaces:
-                i = self.construct_interface(map, interface)
-                interfaces.append(i)
+                self.graphene_reducer(map, interface)
+                internal_type = map[interface._meta.name]
+                assert internal_type.graphene_type == interface
+                interfaces.append(internal_type)
             return interfaces
 
         return GrapheneObjectType(
@@ -190,10 +194,16 @@ class TypeMap(GraphQLTypeMap):
         _resolve_type = None
         if type.resolve_type:
             _resolve_type = partial(resolve_type, type.resolve_type, map, type._meta.name)
-        types = []
-        for i in type._meta.types:
-            internal_type = self.construct_objecttype(map, i)
-            types.append(internal_type)
+
+        def types():
+            union_types = []
+            for objecttype in type._meta.types:
+                self.graphene_reducer(map, objecttype)
+                internal_type = map[objecttype._meta.name]
+                assert internal_type.graphene_type == objecttype
+                union_types.append(internal_type)
+            return union_types
+
         return GrapheneUnionType(
             graphene_type=type,
             name=type._meta.name,
