@@ -20,7 +20,7 @@ Graphene-Django has built-in support for transport batching, which can be enable
     from graphene_django.views import GraphQLView
 
     urlpatterns = [
-        url(r'^graphql', GraphQLView.as_view(graphiql=True, batch=True)),
+        url(r'^graphql', GraphQLView.as_view(batch=True)),
     ]
 
 
