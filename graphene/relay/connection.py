@@ -5,7 +5,7 @@ from functools import partial
 import six
 
 from graphql_relay import connection_from_list
-from promise import is_thenable, promisify
+from promise import Promise, is_thenable
 
 from ..types import (AbstractType, Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
                      Union)
@@ -143,7 +143,7 @@ class IterableConnectionField(Field):
 
         on_resolve = partial(cls.resolve_connection, connection_type, args)
         if is_thenable(resolved):
-            return promisify(resolved).then(on_resolve)
+            return Promise.resolve(resolved).then(on_resolve)
 
         return on_resolve(resolved)
 
