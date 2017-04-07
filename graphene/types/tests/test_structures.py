@@ -1,7 +1,9 @@
 import pytest
+from functools import partial
 
 from ..structures import List, NonNull
 from ..scalars import String
+from .utils import MyLazyType
 
 
 def test_list():
@@ -15,6 +17,23 @@ def test_list_with_unmounted_type():
         List(String())
     
     assert str(exc_info.value) == 'List could not have a mounted String() as inner type. Try with List(String).'
+
+
+def test_list_with_lazy_type():
+    MyType = object()
+    field = List(lambda: MyType)
+    assert field.of_type == MyType
+
+
+def test_list_with_lazy_partial_type():
+    MyType = object()
+    field = List(partial(lambda: MyType))
+    assert field.of_type == MyType
+
+
+def test_list_with_string_type():
+    field = List("graphene.types.tests.utils.MyLazyType")
+    assert field.of_type == MyLazyType
 
 
 def test_list_inherited_works_list():
@@ -33,6 +52,23 @@ def test_nonnull():
     nonnull = NonNull(String)
     assert nonnull.of_type == String
     assert str(nonnull) == 'String!'
+
+
+def test_nonnull_with_lazy_type():
+    MyType = object()
+    field = NonNull(lambda: MyType)
+    assert field.of_type == MyType
+
+
+def test_nonnull_with_lazy_partial_type():
+    MyType = object()
+    field = NonNull(partial(lambda: MyType))
+    assert field.of_type == MyType
+
+
+def test_nonnull_with_string_type():
+    field = NonNull("graphene.types.tests.utils.MyLazyType")
+    assert field.of_type == MyLazyType
 
 
 def test_nonnull_inherited_works_list():

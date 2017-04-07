@@ -6,6 +6,7 @@ from .argument import Argument, to_arguments
 from .mountedtype import MountedType
 from .structures import NonNull
 from .unmountedtype import UnmountedType
+from .utils import get_type
 
 
 base_type = type
@@ -60,9 +61,7 @@ class Field(MountedType):
 
     @property
     def type(self):
-        if inspect.isfunction(self._type) or type(self._type) is partial:
-            return self._type()
-        return self._type
+        return get_type(self._type)
 
     def get_resolver(self, parent_resolver):
         return self.resolver or parent_resolver

@@ -1,5 +1,9 @@
+import inspect
 from collections import OrderedDict
+from functools import partial
+from six import string_types
 
+from ..utils.module_loading import import_string
 from .mountedtype import MountedType
 from .unmountedtype import UnmountedType
 
@@ -62,3 +66,11 @@ def yank_fields_from_attrs(attrs, _as=None, delete=True, sort=True):
     if sort:
         fields_with_names = sorted(fields_with_names, key=lambda f: f[1])
     return OrderedDict(fields_with_names)
+
+
+def get_type(_type):
+    if isinstance(_type, string_types):
+        return import_string(_type)
+    if inspect.isfunction(_type) or type(_type) is partial:
+        return _type()
+    return _type

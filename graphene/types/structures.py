@@ -1,4 +1,5 @@
 from .unmountedtype import UnmountedType
+from .utils import get_type
 
 
 class Structure(UnmountedType):
@@ -18,7 +19,11 @@ class Structure(UnmountedType):
                 cls_name,
                 of_type_name,
             ))
-        self.of_type = of_type
+        self._of_type = of_type
+
+    @property
+    def of_type(self):
+        return get_type(self._of_type)
 
     def get_type(self):
         '''

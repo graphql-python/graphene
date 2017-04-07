@@ -1,9 +1,11 @@
 import pytest
+from functools import partial
 
 from ..argument import Argument
 from ..field import Field
 from ..structures import NonNull
 from ..scalars import String
+from .utils import MyLazyType
 
 
 class MyInstance(object):
@@ -64,6 +66,17 @@ def test_field_with_lazy_type():
     MyType = object()
     field = Field(lambda: MyType)
     assert field.type == MyType
+
+
+def test_field_with_lazy_partial_type():
+    MyType = object()
+    field = Field(partial(lambda: MyType))
+    assert field.type == MyType
+
+
+def test_field_with_string_type():
+    field = Field("graphene.types.tests.utils.MyLazyType")
+    assert field.type == MyLazyType
 
 
 def test_field_not_source_and_resolver():

@@ -283,6 +283,4 @@ class TypeMap(GraphQLTypeMap):
             return GraphQLList(self.get_field_type(map, type.of_type))
         if isinstance(type, NonNull):
             return GraphQLNonNull(self.get_field_type(map, type.of_type))
-        if inspect.isfunction(type):
-            type = type()
         return map.get(type._meta.name)
