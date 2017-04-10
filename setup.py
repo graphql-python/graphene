@@ -41,6 +41,7 @@ tests_require = [
     'pytest>=2.7.2',
     'pytest-benchmark',
     'pytest-cov',
+    'snapshottest',
     'coveralls',
     'six',
     'mock',
