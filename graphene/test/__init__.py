@@ -1,9 +1,17 @@
 from graphene.types.schema import Schema
 
-from graphql.error import format_error
+from graphql.error import format_error as format_graphql_error
+from graphql.error import GraphQLError
 
 
-def format_execution_result(execution_result):
+def default_format_error(error):
+    if isinstance(error, GraphQLError):
+        return format_graphql_error(error)
+
+    return {'message': six.text_type(error)}
+
+
+def format_execution_result(execution_result, format_error):
     if execution_result:
         response = {}
 
@@ -17,12 +25,14 @@ def format_execution_result(execution_result):
 
 
 class Client(object):
-    def __init__(self, schema, **execute_options):
+    def __init__(self, schema, format_error=None, **execute_options):
         assert isinstance(schema, Schema)
         self.schema = schema
         self.execute_options = execute_options
+        self.format_error = format_error or default_format_error
 
     def execute(self, *args, **kwargs):
         return format_execution_result(
-            self.schema.execute(*args, **dict(self.execute_options, **kwargs))
+            self.schema.execute(*args, **dict(self.execute_options, **kwargs)),
+            self.format_error
         )
