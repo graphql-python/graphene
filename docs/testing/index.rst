@@ -50,6 +50,27 @@ To use the test client, instantiate ``graphene.test.Client`` and retrieve GraphQ
         }
 
 
+Execute parameters
+~~~~~~~~~~~~~~~~~~
+
+You can also add extra keyword arguments to the ``execute`` method, such as
+``context_value``, ``root_value``, ``variable_values``, ...:
+
+
+.. code:: python
+
+    from graphene.test import Client
+
+    def test_hey():
+        client = Client(my_schema)
+        executed = client.execute('''{ hey }''', context_value={'user': 'Peter'})
+        assert executed == {
+            'data': {
+                'hey': 'hello Peter!'
+            }
+        }
+
+
 Snapshot testing
 ~~~~~~~~~~~~~~~~
 
