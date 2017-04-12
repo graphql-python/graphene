@@ -1,7 +1,10 @@
+from graphene.test import Client
 from ..data import setup
 from ..schema import schema
 
 setup()
+
+client = Client(schema)
 
 
 def test_str_schema():
@@ -66,7 +69,7 @@ type ShipEdge {
 '''
 
 
-def test_correctly_fetches_id_name_rebels():
+def test_correctly_fetches_id_name_rebels(snapshot):
     query = '''
       query RebelsQuery {
         rebels {
@@ -75,18 +78,10 @@ def test_correctly_fetches_id_name_rebels():
         }
       }
     '''
-    expected = {
-        'rebels': {
-            'id': 'RmFjdGlvbjox',
-            'name': 'Alliance to Restore the Republic'
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_correctly_refetches_rebels():
+def test_correctly_refetches_rebels(snapshot):
     query = '''
       query RebelsRefetchQuery {
         node(id: "RmFjdGlvbjox") {
@@ -97,18 +92,10 @@ def test_correctly_refetches_rebels():
         }
       }
     '''
-    expected = {
-        'node': {
-            'id': 'RmFjdGlvbjox',
-            'name': 'Alliance to Restore the Republic'
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_correctly_fetches_id_name_empire():
+def test_correctly_fetches_id_name_empire(snapshot):
     query = '''
       query EmpireQuery {
         empire {
@@ -117,18 +104,10 @@ def test_correctly_fetches_id_name_empire():
         }
       }
     '''
-    expected = {
-        'empire': {
-            'id': 'RmFjdGlvbjoy',
-            'name': 'Galactic Empire'
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_correctly_refetches_empire():
+def test_correctly_refetches_empire(snapshot):
     query = '''
       query EmpireRefetchQuery {
         node(id: "RmFjdGlvbjoy") {
@@ -139,18 +118,10 @@ def test_correctly_refetches_empire():
         }
       }
     '''
-    expected = {
-        'node': {
-            'id': 'RmFjdGlvbjoy',
-            'name': 'Galactic Empire'
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_correctly_refetches_xwing():
+def test_correctly_refetches_xwing(snapshot):
     query = '''
       query XWingRefetchQuery {
         node(id: "U2hpcDox") {
@@ -161,12 +132,4 @@ def test_correctly_refetches_xwing():
         }
       }
     '''
-    expected = {
-        'node': {
-            'id': 'U2hpcDox',
-            'name': 'X-Wing'
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
