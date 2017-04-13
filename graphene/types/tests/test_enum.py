@@ -111,3 +111,52 @@ def test_enum_value_as_unmounted_argument():
     unmounted_field = unmounted.Argument()
     assert isinstance(unmounted_field, Argument)
     assert unmounted_field.type == RGB
+
+
+def test_enum_can_be_compared():
+    class RGB(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    assert RGB.RED == 1
+    assert RGB.GREEN == 2
+    assert RGB.BLUE == 3
+
+
+def test_enum_can_be_initialzied():
+    class RGB(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    assert RGB.get(1) == RGB.RED
+    assert RGB.get(2) == RGB.GREEN
+    assert RGB.get(3) == RGB.BLUE
+
+
+def test_enum_can_retrieve_members():
+    class RGB(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    assert RGB['RED'] == RGB.RED
+    assert RGB['GREEN'] == RGB.GREEN
+    assert RGB['BLUE'] == RGB.BLUE
+
+
+def test_enum_to_enum_comparison_should_differ():
+    class RGB1(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    class RGB2(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    assert RGB1.RED != RGB2.RED
+    assert RGB1.GREEN != RGB2.GREEN
+    assert RGB1.BLUE != RGB2.BLUE
