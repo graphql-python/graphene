@@ -5,6 +5,7 @@ import six
 from graphql_relay import from_global_id, to_global_id
 
 from ..types import ID, Field, Interface, ObjectType
+from ..types.utils import get_type
 from ..types.interface import InterfaceMeta
 
 
@@ -64,16 +65,17 @@ class NodeField(Field):
                  name=None, **kwargs):
         assert issubclass(node, Node), 'NodeField can only operate in Nodes'
         self.node_type = node
-
-        # If we don's specify a type, the field type will be the node interface
-        field_type = type or node
+        self.field_type = type
 
         super(NodeField, self).__init__(
-            field_type,
+            # If we don's specify a type, the field type will be the node interface
+            type or node,
             description='The ID of the object',
-            id=ID(required=True),
-            resolver=partial(node.node_resolver, only_type=type)
+            id=ID(required=True)
         )
+
+    def get_resolver(self, parent_resolver):
+        return partial(self.node_type.node_resolver, only_type=get_type(self.field_type))
 
 
 class Node(six.with_metaclass(NodeMeta, Interface)):

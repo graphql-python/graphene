@@ -45,6 +45,7 @@ class RootQuery(ObjectType):
     first = String()
     node = Node.Field()
     only_node = Node.Field(MyNode)
+    only_node_lazy = Node.Field(lambda: MyNode)
 
 schema = Schema(query=RootQuery, types=[MyNode, MyOtherNode])
 
@@ -116,6 +117,23 @@ def test_node_field_only_type_wrong():
     assert executed.data == { 'onlyNode': None }
 
 
+def test_node_field_only_lazy_type():
+    executed = schema.execute(
+        '{ onlyNodeLazy(id:"%s") { __typename, name } } ' % Node.to_global_id("MyNode", 1)
+    )
+    assert not executed.errors
+    assert executed.data == {'onlyNodeLazy': {'__typename': 'MyNode', 'name': '1'}}
+
+
+def test_node_field_only_lazy_type_wrong():
+    executed = schema.execute(
+        '{ onlyNodeLazy(id:"%s") { __typename, name } } ' % Node.to_global_id("MyOtherNode", 1)
+    )
+    assert len(executed.errors) == 1
+    assert str(executed.errors[0]) == 'Must receive an MyOtherNode id.'
+    assert executed.data == { 'onlyNodeLazy': None }
+
+
 def test_str_schema():
     assert str(schema) == """
 schema {
@@ -142,5 +160,6 @@ type RootQuery {
   first: String
   node(id: ID!): Node
   onlyNode(id: ID!): MyNode
+  onlyNodeLazy(id: ID!): MyNode
 }
 """.lstrip()
