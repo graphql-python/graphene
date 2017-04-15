@@ -52,6 +52,10 @@ def resolve_type(resolve_type_func, map, type_name, root, context, info):
     return _type
 
 
+def is_type_of_from_possible_types(possible_types, root, context, info):
+    return isinstance(root, possible_types)
+
+
 class TypeMap(GraphQLTypeMap):
 
     def __init__(self, types, auto_camelcase=True, schema=None):
@@ -153,12 +157,17 @@ class TypeMap(GraphQLTypeMap):
                 interfaces.append(internal_type)
             return interfaces
 
+        if type._meta.possible_types:
+            is_type_of = partial(is_type_of_from_possible_types, type._meta.possible_types)
+        else:
+            is_type_of = type.is_type_of
+
         return GrapheneObjectType(
             graphene_type=type,
             name=type._meta.name,
             description=type._meta.description,
             fields=partial(self.construct_fields_for_type, map, type),
-            is_type_of=type.is_type_of,
+            is_type_of=is_type_of,
             interfaces=interfaces
         )
 

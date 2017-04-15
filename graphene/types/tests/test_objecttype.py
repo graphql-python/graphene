@@ -184,3 +184,27 @@ def test_generate_objecttype_description():
         '''
 
     assert MyObjectType._meta.description == "Documentation\n\nDocumentation line 2"
+
+
+def test_objecttype_with_possible_types():
+    class MyObjectType(ObjectType):
+        class Meta:
+            possible_types = (dict, )
+
+    assert MyObjectType._meta.possible_types == (dict, )
+
+
+def test_objecttype_with_possible_types_and_is_type_of_should_raise():
+    with pytest.raises(AssertionError) as excinfo:
+        class MyObjectType(ObjectType):
+            class Meta:
+                possible_types = (dict, )
+
+            @classmethod
+            def is_type_of(cls, root, context, info):
+                return False
+
+    assert str(excinfo.value) == (
+        'MyObjectType.Meta.possible_types will cause type collision with '
+        'MyObjectType.is_type_of. Please use one or other.'
+    )

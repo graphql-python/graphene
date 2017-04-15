@@ -183,3 +183,18 @@ def test_objecttype_camelcase_disabled():
     assert foo_field.args == {
         'bar_foo': GraphQLArgument(GraphQLString, out_name='bar_foo')
     }
+
+
+def test_objecttype_with_possible_types():
+    class MyObjectType(ObjectType):
+        '''Description'''
+        class Meta:
+            possible_types = (dict, )
+
+        foo_bar = String()
+
+    typemap = TypeMap([MyObjectType])
+    graphql_type = typemap['MyObjectType']
+    assert graphql_type.is_type_of
+    assert graphql_type.is_type_of({}, None, None) is True
+    assert graphql_type.is_type_of(MyObjectType(), None, None) is False

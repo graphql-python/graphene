@@ -24,6 +24,7 @@ class ObjectTypeMeta(AbstractTypeMeta):
             name=name,
             description=trim_docstring(attrs.get('__doc__')),
             interfaces=(),
+            possible_types=(),
             default_resolver=None,
             local_fields=OrderedDict(),
         )
@@ -54,6 +55,11 @@ class ObjectTypeMeta(AbstractTypeMeta):
         )
 
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
+
+        assert not (options.possible_types and cls.is_type_of), (
+            '{}.Meta.possible_types will cause type collision with {}.is_type_of. '
+            'Please use one or other.'
+        ).format(name, name)
 
         for interface in options.interfaces:
             interface.implements(cls)
