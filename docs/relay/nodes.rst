@@ -98,4 +98,5 @@ Example usage:
         # Should be CustomNode.Field() if we want to use our custom Node
         node = relay.Node.Field()
 
+.. _Relay specification: https://facebook.github.io/relay/docs/graphql-relay-specification.html
 .. _Starwars Relay example: https://github.com/graphql-python/graphene/blob/master/examples/starwars_relay/schema.py
