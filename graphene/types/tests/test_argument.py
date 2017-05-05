@@ -48,7 +48,7 @@ def test_to_arguments_raises_if_field():
 
     with pytest.raises(ValueError) as exc_info:
         to_arguments(args)
-    
+
     assert str(exc_info.value) == 'Expected arg_string to be Argument, but received Field. Try using Argument(String).'
 
 
