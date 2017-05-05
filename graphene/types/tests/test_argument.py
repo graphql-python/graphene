@@ -1,4 +1,5 @@
 import pytest
+from functools import partial
 
 from ..argument import Argument, to_arguments
 from ..field import Field
@@ -61,3 +62,15 @@ def test_to_arguments_raises_if_inputfield():
         to_arguments(args)
 
     assert str(exc_info.value) == 'Expected arg_string to be Argument, but received InputField. Try using Argument(String).'
+
+
+def test_argument_with_lazy_type():
+    MyType = object()
+    arg = Field(lambda: MyType)
+    assert arg.type == MyType
+
+
+def test_argument_with_lazy_partial_type():
+    MyType = object()
+    arg = Field(partial(lambda: MyType))
+    assert arg.type == MyType

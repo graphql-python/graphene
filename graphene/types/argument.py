@@ -4,6 +4,7 @@ from itertools import chain
 from .mountedtype import MountedType
 from .structures import NonNull
 from .dynamic import Dynamic
+from .utils import get_type
 
 
 class Argument(MountedType):
@@ -15,9 +16,13 @@ class Argument(MountedType):
             type = NonNull(type)
 
         self.name = name
-        self.type = type
+        self._type = type
         self.default_value = default_value
         self.description = description
+
+    @property
+    def type(self):
+        return get_type(self._type)
 
     def __eq__(self, other):
         return isinstance(other, Argument) and (
