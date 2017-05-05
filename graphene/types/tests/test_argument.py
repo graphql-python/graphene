@@ -66,11 +66,11 @@ def test_to_arguments_raises_if_inputfield():
 
 def test_argument_with_lazy_type():
     MyType = object()
-    arg = Field(lambda: MyType)
+    arg = Argument(lambda: MyType)
     assert arg.type == MyType
 
 
 def test_argument_with_lazy_partial_type():
     MyType = object()
-    arg = Field(partial(lambda: MyType))
+    arg = Argument(partial(lambda: MyType))
     assert arg.type == MyType
