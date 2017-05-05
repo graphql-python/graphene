@@ -59,5 +59,5 @@ def test_to_arguments_raises_if_inputfield():
 
     with pytest.raises(ValueError) as exc_info:
         to_arguments(args)
-    
+
     assert str(exc_info.value) == 'Expected arg_string to be Argument, but received InputField. Try using Argument(String).'
