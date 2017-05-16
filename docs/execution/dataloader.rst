@@ -89,7 +89,7 @@ there could be at most 13 database requests!
 
 
 When using DataLoader, we could define the User type using our previous example with 
-learer code and at most 4 database requests, and possibly fewer if there are cache hits.
+leaner code and at most 4 database requests, and possibly fewer if there are cache hits.
 
 
 .. code:: python
