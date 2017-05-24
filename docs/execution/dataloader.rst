@@ -59,7 +59,7 @@ maintain minimal outgoing data requests.
 Using with Graphene
 -------------------
 
-DataLoader pairs nicely well with Grapehne/GraphQL. GraphQL fields are designed
+DataLoader pairs nicely well with Graphene/GraphQL. GraphQL fields are designed
 to be stand-alone functions. Without a caching or batching mechanism, it's easy
 for a naive GraphQL server to issue new database requests each time a field is resolved.
 
