@@ -9,7 +9,6 @@ from .unmountedtype import UnmountedType
 
 
 class ScalarTypeMeta(type):
-
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of Model
         # (excluding Model class itself).
@@ -165,3 +164,45 @@ class ID(Scalar):
     def parse_literal(ast):
         if isinstance(ast, (StringValue, IntValue)):
             return ast.value
+
+
+class OmniScalar(Scalar):
+    '''
+    The `OmniScalar` type represents any kind of scalar type.  For values
+    whose type is nondeterministic, an OmniScalar will parse and serialize it
+    appropriately.  Non-scalar types (lists and objects) are considered null.
+    '''
+
+    _scalar_type_map = {
+        str: String,
+        bool: Boolean,
+        int: Int,
+        float: Float,
+    }
+
+    if six.PY2:
+        _scalar_type_map[unicode] = String
+
+    @staticmethod
+    def serialize(value):
+        scalar_type = OmniScalar._scalar_type_map.get(type(value))
+        if scalar_type:
+            return scalar_type.serialize(value)
+        else:
+            return None
+
+    @staticmethod
+    def parse_value(value):
+        scalar_type = OmniScalar._scalar_type_map.get(type(value))
+        if scalar_type:
+            return scalar_type.parse_value(value)
+        else:
+            return None
+
+    @staticmethod
+    def parse_literal(ast):
+        scalar_type = OmniScalar._scalar_type_map.get(type(ast))
+        if scalar_type:
+            return scalar_type.parse_literal(ast)
+        else:
+            return None
