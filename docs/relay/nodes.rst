@@ -3,7 +3,7 @@ Nodes
 
 A ``Node`` is an Interface provided by ``graphene.relay`` that contains
 a single field ``id`` (which is a ``ID!``). Any object that inherits
-from it have to implement a ``get_node`` method for retrieving a
+from it has to implement a ``get_node`` method for retrieving a
 ``Node`` by an *id*.
 
 
@@ -26,8 +26,8 @@ Example usage (taken from the `Starwars Relay example`_):
             return get_ship(id)
 
 The ``id`` returned by the ``Ship`` type when you query it will be a
-scalar which contains the enough info for the server for knowing it’s
-type and it’s id.
+scalar which contains enough info for the server to know its type and
+its id.
 
 For example, the instance ``Ship(id=1)`` will return ``U2hpcDox`` as the
 id when you query it (which is the base64 encoding of ``Ship:1``), and
@@ -77,7 +77,7 @@ Accessing node types
 If we want to retrieve node instances from a ``global_id`` (scalar that identifies an instance by it's type name and id),
 we can simply do ``Node.get_node_from_global_id(global_id, context, info)``.
 
-In the case we want to restrict the instnance retrieval to an specific type, we can do:
+In the case we want to restrict the instance retrieval to a specific type, we can do:
 ``Node.get_node_from_global_id(global_id, context, info, only_type=Ship)``. This will raise an error
 if the ``global_id`` doesn't correspond to a Ship type.
 
@@ -98,4 +98,5 @@ Example usage:
         # Should be CustomNode.Field() if we want to use our custom Node
         node = relay.Node.Field()
 
+.. _Relay specification: https://facebook.github.io/relay/docs/graphql-relay-specification.html
 .. _Starwars Relay example: https://github.com/graphql-python/graphene/blob/master/examples/starwars_relay/schema.py

@@ -30,15 +30,15 @@ This middleware only continues evaluation if the ``field_name`` is not ``'user'`
 
 .. code:: python
 
-	class AuthorizationMiddleware(object):
-		def resolve(self, next, root, args, context, info):
-			if info.field_name == 'user':
-				return None
-			return next(root, args, context, info)
+    class AuthorizationMiddleware(object):
+        def resolve(self, next, root, args, context, info):
+            if info.field_name == 'user':
+                return None
+            return next(root, args, context, info)
 
 
 And then execute it with:
 
 .. code:: python
 
-	result = schema.execute('THE QUERY', middleware=[AuthorizationMiddleware()])
+    result = schema.execute('THE QUERY', middleware=[AuthorizationMiddleware()])

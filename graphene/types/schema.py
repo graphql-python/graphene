@@ -1,3 +1,4 @@
+import inspect
 
 from graphql import GraphQLSchema, graphql, is_type
 from graphql.type.directives import (GraphQLDirective, GraphQLIncludeDirective,
@@ -7,6 +8,7 @@ from graphql.utils.introspection_query import introspection_query
 from graphql.utils.schema_printer import print_schema
 
 from .definitions import GrapheneGraphQLType
+from .objecttype import ObjectType
 from .typemap import TypeMap, is_graphene_type
 
 
@@ -20,6 +22,9 @@ class Schema(GraphQLSchema):
 
     def __init__(self, query=None, mutation=None, subscription=None,
                  directives=None, types=None, auto_camelcase=True):
+        assert inspect.isclass(query) and issubclass(query, ObjectType), (
+            'Schema query must be Object Type but got: {}.'
+        ).format(query)
         self._query = query
         self._mutation = mutation
         self._subscription = subscription
@@ -77,7 +82,10 @@ class Schema(GraphQLSchema):
         return graphql(self, *args, **kwargs)
 
     def introspect(self):
-        return self.execute(introspection_query).data
+        instrospection = self.execute(introspection_query)
+        if instrospection.errors:
+            raise instrospection.errors[0]
+        return instrospection.data
 
     def __str__(self):
         return print_schema(self)
@@ -94,4 +102,4 @@ class Schema(GraphQLSchema):
         ]
         if self.types:
             initial_types += self.types
-        self._type_map = TypeMap(initial_types, auto_camelcase=self.auto_camelcase)
+        self._type_map = TypeMap(initial_types, auto_camelcase=self.auto_camelcase, schema=self)

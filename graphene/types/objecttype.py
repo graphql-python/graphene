@@ -3,6 +3,7 @@ from collections import OrderedDict
 import six
 
 from ..utils.is_base_type import is_base_type
+from ..utils.trim_docstring import trim_docstring
 from .abstracttype import AbstractTypeMeta
 from .field import Field
 from .interface import Interface
@@ -19,13 +20,22 @@ class ObjectTypeMeta(AbstractTypeMeta):
             return type.__new__(cls, name, bases, attrs)
 
         _meta = attrs.pop('_meta', None)
-        options = _meta or Options(
-            attrs.pop('Meta', None),
+        defaults = dict(
             name=name,
-            description=attrs.get('__doc__'),
+            description=trim_docstring(attrs.get('__doc__')),
             interfaces=(),
+            possible_types=(),
+            default_resolver=None,
             local_fields=OrderedDict(),
         )
+        if not _meta:
+            options = Options(
+                attrs.pop('Meta', None),
+                **defaults
+            )
+        else:
+            options = _meta.extend_with_defaults(defaults)
+
         options.base_fields = get_base_fields(bases, _as=Field)
 
         if not options.local_fields:
@@ -45,6 +55,11 @@ class ObjectTypeMeta(AbstractTypeMeta):
         )
 
         cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
+
+        assert not (options.possible_types and cls.is_type_of), (
+            '{}.Meta.possible_types will cause type collision with {}.is_type_of. '
+            'Please use one or other.'
+        ).format(name, name)
 
         for interface in options.interfaces:
             interface.implements(cls)

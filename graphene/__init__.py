@@ -10,7 +10,7 @@ except NameError:
     __SETUP__ = False
 
 
-VERSION = (1, 1, 3, 'final', 0)
+VERSION = (1, 4, 0, 'final', 0)
 
 __version__ = get_version(VERSION)
 
@@ -43,6 +43,7 @@ if not __SETUP__:
         PageInfo
     )
     from .utils.resolve_only_args import resolve_only_args
+    from .utils.module_loading import lazy_import
 
     __all__ = [
         'AbstractType',
@@ -72,4 +73,6 @@ if not __SETUP__:
         'ClientIDMutation',
         'Connection',
         'ConnectionField',
-        'PageInfo']
+        'PageInfo',
+        'lazy_import',
+    ]

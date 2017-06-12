@@ -72,4 +72,4 @@ Types mounted in a ``Field`` act as ``Argument``\ s.
     graphene.Field(graphene.String, to=graphene.String())
 
     # Is equivalent to:
-    graphene.Field(graphene.String, to=graphene.Argument(graphene.String()))
+    graphene.Field(graphene.String, to=graphene.Argument(graphene.String))

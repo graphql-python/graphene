@@ -1,10 +1,13 @@
+from graphene.test import Client
 from ..data import setup
 from ..schema import schema
 
 setup()
 
+client = Client(schema)
 
-def test_correct_fetch_first_ship_rebels():
+
+def test_correct_fetch_first_ship_rebels(snapshot):
     query = '''
     query RebelsShipsQuery {
       rebels {
@@ -26,27 +29,4 @@ def test_correct_fetch_first_ship_rebels():
       }
     }
     '''
-    expected = {
-        'rebels': {
-            'name': 'Alliance to Restore the Republic',
-            'ships': {
-                'pageInfo': {
-                    'startCursor': 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'endCursor': 'YXJyYXljb25uZWN0aW9uOjA=',
-                    'hasNextPage': True,
-                    'hasPreviousPage': False
-                },
-                'edges': [
-                    {
-                        'cursor': 'YXJyYXljb25uZWN0aW9uOjA=',
-                        'node': {
-                            'name': 'X-Wing'
-                        }
-                    }
-                ]
-            }
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))

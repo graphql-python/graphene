@@ -11,6 +11,7 @@ Contents:
    execution/index
    relay/index
    apollo/index
+   testing/index
 
 Integrations
 -----

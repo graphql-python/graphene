@@ -1,11 +1,12 @@
-
+from graphene.test import Client
 from ..data import setup
 from ..schema import schema
 
 setup()
 
+client = Client(schema)
 
-def test_hero_name_query():
+def test_hero_name_query(snapshot):
     query = '''
         query HeroNameQuery {
           hero {
@@ -13,17 +14,11 @@ def test_hero_name_query():
           }
         }
     '''
-    expected = {
-        'hero': {
-            'name': 'R2-D2'
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
+    
 
 
-def test_hero_name_and_friends_query():
+def test_hero_name_and_friends_query(snapshot):
     query = '''
         query HeroNameAndFriendsQuery {
           hero {
@@ -35,23 +30,10 @@ def test_hero_name_and_friends_query():
           }
         }
     '''
-    expected = {
-        'hero': {
-            'id': '2001',
-            'name': 'R2-D2',
-            'friends': [
-                {'name': 'Luke Skywalker'},
-                {'name': 'Han Solo'},
-                {'name': 'Leia Organa'},
-            ]
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_nested_query():
+def test_nested_query(snapshot):
     query = '''
         query NestedQuery {
           hero {
@@ -66,70 +48,10 @@ def test_nested_query():
           }
         }
     '''
-    expected = {
-        'hero': {
-            'name': 'R2-D2',
-            'friends': [
-                {
-                    'name': 'Luke Skywalker',
-                    'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
-                    'friends': [
-                        {
-                            'name': 'Han Solo',
-                        },
-                        {
-                            'name': 'Leia Organa',
-                        },
-                        {
-                            'name': 'C-3PO',
-                        },
-                        {
-                            'name': 'R2-D2',
-                        },
-                    ]
-                },
-                {
-                    'name': 'Han Solo',
-                    'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
-                    'friends': [
-                        {
-                            'name': 'Luke Skywalker',
-                        },
-                        {
-                            'name': 'Leia Organa',
-                        },
-                        {
-                            'name': 'R2-D2',
-                        },
-                    ]
-                },
-                {
-                    'name': 'Leia Organa',
-                    'appearsIn': ['NEWHOPE', 'EMPIRE', 'JEDI'],
-                    'friends': [
-                        {
-                            'name': 'Luke Skywalker',
-                        },
-                        {
-                            'name': 'Han Solo',
-                        },
-                        {
-                            'name': 'C-3PO',
-                        },
-                        {
-                            'name': 'R2-D2',
-                        },
-                    ]
-                },
-            ]
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_fetch_luke_query():
+def test_fetch_luke_query(snapshot):
     query = '''
         query FetchLukeQuery {
           human(id: "1000") {
@@ -137,17 +59,10 @@ def test_fetch_luke_query():
           }
         }
     '''
-    expected = {
-        'human': {
-            'name': 'Luke Skywalker',
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_fetch_some_id_query():
+def test_fetch_some_id_query(snapshot):
     query = '''
         query FetchSomeIDQuery($someId: String!) {
           human(id: $someId) {
@@ -158,17 +73,10 @@ def test_fetch_some_id_query():
     params = {
         'someId': '1000',
     }
-    expected = {
-        'human': {
-            'name': 'Luke Skywalker',
-        }
-    }
-    result = schema.execute(query, None, variable_values=params)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query, variable_values=params))
 
 
-def test_fetch_some_id_query2():
+def test_fetch_some_id_query2(snapshot):
     query = '''
         query FetchSomeIDQuery($someId: String!) {
           human(id: $someId) {
@@ -179,17 +87,10 @@ def test_fetch_some_id_query2():
     params = {
         'someId': '1002',
     }
-    expected = {
-        'human': {
-            'name': 'Han Solo',
-        }
-    }
-    result = schema.execute(query, None, variable_values=params)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query, variable_values=params))
 
 
-def test_invalid_id_query():
+def test_invalid_id_query(snapshot):
     query = '''
         query humanQuery($id: String!) {
           human(id: $id) {
@@ -200,15 +101,10 @@ def test_invalid_id_query():
     params = {
         'id': 'not a valid id',
     }
-    expected = {
-        'human': None
-    }
-    result = schema.execute(query, None, variable_values=params)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query, variable_values=params))
 
 
-def test_fetch_luke_aliased():
+def test_fetch_luke_aliased(snapshot):
     query = '''
         query FetchLukeAliased {
           luke: human(id: "1000") {
@@ -216,17 +112,10 @@ def test_fetch_luke_aliased():
           }
         }
     '''
-    expected = {
-        'luke': {
-            'name': 'Luke Skywalker',
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_fetch_luke_and_leia_aliased():
+def test_fetch_luke_and_leia_aliased(snapshot):
     query = '''
         query FetchLukeAndLeiaAliased {
           luke: human(id: "1000") {
@@ -237,20 +126,10 @@ def test_fetch_luke_and_leia_aliased():
           }
         }
     '''
-    expected = {
-        'luke': {
-            'name': 'Luke Skywalker',
-        },
-        'leia': {
-            'name': 'Leia Organa',
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_duplicate_fields():
+def test_duplicate_fields(snapshot):
     query = '''
         query DuplicateFields {
           luke: human(id: "1000") {
@@ -263,22 +142,10 @@ def test_duplicate_fields():
           }
         }
     '''
-    expected = {
-        'luke': {
-            'name': 'Luke Skywalker',
-            'homePlanet': 'Tatooine',
-        },
-        'leia': {
-            'name': 'Leia Organa',
-            'homePlanet': 'Alderaan',
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_use_fragment():
+def test_use_fragment(snapshot):
     query = '''
         query UseFragment {
           luke: human(id: "1000") {
@@ -293,22 +160,10 @@ def test_use_fragment():
           homePlanet
         }
     '''
-    expected = {
-        'luke': {
-            'name': 'Luke Skywalker',
-            'homePlanet': 'Tatooine',
-        },
-        'leia': {
-            'name': 'Leia Organa',
-            'homePlanet': 'Alderaan',
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_check_type_of_r2():
+def test_check_type_of_r2(snapshot):
     query = '''
         query CheckTypeOfR2 {
           hero {
@@ -317,18 +172,10 @@ def test_check_type_of_r2():
           }
         }
     '''
-    expected = {
-        'hero': {
-            '__typename': 'Droid',
-            'name': 'R2-D2',
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))
 
 
-def test_check_type_of_luke():
+def test_check_type_of_luke(snapshot):
     query = '''
         query CheckTypeOfLuke {
           hero(episode: EMPIRE) {
@@ -337,12 +184,4 @@ def test_check_type_of_luke():
           }
         }
     '''
-    expected = {
-        'hero': {
-            '__typename': 'Human',
-            'name': 'Luke Skywalker',
-        }
-    }
-    result = schema.execute(query)
-    assert not result.errors
-    assert result.data == expected
+    snapshot.assert_match(client.execute(query))

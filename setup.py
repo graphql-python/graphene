@@ -41,6 +41,7 @@ tests_require = [
     'pytest>=2.7.2',
     'pytest-benchmark',
     'pytest-cov',
+    'snapshottest',
     'coveralls',
     'six',
     'mock',
@@ -81,9 +82,9 @@ setup(
 
     install_requires=[
         'six>=1.10.0',
-        'graphql-core>=1.0.1',
+        'graphql-core>=1.1',
         'graphql-relay>=0.4.5',
-        'promise>=1.0.1',
+        'promise>=2.0',
     ],
     tests_require=tests_require,
     extras_require={

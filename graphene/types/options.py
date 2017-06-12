@@ -30,6 +30,12 @@ class Options(object):
                 )
             )
 
+    def extend_with_defaults(self, defaults):
+        for attr_name, value in defaults.items():
+            if not hasattr(self, attr_name):
+                setattr(self, attr_name, value)
+        return self
+
     def __repr__(self):
         options_props = props(self)
         props_as_attrs = ' '.join(['{}={}'.format(key, value) for key, value in options_props.items()])

@@ -21,6 +21,7 @@ from .field import Field
 from .inputobjecttype import InputObjectType
 from .interface import Interface
 from .objecttype import ObjectType
+from .resolver import get_default_resolver
 from .scalars import ID, Boolean, Float, Int, Scalar, String
 from .structures import List, NonNull
 from .union import Union
@@ -43,16 +44,23 @@ def resolve_type(resolve_type_func, map, type_name, root, context, info):
 
     if inspect.isclass(_type) and issubclass(_type, ObjectType):
         graphql_type = map.get(_type._meta.name)
-        assert graphql_type and graphql_type.graphene_type == _type
+        assert graphql_type and graphql_type.graphene_type == _type, (
+            'The type {} does not match with the associated graphene type {}.'
+        ).format(_type, graphql_type.graphene_type)
         return graphql_type
 
     return _type
 
 
+def is_type_of_from_possible_types(possible_types, root, context, info):
+    return isinstance(root, possible_types)
+
+
 class TypeMap(GraphQLTypeMap):
 
-    def __init__(self, types, auto_camelcase=True):
+    def __init__(self, types, auto_camelcase=True, schema=None):
         self.auto_camelcase = auto_camelcase
+        self.schema = schema
         super(TypeMap, self).__init__(types)
 
     def reducer(self, map, type):
@@ -70,23 +78,31 @@ class TypeMap(GraphQLTypeMap):
         if type._meta.name in map:
             _type = map[type._meta.name]
             if isinstance(_type, GrapheneGraphQLType):
-                assert _type.graphene_type == type
+                assert _type.graphene_type == type, (
+                    'Found different types with the same name in the schema: {}, {}.'
+                ).format(_type.graphene_type, type)
             return map
+
         if issubclass(type, ObjectType):
-            return self.construct_objecttype(map, type)
-        if issubclass(type, InputObjectType):
-            return self.construct_inputobjecttype(map, type)
-        if issubclass(type, Interface):
-            return self.construct_interface(map, type)
-        if issubclass(type, Scalar):
-            return self.construct_scalar(map, type)
-        if issubclass(type, Enum):
-            return self.construct_enum(map, type)
-        if issubclass(type, Union):
-            return self.construct_union(map, type)
-        return map
+            internal_type = self.construct_objecttype(map, type)
+        elif issubclass(type, InputObjectType):
+            internal_type = self.construct_inputobjecttype(map, type)
+        elif issubclass(type, Interface):
+            internal_type = self.construct_interface(map, type)
+        elif issubclass(type, Scalar):
+            internal_type = self.construct_scalar(map, type)
+        elif issubclass(type, Enum):
+            internal_type = self.construct_enum(map, type)
+        elif issubclass(type, Union):
+            internal_type = self.construct_union(map, type)
+        else:
+            raise Exception("Expected Graphene type, but received: {}.".format(type))
+
+        return GraphQLTypeMap.reducer(map, internal_type)
 
     def construct_scalar(self, map, type):
+        # We have a mapping to the original GraphQL types
+        # so there are no collisions.
         _scalars = {
             String: GraphQLString,
             Int: GraphQLInt,
@@ -95,18 +111,17 @@ class TypeMap(GraphQLTypeMap):
             ID: GraphQLID
         }
         if type in _scalars:
-            map[type._meta.name] = _scalars[type]
-        else:
-            map[type._meta.name] = GrapheneScalarType(
-                graphene_type=type,
-                name=type._meta.name,
-                description=type._meta.description,
+            return _scalars[type]
 
-                serialize=getattr(type, 'serialize', None),
-                parse_value=getattr(type, 'parse_value', None),
-                parse_literal=getattr(type, 'parse_literal', None),
-            )
-        return map
+        return GrapheneScalarType(
+            graphene_type=type,
+            name=type._meta.name,
+            description=type._meta.description,
+
+            serialize=getattr(type, 'serialize', None),
+            parse_value=getattr(type, 'parse_value', None),
+            parse_literal=getattr(type, 'parse_literal', None),
+        )
 
     def construct_enum(self, map, type):
         values = OrderedDict()
@@ -117,92 +132,104 @@ class TypeMap(GraphQLTypeMap):
                 description=getattr(value, 'description', None),
                 deprecation_reason=getattr(value, 'deprecation_reason', None)
             )
-        map[type._meta.name] = GrapheneEnumType(
+        return GrapheneEnumType(
             graphene_type=type,
             values=values,
             name=type._meta.name,
             description=type._meta.description,
         )
-        return map
 
     def construct_objecttype(self, map, type):
         if type._meta.name in map:
             _type = map[type._meta.name]
             if isinstance(_type, GrapheneGraphQLType):
-                assert _type.graphene_type == type
-            return map
-        map[type._meta.name] = GrapheneObjectType(
+                assert _type.graphene_type == type, (
+                    'Found different types with the same name in the schema: {}, {}.'
+                ).format(_type.graphene_type, type)
+            return _type
+
+        def interfaces():
+            interfaces = []
+            for interface in type._meta.interfaces:
+                self.graphene_reducer(map, interface)
+                internal_type = map[interface._meta.name]
+                assert internal_type.graphene_type == interface
+                interfaces.append(internal_type)
+            return interfaces
+
+        if type._meta.possible_types:
+            is_type_of = partial(is_type_of_from_possible_types, type._meta.possible_types)
+        else:
+            is_type_of = type.is_type_of
+
+        return GrapheneObjectType(
             graphene_type=type,
             name=type._meta.name,
             description=type._meta.description,
-            fields=None,
-            is_type_of=type.is_type_of,
-            interfaces=None
+            fields=partial(self.construct_fields_for_type, map, type),
+            is_type_of=is_type_of,
+            interfaces=interfaces
         )
-        interfaces = []
-        for i in type._meta.interfaces:
-            map = self.reducer(map, i)
-            interfaces.append(map[i._meta.name])
-        map[type._meta.name]._provided_interfaces = interfaces
-        map[type._meta.name]._fields = self.construct_fields_for_type(map, type)
-        # self.reducer(map, map[type._meta.name])
-        return map
 
     def construct_interface(self, map, type):
+        if type._meta.name in map:
+            _type = map[type._meta.name]
+            if isinstance(_type, GrapheneInterfaceType):
+                assert _type.graphene_type == type, (
+                    'Found different types with the same name in the schema: {}, {}.'
+                ).format(_type.graphene_type, type)
+            return _type
+
         _resolve_type = None
         if type.resolve_type:
             _resolve_type = partial(resolve_type, type.resolve_type, map, type._meta.name)
-        map[type._meta.name] = GrapheneInterfaceType(
+        return GrapheneInterfaceType(
             graphene_type=type,
             name=type._meta.name,
             description=type._meta.description,
-            fields=None,
+            fields=partial(self.construct_fields_for_type, map, type),
             resolve_type=_resolve_type,
         )
-        map[type._meta.name]._fields = self.construct_fields_for_type(map, type)
-        # self.reducer(map, map[type._meta.name])
-        return map
 
     def construct_inputobjecttype(self, map, type):
-        map[type._meta.name] = GrapheneInputObjectType(
+        return GrapheneInputObjectType(
             graphene_type=type,
             name=type._meta.name,
             description=type._meta.description,
-            fields=None,
+            fields=partial(self.construct_fields_for_type, map, type, is_input_type=True),
         )
-        map[type._meta.name]._fields = self.construct_fields_for_type(map, type, is_input_type=True)
-        return map
 
     def construct_union(self, map, type):
         _resolve_type = None
         if type.resolve_type:
             _resolve_type = partial(resolve_type, type.resolve_type, map, type._meta.name)
-        types = []
-        for i in type._meta.types:
-            map = self.construct_objecttype(map, i)
-            types.append(map[i._meta.name])
-        map[type._meta.name] = GrapheneUnionType(
+
+        def types():
+            union_types = []
+            for objecttype in type._meta.types:
+                self.graphene_reducer(map, objecttype)
+                internal_type = map[objecttype._meta.name]
+                assert internal_type.graphene_type == objecttype
+                union_types.append(internal_type)
+            return union_types
+
+        return GrapheneUnionType(
             graphene_type=type,
             name=type._meta.name,
             types=types,
             resolve_type=_resolve_type,
         )
-        map[type._meta.name].types = types
-        return map
 
     def get_name(self, name):
         if self.auto_camelcase:
             return to_camel_case(name)
         return name
 
-    def default_resolver(self, attname, default_value, root, *_):
-        return getattr(root, attname, default_value)
-
     def construct_fields_for_type(self, map, type, is_input_type=False):
         fields = OrderedDict()
         for name, field in type._meta.fields.items():
             if isinstance(field, Dynamic):
-                field = get_field_as(field.get_type(), _as=Field)
+                field = get_field_as(field.get_type(self.schema), _as=Field)
                 if not field:
                     continue
             map = self.reducer(map, field.type)
@@ -257,13 +284,12 @@ class TypeMap(GraphQLTypeMap):
         if resolver:
             return get_unbound_function(resolver)
 
-        return partial(self.default_resolver, name, default_value)
+        default_resolver = type._meta.default_resolver or get_default_resolver()
+        return partial(default_resolver, name, default_value)
 
     def get_field_type(self, map, type):
         if isinstance(type, List):
             return GraphQLList(self.get_field_type(map, type.of_type))
         if isinstance(type, NonNull):
             return GraphQLNonNull(self.get_field_type(map, type.of_type))
-        if inspect.isfunction(type):
-            type = type()
         return map.get(type._meta.name)

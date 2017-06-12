@@ -7,6 +7,7 @@ Types Reference
 
    enums
    scalars
+   list-and-nonnull
    interfaces
    abstracttypes
    objecttypes

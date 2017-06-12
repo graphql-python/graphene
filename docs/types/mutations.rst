@@ -19,7 +19,8 @@ This example defines a Mutation:
         ok = graphene.Boolean()
         person = graphene.Field(lambda: Person)
 
-        def mutate(self, args, context, info):
+        @staticmethod
+        def mutate(root, args, context, info):
             person = Person(name=args.get('name'))
             ok = True
             return CreatePerson(person=person, ok=ok)
@@ -42,11 +43,16 @@ So, we can finish our schema like this:
 
     class Person(graphene.ObjectType):
         name = graphene.String()
+        age = graphene.Int()
 
     class MyMutations(graphene.ObjectType):
         create_person = CreatePerson.Field()
 
-    schema = graphene.Schema(mutation=MyMutations)
+    # We must define a query for our schema
+    class Query(graphene.ObjectType):
+        person = graphene.Field(Person)
+
+    schema = graphene.Schema(query=Query, mutation=MyMutations)
 
 Executing the Mutation
 ----------------------
@@ -96,11 +102,12 @@ To use an InputField you define an InputObjectType that specifies the structure 
 
     class CreatePerson(graphene.Mutation):
         class Input:
-            person_data = graphene.InputField(PersonInput)
+            person_data = graphene.Argument(PersonInput)
 
         person = graphene.Field(lambda: Person)
 
-        def mutate(self, args, context, info):
+        @staticmethod
+        def mutate(root, args, context, info):
             p_data = args.get('person_data')
 
             name = p_data.get('name')

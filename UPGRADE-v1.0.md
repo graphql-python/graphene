@@ -97,7 +97,7 @@ schema = graphene.Schema(
 
 ## Interfaces
 
-For implementing an Interface in a ObjectType, you have to it onto `Meta.interfaces`.
+For implementing an Interface in an ObjectType, you have to add it onto `Meta.interfaces`.
 
 Like:
 
@@ -142,7 +142,7 @@ class Query(ObjectType):
 
 ## Nodes
 
-Apart of implementing as showed in the previous section, for use the node field you have to
+Apart from implementing as shown in the previous section, to use the node field you have to
 specify the node Type.
 
 Example:
@@ -155,16 +155,16 @@ class Query(ObjectType):
     node = relay.Node.Field() # New way
 ```
 
-Also, if wanted to create an `ObjectType` that implements `Node`, you have to do it
+Also, if you wanted to create an `ObjectType` that implements `Node`, you have to do it
 explicity.
 
 
 ## Django
 
-The Django integration with Graphene now have an independent package: `graphene-django`.
+The Django integration with Graphene now has an independent package: `graphene-django`.
 For installing, you have to replace the old `graphene[django]` with `graphene-django`.
 
-* As the package is now independent, you have to import now from `graphene_django`.
+* As the package is now independent, you now have to import from `graphene_django`.
 * **DjangoNode no longer exists**, please use `relay.Node` instead:
 
   ```python
@@ -178,7 +178,7 @@ For installing, you have to replace the old `graphene[django]` with `graphene-dj
 
 ## SQLAlchemy
 
-The SQLAlchemy integration with Graphene now have an independent package: `graphene-sqlalchemy`.
+The SQLAlchemy integration with Graphene now has an independent package: `graphene-sqlalchemy`.
 For installing, you have to replace the old `graphene[sqlalchemy]` with `graphene-sqlalchemy`.
 
 * As the package is now independent, you have to import now from `graphene_sqlalchemy`.
