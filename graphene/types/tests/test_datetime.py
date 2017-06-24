@@ -11,11 +11,12 @@ class Query(ObjectType):
     time = Time(_at=Time(name='at'))
 
     def resolve_datetime(self, args, context, info):
-        _in = args.get('in')
+        _in = args.get('_in')
         return _in
 
     def resolve_time(self, args, context, info):
-        return args.get('at')
+        return args.get('_at')
+
 
 schema = Schema(query=Query)
 
@@ -24,23 +25,21 @@ def test_datetime_query():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc)
     isoformat = now.isoformat()
 
-    result = schema.execute('''{ datetime(in: "%s") }'''%isoformat)
+    result = schema.execute('''{ datetime(in: "%s") }''' % isoformat)
     assert not result.errors
-    assert result.data == {
-        'datetime': isoformat
-    }
+    assert result.data == {'datetime': isoformat}
 
 
 def test_time_query():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc)
-    time = datetime.time(now.hour, now.minute, now.second, now.microsecond, now.tzinfo)
+    time = datetime.time(now.hour, now.minute, now.second, now.microsecond,
+                         now.tzinfo)
     isoformat = time.isoformat()
 
-    result = schema.execute('''{ time(at: "%s") }'''%isoformat)
+    result = schema.execute('''{ time(at: "%s") }''' % isoformat)
     assert not result.errors
-    assert result.data == {
-        'time': isoformat
-    }
+    assert result.data == {'time': isoformat}
+
 
 def test_datetime_query_variable():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc)
@@ -48,24 +47,19 @@ def test_datetime_query_variable():
 
     result = schema.execute(
         '''query Test($date: DateTime){ datetime(in: $date) }''',
-        variable_values={'date': isoformat}
-    )
+        variable_values={'date': isoformat})
     assert not result.errors
-    assert result.data == {
-        'datetime': isoformat
-    }
+    assert result.data == {'datetime': isoformat}
 
 
 def test_time_query_variable():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc)
-    time = datetime.time(now.hour, now.minute, now.second, now.microsecond, now.tzinfo)
+    time = datetime.time(now.hour, now.minute, now.second, now.microsecond,
+                         now.tzinfo)
     isoformat = time.isoformat()
 
     result = schema.execute(
         '''query Test($time: Time){ time(at: $time) }''',
-        variable_values={'time': isoformat}
-    )
+        variable_values={'time': isoformat})
     assert not result.errors
-    assert result.data == {
-        'time': isoformat
-    }
+    assert result.data == {'time': isoformat}
