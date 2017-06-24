@@ -4,10 +4,10 @@ import re
 def to_camel_case(snake_str):
     """
     Return a camel-cased version of a snake-cased string.
-    
+
     Leading underscores and multiple-underscores are kept
     intact.
-    
+
     :param snake_str: A snake-cased string.
     :return: A camel-cased string.
     """
@@ -29,10 +29,11 @@ def to_camel_case(snake_str):
             camel_case_sub_strings.append(s)
             continue
 
-        # Otherwise replace '_name' with 'Name', for example.
+        # Otherwise we replace '_name' with 'Name', for example.
         camel_case_sub_strings.append(s[1:].title())
 
     return ''.join(camel_case_sub_strings)
+
 
 # From this response in Stackoverflow
 # http://stackoverflow.com/a/1176023/1072990
