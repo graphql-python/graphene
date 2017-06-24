@@ -5,6 +5,7 @@ from ...types import (AbstractType, Argument, Field, InputField,
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
 from ..node import Node
+from promise import Promise
 
 
 class SharedFields(AbstractType):
@@ -12,7 +13,6 @@ class SharedFields(AbstractType):
 
 
 class MyNode(ObjectType):
-
     class Meta:
         interfaces = (Node, )
 
@@ -20,9 +20,9 @@ class MyNode(ObjectType):
 
 
 class SaySomething(ClientIDMutation):
-
     class Input:
         what = String()
+
     phrase = String()
 
     @staticmethod
@@ -31,8 +31,19 @@ class SaySomething(ClientIDMutation):
         return SaySomething(phrase=str(what))
 
 
-class OtherMutation(ClientIDMutation):
+class SaySomethingPromise(ClientIDMutation):
+    class Input:
+        what = String()
 
+    phrase = String()
+
+    @staticmethod
+    def mutate_and_get_payload(args, context, info):
+        what = args.get('what')
+        return Promise.resolve(SaySomething(phrase=str(what)))
+
+
+class OtherMutation(ClientIDMutation):
     class Input(SharedFields):
         additional_field = String()
 
@@ -44,9 +55,9 @@ class OtherMutation(ClientIDMutation):
         shared = args.get('shared', '')
         additionalField = args.get('additionalField', '')
         edge_type = MyNode.Connection.Edge
-        return OtherMutation(name=shared + additionalField,
-                             my_node_edge=edge_type(
-                                 cursor='1', node=MyNode(name='name')))
+        return OtherMutation(
+            name=shared + additionalField,
+            my_node_edge=edge_type(cursor='1', node=MyNode(name='name')))
 
 
 class RootQuery(ObjectType):
@@ -55,13 +66,16 @@ class RootQuery(ObjectType):
 
 class Mutation(ObjectType):
     say = SaySomething.Field()
+    say_promise = SaySomethingPromise.Field()
     other = OtherMutation.Field()
+
 
 schema = Schema(query=RootQuery, mutation=Mutation)
 
 
 def test_no_mutate_and_get_payload():
     with pytest.raises(AssertionError) as excinfo:
+
         class MyMutation(ClientIDMutation):
             pass
 
@@ -97,7 +111,9 @@ def test_mutation_input():
 
 def test_subclassed_mutation():
     fields = OtherMutation._meta.fields
-    assert list(fields.keys()) == ['name', 'my_node_edge', 'client_mutation_id']
+    assert list(fields.keys()) == [
+        'name', 'my_node_edge', 'client_mutation_id'
+    ]
     assert isinstance(fields['name'], Field)
     field = OtherMutation.Field()
     assert field.type == OtherMutation
@@ -111,7 +127,9 @@ def test_subclassed_mutation_input():
     Input = OtherMutation.Input
     assert issubclass(Input, InputObjectType)
     fields = Input._meta.fields
-    assert list(fields.keys()) == ['shared', 'additional_field', 'client_mutation_id']
+    assert list(fields.keys()) == [
+        'shared', 'additional_field', 'client_mutation_id'
+    ]
     assert isinstance(fields['shared'], InputField)
     assert fields['shared'].type == String
     assert isinstance(fields['additional_field'], InputField)
@@ -120,16 +138,35 @@ def test_subclassed_mutation_input():
     assert fields['client_mutation_id'].type == String
 
 
-# def test_node_query():
-#     executed = schema.execute(
-#         'mutation a { say(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
-#     )
-#     assert not executed.errors
-#     assert executed.data == {'say': {'phrase': 'hello'}}
+def test_node_query():
+    executed = schema.execute(
+        'mutation a { say(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
+    )
+    assert not executed.errors
+    assert executed.data == {'say': {'phrase': 'hello'}}
+
+
+def test_node_query():
+    executed = schema.execute(
+        'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
+    )
+    assert not executed.errors
+    assert executed.data == {'sayPromise': {'phrase': 'hello'}}
+
 
 def test_edge_query():
     executed = schema.execute(
         'mutation a { other(input: {clientMutationId:"1"}) { clientMutationId, myNodeEdge { cursor node { name }} } }'
     )
     assert not executed.errors
-    assert dict(executed.data) == {'other': {'clientMutationId': '1', 'myNodeEdge': {'cursor': '1', 'node': {'name': 'name'}}}}
+    assert dict(executed.data) == {
+        'other': {
+            'clientMutationId': '1',
+            'myNodeEdge': {
+                'cursor': '1',
+                'node': {
+                    'name': 'name'
+                }
+            }
+        }
+    }
