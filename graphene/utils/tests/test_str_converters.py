@@ -14,8 +14,12 @@ def test_snake_case():
 
 def test_camel_case():
     assert to_camel_case('snakes_on_a_plane') == 'snakesOnAPlane'
-    assert to_camel_case('snakes_on_a__plane') == 'snakesOnA_Plane'
+    assert to_camel_case('snakes_on_a__plane') == 'snakesOnA__plane'
     assert to_camel_case('i_phone_hysteria') == 'iPhoneHysteria'
+    assert to_camel_case('i_phone_hysteria_') == 'iPhoneHysteria_'
+    assert to_camel_case('_i_phone_hysteria') == '_iPhoneHysteria'
+    assert to_camel_case('__i_phone_hysteria') == '__iPhoneHysteria'
+    assert to_camel_case('__all__') == '__all__'
 
 
 def test_to_const():
