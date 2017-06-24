@@ -12,16 +12,19 @@ def to_camel_case(snake_str):
     :return: A camel-cased string.
     """
     # Find all subcomponents in a snake-cased string, including
-    # any trailing underscores, which are treated as
+    # any trailing underscores, which are treated as a separate
+    # component.
     snake_case_sub_strings = re.findall(r'(_*[a-zA-Z]+|_+$)', snake_str)
 
-    # The first variable is unchanged case wise.
+    # The first variable is unchanged case wise (and leading
+    # underscores preserved as-is).
     camel_case_sub_strings = [snake_case_sub_strings[0]]
 
     for s in snake_case_sub_strings[1:]:
         # We reset the camel casing algorithm if more than one
-        # underscore is encountered, and do nothing for trailing
-        # unscores at the end of the snake-cased variable.
+        # underscore is encountered.  The endwiths handles any
+        # trailing underscores in the original snake-cased
+        # variable.
         if s.startswith('__') or s.endswith('_'):
             camel_case_sub_strings.append(s)
             continue
