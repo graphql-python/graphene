@@ -10,7 +10,6 @@ from .objecttype import ObjectType, ObjectTypeMeta
 
 
 class MutationMeta(ObjectTypeMeta):
-
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of
         # Mutation
@@ -21,10 +20,12 @@ class MutationMeta(ObjectTypeMeta):
 
         cls = ObjectTypeMeta.__new__(cls, name, bases, attrs)
         field_args = props(input_class) if input_class else {}
+        output_class = getattr(cls, 'Output', cls)
         resolver = getattr(cls, 'mutate', None)
         assert resolver, 'All mutations must define a mutate method in it'
         resolver = get_unbound_function(resolver)
-        cls.Field = partial(Field, cls, args=field_args, resolver=resolver)
+        cls.Field = partial(
+            Field, output_class, args=field_args, resolver=resolver)
         return cls
 
 

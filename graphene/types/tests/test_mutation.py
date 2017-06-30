@@ -3,6 +3,7 @@ import pytest
 from ..mutation import Mutation
 from ..objecttype import ObjectType
 from ..schema import Schema
+from ..argument import Argument
 from ..scalars import String
 from ..dynamic import Dynamic
 
@@ -10,6 +11,7 @@ from ..dynamic import Dynamic
 def test_generate_mutation_no_args():
     class MyMutation(Mutation):
         '''Documentation'''
+
         @classmethod
         def mutate(cls, *args, **kwargs):
             pass
@@ -22,7 +24,6 @@ def test_generate_mutation_no_args():
 
 def test_generate_mutation_with_meta():
     class MyMutation(Mutation):
-
         class Meta:
             name = 'MyOtherMutation'
             description = 'Documentation'
@@ -38,10 +39,33 @@ def test_generate_mutation_with_meta():
 
 def test_mutation_raises_exception_if_no_mutate():
     with pytest.raises(AssertionError) as excinfo:
+
         class MyMutation(Mutation):
             pass
 
-    assert "All mutations must define a mutate method in it" == str(excinfo.value)
+    assert "All mutations must define a mutate method in it" == str(
+        excinfo.value)
+
+
+def test_mutation_custom_output_type():
+    class User(ObjectType):
+        name = String()
+
+    class CreateUser(Mutation):
+        class Input:
+            name = String()
+
+        Output = User
+
+        @classmethod
+        def mutate(cls, args, context, info):
+            name = args.get('name')
+            return User(name=name)
+
+    field = CreateUser.Field()
+    assert field.type == User
+    assert field.args == {'name': Argument(String)}
+    assert field.resolver == CreateUser.mutate
 
 
 def test_mutation_execution():

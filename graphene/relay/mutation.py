@@ -5,14 +5,14 @@ import six
 
 from promise import Promise
 
-from ..types import AbstractType, Argument, Field, InputObjectType, String
-from ..types.objecttype import ObjectType, ObjectTypeMeta
+from ..types import Field, AbstractType, Argument, InputObjectType, String
+from ..types.mutation import Mutation, MutationMeta
+from ..types.objecttype import ObjectTypeMeta
 from ..utils.is_base_type import is_base_type
 from ..utils.props import props
 
 
-class ClientIDMutationMeta(ObjectTypeMeta):
-
+class ClientIDMutationMeta(MutationMeta):
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of
         # Mutation
@@ -23,13 +23,13 @@ class ClientIDMutationMeta(ObjectTypeMeta):
         base_name = re.sub('Payload$', '', name)
         if 'client_mutation_id' not in attrs:
             attrs['client_mutation_id'] = String(name='clientMutationId')
-        cls = ObjectTypeMeta.__new__(cls, '{}Payload'.format(base_name), bases, attrs)
+        cls = ObjectTypeMeta.__new__(cls, '{}Payload'.format(base_name), bases,
+                                     attrs)
         mutate_and_get_payload = getattr(cls, 'mutate_and_get_payload', None)
         if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:
             assert mutate_and_get_payload, (
                 "{}.mutate_and_get_payload method is required"
-                " in a ClientIDMutation."
-            ).format(name)
+                " in a ClientIDMutation.").format(name)
         input_attrs = {}
         bases = ()
         if not input_class:
@@ -39,13 +39,18 @@ class ClientIDMutationMeta(ObjectTypeMeta):
         else:
             bases += (input_class, )
         input_attrs['client_mutation_id'] = String(name='clientMutationId')
-        cls.Input = type('{}Input'.format(base_name), bases + (InputObjectType,), input_attrs)
-        cls.Field = partial(Field, cls, resolver=cls.mutate, input=Argument(cls.Input, required=True))
+        cls.Input = type('{}Input'.format(base_name),
+                         bases + (InputObjectType, ), input_attrs)
+        output_class = getattr(cls, 'Output', cls)
+        cls.Field = partial(
+            Field,
+            output_class,
+            resolver=cls.mutate,
+            input=Argument(cls.Input, required=True))
         return cls
 
 
-class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, ObjectType)):
-
+class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, Mutation)):
     @classmethod
     def mutate(cls, root, args, context, info):
         input = args.get('input')
@@ -54,11 +59,10 @@ class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, ObjectType)):
             try:
                 payload.client_mutation_id = input.get('clientMutationId')
             except:
-                raise Exception((
-                    'Cannot set client_mutation_id in the payload object {}'
-                ).format(repr(payload)))
+                raise Exception(
+                    ('Cannot set client_mutation_id in the payload object {}'
+                     ).format(repr(payload)))
             return payload
 
         return Promise.resolve(
-            cls.mutate_and_get_payload(input, context, info)
-        ).then(on_resolve)
+            cls.mutate_and_get_payload(input, context, info)).then(on_resolve)
