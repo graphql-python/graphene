@@ -52,7 +52,7 @@ field is the ``resolve_{field_name}`` method on the ``ObjectType``.
 
 By default resolvers take the arguments ``args``, ``context`` and ``info``.
 
-NOTE: The resolvers on a ``ObjectType`` are always treated as ``staticmethods``,
+NOTE: The resolvers on a ``ObjectType`` are always treated as ``staticmethod``\ s,
 so the first argument to the resolver method ``self`` (or ``root``) need
 not be an actual instance of the ``ObjectType``.
 
