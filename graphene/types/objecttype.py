@@ -1,82 +1,55 @@
 from collections import OrderedDict
 
-import six
-
-from ..utils.is_base_type import is_base_type
-from ..utils.trim_docstring import trim_docstring
-from .abstracttype import AbstractTypeMeta
 from .field import Field
 from .interface import Interface
-from .options import Options
-from .utils import get_base_fields, merge, yank_fields_from_attrs
+from .utils import yank_fields_from_attrs
+
+from .base import BaseOptions, BaseType
 
 
-class ObjectTypeMeta(AbstractTypeMeta):
-
-    def __new__(cls, name, bases, attrs):
-        # Also ensure initialization is only performed for subclasses of
-        # ObjectType
-        if not is_base_type(bases, ObjectTypeMeta):
-            return type.__new__(cls, name, bases, attrs)
-
-        _meta = attrs.pop('_meta', None)
-        defaults = dict(
-            name=name,
-            description=trim_docstring(attrs.get('__doc__')),
-            interfaces=(),
-            possible_types=(),
-            default_resolver=None,
-            local_fields=OrderedDict(),
-        )
-        if not _meta:
-            options = Options(
-                attrs.pop('Meta', None),
-                **defaults
-            )
-        else:
-            options = _meta.extend_with_defaults(defaults)
-
-        options.base_fields = get_base_fields(bases, _as=Field)
-
-        if not options.local_fields:
-            options.local_fields = yank_fields_from_attrs(attrs=attrs, _as=Field)
-
-        options.interface_fields = OrderedDict()
-        for interface in options.interfaces:
-            assert issubclass(interface, Interface), (
-                'All interfaces of {} must be a subclass of Interface. Received "{}".'
-            ).format(name, interface)
-            options.interface_fields.update(interface._meta.fields)
-
-        options.fields = merge(
-            options.interface_fields,
-            options.base_fields,
-            options.local_fields
-        )
-
-        cls = type.__new__(cls, name, bases, dict(attrs, _meta=options))
-
-        assert not (options.possible_types and cls.is_type_of), (
-            '{}.Meta.possible_types will cause type collision with {}.is_type_of. '
-            'Please use one or other.'
-        ).format(name, name)
-
-        for interface in options.interfaces:
-            interface.implements(cls)
-
-        return cls
-
-    def __str__(cls):  # noqa: N802
-        return cls._meta.name
+class ObjectTypeOptions(BaseOptions):
+    fields = None  # type: Dict[str, Field]
+    interfaces = () # type: List[Type[Interface]]
 
 
-class ObjectType(six.with_metaclass(ObjectTypeMeta)):
+class ObjectTypeMeta(type):
+    pass
+
+class ObjectType(BaseType):
     '''
     Object Type Definition
 
     Almost all of the GraphQL types you define will be object types. Object types
     have a name, but most importantly describe their fields.
     '''
+    @classmethod
+    def __init_subclass_with_meta__(cls, interfaces=(), possible_types=(), default_resolver=None, **options):
+        _meta = ObjectTypeOptions(cls)
+
+        fields = OrderedDict()
+
+        for interface in interfaces:
+            assert issubclass(interface, Interface), (
+                'All interfaces of {} must be a subclass of Interface. Received "{}".'
+            ).format(name, interface)
+            fields.update(interface._meta.fields)
+
+        for base in reversed(cls.__mro__):
+            fields.update(
+                yank_fields_from_attrs(base.__dict__, _as=Field)
+            )
+
+        assert not (possible_types and cls.is_type_of), (
+            '{name}.Meta.possible_types will cause type collision with {name}.is_type_of. '
+            'Please use one or other.'
+        ).format(name=cls.__name__)
+
+        _meta.fields = fields
+        _meta.interfaces = interfaces
+        _meta.possible_types = possible_types
+        _meta.default_resolver = default_resolver
+
+        super(ObjectType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     is_type_of = None
 
