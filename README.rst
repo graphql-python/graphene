@@ -1,5 +1,5 @@
-Please read `UPGRADE-v1.0.md </UPGRADE-v1.0.md>`__ to learn how to
-upgrade to Graphene ``1.0``.
+Please read `UPGRADE-v2.0.md </UPGRADE-v2.0.md>`__ to learn how to
+upgrade to Graphene ``2.0``.
 
 --------------
 
@@ -11,7 +11,7 @@ building GraphQL schemas/types fast and easily.
 
 -  **Easy to use:** Graphene helps you use GraphQL in Python without
    effort.
--  **Relay:** Graphene has builtin support for both Relay.
+-  **Relay:** Graphene has builtin support for Relay.
 -  **Data agnostic:** Graphene supports any kind of data source: SQL
    (Django, SQLAlchemy), NoSQL, custom Python objects, etc. We believe
    that by providing a complete API you could plug Graphene anywhere
@@ -47,12 +47,12 @@ For instaling graphene, just run this command in your shell
 
 .. code:: bash
 
-    pip install "graphene>=1.0"
+    pip install "graphene>=2.0"
 
-1.0 Upgrade Guide
+2.0 Upgrade Guide
 -----------------
 
-Please read `UPGRADE-v1.0.md </UPGRADE-v1.0.md>`__ to learn how to
+Please read `UPGRADE-v2.0.md </UPGRADE-v2.0.md>`__ to learn how to
 upgrade.
 
 Examples
