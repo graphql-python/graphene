@@ -19,7 +19,9 @@ class Interface(BaseType):
     when the field is resolved.
     '''
     @classmethod
-    def __init_subclass_with_meta__(cls, _meta=None, **options):
+    def __init_subclass_with_meta__(cls, abstract=False, _meta=None, **options):
+        if abstract:
+            return
         if not _meta:
             _meta = InterfaceOptions(cls)
 

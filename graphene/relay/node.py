@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from functools import partial
 
 import six
@@ -58,15 +59,21 @@ class NodeField(Field):
         return partial(self.node_type.node_resolver, only_type=get_type(self.field_type))
 
 
-class Node(Interface):
-    '''An object with an ID'''
+class AbstractNode(Interface):
+    class Meta:
+        abstract = True
 
+    @classmethod
     def __init_subclass_with_meta__(cls, **options):
         _meta = InterfaceOptions(cls)
-        _meta.fields = {
-            'id': GlobalID(cls, description='The ID of the object.')
-        }
-        super(Node, cls).__init_subclass_with_meta__(cls, _meta=_meta, **options)
+        _meta.fields = OrderedDict(
+            id=GlobalID(cls, description='The ID of the object.')
+        )
+        super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+
+
+class Node(AbstractNode):
+    '''An object with an ID'''
 
     @classmethod
     def Field(cls, *args, **kwargs):  # noqa: N802
