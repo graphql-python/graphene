@@ -19,16 +19,21 @@ class Interface(BaseType):
     when the field is resolved.
     '''
     @classmethod
-    def __init_subclass_with_meta__(cls, **options):
-        _meta = InterfaceOptions(cls)
+    def __init_subclass_with_meta__(cls, _meta=None, **options):
+        if not _meta:
+            _meta = InterfaceOptions(cls)
 
         fields = OrderedDict()
         for base in reversed(cls.__mro__):
             fields.update(
                 yank_fields_from_attrs(base.__dict__, _as=Field)
             )
+        
+        if _meta.fields:
+            _meta.fields.update(fields)
+        else:
+            _meta.fields = fields
 
-        _meta.fields = fields
         super(Interface, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod

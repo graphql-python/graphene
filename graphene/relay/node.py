@@ -6,7 +6,7 @@ from graphql_relay import from_global_id, to_global_id
 
 from ..types import ID, Field, Interface, ObjectType
 from ..types.utils import get_type
-from ..types.interface import InterfaceMeta
+from ..types.interface import InterfaceOptions
 
 
 def is_node(objecttype):
@@ -20,18 +20,6 @@ def is_node(objecttype):
         if issubclass(i, Node):
             return True
     return False
-
-
-def get_default_connection(cls):
-    from .connection import Connection
-    assert issubclass(cls, ObjectType), (
-        'Can only get connection type on implemented Nodes.'
-    )
-
-    class Meta:
-        node = cls
-
-    return type('{}Connection'.format(cls.__name__), (Connection,), {'Meta': Meta})
 
 
 class GlobalID(Field):
@@ -49,14 +37,6 @@ class GlobalID(Field):
 
     def get_resolver(self, parent_resolver):
         return partial(self.id_resolver, parent_resolver, self.node, parent_type_name=self.parent_type_name)
-
-
-class NodeMeta(InterfaceMeta):
-
-    def __new__(cls, name, bases, attrs):
-        cls = InterfaceMeta.__new__(cls, name, bases, attrs)
-        cls._meta.fields['id'] = GlobalID(cls, description='The ID of the object.')
-        return cls
 
 
 class NodeField(Field):
@@ -78,8 +58,15 @@ class NodeField(Field):
         return partial(self.node_type.node_resolver, only_type=get_type(self.field_type))
 
 
-class Node(six.with_metaclass(NodeMeta, Interface)):
+class Node(Interface):
     '''An object with an ID'''
+
+    def __init_subclass_with_meta__(cls, **options):
+        _meta = InterfaceOptions(cls)
+        _meta.fields = {
+            'id': GlobalID(cls, description='The ID of the object.')
+        }
+        super(Node, cls).__init_subclass_with_meta__(cls, _meta=_meta, **options)
 
     @classmethod
     def Field(cls, *args, **kwargs):  # noqa: N802
@@ -117,11 +104,3 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
     @classmethod
     def to_global_id(cls, type, id):
         return to_global_id(type, id)
-
-    @classmethod
-    def implements(cls, objecttype):
-        get_connection = getattr(objecttype, 'get_connection', None)
-        if not get_connection:
-            get_connection = partial(get_default_connection, objecttype)
-
-        objecttype.Connection = get_connection()

@@ -35,7 +35,12 @@ class Mutation(ObjectType):
             output = cls
         
         if not arguments:
-            input_class = getattr(cls, 'Input', None)
+            input_class = getattr(cls, 'Arguments', None)
+            if not input_class:
+                input_class = getattr(cls, 'Input', None)
+                if input_class:
+                    print("WARNING: Please use Arguments for Mutation (Input is for ClientMutationID)")
+
             if input_class:
                 arguments = props(input_class)
             else:
