@@ -10,6 +10,7 @@ Contents:
    types/index
    execution/index
    relay/index
+   apollo/index
    testing/index
 
 Integrations
