@@ -1,4 +1,4 @@
-# v1.0 Upgrade Guide
+# v2.0 Upgrade Guide
 
 * `ObjectType`, `Interface`, `InputObjectType`, `Scalar` and `Enum` implementations
   have been quite simplified, without the need of define a explicit Metaclass.
