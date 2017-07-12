@@ -49,7 +49,7 @@ def get_field_as(value, _as=None):
         return _as.mounted(value)
 
 
-def yank_fields_from_attrs(attrs, _as=None, delete=True, sort=True):
+def yank_fields_from_attrs(attrs, _as=None, sort=True):
     '''
     Extract all the fields in given attributes (dict)
     and return them ordered
@@ -60,8 +60,6 @@ def yank_fields_from_attrs(attrs, _as=None, delete=True, sort=True):
         if not field:
             continue
         fields_with_names.append((attname, field))
-        if delete:
-            del attrs[attname]
 
     if sort:
         fields_with_names = sorted(fields_with_names, key=lambda f: f[1])

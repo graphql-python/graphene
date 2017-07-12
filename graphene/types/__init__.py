@@ -1,7 +1,6 @@
 # flake8: noqa
 
 from .objecttype import ObjectType
-from .abstracttype import AbstractType
 from .interface import Interface
 from .mutation import Mutation
 from .scalars import Scalar, String, ID, Int, Float, Boolean
@@ -15,9 +14,11 @@ from .inputobjecttype import InputObjectType
 from .dynamic import Dynamic
 from .union import Union
 
+# Deprecated
+from .abstracttype import AbstractType
+
 
 __all__ = [
-    'AbstractType',
     'ObjectType',
     'InputObjectType',
     'Interface',

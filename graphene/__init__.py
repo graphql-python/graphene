@@ -33,20 +33,19 @@ if not __SETUP__:
         Dynamic,
         Union,
     )
-    from .relay import (
-        Node,
-        is_node,
-        GlobalID,
-        ClientIDMutation,
-        Connection,
-        ConnectionField,
-        PageInfo
-    )
+    # from .relay import (
+    #     Node,
+    #     is_node,
+    #     GlobalID,
+    #     ClientIDMutation,
+    #     Connection,
+    #     ConnectionField,
+    #     PageInfo
+    # )
     from .utils.resolve_only_args import resolve_only_args
     from .utils.module_loading import lazy_import
 
     __all__ = [
-        'AbstractType',
         'ObjectType',
         'InputObjectType',
         'Interface',

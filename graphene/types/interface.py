@@ -1,45 +1,15 @@
-import six
-
-from ..utils.is_base_type import is_base_type
-from ..utils.trim_docstring import trim_docstring
-from .abstracttype import AbstractTypeMeta
 from .field import Field
-from .options import Options
-from .utils import get_base_fields, merge, yank_fields_from_attrs
+from .utils import yank_fields_from_attrs
+from collections import OrderedDict
+
+from .base import BaseOptions, BaseType
 
 
-class InterfaceMeta(AbstractTypeMeta):
-
-    def __new__(cls, name, bases, attrs):
-        # Also ensure initialization is only performed for subclasses of
-        # Interface
-        if not is_base_type(bases, InterfaceMeta):
-            return type.__new__(cls, name, bases, attrs)
-
-        options = Options(
-            attrs.pop('Meta', None),
-            name=name,
-            description=trim_docstring(attrs.get('__doc__')),
-            local_fields=None,
-        )
-
-        options.base_fields = get_base_fields(bases, _as=Field)
-
-        if not options.local_fields:
-            options.local_fields = yank_fields_from_attrs(attrs, _as=Field)
-
-        options.fields = merge(
-            options.base_fields,
-            options.local_fields
-        )
-
-        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
-
-    def __str__(cls):  # noqa: N802
-        return cls._meta.name
+class InterfaceOptions(BaseOptions):
+    fields = None  # type: Dict[str, Field]
 
 
-class Interface(six.with_metaclass(InterfaceMeta)):
+class Interface(BaseType):
     '''
     Interface Type Definition
 
@@ -48,6 +18,18 @@ class Interface(six.with_metaclass(InterfaceMeta)):
     all types, as well as a function to determine which type is actually used
     when the field is resolved.
     '''
+    @classmethod
+    def __init_subclass_with_meta__(cls, **options):
+        _meta = InterfaceOptions(cls)
+
+        fields = OrderedDict()
+        for base in reversed(cls.__mro__):
+            fields.update(
+                yank_fields_from_attrs(base.__dict__, _as=Field)
+            )
+
+        _meta.fields = fields
+        super(Interface, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def resolve_type(cls, instance, context, info):
