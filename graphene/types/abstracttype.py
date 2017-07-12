@@ -1,5 +1,6 @@
 from ..pyutils.init_subclass import InitSubclassMeta
 
+
 class AbstractType(object):
     __metaclass__ = InitSubclassMeta
 

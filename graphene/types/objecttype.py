@@ -12,9 +12,6 @@ class ObjectTypeOptions(BaseOptions):
     interfaces = () # type: List[Type[Interface]]
 
 
-class ObjectTypeMeta(type):
-    pass
-
 class ObjectType(BaseType):
     '''
     Object Type Definition
