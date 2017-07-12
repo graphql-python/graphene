@@ -23,8 +23,9 @@ class ObjectType(BaseType):
     have a name, but most importantly describe their fields.
     '''
     @classmethod
-    def __init_subclass_with_meta__(cls, interfaces=(), possible_types=(), default_resolver=None, **options):
-        _meta = ObjectTypeOptions(cls)
+    def __init_subclass_with_meta__(cls, interfaces=(), possible_types=(), default_resolver=None, _meta=None, **options):
+        if not _meta:
+            _meta = ObjectTypeOptions(cls)
 
         fields = OrderedDict()
 
