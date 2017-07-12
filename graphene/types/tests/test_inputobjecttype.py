@@ -1,5 +1,4 @@
 
-from ..abstracttype import AbstractType
 from ..field import Field
 from ..argument import Argument
 from ..inputfield import InputField
@@ -80,7 +79,7 @@ def test_generate_inputobjecttype_as_argument():
 
 
 def test_generate_inputobjecttype_inherit_abstracttype():
-    class MyAbstractType(AbstractType):
+    class MyAbstractType(object):
         field1 = MyScalar(MyType)
 
     class MyInputObjectType(InputObjectType, MyAbstractType):
@@ -91,7 +90,7 @@ def test_generate_inputobjecttype_inherit_abstracttype():
 
 
 def test_generate_inputobjecttype_inherit_abstracttype_reversed():
-    class MyAbstractType(AbstractType):
+    class MyAbstractType(object):
         field1 = MyScalar(MyType)
 
     class MyInputObjectType(MyAbstractType, InputObjectType):

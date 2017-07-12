@@ -23,9 +23,9 @@ def get_base_fields(bases, _as=None):
     Get all the fields in the given bases
     '''
     fields = OrderedDict()
-    from ..types import AbstractType, Interface
+    from ..types import Interface
     # We allow inheritance in AbstractTypes and Interfaces but not ObjectTypes
-    inherited_bases = (AbstractType, Interface)
+    inherited_bases = (Interface)
     for base in bases:
         if base in inherited_bases or not issubclass(base, inherited_bases):
             continue

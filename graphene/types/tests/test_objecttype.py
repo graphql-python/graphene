@@ -1,6 +1,5 @@
 import pytest
 
-from ..abstracttype import AbstractType
 from ..field import Field
 from ..interface import Interface
 from ..objecttype import ObjectType
@@ -89,7 +88,7 @@ def test_ordered_fields_in_objecttype():
 
 
 def test_generate_objecttype_inherit_abstracttype():
-    class MyAbstractType(AbstractType):
+    class MyAbstractType(object):
         field1 = MyScalar()
 
     class MyObjectType(ObjectType, MyAbstractType):
@@ -103,7 +102,7 @@ def test_generate_objecttype_inherit_abstracttype():
 
 
 def test_generate_objecttype_inherit_abstracttype_reversed():
-    class MyAbstractType(AbstractType):
+    class MyAbstractType(object):
         field1 = MyScalar()
 
     class MyObjectType(MyAbstractType, ObjectType):
