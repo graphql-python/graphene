@@ -1,53 +1,56 @@
-# https://github.com/graphql-python/graphene/issues/425
-import six
+# THIS IS THE OLD IMPLEMENTATION, for Graphene 1.0
+# Keep here as reference for upgrade.
 
-from graphene.utils.is_base_type import is_base_type
+# # https://github.com/graphql-python/graphene/issues/425
+# import six
 
-from graphene.types.objecttype import ObjectTypeMeta, ObjectType
-from graphene.types.options import Options
+# from graphene.utils.is_base_type import is_base_type
 
-class SpecialObjectTypeMeta(ObjectTypeMeta):
+# from graphene.types.objecttype import ObjectTypeMeta, ObjectType
+# from graphene.types.options import Options
 
-    @staticmethod
-    def __new__(cls, name, bases, attrs):
-        # Also ensure initialization is only performed for subclasses of
-        # DjangoObjectType
-        if not is_base_type(bases, SpecialObjectTypeMeta):
-            return type.__new__(cls, name, bases, attrs)
+# class SpecialObjectTypeMeta(ObjectTypeMeta):
 
-        options = Options(
-            attrs.pop('Meta', None),
-            other_attr='default',
-        )
+#     @staticmethod
+#     def __new__(cls, name, bases, attrs):
+#         # Also ensure initialization is only performed for subclasses of
+#         # DjangoObjectType
+#         if not is_base_type(bases, SpecialObjectTypeMeta):
+#             return type.__new__(cls, name, bases, attrs)
 
-        cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options))
-        assert cls._meta is options
-        return cls
+#         options = Options(
+#             attrs.pop('Meta', None),
+#             other_attr='default',
+#         )
 
-
-class SpecialObjectType(six.with_metaclass(SpecialObjectTypeMeta, ObjectType)):
-    pass
-
-
-def test_special_objecttype_could_be_subclassed():
-    class MyType(SpecialObjectType):
-        class Meta:
-            other_attr = 'yeah!'
-
-    assert MyType._meta.other_attr == 'yeah!'
+#         cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options))
+#         assert cls._meta is options
+#         return cls
 
 
-def test_special_objecttype_could_be_subclassed_default():
-    class MyType(SpecialObjectType):
-        pass
-
-    assert MyType._meta.other_attr == 'default'
+# class SpecialObjectType(six.with_metaclass(SpecialObjectTypeMeta, ObjectType)):
+#     pass
 
 
-def test_special_objecttype_inherit_meta_options():
-    class MyType(SpecialObjectType):
-        pass
+# def test_special_objecttype_could_be_subclassed():
+#     class MyType(SpecialObjectType):
+#         class Meta:
+#             other_attr = 'yeah!'
 
-    assert MyType._meta.name == 'MyType'
-    assert MyType._meta.default_resolver == None
-    assert MyType._meta.interfaces == ()
+#     assert MyType._meta.other_attr == 'yeah!'
+
+
+# def test_special_objecttype_could_be_subclassed_default():
+#     class MyType(SpecialObjectType):
+#         pass
+
+#     assert MyType._meta.other_attr == 'default'
+
+
+# def test_special_objecttype_inherit_meta_options():
+#     class MyType(SpecialObjectType):
+#         pass
+
+#     assert MyType._meta.name == 'MyType'
+#     assert MyType._meta.default_resolver == None
+#     assert MyType._meta.interfaces == ()

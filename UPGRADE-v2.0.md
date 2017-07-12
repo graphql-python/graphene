@@ -1,5 +1,10 @@
 # v1.0 Upgrade Guide
 
+* `ObjectType`, `Interface`, `InputObjectType`, `Scalar` and `Enum` implementations
+  have been quite simplified, without the need of define a explicit Metaclass.
+  The metaclasses threfore are now deleted as are no longer necessary, if your code was depending
+  on this internal metaclass for creating custom attrs, please see an [example of how to do it now in 2.0](https://github.com/graphql-python/graphene/blob/master/graphene/tests/issues/test_425_graphene2.py).
+
 ## Deprecations
 
 
