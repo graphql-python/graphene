@@ -41,8 +41,10 @@ class Mutation(ObjectType):
             else:
                 arguments = {}
 
-        resolver = resolver or get_unbound_function(getattr(cls, 'mutate', None))
-        assert resolver, 'All mutations must define a mutate method in it'
+        if not resolver:
+            mutate = getattr(cls, 'mutate', None)
+            assert mutate, 'All mutations must define a mutate method in it'
+            resolver = get_unbound_function(mutate)
 
         _meta.fields = fields
         _meta.output = output
