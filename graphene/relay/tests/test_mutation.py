@@ -1,6 +1,6 @@
 import pytest
 
-from ...types import (AbstractType, Argument, Field, InputField,
+from ...types import ( Argument, Field, InputField, ID,
                       InputObjectType, NonNull, ObjectType, Schema)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
@@ -8,14 +8,14 @@ from ..node import Node
 from promise import Promise
 
 
-class SharedFields(AbstractType):
+class SharedFields(object):
     shared = String()
 
 
 class MyNode(ObjectType):
-    class Meta:
-        interfaces = (Node, )
-
+    # class Meta:
+    #     interfaces = (Node, )
+    id = ID()
     name = String()
 
 
@@ -43,18 +43,24 @@ class SaySomethingPromise(ClientIDMutation):
         return Promise.resolve(SaySomething(phrase=str(what)))
 
 
+# MyEdge = MyNode.Connection.Edge
+class MyEdge(ObjectType):
+    node = Field(MyNode)
+    cursor = String()
+
+
 class OtherMutation(ClientIDMutation):
     class Input(SharedFields):
         additional_field = String()
 
     name = String()
-    my_node_edge = Field(MyNode.Connection.Edge)
+    my_node_edge = Field(MyEdge)
 
     @classmethod
     def mutate_and_get_payload(cls, args, context, info):
         shared = args.get('shared', '')
         additionalField = args.get('additionalField', '')
-        edge_type = MyNode.Connection.Edge
+        edge_type = MyEdge
         return OtherMutation(
             name=shared + additionalField,
             my_node_edge=edge_type(cursor='1', node=MyNode(name='name')))

@@ -42,7 +42,10 @@ class ObjectType(BaseType):
             'Please use one or other.'
         ).format(name=cls.__name__)
 
-        _meta.fields = fields
+        if _meta.fields:
+            _meta.fields.update(fields)
+        else:
+            _meta.fields = fields
         _meta.interfaces = interfaces
         _meta.possible_types = possible_types
         _meta.default_resolver = default_resolver

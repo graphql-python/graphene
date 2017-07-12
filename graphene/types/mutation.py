@@ -20,8 +20,11 @@ class Mutation(ObjectType):
     Mutation Type Definition
     '''
     @classmethod
-    def __init_subclass_with_meta__(cls, resolver=None, output=None, arguments=None, **options):
-        _meta = MutationOptions(cls)
+    def __init_subclass_with_meta__(cls, resolver=None, output=None, arguments=None, _meta=None, abstract=False, **options):
+        if abstract:
+            return
+        if not _meta:
+            _meta = MutationOptions(cls)
 
         output = output or getattr(cls, 'Output', None)
         fields = {}
@@ -51,7 +54,11 @@ class Mutation(ObjectType):
             assert mutate, 'All mutations must define a mutate method in it'
             resolver = get_unbound_function(mutate)
 
-        _meta.fields = fields
+        if _meta.fields:
+            _meta.fields.update(fields)
+        else:
+            _meta.fields = fields
+
         _meta.output = output
         _meta.resolver = resolver
         _meta.arguments = arguments

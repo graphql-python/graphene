@@ -10,9 +10,7 @@ from promise import Promise, is_thenable
 from ..types import (AbstractType, Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
                      Union)
 from ..types.field import Field
-from ..types.objecttype import ObjectType, ObjectTypeMeta
-from ..types.options import Options
-from ..utils.is_base_type import is_base_type
+from ..types.objecttype import ObjectType
 from ..utils.props import props
 from .node import is_node
 
@@ -41,7 +39,7 @@ class PageInfo(ObjectType):
     )
 
 
-class ConnectionMeta(ObjectTypeMeta):
+class ConnectionMeta(type):
 
     def __new__(cls, name, bases, attrs):
         # Also ensure initialization is only performed for subclasses of Model
@@ -89,7 +87,7 @@ class ConnectionMeta(ObjectTypeMeta):
         return ObjectTypeMeta.__new__(cls, name, bases, attrs)
 
 
-class Connection(six.with_metaclass(ConnectionMeta, ObjectType)):
+class Connection(ObjectType):
     pass
 
 
