@@ -8,35 +8,6 @@ from .mountedtype import MountedType
 from .unmountedtype import UnmountedType
 
 
-def merge(*dicts):
-    '''
-    Merge the dicts into one
-    '''
-    merged = OrderedDict()
-    for _dict in dicts:
-        merged.update(_dict)
-    return merged
-
-
-def get_base_fields(bases, _as=None):
-    '''
-    Get all the fields in the given bases
-    '''
-    fields = OrderedDict()
-    from ..types import Interface
-    # We allow inheritance in AbstractTypes and Interfaces but not ObjectTypes
-    inherited_bases = (Interface)
-    for base in bases:
-        if base in inherited_bases or not issubclass(base, inherited_bases):
-            continue
-        for name, field in base._meta.fields.items():
-            if name in fields:
-                continue
-            fields[name] = get_field_as(field, _as=_as)
-
-    return fields
-
-
 def get_field_as(value, _as=None):
     '''
     Get type mounted
