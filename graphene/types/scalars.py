@@ -1,34 +1,17 @@
 import six
+
 from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
                                   StringValue)
 
-from ..utils.is_base_type import is_base_type
-from ..utils.trim_docstring import trim_docstring
-from .options import Options
 from .unmountedtype import UnmountedType
+from .base import BaseOptions, BaseType
 
 
-class ScalarTypeMeta(type):
-
-    def __new__(cls, name, bases, attrs):
-        # Also ensure initialization is only performed for subclasses of Model
-        # (excluding Model class itself).
-        if not is_base_type(bases, ScalarTypeMeta):
-            return type.__new__(cls, name, bases, attrs)
-
-        options = Options(
-            attrs.pop('Meta', None),
-            name=name,
-            description=trim_docstring(attrs.get('__doc__')),
-        )
-
-        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
-
-    def __str__(cls):  # noqa: N802
-        return cls._meta.name
+class ScalarOptions(BaseOptions):
+    pass
 
 
-class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
+class Scalar(UnmountedType, BaseType):
     '''
     Scalar Type Definition
 
@@ -36,6 +19,10 @@ class Scalar(six.with_metaclass(ScalarTypeMeta, UnmountedType)):
     Scalars (or Enums) and are defined with a name and a series of functions
     used to parse input from ast or variables and to ensure validity.
     '''
+    @classmethod
+    def __init_subclass_with_meta__(cls, **options):
+        _meta = ScalarOptions(cls)
+        super(Scalar, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     serialize = None
     parse_value = None
