@@ -7,10 +7,10 @@ import six
 from graphql_relay import connection_from_list
 from promise import Promise, is_thenable
 
-from ..types import (AbstractType, Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
+from ..types import (Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
                      Union)
 from ..types.field import Field
-from ..types.objecttype import ObjectType
+from ..types.objecttype import ObjectType, ObjectTypeOptions
 from ..utils.props import props
 from .node import is_node
 
@@ -39,56 +39,47 @@ class PageInfo(ObjectType):
     )
 
 
-class ConnectionMeta(type):
-
-    def __new__(cls, name, bases, attrs):
-        # Also ensure initialization is only performed for subclasses of Model
-        # (excluding Model class itself).
-        if not is_base_type(bases, ConnectionMeta):
-            return type.__new__(cls, name, bases, attrs)
-
-        options = Options(
-            attrs.pop('Meta', None),
-            name=name,
-            description=None,
-            node=None,
-        )
-        options.interfaces = ()
-        options.local_fields = OrderedDict()
-
-        assert options.node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
-        assert issubclass(options.node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)), (
-            'Received incompatible node "{}" for Connection {}.'
-        ).format(options.node, name)
-
-        base_name = re.sub('Connection$', '', options.name) or options.node._meta.name
-        if not options.name:
-            options.name = '{}Connection'.format(base_name)
-
-        edge_class = attrs.pop('Edge', None)
-
-        class EdgeBase(AbstractType):
-            node = Field(options.node, description='The item at the end of the edge')
-            cursor = String(required=True, description='A cursor for use in pagination')
-
-        edge_name = '{}Edge'.format(base_name)
-        if edge_class and issubclass(edge_class, AbstractType):
-            edge = type(edge_name, (EdgeBase, edge_class, ObjectType, ), {})
-        else:
-            edge_attrs = props(edge_class) if edge_class else {}
-            edge = type(edge_name, (EdgeBase, ObjectType, ), edge_attrs)
-
-        class ConnectionBase(AbstractType):
-            page_info = Field(PageInfo, name='pageInfo', required=True)
-            edges = NonNull(List(edge))
-
-        bases = (ConnectionBase, ) + bases
-        attrs = dict(attrs, _meta=options, Edge=edge)
-        return ObjectTypeMeta.__new__(cls, name, bases, attrs)
+class ConnectionOptions(ObjectTypeOptions):
+    node = None
 
 
 class Connection(ObjectType):
-    pass
+    class Meta:
+        abstract = True
+    @classmethod
+    def __init_subclass_with_meta__(cls, node=None, name=None, **options):
+        _meta = ConnectionOptions(cls)
+        assert node, 'You have to provide a node in {}.Meta'.format(cls.__name__)
+        assert issubclass(node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)), (
+            'Received incompatible node "{}" for Connection {}.'
+        ).format(node, cls.__name__)
+
+        base_name = re.sub('Connection$', '', name or cls.__name__) or node._meta.name
+        if not name:
+            name = '{}Connection'.format(base_name)
+
+        edge_class = getattr(cls, 'Edge', None)
+        _node = node
+        class EdgeBase(object):
+            node = Field(_node, description='The item at the end of the edge')
+            cursor = String(required=True, description='A cursor for use in pagination')
+
+        edge_name = '{}Edge'.format(base_name)
+        if edge_class:
+            edge_bases = (edge_class, EdgeBase, ObjectType,)
+        else:
+            edge_bases = (EdgeBase, ObjectType,)
+
+        edge = type(edge_name, edge_bases, {})
+        cls.Edge = edge
+
+        _meta.name = name
+        _meta.node = node
+        _meta.fields = OrderedDict([
+            ('page_info', Field(PageInfo, name='pageInfo', required=True)),
+            ('edges', Field(NonNull(List(edge)))),
+        ])
+        return super(Connection, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
 
 class IterableConnectionField(Field):

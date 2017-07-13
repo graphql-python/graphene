@@ -1,5 +1,5 @@
 
-from ...types import AbstractType, Field, List, NonNull, ObjectType, String, Argument, Int
+from ...types import Field, List, NonNull, ObjectType, String, Argument, Int
 from ..connection import Connection, PageInfo, ConnectionField
 from ..node import Node
 
@@ -38,7 +38,7 @@ def test_connection():
 
 
 def test_connection_inherit_abstracttype():
-    class BaseConnection(AbstractType):
+    class BaseConnection(object):
         extra = String()
 
     class MyObjectConnection(BaseConnection, Connection):
@@ -73,7 +73,7 @@ def test_edge():
 
 
 def test_edge_with_bases():
-    class BaseEdge(AbstractType):
+    class BaseEdge(object):
         extra = String()
 
     class MyObjectConnection(Connection):
@@ -94,16 +94,6 @@ def test_edge_with_bases():
 
     assert isinstance(edge_fields['other'], Field)
     assert edge_fields['other'].type == String
-
-
-def test_edge_on_node():
-    Edge = MyObject.Connection.Edge
-    assert Edge._meta.name == 'MyObjectEdge'
-    edge_fields = Edge._meta.fields
-    assert list(edge_fields.keys()) == ['node', 'cursor']
-
-    assert isinstance(edge_fields['node'], Field)
-    assert edge_fields['node'].type == MyObject
 
 
 def test_pageinfo():

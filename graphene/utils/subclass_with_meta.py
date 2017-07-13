@@ -1,12 +1,17 @@
+import six
+
 from .props import props
 from ..pyutils.init_subclass import InitSubclassMeta
 
 
-class SubclassWithMeta(object):
+class SubclassWithMeta_Meta(InitSubclassMeta):
+    def __repr__(cls):
+        return cls._meta.name
+
+
+class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
     """This class improves __init_subclass__ to receive automatically the options from meta"""
     # We will only have the metaclass in Python 2
-    __metaclass__ = InitSubclassMeta
-
     def __init_subclass__(cls, **meta_options):
         """This method just terminates the super() chain"""
         _Meta = getattr(cls, "Meta", None)

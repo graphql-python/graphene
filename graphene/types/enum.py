@@ -5,6 +5,7 @@ import six
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 from graphene.pyutils.init_subclass import InitSubclassMeta
+from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 
 try:
     from enum import Enum as PyEnum
@@ -25,7 +26,7 @@ class EnumOptions(BaseOptions):
     enum = None  # type: Enum
 
 
-class EnumMeta(InitSubclassMeta):
+class EnumMeta(SubclassWithMeta_Meta):
     def get(cls, value):
         return cls._meta.enum(value)
 
@@ -51,7 +52,7 @@ class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
     @classmethod
     def __init_subclass_with_meta__(cls, enum=None, **options):
         _meta = EnumOptions(cls)
-        _meta.enum = enum or PyEnum(cls.__name__, dict(cls.__dict__, __eq__=eq_enum))
+        _meta.enum = enum or PyEnum(cls.__name__, OrderedDict(cls.__dict__, __eq__=eq_enum))
         for key, value in _meta.enum.__members__.items():
             setattr(cls, key, value)
         super(Enum, cls).__init_subclass_with_meta__(_meta=_meta, **options)

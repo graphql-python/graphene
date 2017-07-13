@@ -4,7 +4,7 @@ from graphql_relay.utils import base64
 from promise import Promise
 
 from ...types import ObjectType, Schema, String
-from ..connection import ConnectionField, PageInfo
+from ..connection import Connection, ConnectionField, PageInfo
 from ..node import Node
 
 letter_chars = ['A', 'B', 'C', 'D', 'E']
@@ -18,10 +18,15 @@ class Letter(ObjectType):
     letter = String()
 
 
+class LetterConnection(Connection):
+    class Meta:
+        node = Letter
+
+
 class Query(ObjectType):
-    letters = ConnectionField(Letter)
-    connection_letters = ConnectionField(Letter)
-    promise_letters = ConnectionField(Letter)
+    letters = ConnectionField(LetterConnection)
+    connection_letters = ConnectionField(LetterConnection)
+    promise_letters = ConnectionField(LetterConnection)
 
     node = Node.Field()
 
@@ -32,13 +37,13 @@ class Query(ObjectType):
         return Promise.resolve(list(letters.values()))
 
     def resolve_connection_letters(self, args, context, info):
-        return Letter.Connection(
+        return LetterConnection(
             page_info=PageInfo(
                 has_next_page=True,
                 has_previous_page=False
             ),
             edges=[
-                Letter.Connection.Edge(
+                LetterConnection.Edge(
                     node=Letter(id=0, letter='A'),
                     cursor='a-cursor'
                 ),

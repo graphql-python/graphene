@@ -20,7 +20,9 @@ class ObjectType(BaseType):
     have a name, but most importantly describe their fields.
     '''
     @classmethod
-    def __init_subclass_with_meta__(cls, interfaces=(), possible_types=(), default_resolver=None, _meta=None, **options):
+    def __init_subclass_with_meta__(cls, interfaces=(), possible_types=(), default_resolver=None, _meta=None, abstract=False, **options):
+        if abstract:
+            return
         if not _meta:
             _meta = ObjectTypeOptions(cls)
 
@@ -46,6 +48,7 @@ class ObjectType(BaseType):
             _meta.fields.update(fields)
         else:
             _meta.fields = fields
+
         _meta.interfaces = interfaces
         _meta.possible_types = possible_types
         _meta.default_resolver = default_resolver
