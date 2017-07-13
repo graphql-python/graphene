@@ -27,6 +27,10 @@ class EnumOptions(BaseOptions):
 
 
 class EnumMeta(SubclassWithMeta_Meta):
+    def __new__(cls, name, bases, classdict, **options):
+        enum = PyEnum(cls.__name__, OrderedDict(classdict, __eq__=eq_enum))
+        return SubclassWithMeta_Meta.__new__(cls, name, bases, OrderedDict(classdict, __enum__=enum), **options)
+
     def get(cls, value):
         return cls._meta.enum(value)
 
@@ -52,7 +56,7 @@ class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
     @classmethod
     def __init_subclass_with_meta__(cls, enum=None, **options):
         _meta = EnumOptions(cls)
-        _meta.enum = enum or PyEnum(cls.__name__, OrderedDict(cls.__dict__, __eq__=eq_enum))
+        _meta.enum = enum or cls.__enum__
         for key, value in _meta.enum.__members__.items():
             setattr(cls, key, value)
         super(Enum, cls).__init_subclass_with_meta__(_meta=_meta, **options)
