@@ -47,3 +47,36 @@
   class Dog(ObjectType, interfaces=[Pet]):
       name = String()
   ```
+
+## Breaking Changes
+
+* Node types no longer have a `Connection` by default.
+  In 2.0 and onwoards `Connection`s should be defined explicitly.
+  
+  Before:
+
+  ```python
+  class User(ObjectType):
+      class Meta:
+          interfaces = [relay.Node]
+      name = String()
+    
+  class Query(ObjectType):
+      user_connection = relay.ConnectionField(User)
+  ```
+
+  With 2.0:
+
+  ```python
+  class User(ObjectType):
+      class Meta:
+          interfaces = [relay.Node]
+      name = String()
+  
+  class UserConnection(relay.Connection):
+      class Meta:
+          node = User
+
+  class Query(ObjectType):
+      user_connection = relay.ConnectionField(UserConnection)
+  ```
