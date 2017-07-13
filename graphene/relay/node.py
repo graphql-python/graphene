@@ -1,13 +1,11 @@
 from collections import OrderedDict
 from functools import partial
 
-import six
-
 from graphql_relay import from_global_id, to_global_id
 
 from ..types import ID, Field, Interface, ObjectType
-from ..types.utils import get_type
 from ..types.interface import InterfaceOptions
+from ..types.utils import get_type
 
 
 def is_node(objecttype):
@@ -60,6 +58,7 @@ class NodeField(Field):
 
 
 class AbstractNode(Interface):
+
     class Meta:
         abstract = True
 

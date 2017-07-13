@@ -3,10 +3,8 @@ from collections import OrderedDict
 from ..utils.get_unbound_function import get_unbound_function
 from ..utils.props import props
 from .field import Field
-from .utils import yank_fields_from_attrs
 from .objecttype import ObjectType, ObjectTypeOptions
-
-from .base import BaseOptions, BaseType
+from .utils import yank_fields_from_attrs
 
 
 class MutationOptions(ObjectTypeOptions):
@@ -20,7 +18,8 @@ class Mutation(ObjectType):
     Mutation Type Definition
     '''
     @classmethod
-    def __init_subclass_with_meta__(cls, resolver=None, output=None, arguments=None, _meta=None, abstract=False, **options):
+    def __init_subclass_with_meta__(cls, resolver=None, output=None, arguments=None,
+                                    _meta=None, abstract=False, **options):
         if abstract:
             return
         if not _meta:
@@ -36,7 +35,7 @@ class Mutation(ObjectType):
                     yank_fields_from_attrs(base.__dict__, _as=Field)
                 )
             output = cls
-        
+
         if not arguments:
             input_class = getattr(cls, 'Arguments', None)
             if not input_class:
@@ -64,7 +63,7 @@ class Mutation(ObjectType):
         _meta.arguments = arguments
 
         super(Mutation, cls).__init_subclass_with_meta__(_meta=_meta, **options)
-    
+
     @classmethod
     def Field(cls, *args, **kwargs):
         return Field(

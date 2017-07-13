@@ -3,8 +3,8 @@ import six
 from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
                                   StringValue)
 
-from .unmountedtype import UnmountedType
 from .base import BaseOptions, BaseType
+from .unmountedtype import UnmountedType
 
 
 class ScalarOptions(BaseOptions):

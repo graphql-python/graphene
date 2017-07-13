@@ -1,7 +1,8 @@
 from pytest import raises
 
-from graphene import String, ObjectType
-from ..module_loading import lazy_import, import_string
+from graphene import ObjectType, String
+
+from ..module_loading import import_string, lazy_import
 
 
 def test_import_string():

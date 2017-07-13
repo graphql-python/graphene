@@ -3,12 +3,12 @@ from collections import OrderedDict
 
 from promise import Promise
 
-from ..types import Field, AbstractType, Argument, InputObjectType, String, Field
-from ..types.mutation import Mutation, MutationOptions
-from ..utils.props import props
+from ..types import Field, InputObjectType, String
+from ..types.mutation import Mutation
 
 
 class ClientIDMutation(Mutation):
+
     class Meta:
         abstract = True
 
@@ -17,7 +17,7 @@ class ClientIDMutation(Mutation):
         input_class = getattr(cls, 'Input', None)
         name = name or cls.__name__
         base_name = re.sub('Payload$', '', name)
-        
+
         assert not output, "Can't specify any output"
         assert not arguments, "Can't specify any arguments"
 
@@ -28,8 +28,8 @@ class ClientIDMutation(Mutation):
         cls.Input = type('{}Input'.format(base_name),
                          bases, {
                              'client_mutation_id': String(name='clientMutationId')
-                         })
-        
+        })
+
         arguments = OrderedDict(
             input=cls.Input(required=True)
             # 'client_mutation_id': String(name='clientMutationId')
@@ -39,7 +39,7 @@ class ClientIDMutation(Mutation):
             assert mutate_and_get_payload, (
                 "{name}.mutate_and_get_payload method is required"
                 " in a ClientIDMutation.").format(name=name)
-        
+
         if not name:
             name = '{}Payload'.format(base_name)
 

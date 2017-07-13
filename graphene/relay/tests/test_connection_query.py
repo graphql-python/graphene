@@ -19,6 +19,7 @@ class Letter(ObjectType):
 
 
 class LetterConnection(Connection):
+
     class Meta:
         node = Letter
 

@@ -1,10 +1,11 @@
 import six
 
-from .props import props
 from ..pyutils.init_subclass import InitSubclassMeta
+from .props import props
 
 
 class SubclassWithMeta_Meta(InitSubclassMeta):
+
     def __repr__(cls):
         return cls._meta.name
 

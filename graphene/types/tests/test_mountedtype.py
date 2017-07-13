@@ -1,11 +1,10 @@
-import pytest
 
-from ..mountedtype import MountedType
 from ..field import Field
 from ..scalars import String
 
 
 class CustomField(Field):
+
     def __init__(self, *args, **kwargs):
         self.metadata = kwargs.pop('metadata', None)
         super(CustomField, self).__init__(*args, **kwargs)

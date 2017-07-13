@@ -187,6 +187,7 @@ def test_generate_objecttype_description():
 
 def test_objecttype_with_possible_types():
     class MyObjectType(ObjectType):
+
         class Meta:
             possible_types = (dict, )
 
@@ -196,6 +197,7 @@ def test_objecttype_with_possible_types():
 def test_objecttype_with_possible_types_and_is_type_of_should_raise():
     with pytest.raises(AssertionError) as excinfo:
         class MyObjectType(ObjectType):
+
             class Meta:
                 possible_types = (dict, )
 

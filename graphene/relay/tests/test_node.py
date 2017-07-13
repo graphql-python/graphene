@@ -3,7 +3,6 @@ from collections import OrderedDict
 from graphql_relay import to_global_id
 
 from ...types import ObjectType, Schema, String
-from ..connection import Connection
 from ..node import Node
 
 
@@ -105,7 +104,7 @@ def test_node_field_only_type_wrong():
     )
     assert len(executed.errors) == 1
     assert str(executed.errors[0]) == 'Must receive an MyOtherNode id.'
-    assert executed.data == { 'onlyNode': None }
+    assert executed.data == {'onlyNode': None}
 
 
 def test_node_field_only_lazy_type():
@@ -122,7 +121,7 @@ def test_node_field_only_lazy_type_wrong():
     )
     assert len(executed.errors) == 1
     assert str(executed.errors[0]) == 'Must receive an MyOtherNode id.'
-    assert executed.data == { 'onlyNodeLazy': None }
+    assert executed.data == {'onlyNodeLazy': None}
 
 
 def test_str_schema():

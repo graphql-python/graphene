@@ -1,18 +1,18 @@
 import json
 from functools import partial
 
-from graphql import Source, execute, parse, GraphQLError
+from graphql import GraphQLError, Source, execute, parse
 
+from ..dynamic import Dynamic
 from ..field import Field
-from ..interface import Interface
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
+from ..interface import Interface
 from ..objecttype import ObjectType
 from ..scalars import Int, String
 from ..schema import Schema
 from ..structures import List
 from ..union import Union
-from ..dynamic import Dynamic
 
 
 def test_query():
@@ -48,6 +48,7 @@ def test_query_union():
             return isinstance(root, two_object)
 
     class MyUnion(Union):
+
         class Meta:
             types = (One, Two)
 
@@ -81,6 +82,7 @@ def test_query_interface():
         base = String()
 
     class One(ObjectType):
+
         class Meta:
             interfaces = (MyInterface, )
 
@@ -91,6 +93,7 @@ def test_query_interface():
             return isinstance(root, one_object)
 
     class Two(ObjectType):
+
         class Meta:
             interfaces = (MyInterface, )
 
@@ -268,6 +271,7 @@ def test_query_middlewares():
 
 def test_objecttype_on_instances():
     class Ship:
+
         def __init__(self, name):
             self.name = name
 

@@ -21,6 +21,7 @@ def test__is_dunder():
     for name in non_dunder_names:
         assert _is_dunder(name) is False
 
+
 def test__is_sunder():
     sunder_names = [
         '_i_',

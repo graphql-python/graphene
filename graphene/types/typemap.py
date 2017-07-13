@@ -11,10 +11,10 @@ from graphql.type.typemap import GraphQLTypeMap
 
 from ..utils.get_unbound_function import get_unbound_function
 from ..utils.str_converters import to_camel_case
-from .definitions import (GrapheneEnumType, GrapheneInputObjectType,
-                          GrapheneInterfaceType, GrapheneObjectType,
-                          GrapheneScalarType, GrapheneUnionType,
-                          GrapheneGraphQLType)
+from .definitions import (GrapheneEnumType, GrapheneGraphQLType,
+                          GrapheneInputObjectType, GrapheneInterfaceType,
+                          GrapheneObjectType, GrapheneScalarType,
+                          GrapheneUnionType)
 from .dynamic import Dynamic
 from .enum import Enum
 from .field import Field
@@ -59,6 +59,7 @@ def is_type_of_from_possible_types(possible_types, root, context, info):
 
 
 class TypeMap(GraphQLTypeMap):
+
     def __init__(self, types, auto_camelcase=True, schema=None):
         self.auto_camelcase = auto_camelcase
         self.schema = schema

@@ -1,7 +1,5 @@
-from .unmountedtype import UnmountedType
-from .objecttype import ObjectType
-
 from .base import BaseOptions, BaseType
+from .unmountedtype import UnmountedType
 
 
 class UnionOptions(BaseOptions):

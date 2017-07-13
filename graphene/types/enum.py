@@ -2,10 +2,10 @@ from collections import OrderedDict
 
 import six
 
+from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
+
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
-from graphene.pyutils.init_subclass import InitSubclassMeta
-from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 
 try:
     from enum import Enum as PyEnum
@@ -27,6 +27,7 @@ class EnumOptions(BaseOptions):
 
 
 class EnumMeta(SubclassWithMeta_Meta):
+
     def __new__(cls, name, bases, classdict, **options):
         enum = PyEnum(cls.__name__, OrderedDict(classdict, __eq__=eq_enum))
         return SubclassWithMeta_Meta.__new__(cls, name, bases, OrderedDict(classdict, __enum__=enum), **options)
@@ -53,6 +54,7 @@ class EnumMeta(SubclassWithMeta_Meta):
 
 
 class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
+
     @classmethod
     def __init_subclass_with_meta__(cls, enum=None, **options):
         _meta = EnumOptions(cls)

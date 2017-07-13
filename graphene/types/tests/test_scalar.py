@@ -1,4 +1,3 @@
-import pytest
 
 from ..scalars import Scalar
 

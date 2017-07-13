@@ -12,6 +12,7 @@ class Query(graphene.ObjectType):
     def resolve_me(self, args, context, info):
         return context['user']
 
+
 schema = graphene.Schema(query=Query)
 query = '''
     query something{

@@ -1,15 +1,14 @@
 from collections import OrderedDict
 
+from .base import BaseOptions, BaseType
 from .field import Field
 from .interface import Interface
 from .utils import yank_fields_from_attrs
 
-from .base import BaseOptions, BaseType
-
 
 class ObjectTypeOptions(BaseOptions):
     fields = None  # type: Dict[str, Field]
-    interfaces = () # type: List[Type[Interface]]
+    interfaces = ()  # type: List[Type[Interface]]
 
 
 class ObjectType(BaseType):
@@ -20,7 +19,10 @@ class ObjectType(BaseType):
     have a name, but most importantly describe their fields.
     '''
     @classmethod
-    def __init_subclass_with_meta__(cls, interfaces=(), possible_types=(), default_resolver=None, _meta=None, abstract=False, **options):
+    def __init_subclass_with_meta__(
+            cls, interfaces=(),
+            possible_types=(),
+            default_resolver=None, _meta=None, abstract=False, **options):
         if abstract:
             return
         if not _meta:
@@ -31,7 +33,7 @@ class ObjectType(BaseType):
         for interface in interfaces:
             assert issubclass(interface, Interface), (
                 'All interfaces of {} must be a subclass of Interface. Received "{}".'
-            ).format(name, interface)
+            ).format(cls.__name__, interface)
             fields.update(interface._meta.fields)
 
         for base in reversed(cls.__mro__):

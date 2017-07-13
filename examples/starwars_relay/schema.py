@@ -18,6 +18,7 @@ class Ship(graphene.ObjectType):
 
 
 class ShipConnection(relay.Connection):
+
     class Meta:
         node = Ship
 

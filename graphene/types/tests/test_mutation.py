@@ -1,11 +1,11 @@
 import pytest
 
+from ..argument import Argument
+from ..dynamic import Dynamic
 from ..mutation import Mutation
 from ..objecttype import ObjectType
-from ..schema import Schema
-from ..argument import Argument
 from ..scalars import String
-from ..dynamic import Dynamic
+from ..schema import Schema
 
 
 def test_generate_mutation_no_args():
@@ -24,6 +24,7 @@ def test_generate_mutation_no_args():
 
 def test_generate_mutation_with_meta():
     class MyMutation(Mutation):
+
         class Meta:
             name = 'MyOtherMutation'
             description = 'Documentation'
@@ -52,6 +53,7 @@ def test_mutation_custom_output_type():
         name = String()
 
     class CreateUser(Mutation):
+
         class Input:
             name = String()
 
@@ -70,6 +72,7 @@ def test_mutation_custom_output_type():
 
 def test_mutation_execution():
     class CreateUser(Mutation):
+
         class Input:
             name = String()
             dynamic = Dynamic(lambda: String())

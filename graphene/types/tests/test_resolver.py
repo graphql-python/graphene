@@ -1,6 +1,6 @@
-import pytest
 
-from ..resolver import attr_resolver, dict_resolver, get_default_resolver, set_default_resolver
+from ..resolver import (attr_resolver, dict_resolver, get_default_resolver,
+                        set_default_resolver)
 
 args = {}
 context = None

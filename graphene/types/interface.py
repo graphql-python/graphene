@@ -1,8 +1,8 @@
-from .field import Field
-from .utils import yank_fields_from_attrs
 from collections import OrderedDict
 
 from .base import BaseOptions, BaseType
+from .field import Field
+from .utils import yank_fields_from_attrs
 
 
 class InterfaceOptions(BaseOptions):
@@ -30,7 +30,7 @@ class Interface(BaseType):
             fields.update(
                 yank_fields_from_attrs(base.__dict__, _as=Field)
             )
-        
+
         if _meta.fields:
             _meta.fields.update(fields)
         else:

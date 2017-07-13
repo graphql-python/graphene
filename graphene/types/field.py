@@ -8,7 +8,6 @@ from .structures import NonNull
 from .unmountedtype import UnmountedType
 from .utils import get_type
 
-
 base_type = type
 
 

@@ -2,16 +2,13 @@ import re
 from collections import Iterable, OrderedDict
 from functools import partial
 
-import six
-
 from graphql_relay import connection_from_list
 from promise import Promise, is_thenable
 
-from ..types import (Boolean, Enum, Int, Interface, List, NonNull, Scalar, String,
-                     Union)
+from ..types import (Boolean, Enum, Int, Interface, List, NonNull, Scalar,
+                     String, Union)
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
-from ..utils.props import props
 from .node import is_node
 
 
@@ -44,8 +41,10 @@ class ConnectionOptions(ObjectTypeOptions):
 
 
 class Connection(ObjectType):
+
     class Meta:
         abstract = True
+
     @classmethod
     def __init_subclass_with_meta__(cls, node=None, name=None, **options):
         _meta = ConnectionOptions(cls)
@@ -60,6 +59,7 @@ class Connection(ObjectType):
 
         edge_class = getattr(cls, 'Edge', None)
         _node = node
+
         class EdgeBase(object):
             node = Field(_node, description='The item at the end of the edge')
             cursor = String(required=True, description='A cursor for use in pagination')

@@ -1,7 +1,7 @@
+from ..argument import Argument
 from ..enum import Enum, PyEnum
 from ..field import Field
 from ..inputfield import InputField
-from ..argument import Argument
 
 
 def test_enum_construction():

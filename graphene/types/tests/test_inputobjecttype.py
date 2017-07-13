@@ -1,9 +1,9 @@
 
-from ..field import Field
 from ..argument import Argument
+from ..field import Field
 from ..inputfield import InputField
-from ..objecttype import ObjectType
 from ..inputobjecttype import InputObjectType
+from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
 
 
@@ -68,7 +68,7 @@ def test_generate_inputobjecttype_as_argument():
 
     class MyObjectType(ObjectType):
         field = Field(MyType, input=MyInputObjectType())
-    
+
     assert 'field' in MyObjectType._meta.fields
     field = MyObjectType._meta.fields['field']
     assert isinstance(field, Field)

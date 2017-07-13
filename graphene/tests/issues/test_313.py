@@ -3,8 +3,10 @@
 import graphene
 from graphene import resolve_only_args
 
+
 class Query(graphene.ObjectType):
     rand = graphene.String()
+
 
 class Success(graphene.ObjectType):
     yeah = graphene.String()
@@ -15,11 +17,13 @@ class Error(graphene.ObjectType):
 
 
 class CreatePostResult(graphene.Union):
+
     class Meta:
         types = [Success, Error]
 
 
 class CreatePost(graphene.Mutation):
+
     class Input:
         text = graphene.String(required=True)
 
@@ -36,6 +40,7 @@ class Mutations(graphene.ObjectType):
     create_post = CreatePost.Field()
 
 # tests.py
+
 
 def test_create_post():
     query_string = '''

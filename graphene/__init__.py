@@ -74,4 +74,7 @@ if not __SETUP__:
         'ConnectionField',
         'PageInfo',
         'lazy_import',
+
+        # Deprecated
+        'AbstractType',
     ]

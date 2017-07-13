@@ -1,11 +1,11 @@
 import pytest
 
-from ...types import ( Argument, Field, InputField, ID,
-                      InputObjectType, NonNull, ObjectType, Schema)
+from promise import Promise
+
+from ...types import (ID, Argument, Field, InputField, InputObjectType,
+                      NonNull, ObjectType, Schema)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
-from ..node import Node
-from promise import Promise
 
 
 class SharedFields(object):
@@ -20,6 +20,7 @@ class MyNode(ObjectType):
 
 
 class SaySomething(ClientIDMutation):
+
     class Input:
         what = String()
 
@@ -32,6 +33,7 @@ class SaySomething(ClientIDMutation):
 
 
 class SaySomethingPromise(ClientIDMutation):
+
     class Input:
         what = String()
 
@@ -50,6 +52,7 @@ class MyEdge(ObjectType):
 
 
 class OtherMutation(ClientIDMutation):
+
     class Input(SharedFields):
         additional_field = String()
 

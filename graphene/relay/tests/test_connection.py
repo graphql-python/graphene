@@ -1,6 +1,6 @@
 
-from ...types import Field, List, NonNull, ObjectType, String, Argument, Int
-from ..connection import Connection, PageInfo, ConnectionField
+from ...types import Argument, Field, Int, List, NonNull, ObjectType, String
+from ..connection import Connection, ConnectionField, PageInfo
 from ..node import Node
 
 
@@ -104,6 +104,7 @@ def test_pageinfo():
 
 def test_connectionfield():
     class MyObjectConnection(Connection):
+
         class Meta:
             node = MyObject
 
@@ -118,6 +119,7 @@ def test_connectionfield():
 
 def test_connectionfield_custom_args():
     class MyObjectConnection(Connection):
+
         class Meta:
             node = MyObject
 

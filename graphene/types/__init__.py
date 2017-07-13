@@ -38,4 +38,7 @@ __all__ = [
     'Argument',
     'Dynamic',
     'Union',
+
+    # Deprecated
+    'AbstractType',
 ]

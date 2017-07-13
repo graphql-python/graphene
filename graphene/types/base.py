@@ -13,7 +13,7 @@ class BaseOptions(object):
 
     def freeze(self):
         self._frozen = True
-  
+
     def __setattr__(self, name, value):
         if not self._frozen:
             super(BaseOptions, self).__setattr__(name, value)
@@ -25,6 +25,7 @@ class BaseOptions(object):
 
 
 class BaseType(SubclassWithMeta):
+
     @classmethod
     def __init_subclass_with_meta__(cls, name=None, description=None, _meta=None):
         assert "_meta" not in cls.__dict__, "Can't assign directly meta"
