@@ -9,7 +9,6 @@ from ..types import (Boolean, Enum, Int, Interface, List, NonNull, Scalar,
                      String, Union)
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
-from .node import is_node
 
 
 class PageInfo(ObjectType):
