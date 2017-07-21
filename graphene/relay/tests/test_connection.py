@@ -23,7 +23,7 @@ def test_connection():
 
     assert MyObjectConnection._meta.name == 'MyObjectConnection'
     fields = MyObjectConnection._meta.fields
-    assert list(fields.keys()) == ['page_info', 'edges', 'extra']
+    assert list(fields.keys()) == ['page_info', 'total_count', 'edges', 'extra']
     edge_field = fields['edges']
     pageinfo_field = fields['page_info']
 
@@ -48,7 +48,7 @@ def test_connection_inherit_abstracttype():
 
     assert MyObjectConnection._meta.name == 'MyObjectConnection'
     fields = MyObjectConnection._meta.fields
-    assert list(fields.keys()) == ['page_info', 'edges', 'extra']
+    assert list(fields.keys()) == ['page_info', 'total_count', 'edges', 'extra']
 
 
 def test_edge():
