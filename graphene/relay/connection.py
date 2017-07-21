@@ -82,7 +82,12 @@ class ConnectionMeta(ObjectTypeMeta):
 
         class ConnectionBase(AbstractType):
             page_info = Field(PageInfo, name='pageInfo', required=True)
+            total_count = Int(name='totalCount', required=True)
             edges = NonNull(List(edge))
+
+            @staticmethod
+            def resolve_total_count(root, args, context, info):
+                return root.length
 
         bases = (ConnectionBase, ) + bases
         attrs = dict(attrs, _meta=options, Edge=edge)
