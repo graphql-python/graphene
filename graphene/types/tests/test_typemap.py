@@ -135,9 +135,17 @@ def test_inputobject():
     assert graphql_type.name == 'MyInputObjectType'
     assert graphql_type.description == 'Description'
 
+    # Container
+    container = graphql_type.create_container({'bar': 'oh!'})
+    assert isinstance(container, MyInputObjectType)
+    assert 'bar' in container
+    assert container.bar == 'oh!'
+    assert 'foo_bar' not in container
+
     fields = graphql_type.fields
     assert list(fields.keys()) == ['fooBar', 'gizmo', 'own']
-    assert fields['own'].type == graphql_type
+    own_field = fields['own']
+    assert own_field.type == graphql_type
     foo_field = fields['fooBar']
     assert isinstance(foo_field, GraphQLInputObjectField)
     assert foo_field.description == 'Field description'

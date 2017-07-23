@@ -195,6 +195,7 @@ class TypeMap(GraphQLTypeMap):
             graphene_type=type,
             name=type._meta.name,
             description=type._meta.description,
+            container_type=type._meta.create_container,
             fields=partial(
                 self.construct_fields_for_type, map, type, is_input_type=True),
         )
