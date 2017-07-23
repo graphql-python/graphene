@@ -7,10 +7,7 @@ from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 
-try:
-    from enum import Enum as PyEnum
-except ImportError:
-    from ..pyutils.enum import Enum as PyEnum
+from ..pyutils.compat import Enum as PyEnum
 
 
 def eq_enum(self, other):
