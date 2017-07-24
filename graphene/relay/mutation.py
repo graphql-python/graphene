@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict
 
-from promise import Promise
+from promise import Promise, is_thenable
 
 from ..types import Field, InputObjectType, String
 from ..types.mutation import Mutation
@@ -60,6 +60,9 @@ class ClientIDMutation(Mutation):
                     ('Cannot set client_mutation_id in the payload object {}'
                      ).format(repr(payload)))
             return payload
-
-        return Promise.resolve(
-            cls.mutate_and_get_payload(input, context, info)).then(on_resolve)
+        
+        result = cls.mutate_and_get_payload(input, context, info)
+        if is_thenable(result):
+            return Promise.resolve(result).then(on_resolve)
+        
+        return on_resolve(result)
