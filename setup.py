@@ -83,9 +83,11 @@ setup(
 
     install_requires=[
         'six>=1.10.0',
-        'graphql-core>=1.1',
+        # 'graphql-core>=1.1',
+        'https://github.com/graphql-python/graphql-core/archive/master.zip',
         'graphql-relay>=0.4.5',
-        'promise>=2.0',
+        #'promise>=2.0',
+        'https://github.com/syrusakbary/promise/archive/master.zip',
     ],
     tests_require=tests_require,
     extras_require={
