@@ -1,10 +1,15 @@
 from ..pyutils.compat import signature
 from functools import wraps
 
-from ..types import Context, ResolveInfo
-
 
 def resolver_from_annotations(func):
+    from ..types import Context, ResolveInfo
+
+    _is_wrapped_from_annotations = is_wrapped_from_annotations(func)
+    assert not _is_wrapped_from_annotations, "The function {func_name} is already wrapped.".format(
+        func_name=func.func_name
+    )
+
     func_signature = signature(func)
 
     _context_var = None
@@ -32,5 +37,10 @@ def resolver_from_annotations(func):
     else:
         def inner(root, args, context, info):
             return func(root, **args)
-
+    
+    inner._is_wrapped_from_annotations = True
     return wraps(func)(inner)
+
+
+def is_wrapped_from_annotations(func):
+    return getattr(func, '_is_wrapped_from_annotations', False)

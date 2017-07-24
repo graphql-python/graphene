@@ -2,14 +2,16 @@ import six
 from functools import wraps
 from ..pyutils.compat import signature
 
+from .deprecated import warn_deprecation
+
 
 def annotate(_func=None, _trigger_warning=True, **annotations):
     if not six.PY2 and _trigger_warning:
-        print(
+        warn_deprecation(
             "annotate is intended for use in Python 2 only, as you can use type annotations Python 3.\n"
             "Read more in https://docs.python.org/3/library/typing.html"
         )
-    
+
     if not _func:
         def _func(f):
             return annotate(f, **annotations)

@@ -1,5 +1,5 @@
 import graphene
-from graphene import resolve_only_args
+from graphene import annotate
 
 from .data import get_character, get_droid, get_hero, get_human
 
@@ -46,15 +46,15 @@ class Query(graphene.ObjectType):
                            id=graphene.String()
                            )
 
-    @resolve_only_args
+    @annotate(episode=Episode)
     def resolve_hero(self, episode=None):
         return get_hero(episode)
 
-    @resolve_only_args
+    @annotate(id=str)
     def resolve_human(self, id):
         return get_human(id)
 
-    @resolve_only_args
+    @annotate(id=str)
     def resolve_droid(self, id):
         return get_droid(id)
 

@@ -1,7 +1,7 @@
 import json
 from functools import partial
 
-from graphql import GraphQLError, Source, execute, parse
+from graphql import GraphQLError, Source, execute, parse, ResolveInfo
 
 from ..dynamic import Dynamic
 from ..field import Field
@@ -13,6 +13,8 @@ from ..scalars import Int, String
 from ..schema import Schema
 from ..structures import List
 from ..union import Union
+from ..context import Context
+from ...utils.annotate import annotate
 
 
 def test_query():
@@ -406,3 +408,42 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
     result = benchmark(big_list_query)
     assert not result.errors
     assert result.data == {'allContainers': [{'x': c.x, 'y': c.y, 'z': c.z, 'o': c.o} for c in big_container_list]}
+
+
+def test_query_annotated_resolvers():
+    import json
+
+    context = Context(key="context")
+
+    class Query(ObjectType):
+        annotated = String(id=String())
+        context = String()
+        info = String()
+
+        @annotate
+        def resolve_annotated(self, id):
+            return "{}-{}".format(self, id)
+
+        @annotate(context=Context)
+        def resolve_context(self, context):
+            assert isinstance(context, Context)
+            return "{}-{}".format(self, context.key)
+
+        @annotate(info=ResolveInfo)
+        def resolve_info(self, info):
+            assert isinstance(info, ResolveInfo)
+            return "{}-{}".format(self, info.field_name)
+
+    test_schema = Schema(Query)
+
+    result = test_schema.execute('{ annotated(id:"self") }', "base")
+    assert not result.errors
+    assert result.data == {'annotated': 'base-self'}
+
+    result = test_schema.execute('{ context }', "base", context_value=context)
+    assert not result.errors
+    assert result.data == {'context': 'base-context'}
+
+    result = test_schema.execute('{ info }', "base")
+    assert not result.errors
+    assert result.data == {'info': 'base-info'}

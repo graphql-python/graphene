@@ -80,3 +80,64 @@
   class Query(ObjectType):
       user_connection = relay.ConnectionField(UserConnection)
   ```
+
+## New Features
+
+### InputObjectType
+
+`InputObjectType`s are now a first class citizen in Graphene.
+That means, if you are using a custom InputObjectType, you can access
+it's fields via `getattr` (`my_input.myattr`) when resolving, instead of
+the classic way `my_input['myattr']`.
+
+And also use custom defined properties on your input class.
+
+Example. Before:
+
+```python
+class User(ObjectType):
+    name = String()
+
+class UserInput(InputObjectType):
+    id = ID()
+
+def is_user_id(id):
+    return id.startswith('userid_')
+
+class Query(ObjectType):
+    user = graphene.Field(User, id=UserInput())
+
+    @resolve_only_args
+    def resolve_user(self, input):
+        user_id = input.get('id')
+        if is_user_id(user_id):
+            return get_user(user_id)
+```
+
+With 2.0:
+
+```python
+class User(ObjectType):
+    id = ID()
+
+class UserInput(InputObjectType):
+    id = ID()
+
+    @property
+    def is_user_id(self):
+        return id.startswith('userid_')
+
+class Query(ObjectType):
+    user = graphene.Field(User, id=UserInput())
+
+    @annotate(input=UserInput)
+    def resolve_user(self, input):
+        if input.is_user_id:
+            return get_user(input.id)
+
+    # You can also do in Python 3:
+    def resolve_user(self, input: UserInput):
+        if input.is_user_id:
+            return get_user(input.id)
+
+```
