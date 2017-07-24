@@ -23,7 +23,7 @@ def test_abstract_objecttype_warn_deprecation(mocker):
     class MyAbstractType(AbstractType):
         field1 = MyScalar()
 
-    abstracttype.warn_deprecation.assert_called_once()
+    assert abstracttype.warn_deprecation.called
 
 
 def test_generate_objecttype_inherit_abstracttype():

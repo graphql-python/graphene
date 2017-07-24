@@ -10,4 +10,4 @@ def test_resolve_only_args(mocker):
     my_data = {'one': 1, 'two': 2}
 
     wrapped = resolve_only_args(resolver)
-    deprecated.warn_deprecation.assert_called_once()
+    assert deprecated.warn_deprecation.called

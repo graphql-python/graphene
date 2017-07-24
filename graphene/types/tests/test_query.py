@@ -420,16 +420,16 @@ def test_query_annotated_resolvers():
         context = String()
         info = String()
 
-        @annotate
+        @annotate(_trigger_warning=False)
         def resolve_annotated(self, id):
             return "{}-{}".format(self, id)
 
-        @annotate(context=Context)
+        @annotate(context=Context, _trigger_warning=False)
         def resolve_context(self, context):
             assert isinstance(context, Context)
             return "{}-{}".format(self, context.key)
 
-        @annotate(info=ResolveInfo)
+        @annotate(info=ResolveInfo, _trigger_warning=False)
         def resolve_info(self, info):
             assert isinstance(info, ResolveInfo)
             return "{}-{}".format(self, info.field_name)
