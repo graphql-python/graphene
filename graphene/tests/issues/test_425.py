@@ -1,56 +1,42 @@
-# THIS IS THE OLD IMPLEMENTATION, for Graphene 1.0
-# Keep here as reference for upgrade.
+# https://github.com/graphql-python/graphene/issues/425
+# Adapted for Graphene 2.0
 
-# # https://github.com/graphql-python/graphene/issues/425
-# import six
-
-# from graphene.utils.is_base_type import is_base_type
-
-# from graphene.types.objecttype import ObjectTypeMeta, ObjectType
-# from graphene.types.options import Options
-
-# class SpecialObjectTypeMeta(ObjectTypeMeta):
-
-#     @staticmethod
-#     def __new__(cls, name, bases, attrs):
-#         # Also ensure initialization is only performed for subclasses of
-#         # DjangoObjectType
-#         if not is_base_type(bases, SpecialObjectTypeMeta):
-#             return type.__new__(cls, name, bases, attrs)
-
-#         options = Options(
-#             attrs.pop('Meta', None),
-#             other_attr='default',
-#         )
-
-#         cls = ObjectTypeMeta.__new__(cls, name, bases, dict(attrs, _meta=options))
-#         assert cls._meta is options
-#         return cls
+from graphene.types.objecttype import ObjectType, ObjectTypeOptions
 
 
-# class SpecialObjectType(six.with_metaclass(SpecialObjectTypeMeta, ObjectType)):
-#     pass
+class SpecialOptions(ObjectTypeOptions):
+    other_attr = None
 
 
-# def test_special_objecttype_could_be_subclassed():
-#     class MyType(SpecialObjectType):
-#         class Meta:
-#             other_attr = 'yeah!'
+class SpecialObjectType(ObjectType):
 
-#     assert MyType._meta.other_attr == 'yeah!'
-
-
-# def test_special_objecttype_could_be_subclassed_default():
-#     class MyType(SpecialObjectType):
-#         pass
-
-#     assert MyType._meta.other_attr == 'default'
+    @classmethod
+    def __init_subclass_with_meta__(cls, other_attr='default', **options):
+        _meta = SpecialOptions(cls)
+        _meta.other_attr = other_attr
+        super(SpecialObjectType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
 
-# def test_special_objecttype_inherit_meta_options():
-#     class MyType(SpecialObjectType):
-#         pass
+def test_special_objecttype_could_be_subclassed():
+    class MyType(SpecialObjectType):
 
-#     assert MyType._meta.name == 'MyType'
-#     assert MyType._meta.default_resolver == None
-#     assert MyType._meta.interfaces == ()
+        class Meta:
+            other_attr = 'yeah!'
+
+    assert MyType._meta.other_attr == 'yeah!'
+
+
+def test_special_objecttype_could_be_subclassed_default():
+    class MyType(SpecialObjectType):
+        pass
+
+    assert MyType._meta.other_attr == 'default'
+
+
+def test_special_objecttype_inherit_meta_options():
+    class MyType(SpecialObjectType):
+        pass
+
+    assert MyType._meta.name == 'MyType'
+    assert MyType._meta.default_resolver is None
+    assert MyType._meta.interfaces == ()
