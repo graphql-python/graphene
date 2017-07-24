@@ -37,7 +37,7 @@ def resolver_from_annotations(func):
     else:
         def inner(root, args, context, info):
             return func(root, **args)
-    
+
     inner._is_wrapped_from_annotations = True
     return wraps(func)(inner)
 

@@ -37,7 +37,7 @@ class InputObjectType(dict, UnmountedType, BaseType):
         dict.__init__(self, *args, **kwargs)
         for key, value in self.items():
             setattr(self, key, value)
-    
+
     @classmethod
     def create_container(cls, data):
         return cls(data, _as_container=True)

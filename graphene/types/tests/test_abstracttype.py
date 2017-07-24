@@ -3,8 +3,8 @@ import pytest
 from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
 from ..abstracttype import AbstractType
+from .. import abstracttype
 from ..field import Field
-from ...utils import deprecated
 
 
 class MyType(ObjectType):
@@ -18,12 +18,12 @@ class MyScalar(UnmountedType):
 
 
 def test_abstract_objecttype_warn_deprecation(mocker):
-    mocker.patch.object(deprecated, 'warn_deprecation')
+    mocker.patch.object(abstracttype, 'warn_deprecation')
 
     class MyAbstractType(AbstractType):
         field1 = MyScalar()
 
-    deprecated.warn_deprecation.assert_called_once()
+    abstracttype.warn_deprecation.assert_called_once()
 
 
 def test_generate_objecttype_inherit_abstracttype():

@@ -1,6 +1,5 @@
 import six
-from functools import wraps
-from ..pyutils.compat import signature
+from ..pyutils.compat import signature, func_name
 
 from .deprecated import warn_deprecation
 
@@ -25,7 +24,7 @@ def annotate(_func=None, _trigger_warning=True, **annotations):
             'The key {key} is not a function parameter in the function "{func_name}".'
         ).format(
             key=key,
-            func_name=_func.func_name
+            func_name=func_name(_func)
         )
 
     func_annotations = getattr(_func, '__annotations__', None)
@@ -33,6 +32,6 @@ def annotate(_func=None, _trigger_warning=True, **annotations):
         _func.__annotations__ = annotations
     else:
         _func.__annotations__.update(annotations)
-    
+
     _func._is_annotated = True
     return _func

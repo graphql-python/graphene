@@ -60,9 +60,9 @@ class ClientIDMutation(Mutation):
                     ('Cannot set client_mutation_id in the payload object {}'
                      ).format(repr(payload)))
             return payload
-        
+
         result = cls.mutate_and_get_payload(input, context, info)
         if is_thenable(result):
             return Promise.resolve(result).then(on_resolve)
-        
+
         return on_resolve(result)
