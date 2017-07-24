@@ -3,8 +3,8 @@ from functools import wraps
 from ..pyutils.compat import signature
 
 
-def annotate(_func=None, **annotations):
-    if not six.PY2:
+def annotate(_func=None, _trigger_warning=True, **annotations):
+    if not six.PY2 and _trigger_warning:
         print(
             "annotate is intended for use in Python 2 only, as you can use type annotations Python 3.\n"
             "Read more in https://docs.python.org/3/library/typing.html"

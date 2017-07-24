@@ -32,6 +32,8 @@ if not __SETUP__:
         Argument,
         Dynamic,
         Union,
+        Context,
+        ResolveInfo
     )
     from .relay import (
         Node,
@@ -74,6 +76,8 @@ if not __SETUP__:
         'ConnectionField',
         'PageInfo',
         'lazy_import',
+        'Context',
+        'ResolveInfo',
 
         # Deprecated
         'AbstractType',

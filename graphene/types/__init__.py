@@ -1,4 +1,5 @@
 # flake8: noqa
+from graphql.execution.base import ResolveInfo
 
 from .objecttype import ObjectType
 from .interface import Interface
@@ -13,6 +14,7 @@ from .argument import Argument
 from .inputobjecttype import InputObjectType
 from .dynamic import Dynamic
 from .union import Union
+from .context import Context
 
 # Deprecated
 from .abstracttype import AbstractType
@@ -38,6 +40,8 @@ __all__ = [
     'Argument',
     'Dynamic',
     'Union',
+    'Context',
+    'ResolveInfo',
 
     # Deprecated
     'AbstractType',
