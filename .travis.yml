@@ -22,6 +22,10 @@ before_install:
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
+    # For testing
+    pip install https://github.com/graphql-python/graphql-core/archive/master.zip
+    pip install https://github.com/syrusakbary/promise/archive/master.zip
+
     pip install -e .[test]
     python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
