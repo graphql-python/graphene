@@ -99,8 +99,8 @@ leaner code and at most 4 database requests, and possibly fewer if there are cac
         best_friend = graphene.Field(lambda: User)
         friends = graphene.List(lambda: User)
 
-        def resolve_best_friend(self, args, context, info):
+        def resolve_best_friend(self):
             return user_loader.load(self.best_friend_id)
 
-        def resolve_friends(self, args, context, info):
+        def resolve_friends(self):
             return user_loader.load_many(self.friend_ids)

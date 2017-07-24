@@ -87,7 +87,7 @@ class User(ObjectType):
     class Meta:
         interfaces = [relay.Node]
     name = String()
-  
+
 class Query(ObjectType):
     user_connection = relay.ConnectionField(User)
 ```

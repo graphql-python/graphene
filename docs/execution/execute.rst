@@ -24,7 +24,8 @@ You can pass context to a query via ``context_value``.
     class Query(graphene.ObjectType):
         name = graphene.String()
 
-        def resolve_name(self, args, context, info):
+        @graphene.annotate(context=graphene.Context)
+        def resolve_name(self, context):
             return context.get('name')
 
     schema = graphene.Schema(Query)

@@ -41,5 +41,5 @@ that implements ``Node`` will have a default Connection.
         name = graphene.String()
         ships = relay.ConnectionField(ShipConnection)
 
-        def resolve_ships(self, args, context, info):
+        def resolve_ships(self):
             return []
