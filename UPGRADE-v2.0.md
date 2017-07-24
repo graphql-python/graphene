@@ -1,92 +1,119 @@
 # v2.0 Upgrade Guide
 
-* `ObjectType`, `Interface`, `InputObjectType`, `Scalar` and `Enum` implementations
-  have been quite simplified, without the need of define a explicit Metaclass.
-  The metaclasses threfore are now deleted as are no longer necessary, if your code was depending
-  on this internal metaclass for creating custom attrs, please see an [example of how to do it now in 2.0](https://github.com/graphql-python/graphene/blob/2.0/graphene/tests/issues/test_425.py).
+`ObjectType`, `Interface`, `InputObjectType`, `Scalar` and `Enum` implementations
+have been quite simplified, without the need to define a explicit Metaclass for each subtype.
+
+It also improves the function resolvers, [simplifying the code](#resolve_only_args) the
+developer have to write to use them.
+
+Deprecations:
+* [`AbstractType`](#abstracttype-deprecated)
+* [`resolve_only_args`](#resolve_only_args)
+
+Breaking changes:
+* [`Node Connections`](#node-connections)
+
+New Features!
+* [`InputObjectType`](#inputobjecttype)
+* [`Meta as Class arguments`](#meta-ass-class-arguments) (_only available for Python 3_)
+
+
+> The type metaclases are now deleted as are no longer necessary, if your code was depending
+> on this strategy for creating custom attrs, see an [example on how to do it in 2.0](https://github.com/graphql-python/graphene/blob/2.0/graphene/tests/issues/test_425.py).
 
 ## Deprecations
 
+### AbstractType deprecated
 
-*  AbstractType is deprecated, please use normal inheritance instead.
+AbstractType is deprecated in graphene 2.0, you can now use normal inheritance instead.
 
-  Before:
+Before:
 
-  ```python
-  class CommonFields(AbstractType):
-      name = String()
-  
-  class Pet(CommonFields, Interface):
-      pass
-  ```
+```python
+class CommonFields(AbstractType):
+    name = String()
 
-  With 2.0:
+class Pet(CommonFields, Interface):
+    pass
+```
 
-  ```python
-  class CommonFields(object):
-      name = String()
-  
-  class Pet(CommonFields, Interface):
-      pass
-  ```
+With 2.0:
 
-* Meta options as class arguments (**ONLY PYTHON 3**).
-  
-  Before:
+```python
+class CommonFields(object):
+    name = String()
 
-  ```python
-  class Dog(ObjectType):
-      class Meta:
-          interfaces = [Pet]
-      name = String()
-  ```
+class Pet(CommonFields, Interface):
+    pass
+```
 
-  With 2.0:
+### resolve\_only\_args
 
-  ```python
-  class Dog(ObjectType, interfaces=[Pet]):
-      name = String()
-  ```
+`resolve_only_args` is now deprecated in favor of type annotations (using the polyfill `@graphene.annotate` in Python 2).
+
+Before:
+
+```python
+class User(ObjectType):
+    name = String()
+
+    @resolve_only_args
+    def resolve_name(self):
+        return self.name
+```
+
+With 2.0:
+
+```python
+class User(ObjectType):
+    name = String()
+
+    # Decorate the resolver with @annotate in Python 2
+    def resolve_name(self) -> str:
+        return self.name
+```
+
 
 ## Breaking Changes
 
-* Node types no longer have a `Connection` by default.
-  In 2.0 and onwoards `Connection`s should be defined explicitly.
+### Node Connections
+
+Node types no longer have a `Connection` by default.
+In 2.0 and onwards `Connection`s should be defined explicitly.
+
+Before:
+
+```python
+class User(ObjectType):
+    class Meta:
+        interfaces = [relay.Node]
+    name = String()
   
-  Before:
+class Query(ObjectType):
+    user_connection = relay.ConnectionField(User)
+```
 
-  ```python
-  class User(ObjectType):
-      class Meta:
-          interfaces = [relay.Node]
-      name = String()
-    
-  class Query(ObjectType):
-      user_connection = relay.ConnectionField(User)
-  ```
+With 2.0:
 
-  With 2.0:
+```python
+class User(ObjectType):
+    class Meta:
+        interfaces = [relay.Node]
+    name = String()
 
-  ```python
-  class User(ObjectType):
-      class Meta:
-          interfaces = [relay.Node]
-      name = String()
-  
-  class UserConnection(relay.Connection):
-      class Meta:
-          node = User
+class UserConnection(relay.Connection):
+    class Meta:
+        node = User
 
-  class Query(ObjectType):
-      user_connection = relay.ConnectionField(UserConnection)
-  ```
+class Query(ObjectType):
+    user_connection = relay.ConnectionField(UserConnection)
+```
 
 ## New Features
 
 ### InputObjectType
 
-`InputObjectType`s are now a first class citizen in Graphene.
-That means, if you are using a custom InputObjectType, you can access
+If you are using `InputObjectType`, you now can access
 it's fields via `getattr` (`my_input.myattr`) when resolving, instead of
 the classic way `my_input['myattr']`.
 
@@ -95,9 +122,6 @@ And also use custom defined properties on your input class.
 Example. Before:
 
 ```python
-class User(ObjectType):
-    name = String()
-
 class UserInput(InputObjectType):
     id = ID()
 
@@ -117,27 +141,40 @@ class Query(ObjectType):
 With 2.0:
 
 ```python
-class User(ObjectType):
-    id = ID()
-
 class UserInput(InputObjectType):
     id = ID()
 
     @property
     def is_user_id(self):
-        return id.startswith('userid_')
+        return self.id.startswith('userid_')
 
 class Query(ObjectType):
     user = graphene.Field(User, id=UserInput())
 
-    @annotate(input=UserInput)
-    def resolve_user(self, input):
+    # Decorate the resolver with @annotate(input=UserInput) in Python 2
+    def resolve_user(self, input: UserInput) -> User:
         if input.is_user_id:
             return get_user(input.id)
 
-    # You can also do in Python 3:
-    def resolve_user(self, input: UserInput):
-        if input.is_user_id:
-            return get_user(input.id)
+```
 
+
+### Meta as Class arguments
+
+Now you can use the meta options as class arguments (**ONLY PYTHON 3**).
+
+Before:
+
+```python
+class Dog(ObjectType):
+    class Meta:
+        interfaces = [Pet]
+    name = String()
+```
+
+With 2.0:
+
+```python
+class Dog(ObjectType, interfaces=[Pet]):
+    name = String()
 ```
