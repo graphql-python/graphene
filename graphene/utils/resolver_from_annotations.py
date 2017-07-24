@@ -4,7 +4,7 @@ from functools import wraps
 from ..types import Context, ResolveInfo
 
 
-def annotated_resolver(func):
+def resolver_from_annotations(func):
     func_signature = signature(func)
 
     _context_var = None

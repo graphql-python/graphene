@@ -31,5 +31,6 @@ def annotate(_func=None, _trigger_warning=True, **annotations):
         _func.__annotations__ = annotations
     else:
         _func.__annotations__.update(annotations)
-
+    
+    _func._is_annotated = True
     return _func
