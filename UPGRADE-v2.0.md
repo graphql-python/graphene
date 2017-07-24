@@ -49,7 +49,7 @@ class Pet(CommonFields, Interface):
 
 ### resolve\_only\_args
 
-`resolve_only_args` is now deprecated in favor of type annotations (using the polyfill `@graphene.annotate` in Python 2).
+`resolve_only_args` is now deprecated in favor of type annotations (using the polyfill `@graphene.annotate` in Python 2 in case is necessary for accessing `context` or `info`).
 
 Before:
 
@@ -68,8 +68,7 @@ With 2.0:
 class User(ObjectType):
     name = String()
 
-    # Decorate the resolver with @annotate in Python 2
-    def resolve_name(self) -> str:
+    def resolve_name(self):
         return self.name
 ```
 
@@ -129,7 +128,7 @@ def is_user_id(id):
     return id.startswith('userid_')
 
 class Query(ObjectType):
-    user = graphene.Field(User, id=UserInput())
+    user = graphene.Field(User, input=UserInput())
 
     @resolve_only_args
     def resolve_user(self, input):
@@ -149,10 +148,9 @@ class UserInput(InputObjectType):
         return self.id.startswith('userid_')
 
 class Query(ObjectType):
-    user = graphene.Field(User, id=UserInput())
+    user = graphene.Field(User, input=UserInput())
 
-    # Decorate the resolver with @annotate(input=UserInput) in Python 2
-    def resolve_user(self, input: UserInput) -> User:
+    def resolve_user(self, input):
         if input.is_user_id:
             return get_user(input.id)
 

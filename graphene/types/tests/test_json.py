@@ -7,8 +7,7 @@ from ..schema import Schema
 class Query(ObjectType):
     json = JSONString(input=JSONString())
 
-    def resolve_json(self, args, context, info):
-        input = args.get('input')
+    def resolve_json(self, input):
         return input
 
 schema = Schema(query=Query)

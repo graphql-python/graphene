@@ -7,7 +7,6 @@ from .mountedtype import MountedType
 from .structures import NonNull
 from .unmountedtype import UnmountedType
 from .utils import get_type
-from ..utils.auto_resolver import auto_resolver
 
 base_type = type
 
@@ -64,4 +63,4 @@ class Field(MountedType):
         return get_type(self._type)
 
     def get_resolver(self, parent_resolver):
-        return auto_resolver(self.resolver or parent_resolver)
+        return self.resolver or parent_resolver

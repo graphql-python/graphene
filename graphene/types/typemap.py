@@ -11,6 +11,7 @@ from graphql.type.typemap import GraphQLTypeMap
 
 from ..utils.get_unbound_function import get_unbound_function
 from ..utils.str_converters import to_camel_case
+from ..utils.auto_resolver import auto_resolver, final_resolver
 from .definitions import (GrapheneEnumType, GrapheneGraphQLType,
                           GrapheneInputObjectType, GrapheneInterfaceType,
                           GrapheneObjectType, GrapheneScalarType,
@@ -256,8 +257,14 @@ class TypeMap(GraphQLTypeMap):
                     field_type,
                     args=args,
                     resolver=field.get_resolver(
-                        self.get_resolver_for_type(type, name,
-                                                   field.default_value)),
+                        auto_resolver(
+                            self.get_resolver_for_type(
+                                type,
+                                name,
+                                field.default_value
+                            )
+                        )
+                    ),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description)
             field_name = field.name or self.get_name(name)
@@ -287,7 +294,7 @@ class TypeMap(GraphQLTypeMap):
 
         default_resolver = type._meta.default_resolver or get_default_resolver(
         )
-        return partial(default_resolver, name, default_value)
+        return final_resolver(partial(default_resolver, name, default_value))
 
     def get_field_type(self, map, type):
         if isinstance(type, List):

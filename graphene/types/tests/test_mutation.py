@@ -12,14 +12,14 @@ def test_generate_mutation_no_args():
     class MyMutation(Mutation):
         '''Documentation'''
 
-        @classmethod
-        def mutate(cls, *args, **kwargs):
-            pass
+        def mutate(self, **args):
+            return args
 
     assert issubclass(MyMutation, ObjectType)
     assert MyMutation._meta.name == "MyMutation"
     assert MyMutation._meta.description == "Documentation"
-    assert MyMutation.Field().resolver == MyMutation.mutate
+    resolved = MyMutation.Field().resolver(None, {'name': 'Peter'}, None, None)
+    assert resolved == {'name': 'Peter'}
 
 
 def test_generate_mutation_with_meta():
@@ -29,13 +29,13 @@ def test_generate_mutation_with_meta():
             name = 'MyOtherMutation'
             description = 'Documentation'
 
-        @classmethod
-        def mutate(cls, *args, **kwargs):
-            pass
+        def mutate(self, **args):
+            return args
 
     assert MyMutation._meta.name == "MyOtherMutation"
     assert MyMutation._meta.description == "Documentation"
-    assert MyMutation.Field().resolver == MyMutation.mutate
+    resolved = MyMutation.Field().resolver(None, {'name': 'Peter'}, None, None)
+    assert resolved == {'name': 'Peter'}
 
 
 def test_mutation_raises_exception_if_no_mutate():
@@ -59,15 +59,15 @@ def test_mutation_custom_output_type():
 
         Output = User
 
-        @classmethod
-        def mutate(cls, args, context, info):
-            name = args.get('name')
+        def mutate(self, name):
             return User(name=name)
 
     field = CreateUser.Field()
     assert field.type == User
     assert field.args == {'name': Argument(String)}
-    assert field.resolver == CreateUser.mutate
+    resolved = field.resolver(None, {'name': 'Peter'}, None, None)
+    assert isinstance(resolved, User)
+    assert resolved.name == 'Peter'
 
 
 def test_mutation_execution():
@@ -81,9 +81,7 @@ def test_mutation_execution():
         name = String()
         dynamic = Dynamic(lambda: String())
 
-        def mutate(self, args, context, info):
-            name = args.get('name')
-            dynamic = args.get('dynamic')
+        def mutate(self, name, dynamic):
             return CreateUser(name=name, dynamic=dynamic)
 
     class Query(ObjectType):

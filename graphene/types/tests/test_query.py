@@ -57,7 +57,7 @@ def test_query_union():
     class Query(ObjectType):
         unions = List(MyUnion)
 
-        def resolve_unions(self, args, context, info):
+        def resolve_unions(self):
             return [one_object(), two_object()]
 
     hello_schema = Schema(Query)
@@ -108,7 +108,7 @@ def test_query_interface():
     class Query(ObjectType):
         interfaces = List(MyInterface)
 
-        def resolve_interfaces(self, args, context, info):
+        def resolve_interfaces(self):
             return [one_object(), two_object()]
 
     hello_schema = Schema(Query, types=[One, Two])
@@ -188,7 +188,7 @@ def test_query_resolve_function():
     class Query(ObjectType):
         hello = String()
 
-        def resolve_hello(self, args, context, info):
+        def resolve_hello(self):
             return 'World'
 
     hello_schema = Schema(Query)
@@ -202,7 +202,7 @@ def test_query_arguments():
     class Query(ObjectType):
         test = String(a_str=String(), a_int=Int())
 
-        def resolve_test(self, args, context, info):
+        def resolve_test(self, **args):
             return json.dumps([self, args], separators=(',', ':'))
 
     test_schema = Schema(Query)
@@ -231,7 +231,7 @@ def test_query_input_field():
     class Query(ObjectType):
         test = String(a_input=Input())
 
-        def resolve_test(self, args, context, info):
+        def resolve_test(self, **args):
             return json.dumps([self, args], separators=(',', ':'))
 
     test_schema = Schema(Query)
@@ -254,10 +254,10 @@ def test_query_middlewares():
         hello = String()
         other = String()
 
-        def resolve_hello(self, args, context, info):
+        def resolve_hello(self):
             return 'World'
 
-        def resolve_other(self, args, context, info):
+        def resolve_other(self):
             return 'other'
 
     def reversed_middleware(next, *args, **kwargs):
@@ -280,14 +280,14 @@ def test_objecttype_on_instances():
     class ShipType(ObjectType):
         name = String(description="Ship name", required=True)
 
-        def resolve_name(self, context, args, info):
+        def resolve_name(self):
             # Here self will be the Ship instance returned in resolve_ship
             return self.name
 
     class Query(ObjectType):
         ship = Field(ShipType)
 
-        def resolve_ship(self, context, args, info):
+        def resolve_ship(self):
             return Ship(name='xwing')
 
     schema = Schema(query=Query)
@@ -302,7 +302,7 @@ def test_big_list_query_benchmark(benchmark):
     class Query(ObjectType):
         all_ints = List(Int)
 
-        def resolve_all_ints(self, args, context, info):
+        def resolve_all_ints(self):
             return big_list
 
     hello_schema = Schema(Query)
@@ -319,7 +319,7 @@ def test_big_list_query_compiled_query_benchmark(benchmark):
     class Query(ObjectType):
         all_ints = List(Int)
 
-        def resolve_all_ints(self, args, context, info):
+        def resolve_all_ints(self):
             return big_list
 
     hello_schema = Schema(Query)
@@ -341,7 +341,7 @@ def test_big_list_of_containers_query_benchmark(benchmark):
     class Query(ObjectType):
         all_containers = List(Container)
 
-        def resolve_all_containers(self, args, context, info):
+        def resolve_all_containers(self):
             return big_container_list
 
     hello_schema = Schema(Query)
@@ -364,7 +364,7 @@ def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
     class Query(ObjectType):
         all_containers = List(Container)
 
-        def resolve_all_containers(self, args, context, info):
+        def resolve_all_containers(self):
             return big_container_list
 
     hello_schema = Schema(Query)
@@ -382,16 +382,16 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
         z = Int()
         o = Int()
 
-        def resolve_x(self, args, context, info):
+        def resolve_x(self):
             return self.x
 
-        def resolve_y(self, args, context, info):
+        def resolve_y(self):
             return self.y
 
-        def resolve_z(self, args, context, info):
+        def resolve_z(self):
             return self.z
 
-        def resolve_o(self, args, context, info):
+        def resolve_o(self):
             return self.o
 
     big_container_list = [Container(x=x, y=x, z=x, o=x) for x in range(1000)]
@@ -399,7 +399,7 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
     class Query(ObjectType):
         all_containers = List(Container)
 
-        def resolve_all_containers(self, args, context, info):
+        def resolve_all_containers(self):
             return big_container_list
 
     hello_schema = Schema(Query)
@@ -420,7 +420,6 @@ def test_query_annotated_resolvers():
         context = String()
         info = String()
 
-        @annotate(_trigger_warning=False)
         def resolve_annotated(self, id):
             return "{}-{}".format(self, id)
 

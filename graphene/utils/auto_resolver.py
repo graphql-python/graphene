@@ -1,12 +1,21 @@
-from .resolver_from_annotations import resolver_from_annotations, is_wrapped_from_annotations
+from .resolver_from_annotations import resolver_from_annotations
+
+
+def final_resolver(func):
+    func._is_final_resolver = True
+    return func
 
 
 def auto_resolver(func=None):
-    annotations = getattr(func, '__annotations__', {})
-    is_annotated = getattr(func, '_is_annotated', False)
+    if not func:
+        return
 
-    if (annotations or is_annotated) and not is_wrapped_from_annotations(func):
+    if not is_final_resolver(func):
         # Is a Graphene 2.0 resolver function
-        return resolver_from_annotations(func)
+        return final_resolver(resolver_from_annotations(func))
     else:
         return func
+
+
+def is_final_resolver(func):
+    return getattr(func, '_is_final_resolver', False)

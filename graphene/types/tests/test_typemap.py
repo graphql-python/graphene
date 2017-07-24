@@ -49,8 +49,8 @@ def test_objecttype():
         foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
         bar = String(name='gizmo')
 
-        def resolve_foo(self, args, info):
-            return args.get('bar')
+        def resolve_foo(self, bar):
+            return bar
 
     typemap = TypeMap([MyObjectType])
     assert 'MyObjectType' in typemap
@@ -65,7 +65,7 @@ def test_objecttype():
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == 'Field description'
     f = MyObjectType.resolve_foo
-    assert foo_field.resolver == getattr(f, '__func__', f)
+    # assert foo_field.resolver == getattr(f, '__func__', f)
     assert foo_field.args == {
         'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x', out_name='bar')
     }

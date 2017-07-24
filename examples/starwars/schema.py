@@ -1,5 +1,4 @@
 import graphene
-from graphene import annotate
 
 from .data import get_character, get_droid, get_hero, get_human
 
@@ -16,7 +15,7 @@ class Character(graphene.Interface):
     friends = graphene.List(lambda: Character)
     appears_in = graphene.List(Episode)
 
-    def resolve_friends(self, args, *_):
+    def resolve_friends(self):
         # The character friends is a list of strings
         return [get_character(f) for f in self.friends]
 
@@ -46,15 +45,12 @@ class Query(graphene.ObjectType):
                            id=graphene.String()
                            )
 
-    @annotate(episode=Episode)
     def resolve_hero(self, episode=None):
         return get_hero(episode)
 
-    @annotate(id=str)
     def resolve_human(self, id):
         return get_human(id)
 
-    @annotate(id=str)
     def resolve_droid(self, id):
         return get_droid(id)
 

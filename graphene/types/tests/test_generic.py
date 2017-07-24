@@ -6,8 +6,7 @@ from ..schema import Schema
 class Query(ObjectType):
     generic = GenericScalar(input=GenericScalar())
 
-    def resolve_generic(self, args, context, info):
-        input = args.get('input')
+    def resolve_generic(self, input=None):
         return input
 
 

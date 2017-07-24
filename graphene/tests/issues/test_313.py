@@ -29,7 +29,6 @@ class CreatePost(graphene.Mutation):
 
     result = graphene.Field(CreatePostResult)
 
-    @resolve_only_args
     def mutate(self, text):
         result = Success(yeah='yeah')
 

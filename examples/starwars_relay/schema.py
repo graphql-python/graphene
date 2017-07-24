@@ -32,7 +32,6 @@ class Faction(graphene.ObjectType):
     name = graphene.String(description='The name of the faction.')
     ships = relay.ConnectionField(ShipConnection, description='The ships used by the faction.')
 
-    @annotate
     def resolve_ships(self, **args):
         # Transform the instance ship_ids into real instances
         return [get_ship(ship_id) for ship_id in self.ships]
@@ -65,11 +64,9 @@ class Query(graphene.ObjectType):
     empire = graphene.Field(Faction)
     node = relay.Node.Field()
 
-    @annotate
     def resolve_rebels(self):
         return get_rebels()
 
-    @annotate
     def resolve_empire(self):
         return get_empire()
 

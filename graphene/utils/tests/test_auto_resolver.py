@@ -1,15 +1,15 @@
 import pytest
 from ..annotate import annotate
-from ..auto_resolver import auto_resolver
+from ..auto_resolver import auto_resolver, final_resolver
 
 from ...types import Context, ResolveInfo
 
 
+@final_resolver
 def resolver(root, args, context, info):
     return root, args, context, info
 
 
-@annotate
 def resolver_annotated(root, **args):
     return root, args, None, None
 

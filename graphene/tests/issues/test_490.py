@@ -6,8 +6,8 @@ import graphene
 class Query(graphene.ObjectType):
     some_field = graphene.String(from_=graphene.String(name="from"))
 
-    def resolve_some_field(_, args, context, infos):
-        return args.get("from_")
+    def resolve_some_field(self, from_=None):
+        return from_
 
 
 def test_issue():

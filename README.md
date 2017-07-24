@@ -32,7 +32,7 @@ Also, Graphene is fully compatible with the GraphQL spec, working seamlessly wit
 For instaling graphene, just run this command in your shell
 
 ```bash
-pip install "graphene>=2.0"
+pip install "graphene>=2.0.dev"
 ```
 
 ## 2.0 Upgrade Guide
@@ -48,7 +48,7 @@ Here is one example for you to get started:
 class Query(graphene.ObjectType):
     hello = graphene.String(description='A typical hello world')
 
-    def resolve_hello(self, args, context, info):
+    def resolve_hello(self):
         return 'World'
 
 schema = graphene.Schema(query=Query)

@@ -31,13 +31,13 @@ class Query(ObjectType):
 
     node = Node.Field()
 
-    def resolve_letters(self, args, context, info):
+    def resolve_letters(self, **args):
         return list(letters.values())
 
-    def resolve_promise_letters(self, args, context, info):
+    def resolve_promise_letters(self, **args):
         return Promise.resolve(list(letters.values()))
 
-    def resolve_connection_letters(self, args, context, info):
+    def resolve_connection_letters(self, **args):
         return LetterConnection(
             page_info=PageInfo(
                 has_next_page=True,

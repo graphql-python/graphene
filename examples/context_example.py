@@ -9,7 +9,8 @@ class User(graphene.ObjectType):
 class Query(graphene.ObjectType):
     me = graphene.Field(User)
 
-    def resolve_me(self, args, context, info):
+    @graphene.annotate(context=graphene.Context)
+    def resolve_me(self, context):
         return context['user']
 
 
