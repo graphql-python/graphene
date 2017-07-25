@@ -176,3 +176,7 @@ With 2.0:
 class Dog(ObjectType, interfaces=[Pet]):
     name = String()
 ```
+
+### UUID Scalar
+
+In Graphene 2.0 there is a new dedicated scalar for UUIDs, `UUID`.
