@@ -5,6 +5,8 @@ from .objecttype import ObjectType
 from .interface import Interface
 from .mutation import Mutation
 from .scalars import Scalar, String, ID, Int, Float, Boolean
+from .json import JSONString
+from .uuid import UUID
 from .schema import Schema
 from .structures import List, NonNull
 from .enum import Enum
@@ -34,6 +36,8 @@ __all__ = [
     'ID',
     'Int',
     'Float',
+    'JSONString',
+    'UUID',
     'Boolean',
     'List',
     'NonNull',
