@@ -14,7 +14,8 @@ class ClientIDMutation(Mutation):
         abstract = True
 
     @classmethod
-    def __init_subclass_with_meta__(cls, output=None, input_fields=None, arguments=None, name=None, abstract=False, **options):
+    def __init_subclass_with_meta__(cls, output=None, input_fields=None,
+                                    arguments=None, name=None, abstract=False, **options):
         if abstract:
             return
 
@@ -28,7 +29,7 @@ class ClientIDMutation(Mutation):
         bases = (InputObjectType, )
         if input_class:
             bases += (input_class, )
-        
+
         if not input_fields:
             input_fields = {}
 
