@@ -14,7 +14,10 @@ class ClientIDMutation(Mutation):
         abstract = True
 
     @classmethod
-    def __init_subclass_with_meta__(cls, output=None, arguments=None, name=None, **options):
+    def __init_subclass_with_meta__(cls, output=None, input_fields=None, arguments=None, name=None, abstract=False, **options):
+        if abstract:
+            return
+
         input_class = getattr(cls, 'Input', None)
         name = name or cls.__name__
         base_name = re.sub('Payload$', '', name)
@@ -25,11 +28,15 @@ class ClientIDMutation(Mutation):
         bases = (InputObjectType, )
         if input_class:
             bases += (input_class, )
+        
+        if not input_fields:
+            input_fields = {}
 
-        cls.Input = type('{}Input'.format(base_name),
-                         bases, {
-                             'client_mutation_id': String(name='clientMutationId')
-        })
+        cls.Input = type(
+            '{}Input'.format(base_name),
+            bases,
+            OrderedDict(input_fields, client_mutation_id=String(name='clientMutationId'))
+        )
 
         arguments = OrderedDict(
             input=cls.Input(required=True)
