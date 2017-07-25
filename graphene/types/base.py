@@ -27,6 +27,10 @@ class BaseOptions(object):
 class BaseType(SubclassWithMeta):
 
     @classmethod
+    def create_type(cls, class_name, **options):
+        return type(class_name, (cls, ), {'Meta': options})
+
+    @classmethod
     def __init_subclass_with_meta__(cls, name=None, description=None, _meta=None):
         assert "_meta" not in cls.__dict__, "Can't assign directly meta"
         if not _meta:
