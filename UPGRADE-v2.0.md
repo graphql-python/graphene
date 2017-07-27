@@ -3,7 +3,7 @@
 `ObjectType`, `Interface`, `InputObjectType`, `Scalar` and `Enum` implementations
 have been quite simplified, without the need to define a explicit Metaclass for each subtype.
 
-It also improves the function resolvers, [simplifying the code](#resolve_only_args) the
+It also improves the field resolvers, [simplifying the code](#resolve_only_args) the
 developer have to write to use them.
 
 Deprecations:
