@@ -31,3 +31,30 @@ You can pass context to a query via ``context_value``.
     schema = graphene.Schema(Query)
     result = schema.execute('{ name }', context_value={'name': 'Syrus'})
 
+
+
+Variables
+_______
+
+You can pass variables to a query via ``variable_values``.
+
+
+.. code:: python
+
+    class Query(graphene.ObjectType):
+        user = graphene.Field(User)
+
+        def resolve_user(self, args, context, info):
+            return context.get('user')
+
+    schema = graphene.Schema(Query)
+    result = schema.execute(
+        '''query getUser($id: ID) {
+            user(id: $id) {
+                id
+                firstName
+                lastName
+            }
+        }''',
+        variable_values={'id': 12},
+    )
