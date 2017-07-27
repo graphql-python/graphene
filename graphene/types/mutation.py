@@ -6,6 +6,7 @@ from .field import Field
 from .objecttype import ObjectType, ObjectTypeOptions
 from .utils import yank_fields_from_attrs
 from ..utils.auto_resolver import auto_resolver
+from ..utils.deprecated import warn_deprecation
 
 
 class MutationOptions(ObjectTypeOptions):
@@ -40,7 +41,11 @@ class Mutation(ObjectType):
             if not input_class:
                 input_class = getattr(cls, 'Input', None)
                 if input_class:
-                    print("WARNING: Please use Arguments for Mutation (Input is for ClientMutationID)")
+                    warn_deprecation((
+                        "Please use {name}.Arguments instead of {name}.Input."
+                        "Input is now only used in ClientMutationID.\n"
+                        "Read more: https://github.com/graphql-python/graphene/blob/2.0/UPGRADE-v2.0.md#mutation-input"
+                    ).format(name=cls.__name__))
 
             if input_class:
                 arguments = props(input_class)

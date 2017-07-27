@@ -9,6 +9,7 @@ developer have to write to use them.
 Deprecations:
 * [`AbstractType`](#abstracttype-deprecated)
 * [`resolve_only_args`](#resolve_only_args)
+* [`Mutation.Input`](#mutation-input)
 
 Breaking changes:
 * [`Node Connections`](#node-connections)
@@ -70,6 +71,26 @@ class User(ObjectType):
 
     def resolve_name(self):
         return self.name
+```
+
+### Mutation.Input
+
+`Mutation.Input` is now deprecated in favor using `Mutation.Arguments` (`ClientIDMutation` still uses `Input`).
+
+Before:
+
+```python
+class User(Mutation):
+    class Input:
+        name = String()
+```
+
+With 2.0:
+
+```python
+class User(Mutation):
+    class Arguments:
+        name = String()
 ```
 
 
@@ -175,6 +196,25 @@ With 2.0:
 ```python
 class Dog(ObjectType, interfaces=[Pet]):
     name = String()
+```
+
+
+### Abstract types
+
+Now you can create abstact types super easily, without the need of subclassing the meta.
+
+```python
+class Base(ObjectType):
+    class Meta:
+        abstract = True
+    
+    id = ID()
+
+    def resolve_id(self):
+        return "{type}_{id}".format(
+            type=self.__class__.__name__,
+            id=self.id
+        )
 ```
 
 ### UUID Scalar
