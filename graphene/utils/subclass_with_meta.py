@@ -27,9 +27,17 @@ class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
                 raise Exception("Meta have to be either a class or a dict. Received {}".format(_Meta))
             delattr(cls, "Meta")
         options = dict(meta_options, **_meta_props)
-        super_class = super(cls, cls)
-        if hasattr(super_class, '__init_subclass_with_meta__'):
-            super_class.__init_subclass_with_meta__(**options)
+
+        abstract = options.pop('abstract', False)
+        if abstract:
+            assert not options, (
+                "Abstract types can only contain the abstract attribute. "
+                "Received: abstract, {option_keys}"
+            ).format(option_keys=', '.join(options.keys()))
+        else:
+            super_class = super(cls, cls)
+            if hasattr(super_class, '__init_subclass_with_meta__'):
+                super_class.__init_subclass_with_meta__(**options)
 
     @classmethod
     def __init_subclass_with_meta__(cls, **meta_options):

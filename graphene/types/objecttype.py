@@ -22,9 +22,7 @@ class ObjectType(BaseType):
     def __init_subclass_with_meta__(
             cls, interfaces=(),
             possible_types=(),
-            default_resolver=None, _meta=None, abstract=False, **options):
-        if abstract:
-            return
+            default_resolver=None, _meta=None, **options):
         if not _meta:
             _meta = ObjectTypeOptions(cls)
 

@@ -20,9 +20,7 @@ class Mutation(ObjectType):
     '''
     @classmethod
     def __init_subclass_with_meta__(cls, resolver=None, output=None, arguments=None,
-                                    _meta=None, abstract=False, **options):
-        if abstract:
-            return
+                                    _meta=None, **options):
         if not _meta:
             _meta = MutationOptions(cls)
 
