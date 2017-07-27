@@ -48,8 +48,6 @@ if not __SETUP__:
     )
     from .utils.resolve_only_args import resolve_only_args
     from .utils.module_loading import lazy_import
-    from .utils.annotate import annotate
-    from .utils.auto_resolver import final_resolver, is_final_resolver
 
     __all__ = [
         'ObjectType',
@@ -82,11 +80,8 @@ if not __SETUP__:
         'ConnectionField',
         'PageInfo',
         'lazy_import',
-        'annotate',
         'Context',
         'ResolveInfo',
-        'final_resolver',
-        'is_final_resolver',
 
         # Deprecated
         'AbstractType',

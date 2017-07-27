@@ -204,5 +204,5 @@ def test_objecttype_with_possible_types():
     typemap = TypeMap([MyObjectType])
     graphql_type = typemap['MyObjectType']
     assert graphql_type.is_type_of
-    assert graphql_type.is_type_of({}, None, None) is True
-    assert graphql_type.is_type_of(MyObjectType(), None, None) is False
+    assert graphql_type.is_type_of({}, None) is True
+    assert graphql_type.is_type_of(MyObjectType(), None) is False

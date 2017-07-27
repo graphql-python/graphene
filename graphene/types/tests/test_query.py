@@ -14,7 +14,6 @@ from ..schema import Schema
 from ..structures import List
 from ..union import Union
 from ..context import Context
-from ...utils.annotate import annotate
 
 
 def test_query():
@@ -39,14 +38,14 @@ def test_query_union():
         one = String()
 
         @classmethod
-        def is_type_of(cls, root, context, info):
+        def is_type_of(cls, root, info):
             return isinstance(root, one_object)
 
     class Two(ObjectType):
         two = String()
 
         @classmethod
-        def is_type_of(cls, root, context, info):
+        def is_type_of(cls, root, info):
             return isinstance(root, two_object)
 
     class MyUnion(Union):
@@ -57,7 +56,7 @@ def test_query_union():
     class Query(ObjectType):
         unions = List(MyUnion)
 
-        def resolve_unions(self):
+        def resolve_unions(self, info):
             return [one_object(), two_object()]
 
     hello_schema = Schema(Query)
@@ -91,7 +90,7 @@ def test_query_interface():
         one = String()
 
         @classmethod
-        def is_type_of(cls, root, context, info):
+        def is_type_of(cls, root, info):
             return isinstance(root, one_object)
 
     class Two(ObjectType):
@@ -102,13 +101,13 @@ def test_query_interface():
         two = String()
 
         @classmethod
-        def is_type_of(cls, root, context, info):
+        def is_type_of(cls, root, info):
             return isinstance(root, two_object)
 
     class Query(ObjectType):
         interfaces = List(MyInterface)
 
-        def resolve_interfaces(self):
+        def resolve_interfaces(self, info):
             return [one_object(), two_object()]
 
     hello_schema = Schema(Query, types=[One, Two])
@@ -156,7 +155,7 @@ def test_query_wrong_default_value():
         field = String()
 
         @classmethod
-        def is_type_of(cls, root, context, info):
+        def is_type_of(cls, root, info):
             return isinstance(root, MyType)
 
     class Query(ObjectType):
@@ -188,7 +187,7 @@ def test_query_resolve_function():
     class Query(ObjectType):
         hello = String()
 
-        def resolve_hello(self):
+        def resolve_hello(self, info):
             return 'World'
 
     hello_schema = Schema(Query)
@@ -202,7 +201,7 @@ def test_query_arguments():
     class Query(ObjectType):
         test = String(a_str=String(), a_int=Int())
 
-        def resolve_test(self, **args):
+        def resolve_test(self, info, **args):
             return json.dumps([self, args], separators=(',', ':'))
 
     test_schema = Schema(Query)
@@ -231,7 +230,7 @@ def test_query_input_field():
     class Query(ObjectType):
         test = String(a_input=Input())
 
-        def resolve_test(self, **args):
+        def resolve_test(self, info, **args):
             return json.dumps([self, args], separators=(',', ':'))
 
     test_schema = Schema(Query)
@@ -254,10 +253,10 @@ def test_query_middlewares():
         hello = String()
         other = String()
 
-        def resolve_hello(self):
+        def resolve_hello(self, info):
             return 'World'
 
-        def resolve_other(self):
+        def resolve_other(self, info):
             return 'other'
 
     def reversed_middleware(next, *args, **kwargs):
@@ -280,14 +279,14 @@ def test_objecttype_on_instances():
     class ShipType(ObjectType):
         name = String(description="Ship name", required=True)
 
-        def resolve_name(self):
+        def resolve_name(self, info):
             # Here self will be the Ship instance returned in resolve_ship
             return self.name
 
     class Query(ObjectType):
         ship = Field(ShipType)
 
-        def resolve_ship(self):
+        def resolve_ship(self, info):
             return Ship(name='xwing')
 
     schema = Schema(query=Query)
@@ -302,7 +301,7 @@ def test_big_list_query_benchmark(benchmark):
     class Query(ObjectType):
         all_ints = List(Int)
 
-        def resolve_all_ints(self):
+        def resolve_all_ints(self, info):
             return big_list
 
     hello_schema = Schema(Query)
@@ -319,7 +318,7 @@ def test_big_list_query_compiled_query_benchmark(benchmark):
     class Query(ObjectType):
         all_ints = List(Int)
 
-        def resolve_all_ints(self):
+        def resolve_all_ints(self, info):
             return big_list
 
     hello_schema = Schema(Query)
@@ -420,15 +419,13 @@ def test_query_annotated_resolvers():
         context = String()
         info = String()
 
-        def resolve_annotated(self, id):
+        def resolve_annotated(self, info, id):
             return "{}-{}".format(self, id)
 
-        @annotate(context=Context, _trigger_warning=False)
-        def resolve_context(self, context):
-            assert isinstance(context, Context)
-            return "{}-{}".format(self, context.key)
+        def resolve_context(self, info):
+            assert isinstance(info.context, Context)
+            return "{}-{}".format(self, info.context.key)
 
-        @annotate(info=ResolveInfo, _trigger_warning=False)
         def resolve_info(self, info):
             assert isinstance(info, ResolveInfo)
             return "{}-{}".format(self, info.field_name)

@@ -15,7 +15,7 @@ class Character(graphene.Interface):
     friends = graphene.List(lambda: Character)
     appears_in = graphene.List(Episode)
 
-    def resolve_friends(self):
+    def resolve_friends(self, info):
         # The character friends is a list of strings
         return [get_character(f) for f in self.friends]
 
@@ -45,13 +45,13 @@ class Query(graphene.ObjectType):
                            id=graphene.String()
                            )
 
-    def resolve_hero(self, episode=None):
+    def resolve_hero(self, info, episode=None):
         return get_hero(episode)
 
-    def resolve_human(self, id):
+    def resolve_human(self, info, id):
         return get_human(id)
 
-    def resolve_droid(self, id):
+    def resolve_droid(self, info, id):
         return get_droid(id)
 
 

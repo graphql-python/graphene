@@ -6,7 +6,7 @@ from ..schema import Schema
 class Query(ObjectType):
     uuid = UUID(input=UUID())
 
-    def resolve_uuid(self, input):
+    def resolve_uuid(self, info, input):
         return input
 
 schema = Schema(query=Query)

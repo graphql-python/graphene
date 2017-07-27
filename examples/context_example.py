@@ -9,9 +9,8 @@ class User(graphene.ObjectType):
 class Query(graphene.ObjectType):
     me = graphene.Field(User)
 
-    @graphene.annotate(context=graphene.Context)
-    def resolve_me(self, context):
-        return context['user']
+    def resolve_me(self, info):
+        return info.context['user']
 
 
 schema = graphene.Schema(query=Query)

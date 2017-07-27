@@ -6,7 +6,7 @@ import graphene
 class Query(graphene.ObjectType):
     some_field = graphene.String(from_=graphene.String(name="from"))
 
-    def resolve_some_field(self, from_=None):
+    def resolve_some_field(self, info, from_=None):
         return from_
 
 

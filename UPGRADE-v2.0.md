@@ -174,6 +174,17 @@ class Query(ObjectType):
     user_connection = relay.ConnectionField(UserConnection)
 ```
 
+
+## Mutation.mutate
+
+Now only receive (`root`, `info`, `**args`)
+
+
+## ClientIDMutation.mutate_and_get_payload
+
+Now only receive (`root`, `info`, `**input`)
+
+
 ## New Features
 
 ### InputObjectType

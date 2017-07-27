@@ -37,14 +37,10 @@ class Interface(BaseType):
         super(Interface, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
-    def resolve_type(cls, instance, context, info):
+    def resolve_type(cls, instance, info):
         from .objecttype import ObjectType
         if isinstance(instance, ObjectType):
             return type(instance)
 
     def __init__(self, *args, **kwargs):
         raise Exception("An Interface cannot be intitialized")
-
-    @classmethod
-    def implements(cls, objecttype):
-        pass
