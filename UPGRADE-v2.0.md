@@ -145,8 +145,8 @@ Example. Before:
 class UserInput(InputObjectType):
     id = ID()
 
-def is_user_id(id):
-    return id.startswith('userid_')
+    def is_user_id(id):
+        return id.startswith('userid_')
 
 class Query(ObjectType):
     user = graphene.Field(User, input=UserInput())
