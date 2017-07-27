@@ -5,7 +5,6 @@ from ..utils.props import props
 from .field import Field
 from .objecttype import ObjectType, ObjectTypeOptions
 from .utils import yank_fields_from_attrs
-from ..utils.auto_resolver import auto_resolver
 from ..utils.deprecated import warn_deprecation
 
 
@@ -63,7 +62,7 @@ class Mutation(ObjectType):
             _meta.fields = fields
 
         _meta.output = output
-        _meta.resolver = auto_resolver(resolver)
+        _meta.resolver = resolver
         _meta.arguments = arguments
 
         super(Mutation, cls).__init_subclass_with_meta__(_meta=_meta, **options)

@@ -3,9 +3,11 @@ from functools import partial
 
 from graphql_relay import from_global_id, to_global_id
 
-from ..types import ID, Field, Interface, ObjectType
+from ..types import ID, Field, Interface, ObjectType, Context, ResolveInfo
 from ..types.interface import InterfaceOptions
 from ..types.utils import get_type
+from ..utils.annotate import annotate
+from ..utils.auto_resolver import final_resolver
 
 
 def is_node(objecttype):
@@ -35,7 +37,9 @@ class GlobalID(Field):
         return node.to_global_id(parent_type_name, type_id)  # root._meta.name
 
     def get_resolver(self, parent_resolver):
-        return partial(self.id_resolver, parent_resolver, self.node, parent_type_name=self.parent_type_name)
+        return final_resolver(partial(
+            self.id_resolver, parent_resolver, self.node, parent_type_name=self.parent_type_name
+        ))
 
 
 class NodeField(Field):
@@ -79,8 +83,9 @@ class Node(AbstractNode):
         return NodeField(cls, *args, **kwargs)
 
     @classmethod
-    def node_resolver(cls, root, args, context, info, only_type=None):
-        return cls.get_node_from_global_id(args.get('id'), context, info, only_type)
+    @annotate(context=Context, info=ResolveInfo, _trigger_warning=False)
+    def node_resolver(cls, root, id, context, info, only_type=None):
+        return cls.get_node_from_global_id(id, context, info, only_type)
 
     @classmethod
     def get_node_from_global_id(cls, global_id, context, info, only_type=None):

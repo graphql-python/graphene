@@ -256,15 +256,13 @@ class TypeMap(GraphQLTypeMap):
                 _field = GraphQLField(
                     field_type,
                     args=args,
-                    resolver=field.get_resolver(
-                        auto_resolver(
-                            self.get_resolver_for_type(
-                                type,
-                                name,
-                                field.default_value
-                            )
-                        )
-                    ),
+                    resolver=auto_resolver(field.get_resolver(
+                        auto_resolver(self.get_resolver_for_type(
+                            type,
+                            name,
+                            field.default_value
+                        ))
+                    )),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description)
             field_name = field.name or self.get_name(name)

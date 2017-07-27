@@ -58,7 +58,7 @@ class ClientIDMutation(Mutation):
         )
 
     @classmethod
-    @annotate(context=Context, info=ResolveInfo)
+    @annotate(context=Context, info=ResolveInfo, _trigger_warning=False)
     def mutate(cls, root, input, context, info):
         def on_resolve(payload):
             try:

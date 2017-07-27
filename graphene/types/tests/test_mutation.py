@@ -18,7 +18,7 @@ def test_generate_mutation_no_args():
     assert issubclass(MyMutation, ObjectType)
     assert MyMutation._meta.name == "MyMutation"
     assert MyMutation._meta.description == "Documentation"
-    resolved = MyMutation.Field().resolver(None, {'name': 'Peter'}, None, None)
+    resolved = MyMutation.Field().resolver(None, name='Peter')
     assert resolved == {'name': 'Peter'}
 
 
@@ -34,7 +34,7 @@ def test_generate_mutation_with_meta():
 
     assert MyMutation._meta.name == "MyOtherMutation"
     assert MyMutation._meta.description == "Documentation"
-    resolved = MyMutation.Field().resolver(None, {'name': 'Peter'}, None, None)
+    resolved = MyMutation.Field().resolver(None, name='Peter')
     assert resolved == {'name': 'Peter'}
 
 
@@ -65,7 +65,7 @@ def test_mutation_custom_output_type():
     field = CreateUser.Field()
     assert field.type == User
     assert field.args == {'name': Argument(String)}
-    resolved = field.resolver(None, {'name': 'Peter'}, None, None)
+    resolved = field.resolver(None, name='Peter')
     assert isinstance(resolved, User)
     assert resolved.name == 'Peter'
 

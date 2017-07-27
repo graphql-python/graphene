@@ -14,7 +14,7 @@ def resolver_annotated(root, **args):
     return root, args, None, None
 
 
-@annotate(context=Context, info=ResolveInfo)
+@annotate(context=Context, info=ResolveInfo, _trigger_warning=False)
 def resolver_with_context_and_info(root, context, info, **args):
     return root, args, context, info
 
