@@ -45,7 +45,7 @@ With 2.0:
 ```python
 my_field = graphene.String(my_arg=graphene.String())
 
-def resolve_my_field(self, arg1, arg2):
+def resolve_my_field(self, my_arg):
     return ...
 ```
 
