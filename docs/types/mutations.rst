@@ -13,7 +13,7 @@ This example defines a Mutation:
     import graphene
 
     class CreatePerson(graphene.Mutation):
-        class Input:
+        class Arguments:
             name = graphene.String()
 
         ok = graphene.Boolean()
@@ -98,7 +98,7 @@ To use an InputField you define an InputObjectType that specifies the structure 
         age = graphene.Int(required=True)
 
     class CreatePerson(graphene.Mutation):
-        class Input:
+        class Arguments:
             person_data = PersonInput(required=True)
 
         person = graphene.Field(Person)
