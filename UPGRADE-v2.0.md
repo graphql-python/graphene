@@ -6,15 +6,16 @@ have been quite simplified, without the need to define a explicit Metaclass for 
 It also improves the field resolvers, [simplifying the code](#simpler-resolvers) the
 developer have to write to use them.
 
-Deprecations:
+**Deprecations:**
 * [`AbstractType`](#abstracttype-deprecated)
 * [`resolve_only_args`](#resolve_only_args)
 * [`Mutation.Input`](#mutationinput)
 
-Breaking changes:
+**Breaking changes:**
+* [`Simpler Resolvers`](#simpler-resolvers)
 * [`Node Connections`](#node-connections)
 
-New Features!
+**New Features!**
 * [`InputObjectType`](#inputobjecttype)
 * [`Meta as Class arguments`](#meta-ass-class-arguments) (_only available for Python 3_)
 
@@ -23,51 +24,6 @@ New Features!
 > on this strategy for creating custom attrs, see an [example on how to do it in 2.0](https://github.com/graphql-python/graphene/blob/2.0/graphene/tests/issues/test_425.py).
 
 ## Deprecations
-
-### Simpler resolvers
-
-All the resolvers in graphene have been simplified. If before resolvers must had received
-four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments
-and `context` and `info` will only be passed if the function is annotated with it.
-
-Before:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-def resolve_my_field(self, args, context, info):
-    my_arg = args.get('my_arg')
-    return ...
-```
-
-With 2.0:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-def resolve_my_field(self, my_arg):
-    return ...
-```
-
-And, if the resolver want to receive the context:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-def resolve_my_field(self, context: graphene.Context, my_arg):
-    return ...
-```
-
-which is equivalent in Python 2 to:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-@annotate(context=graphene.Context)
-def resolve_my_field(self, context, my_arg):
-    return ...
-```
-
 
 ### AbstractType deprecated
 
@@ -140,6 +96,50 @@ class User(Mutation):
 
 
 ## Breaking Changes
+
+### Simpler resolvers
+
+All the resolvers in graphene have been simplified. If before resolvers must had received
+four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments
+and `context` and `info` will only be passed if the function is annotated with it.
+
+Before:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, args, context, info):
+    my_arg = args.get('my_arg')
+    return ...
+```
+
+With 2.0:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, my_arg):
+    return ...
+```
+
+And, if the resolver want to receive the context:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, context: graphene.Context, my_arg):
+    return ...
+```
+
+which is equivalent in Python 2 to:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+@annotate(context=graphene.Context)
+def resolve_my_field(self, context, my_arg):
+    return ...
+```
 
 ### Node Connections
 
