@@ -3,7 +3,7 @@
 `ObjectType`, `Interface`, `InputObjectType`, `Scalar` and `Enum` implementations
 have been quite simplified, without the need to define a explicit Metaclass for each subtype.
 
-It also improves the field resolvers, [simplifying the code](#resolve_only_args) the
+It also improves the field resolvers, [simplifying the code](#simpler-resolvers) the
 developer have to write to use them.
 
 Deprecations:
@@ -23,6 +23,51 @@ New Features!
 > on this strategy for creating custom attrs, see an [example on how to do it in 2.0](https://github.com/graphql-python/graphene/blob/2.0/graphene/tests/issues/test_425.py).
 
 ## Deprecations
+
+### Simpler resolvers
+
+All the resolvers in graphene have been simplified. If before resolvers must had received
+four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments
+and `context` and `info` will only be passed if the function is annotated with it.
+
+Before:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, args, context, info):
+    my_arg = args.get('my_arg')
+    return ...
+```
+
+With 2.0:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, arg1, arg2):
+    return ...
+```
+
+And, if the resolver want to receive the context:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, context: graphene.Context, my_arg):
+    return ...
+```
+
+which is equivalent in Python 2 to:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+@annotate(context=graphene.Context)
+def resolve_my_field(self, context, my_arg):
+    return ...
+```
+
 
 ### AbstractType deprecated
 
