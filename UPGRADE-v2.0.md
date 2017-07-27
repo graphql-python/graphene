@@ -143,10 +143,10 @@ Example. Before:
 
 ```python
 class UserInput(InputObjectType):
-    id = ID()
+    id = ID(required=True)
 
-def is_user_id(id):
-    return id.startswith('userid_')
+def is_valid_input(input):
+    return input.get('id').startswith('userid_')
 
 class Query(ObjectType):
     user = graphene.Field(User, input=UserInput())
@@ -154,7 +154,7 @@ class Query(ObjectType):
     @resolve_only_args
     def resolve_user(self, input):
         user_id = input.get('id')
-        if is_user_id(user_id):
+        if is_valid_input(user_id):
             return get_user(user_id)
 ```
 
@@ -162,17 +162,17 @@ With 2.0:
 
 ```python
 class UserInput(InputObjectType):
-    id = ID()
+    id = ID(required=True)
 
     @property
-    def is_user_id(self):
+    def is_valid(self):
         return self.id.startswith('userid_')
 
 class Query(ObjectType):
     user = graphene.Field(User, input=UserInput())
 
     def resolve_user(self, input):
-        if input.is_user_id:
+        if input.is_valid:
             return get_user(input.id)
 
 ```
