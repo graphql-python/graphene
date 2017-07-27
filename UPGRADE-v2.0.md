@@ -9,7 +9,7 @@ developer have to write to use them.
 Deprecations:
 * [`AbstractType`](#abstracttype-deprecated)
 * [`resolve_only_args`](#resolve_only_args)
-* [`Mutation.Input`](#mutation-input)
+* [`Mutation.Input`](#mutationinput)
 
 Breaking changes:
 * [`Node Connections`](#node-connections)
