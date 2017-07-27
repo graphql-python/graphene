@@ -31,10 +31,10 @@ This middleware only continues evaluation if the ``field_name`` is not ``'user'`
 .. code:: python
 
     class AuthorizationMiddleware(object):
-        def resolve(self, next, root, args, context, info):
+        def resolve(self, next, root, info, **args):
             if info.field_name == 'user':
                 return None
-            return next(root, args, context, info)
+            return next(root, info, **args)
 
 
 And then execute it with:

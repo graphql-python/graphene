@@ -45,26 +45,17 @@ With 2.0:
 ```python
 my_field = graphene.String(my_arg=graphene.String())
 
-def resolve_my_field(self, my_arg):
+def resolve_my_field(self, info, my_arg):
     return ...
 ```
 
-And, if the resolver want to receive the context:
+And, if the resolver want to get the context:
 
 ```python
 my_field = graphene.String(my_arg=graphene.String())
 
-def resolve_my_field(self, context: graphene.Context, my_arg):
-    return ...
-```
-
-which is equivalent in Python 2 to:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-@annotate(context=graphene.Context)
-def resolve_my_field(self, context, my_arg):
+def resolve_my_field(self, info, my_arg):
+    context = info.context
     return ...
 ```
 
@@ -95,7 +86,7 @@ class Pet(CommonFields, Interface):
 
 ### resolve\_only\_args
 
-`resolve_only_args` is now deprecated in favor of type annotations (using the polyfill `@graphene.annotate` in Python 2 in case is necessary for accessing `context` or `info`).
+`resolve_only_args` is now deprecated as the resolver API has been simplified.
 
 Before:
 
@@ -114,7 +105,7 @@ With 2.0:
 class User(ObjectType):
     name = String()
 
-    def resolve_name(self):
+    def resolve_name(self, info):
         return self.name
 ```
 
@@ -227,10 +218,9 @@ class UserInput(InputObjectType):
 class Query(ObjectType):
     user = graphene.Field(User, input=UserInput())
 
-    def resolve_user(self, input):
+    def resolve_user(self, info, id):
         if input.is_valid:
             return get_user(input.id)
-
 ```
 
 
@@ -266,7 +256,7 @@ class Base(ObjectType):
     
     id = ID()
 
-    def resolve_id(self):
+    def resolve_id(self, info):
         return "{type}_{id}".format(
             type=self.__class__.__name__,
             id=self.id

@@ -48,7 +48,7 @@ Here is one example for you to get started:
 class Query(graphene.ObjectType):
     hello = graphene.String(description='A typical hello world')
 
-    def resolve_hello(self):
+    def resolve_hello(self, info):
         return 'World'
 
 schema = graphene.Schema(query=Query)
