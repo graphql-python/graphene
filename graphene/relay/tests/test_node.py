@@ -22,7 +22,7 @@ class MyNode(ObjectType):
     name = String()
 
     @staticmethod
-    def get_node(id, *_):
+    def get_node(info, id):
         return MyNode(name=str(id))
 
 
@@ -36,7 +36,7 @@ class MyOtherNode(SharedNodeFields, ObjectType):
         return 'extra field info.'
 
     @staticmethod
-    def get_node(id, *_):
+    def get_node(info, id):
         return MyOtherNode(shared=str(id))
 
 

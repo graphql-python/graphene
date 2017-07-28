@@ -165,15 +165,40 @@ class Query(ObjectType):
     user_connection = relay.ConnectionField(UserConnection)
 ```
 
+## Node.get_node
+
+The method `get_node` in `ObjectTypes` that have `Node` as interface, changes it's api.
+From `def get_node(cls, id, context, info)` to `def get_node(cls, info, id)`.
+
+```python
+class MyObject(ObjectType):
+    class Meta:
+        interfaces = (Node, )
+
+    @classmethod
+    def get_node(cls, id, context, info):
+        return ...
+```
+
+To:
+```python
+class MyObject(ObjectType):
+    class Meta:
+        interfaces = (Node, )
+
+    @classmethod
+    def get_node(cls, info, id):
+        return ...
+```
 
 ## Mutation.mutate
 
-Now only receive (`root`, `info`, `**args`)
+Now only receives (`root`, `info`, `**args`)
 
 
 ## ClientIDMutation.mutate_and_get_payload
 
-Now only receive (`root`, `info`, `**input`)
+Now only receives (`root`, `info`, `**input`)
 
 
 ## New Features
@@ -218,7 +243,7 @@ class UserInput(InputObjectType):
 class Query(ObjectType):
     user = graphene.Field(User, input=UserInput())
 
-    def resolve_user(self, info, id):
+    def resolve_user(self, info, input):
         if input.is_valid:
             return get_user(input.id)
 ```

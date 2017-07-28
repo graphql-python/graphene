@@ -13,7 +13,7 @@ class Ship(graphene.ObjectType):
     name = graphene.String(description='The name of the ship.')
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, info, id):
         return get_ship(id)
 
 
@@ -37,7 +37,7 @@ class Faction(graphene.ObjectType):
         return [get_ship(ship_id) for ship_id in self.ships]
 
     @classmethod
-    def get_node(cls, id, info):
+    def get_node(cls, info, id):
         return get_faction(id)
 
 

@@ -56,7 +56,7 @@ class NodeField(Field):
         )
 
     def get_resolver(self, parent_resolver):
-        return partial(self.node_type.node_resolver, only_type=get_type(self.field_type))
+        return partial(self.node_type.node_resolver, get_type(self.field_type))
 
 
 class AbstractNode(Interface):
@@ -81,11 +81,11 @@ class Node(AbstractNode):
         return NodeField(cls, *args, **kwargs)
 
     @classmethod
-    def node_resolver(cls, root, info, id, only_type=None):
-        return cls.get_node_from_global_id(id, info, only_type)
+    def node_resolver(cls, only_type, root, info, id):
+        return cls.get_node_from_global_id(info, id, only_type=only_type)
 
     @classmethod
-    def get_node_from_global_id(cls, global_id, info, only_type=None):
+    def get_node_from_global_id(cls, info, global_id, only_type=None):
         try:
             _type, _id = cls.from_global_id(global_id)
             graphene_type = info.schema.get_type(_type).graphene_type
@@ -103,7 +103,7 @@ class Node(AbstractNode):
 
         get_node = getattr(graphene_type, 'get_node', None)
         if get_node:
-            return get_node(_id, info)
+            return get_node(info, _id)
 
     @classmethod
     def from_global_id(cls, global_id):

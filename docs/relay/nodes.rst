@@ -22,7 +22,7 @@ Example usage (taken from the `Starwars Relay example`_):
         name = graphene.String(description='The name of the ship.')
 
         @classmethod
-        def get_node(cls, id, context, info):
+        def get_node(cls, info, id):
             return get_ship(id)
 
 The ``id`` returned by the ``Ship`` type when you query it will be a
@@ -55,7 +55,7 @@ Example of a custom node:
             return '{}:{}'.format(type, id)
 
         @staticmethod
-        def get_node_from_global_id(global_id, context, info, only_type=None):
+        def get_node_from_global_id(info global_id, only_type=None):
             type, id = global_id.split(':')
             if only_node:
                 # We assure that the node type that we want to retrieve
