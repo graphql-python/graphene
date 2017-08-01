@@ -340,7 +340,7 @@ def test_big_list_of_containers_query_benchmark(benchmark):
     class Query(ObjectType):
         all_containers = List(Container)
 
-        def resolve_all_containers(self):
+        def resolve_all_containers(self, info):
             return big_container_list
 
     hello_schema = Schema(Query)
@@ -363,7 +363,7 @@ def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
     class Query(ObjectType):
         all_containers = List(Container)
 
-        def resolve_all_containers(self):
+        def resolve_all_containers(self, info):
             return big_container_list
 
     hello_schema = Schema(Query)
@@ -381,16 +381,16 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
         z = Int()
         o = Int()
 
-        def resolve_x(self):
+        def resolve_x(self, info):
             return self.x
 
-        def resolve_y(self):
+        def resolve_y(self, info):
             return self.y
 
-        def resolve_z(self):
+        def resolve_z(self, info):
             return self.z
 
-        def resolve_o(self):
+        def resolve_o(self, info):
             return self.o
 
     big_container_list = [Container(x=x, y=x, z=x, o=x) for x in range(1000)]
@@ -398,7 +398,7 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
     class Query(ObjectType):
         all_containers = List(Container)
 
-        def resolve_all_containers(self):
+        def resolve_all_containers(self, info):
             return big_container_list
 
     hello_schema = Schema(Query)
