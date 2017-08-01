@@ -91,6 +91,7 @@ def test_no_mutate_and_get_payload():
 def test_mutation():
     fields = SaySomething._meta.fields
     assert list(fields.keys()) == ['phrase', 'client_mutation_id']
+    assert SaySomething._meta.name == "SaySomethingPayload"
     assert isinstance(fields['phrase'], Field)
     field = SaySomething.Field()
     assert field.type == SaySomething

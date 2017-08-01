@@ -19,8 +19,7 @@ class ClientIDMutation(Mutation):
             return
 
         input_class = getattr(cls, 'Input', None)
-        name = name or cls.__name__
-        base_name = re.sub('Payload$', '', name)
+        base_name = re.sub('Payload$', '', name or cls.__name__)
 
         assert not output, "Can't specify any output"
         assert not arguments, "Can't specify any arguments"
@@ -35,7 +34,8 @@ class ClientIDMutation(Mutation):
         cls.Input = type(
             '{}Input'.format(base_name),
             bases,
-            OrderedDict(input_fields, client_mutation_id=String(name='clientMutationId'))
+            OrderedDict(input_fields, client_mutation_id=String(
+                name='clientMutationId'))
         )
 
         arguments = OrderedDict(
@@ -46,12 +46,13 @@ class ClientIDMutation(Mutation):
         if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:
             assert mutate_and_get_payload, (
                 "{name}.mutate_and_get_payload method is required"
-                " in a ClientIDMutation.").format(name=name)
+                " in a ClientIDMutation.").format(name=name or cls.__name__)
 
         if not name:
             name = '{}Payload'.format(base_name)
 
-        super(ClientIDMutation, cls).__init_subclass_with_meta__(output=None, arguments=arguments, name=name, **options)
+        super(ClientIDMutation, cls).__init_subclass_with_meta__(
+            output=None, arguments=arguments, name=name, **options)
         cls._meta.fields['client_mutation_id'] = (
             Field(String, name='clientMutationId')
         )
