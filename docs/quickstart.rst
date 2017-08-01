@@ -39,7 +39,7 @@ one field: ``hello`` and an input name. And when we query it, it should return `
     class Query(graphene.ObjectType):
         hello = graphene.String(name=graphene.String(default_value="stranger"))
 
-        def resolve_hello(self, name):
+        def resolve_hello(self, info, name):
             return 'Hello ' + name
 
     schema = graphene.Schema(query=Query)

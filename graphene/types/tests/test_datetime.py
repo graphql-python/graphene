@@ -11,10 +11,10 @@ class Query(ObjectType):
     datetime = DateTime(_in=DateTime(name='in'))
     time = Time(_at=Time(name='at'))
 
-    def resolve_datetime(self, _in=None):
+    def resolve_datetime(self, info, _in=None):
         return _in
 
-    def resolve_time(self, _at=None):
+    def resolve_time(self, info, _at=None):
         return _at
 
 

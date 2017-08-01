@@ -34,7 +34,7 @@ class Union(UnmountedType, BaseType):
         return cls
 
     @classmethod
-    def resolve_type(cls, instance, context, info):
+    def resolve_type(cls, instance, info):
         from .objecttype import ObjectType
         if isinstance(instance, ObjectType):
             return type(instance)

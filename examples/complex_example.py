@@ -11,10 +11,9 @@ class Address(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    address = graphene.Field(Address, geo=GeoInput())
+    address = graphene.Field(Address, geo=GeoInput(required=True))
 
-    def resolve_address(self, args, context, info):
-        geo = args.get('geo')
+    def resolve_address(self, info, geo):
         return Address(latlng="({},{})".format(geo.get('lat'), geo.get('lng')))
 
 

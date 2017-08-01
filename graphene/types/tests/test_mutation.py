@@ -12,13 +12,13 @@ def test_generate_mutation_no_args():
     class MyMutation(Mutation):
         '''Documentation'''
 
-        def mutate(self, **args):
+        def mutate(self, info, **args):
             return args
 
     assert issubclass(MyMutation, ObjectType)
     assert MyMutation._meta.name == "MyMutation"
     assert MyMutation._meta.description == "Documentation"
-    resolved = MyMutation.Field().resolver(None, name='Peter')
+    resolved = MyMutation.Field().resolver(None, None, name='Peter')
     assert resolved == {'name': 'Peter'}
 
 
@@ -29,12 +29,12 @@ def test_generate_mutation_with_meta():
             name = 'MyOtherMutation'
             description = 'Documentation'
 
-        def mutate(self, **args):
+        def mutate(self, info, **args):
             return args
 
     assert MyMutation._meta.name == "MyOtherMutation"
     assert MyMutation._meta.description == "Documentation"
-    resolved = MyMutation.Field().resolver(None, name='Peter')
+    resolved = MyMutation.Field().resolver(None, None, name='Peter')
     assert resolved == {'name': 'Peter'}
 
 
@@ -59,13 +59,13 @@ def test_mutation_custom_output_type():
 
         Output = User
 
-        def mutate(self, name):
+        def mutate(self, info, name):
             return User(name=name)
 
     field = CreateUser.Field()
     assert field.type == User
     assert field.args == {'name': Argument(String)}
-    resolved = field.resolver(None, name='Peter')
+    resolved = field.resolver(None, None, name='Peter')
     assert isinstance(resolved, User)
     assert resolved.name == 'Peter'
 
@@ -81,7 +81,7 @@ def test_mutation_execution():
         name = String()
         dynamic = Dynamic(lambda: String())
 
-        def mutate(self, name, dynamic):
+        def mutate(self, info, name, dynamic):
             return CreateUser(name=name, dynamic=dynamic)
 
     class Query(ObjectType):

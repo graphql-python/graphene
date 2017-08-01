@@ -27,8 +27,7 @@ class SaySomething(ClientIDMutation):
     phrase = String()
 
     @staticmethod
-    def mutate_and_get_payload(args, context, info):
-        what = args.get('what')
+    def mutate_and_get_payload(self, info, what, client_mutation_id=None):
         return SaySomething(phrase=str(what))
 
 
@@ -40,8 +39,7 @@ class SaySomethingPromise(ClientIDMutation):
     phrase = String()
 
     @staticmethod
-    def mutate_and_get_payload(args, context, info):
-        what = args.get('what')
+    def mutate_and_get_payload(self, info, what, client_mutation_id=None):
         return Promise.resolve(SaySomething(phrase=str(what)))
 
 
@@ -59,13 +57,11 @@ class OtherMutation(ClientIDMutation):
     name = String()
     my_node_edge = Field(MyEdge)
 
-    @classmethod
-    def mutate_and_get_payload(cls, args, context, info):
-        shared = args.get('shared', '')
-        additionalField = args.get('additionalField', '')
+    @staticmethod
+    def mutate_and_get_payload(self, info, shared='', additional_field='', client_mutation_id=None):
         edge_type = MyEdge
         return OtherMutation(
-            name=shared + additionalField,
+            name=shared + additional_field,
             my_node_edge=edge_type(cursor='1', node=MyNode(name='name')))
 
 

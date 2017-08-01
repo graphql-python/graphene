@@ -25,6 +25,42 @@ developer have to write to use them.
 
 ## Deprecations
 
+### Simpler resolvers
+
+All the resolvers in graphene have been simplified. If before resolvers must had received
+four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments
+and `context` and `info` will only be passed if the function is annotated with it.
+
+Before:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, args, context, info):
+    my_arg = args.get('my_arg')
+    return ...
+```
+
+With 2.0:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, info, my_arg):
+    return ...
+```
+
+And, if you need the context in the resolver, you can use `info.context`:
+
+```python
+my_field = graphene.String(my_arg=graphene.String())
+
+def resolve_my_field(self, info, my_arg):
+    context = info.context
+    return ...
+```
+
+
 ### AbstractType deprecated
 
 AbstractType is deprecated in graphene 2.0, you can now use normal inheritance instead.
@@ -51,7 +87,7 @@ class Pet(CommonFields, Interface):
 
 ### resolve\_only\_args
 
-`resolve_only_args` is now deprecated in favor of type annotations (using the polyfill `@graphene.annotate` in Python 2 in case is necessary for accessing `context` or `info`).
+`resolve_only_args` is now deprecated as the resolver API has been simplified.
 
 Before:
 
@@ -70,7 +106,7 @@ With 2.0:
 class User(ObjectType):
     name = String()
 
-    def resolve_name(self):
+    def resolve_name(self, info):
         return self.name
 ```
 
@@ -174,6 +210,42 @@ class Query(ObjectType):
     user_connection = relay.ConnectionField(UserConnection)
 ```
 
+## Node.get_node
+
+The method `get_node` in `ObjectTypes` that have `Node` as interface, changes it's api.
+From `def get_node(cls, id, context, info)` to `def get_node(cls, info, id)`.
+
+```python
+class MyObject(ObjectType):
+    class Meta:
+        interfaces = (Node, )
+
+    @classmethod
+    def get_node(cls, id, context, info):
+        return ...
+```
+
+To:
+```python
+class MyObject(ObjectType):
+    class Meta:
+        interfaces = (Node, )
+
+    @classmethod
+    def get_node(cls, info, id):
+        return ...
+```
+
+## Mutation.mutate
+
+Now only receives (`root`, `info`, `**args`)
+
+
+## ClientIDMutation.mutate_and_get_payload
+
+Now only receives (`root`, `info`, `**input`)
+
+
 ## New Features
 
 ### InputObjectType
@@ -216,10 +288,9 @@ class UserInput(InputObjectType):
 class Query(ObjectType):
     user = graphene.Field(User, input=UserInput())
 
-    def resolve_user(self, input):
+    def resolve_user(self, info, input):
         if input.is_valid:
             return get_user(input.id)
-
 ```
 
 
@@ -255,7 +326,7 @@ class Base(ObjectType):
     
     id = ID()
 
-    def resolve_id(self):
+    def resolve_id(self, info):
         return "{type}_{id}".format(
             type=self.__class__.__name__,
             id=self.id

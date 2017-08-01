@@ -3,9 +3,8 @@ from collections import OrderedDict
 
 from promise import Promise, is_thenable
 
-from ..types import Field, InputObjectType, String, Context, ResolveInfo
+from ..types import Field, InputObjectType, String
 from ..types.mutation import Mutation
-from ..utils.annotate import annotate
 
 
 class ClientIDMutation(Mutation):
@@ -58,18 +57,17 @@ class ClientIDMutation(Mutation):
         )
 
     @classmethod
-    @annotate(context=Context, info=ResolveInfo, _trigger_warning=False)
-    def mutate(cls, root, input, context, info):
+    def mutate(cls, root, info, input):
         def on_resolve(payload):
             try:
-                payload.client_mutation_id = input.get('clientMutationId')
+                payload.client_mutation_id = input.get('client_mutation_id')
             except:
                 raise Exception(
                     ('Cannot set client_mutation_id in the payload object {}'
                      ).format(repr(payload)))
             return payload
 
-        result = cls.mutate_and_get_payload(input, context, info)
+        result = cls.mutate_and_get_payload(root, info, **input)
         if is_thenable(result):
             return Promise.resolve(result).then(on_resolve)
 

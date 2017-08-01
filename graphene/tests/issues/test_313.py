@@ -29,7 +29,7 @@ class CreatePost(graphene.Mutation):
 
     result = graphene.Field(CreatePostResult)
 
-    def mutate(self, text):
+    def mutate(self, info, text):
         result = Success(yeah='yeah')
 
         return CreatePost(result=result)

@@ -11,7 +11,6 @@ from graphql.type.typemap import GraphQLTypeMap
 
 from ..utils.get_unbound_function import get_unbound_function
 from ..utils.str_converters import to_camel_case
-from ..utils.auto_resolver import auto_resolver, final_resolver
 from .definitions import (GrapheneEnumType, GrapheneGraphQLType,
                           GrapheneInputObjectType, GrapheneInterfaceType,
                           GrapheneObjectType, GrapheneScalarType,
@@ -38,12 +37,12 @@ def is_graphene_type(_type):
         return True
 
 
-def resolve_type(resolve_type_func, map, type_name, root, context, info):
-    _type = resolve_type_func(root, context, info)
+def resolve_type(resolve_type_func, map, type_name, root, info):
+    _type = resolve_type_func(root, info)
 
     if not _type:
         return_type = map[type_name]
-        return get_default_resolve_type_fn(root, context, info, return_type)
+        return get_default_resolve_type_fn(root, info, return_type)
 
     if inspect.isclass(_type) and issubclass(_type, ObjectType):
         graphql_type = map.get(_type._meta.name)
@@ -55,7 +54,7 @@ def resolve_type(resolve_type_func, map, type_name, root, context, info):
     return _type
 
 
-def is_type_of_from_possible_types(possible_types, root, context, info):
+def is_type_of_from_possible_types(possible_types, root, info):
     return isinstance(root, possible_types)
 
 
@@ -196,7 +195,7 @@ class TypeMap(GraphQLTypeMap):
             graphene_type=type,
             name=type._meta.name,
             description=type._meta.description,
-            container_type=type._meta.create_container,
+            container_type=type._meta.container,
             fields=partial(
                 self.construct_fields_for_type, map, type, is_input_type=True),
         )
@@ -240,7 +239,7 @@ class TypeMap(GraphQLTypeMap):
                 _field = GraphQLInputObjectField(
                     field_type,
                     default_value=field.default_value,
-                    out_name=field.name or name,
+                    out_name=name,
                     description=field.description)
             else:
                 args = OrderedDict()
@@ -256,13 +255,13 @@ class TypeMap(GraphQLTypeMap):
                 _field = GraphQLField(
                     field_type,
                     args=args,
-                    resolver=auto_resolver(field.get_resolver(
-                        auto_resolver(self.get_resolver_for_type(
+                    resolver=field.get_resolver(
+                        self.get_resolver_for_type(
                             type,
                             name,
                             field.default_value
-                        ))
-                    )),
+                        )
+                    ),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description)
             field_name = field.name or self.get_name(name)
@@ -292,7 +291,7 @@ class TypeMap(GraphQLTypeMap):
 
         default_resolver = type._meta.default_resolver or get_default_resolver(
         )
-        return final_resolver(partial(default_resolver, name, default_value))
+        return partial(default_resolver, name, default_value)
 
     def get_field_type(self, map, type):
         if isinstance(type, List):

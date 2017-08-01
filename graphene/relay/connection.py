@@ -10,7 +10,6 @@ from ..types import (Boolean, Enum, Int, Interface, List, NonNull, Scalar,
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
 from ..utils.deprecated import warn_deprecation
-from ..utils.auto_resolver import final_resolver
 from .node import is_node
 
 
@@ -132,8 +131,8 @@ class IterableConnectionField(Field):
         return connection
 
     @classmethod
-    def connection_resolver(cls, resolver, connection_type, root, args, context, info):
-        resolved = resolver(root, args, context, info)
+    def connection_resolver(cls, resolver, connection_type, root, info, **args):
+        resolved = resolver(root, info, **args)
 
         on_resolve = partial(cls.resolve_connection, connection_type, args)
         if is_thenable(resolved):
@@ -143,7 +142,7 @@ class IterableConnectionField(Field):
 
     def get_resolver(self, parent_resolver):
         resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)
-        return final_resolver(partial(self.connection_resolver, resolver, self.type))
+        return partial(self.connection_resolver, resolver, self.type)
 
 
 ConnectionField = IterableConnectionField
