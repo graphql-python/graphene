@@ -63,20 +63,20 @@ type Faction implements Node {
   ships(before: String, after: String, first: Int, last: Int): ShipConnection
 }
 
-type IntroduceShip {
-  ship: Ship
-  faction: Faction
-  clientMutationId: String
-}
-
 input IntroduceShipInput {
   shipName: String!
   factionId: String!
   clientMutationId: String
 }
 
+type IntroduceShipPayload {
+  ship: Ship
+  faction: Faction
+  clientMutationId: String
+}
+
 type Mutation {
-  introduceShip(input: IntroduceShipInput!): IntroduceShip
+  introduceShip(input: IntroduceShipInput!): IntroduceShipPayload
 }
 
 interface Node {
