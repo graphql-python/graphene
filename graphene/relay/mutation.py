@@ -14,10 +14,7 @@ class ClientIDMutation(Mutation):
 
     @classmethod
     def __init_subclass_with_meta__(cls, output=None, input_fields=None,
-                                    arguments=None, name=None, abstract=False, **options):
-        if abstract:
-            return
-
+                                    arguments=None, name=None, **options):
         input_class = getattr(cls, 'Input', None)
         base_name = re.sub('Payload$', '', name or cls.__name__)
 

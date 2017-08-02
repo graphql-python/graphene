@@ -1,3 +1,4 @@
+import pytest
 
 from ...types import Argument, Field, Int, List, NonNull, ObjectType, String
 from ..connection import Connection, ConnectionField, PageInfo
@@ -116,6 +117,13 @@ def test_connectionfield():
         'last': Argument(Int),
     }
 
+
+def test_connectionfield_node_deprecated():
+    field = ConnectionField(MyObject)
+    with pytest.raises(Exception) as exc_info:
+        field.type
+    
+    assert "ConnectionField's now need a explicit ConnectionType for Nodes." in str(exc_info.value)
 
 def test_connectionfield_custom_args():
     class MyObjectConnection(Connection):

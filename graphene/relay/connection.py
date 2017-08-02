@@ -9,7 +9,6 @@ from ..types import (Boolean, Enum, Int, Interface, List, NonNull, Scalar,
                      String, Union)
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
-from ..utils.deprecated import warn_deprecation
 from .node import is_node
 
 
@@ -101,7 +100,7 @@ class IterableConnectionField(Field):
         type = super(IterableConnectionField, self).type
         connection_type = type
         if is_node(type):
-            warn_deprecation(
+            raise Exception(
                 "ConnectionField's now need a explicit ConnectionType for Nodes.\n"
                 "Read more: https://github.com/graphql-python/graphene/blob/2.0/UPGRADE-v2.0.md#node-connections"
             )

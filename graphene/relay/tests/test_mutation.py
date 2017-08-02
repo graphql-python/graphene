@@ -31,6 +31,25 @@ class SaySomething(ClientIDMutation):
         return SaySomething(phrase=str(what))
 
 
+class FixedSaySomething(object):
+    __slots__ = 'phrase',
+
+    def __init__(self, phrase):
+        self.phrase = phrase
+
+
+class SaySomethingFixed(ClientIDMutation):
+
+    class Input:
+        what = String()
+
+    phrase = String()
+
+    @staticmethod
+    def mutate_and_get_payload(self, info, what, client_mutation_id=None):
+        return FixedSaySomething(phrase=str(what))
+
+
 class SaySomethingPromise(ClientIDMutation):
 
     class Input:
@@ -71,6 +90,7 @@ class RootQuery(ObjectType):
 
 class Mutation(ObjectType):
     say = SaySomething.Field()
+    say_fixed = SaySomethingFixed.Field()
     say_promise = SaySomethingPromise.Field()
     other = OtherMutation.Field()
 
@@ -152,7 +172,14 @@ def test_node_query():
     assert executed.data == {'say': {'phrase': 'hello'}}
 
 
-def test_node_query():
+def test_node_query_fixed():
+    executed = schema.execute(
+        'mutation a { sayFixed(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
+    )
+    assert "Cannot set client_mutation_id in the payload object" in str(executed.errors[0])
+
+
+def test_node_query_promise():
     executed = schema.execute(
         'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
     )
