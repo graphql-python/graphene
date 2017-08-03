@@ -4,7 +4,7 @@
 have been quite simplified, without the need to define a explicit Metaclass for each subtype.
 
 It also improves the field resolvers, [simplifying the code](#simpler-resolvers) the
-developer have to write to use them.
+developer has to write to use them.
 
 **Deprecations:**
 * [`AbstractType`](#abstracttype-deprecated)
@@ -20,14 +20,14 @@ developer have to write to use them.
 * [`Meta as Class arguments`](#meta-ass-class-arguments) (_only available for Python 3_)
 
 
-> The type metaclases are now deleted as are no longer necessary, if your code was depending
+> The type metaclasses are now deleted as they are no longer necessary.  If your code was depending
 > on this strategy for creating custom attrs, see an [example on how to do it in 2.0](https://github.com/graphql-python/graphene/blob/2.0/graphene/tests/issues/test_425.py).
 
 ## Deprecations
 
 ### Simpler resolvers
 
-All the resolvers in graphene have been simplified. If before resolvers must had received
+All the resolvers in graphene have been simplified. If before resolvers required
 four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments
 and `context` and `info` will only be passed if the function is annotated with it.
 
@@ -112,7 +112,7 @@ class User(ObjectType):
 
 ### Mutation.Input
 
-`Mutation.Input` is now deprecated in favor using `Mutation.Arguments` (`ClientIDMutation` still uses `Input`).
+`Mutation.Input` is now deprecated in favor of using `Mutation.Arguments` (`ClientIDMutation` still uses `Input`).
 
 Before:
 
@@ -135,7 +135,7 @@ class User(Mutation):
 
 ### Simpler resolvers
 
-All the resolvers in graphene have been simplified. If before resolvers must had received
+All the resolvers in graphene have been simplified. If before resolvers required
 four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments
 and `context` and `info` will only be passed if the function is annotated with it.
 
@@ -212,7 +212,7 @@ class Query(ObjectType):
 
 ## Node.get_node
 
-The method `get_node` in `ObjectTypes` that have `Node` as interface, changes it's api.
+The method `get_node` in `ObjectTypes` that have `Node` as interface, changes its API.
 From `def get_node(cls, id, context, info)` to `def get_node(cls, info, id)`.
 
 ```python
@@ -251,7 +251,7 @@ Now only receives (`root`, `info`, `**input`)
 ### InputObjectType
 
 If you are using `InputObjectType`, you now can access
-it's fields via `getattr` (`my_input.myattr`) when resolving, instead of
+its fields via `getattr` (`my_input.myattr`) when resolving, instead of
 the classic way `my_input['myattr']`.
 
 And also use custom defined properties on your input class.
