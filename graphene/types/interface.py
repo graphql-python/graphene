@@ -16,12 +16,19 @@ class InterfaceMeta(AbstractTypeMeta):
         if not is_base_type(bases, InterfaceMeta):
             return type.__new__(cls, name, bases, attrs)
 
-        options = Options(
-            attrs.pop('Meta', None),
+        _meta = attrs.pop('_meta', None)
+        defaults = dict(
             name=name,
             description=trim_docstring(attrs.get('__doc__')),
             local_fields=None,
         )
+        if not _meta:
+            options = Options(
+                attrs.pop('Meta', None),
+                **defaults
+            )
+        else:
+            options = _meta.extend_with_defaults(defaults)
 
         options.base_fields = get_base_fields(bases, _as=Field)
 
