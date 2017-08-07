@@ -25,42 +25,6 @@ developer has to write to use them.
 
 ## Deprecations
 
-### Simpler resolvers
-
-All the resolvers in graphene have been simplified.
-Prior to Graphene `2.0`, all resolvers required four arguments: `(root, args, context, info)`.
-Now, resolver `args` are passed as keyword arguments to the function, and `context` argument dissapeared in favor of `info.context`.
-
-Before:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-def resolve_my_field(self, args, context, info):
-    my_arg = args.get('my_arg')
-    return ...
-```
-
-With 2.0:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-def resolve_my_field(self, info, my_arg):
-    return ...
-```
-
-And, if you need the context in the resolver, you can use `info.context`:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-def resolve_my_field(self, info, my_arg):
-    context = info.context
-    return ...
-```
-
-
 ### AbstractType deprecated
 
 AbstractType is deprecated in graphene 2.0, you can now use normal inheritance instead.
@@ -135,9 +99,9 @@ class User(Mutation):
 
 ### Simpler resolvers
 
-All the resolvers in graphene have been simplified. If before resolvers required
-four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments
-and `context` and `info` will only be passed if the function is annotated with it.
+All the resolvers in graphene have been simplified.
+Prior to Graphene `2.0`, all resolvers required four arguments: `(root, args, context, info)`.
+Now, resolver `args` are passed as keyword arguments to the function, and `context` argument dissapeared in favor of `info.context`.
 
 Before:
 
@@ -154,26 +118,17 @@ With 2.0:
 ```python
 my_field = graphene.String(my_arg=graphene.String())
 
-def resolve_my_field(self, my_arg):
+def resolve_my_field(self, info, my_arg):
     return ...
 ```
 
-And, if the resolver want to receive the context:
+And, if you need the context in the resolver, you can use `info.context`:
 
 ```python
 my_field = graphene.String(my_arg=graphene.String())
 
-def resolve_my_field(self, context: graphene.Context, my_arg):
-    return ...
-```
-
-which is equivalent in Python 2 to:
-
-```python
-my_field = graphene.String(my_arg=graphene.String())
-
-@annotate(context=graphene.Context)
-def resolve_my_field(self, context, my_arg):
+def resolve_my_field(self, info, my_arg):
+    context = info.context
     return ...
 ```
 
