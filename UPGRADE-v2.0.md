@@ -28,8 +28,7 @@ developer has to write to use them.
 ### Simpler resolvers
 
 All the resolvers in graphene have been simplified. If before resolvers required
-four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments
-and `context` and `info` will only be passed if the function is annotated with it.
+four arguments `root`, `args`, `context` and `info`, now the `args` are passed as keyword arguments, `info` will be always passed after `root` or `self` and `context` is now inside `info` (`info.context`).
 
 Before:
 
