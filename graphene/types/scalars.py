@@ -86,6 +86,7 @@ class Float(Scalar):
 
     @staticmethod
     def coerce_float(value):
+        # type: (Any) -> float
         try:
             return float(value)
         except ValueError:

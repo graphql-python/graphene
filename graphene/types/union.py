@@ -2,8 +2,15 @@ from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 
 
+# For static type checking with Mypy
+MYPY = False
+if MYPY:
+    from .objecttype import ObjectType
+    from typing import Iterable, Type
+
+
 class UnionOptions(BaseOptions):
-    types = ()  # type: List[Type[ObjectType]]
+    types = ()  # type: Iterable[Type[ObjectType]]
 
 
 class Union(UnmountedType, BaseType):

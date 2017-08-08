@@ -5,10 +5,15 @@ from .field import Field
 from .interface import Interface
 from .utils import yank_fields_from_attrs
 
+# For static type checking with Mypy
+MYPY = False
+if MYPY:
+    from typing import Dict, Iterable, Type
+
 
 class ObjectTypeOptions(BaseOptions):
     fields = None  # type: Dict[str, Field]
-    interfaces = ()  # type: List[Type[Interface]]
+    interfaces = ()  # type: Iterable[Type[Interface]]
 
 
 class ObjectType(BaseType):

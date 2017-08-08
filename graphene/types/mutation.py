@@ -8,10 +8,17 @@ from .utils import yank_fields_from_attrs
 from ..utils.deprecated import warn_deprecation
 
 
+# For static type checking with Mypy
+MYPY = False
+if MYPY:
+    from .argument import Argument
+    from typing import Dict, Type, Callable
+
+
 class MutationOptions(ObjectTypeOptions):
     arguments = None  # type: Dict[str, Argument]
     output = None  # type: Type[ObjectType]
-    resolver = None  # type: Function
+    resolver = None  # type: Callable
 
 
 class Mutation(ObjectType):

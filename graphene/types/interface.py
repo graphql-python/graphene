@@ -4,6 +4,11 @@ from .base import BaseOptions, BaseType
 from .field import Field
 from .utils import yank_fields_from_attrs
 
+# For static type checking with Mypy
+MYPY = False
+if MYPY:
+    from typing import Dict
+
 
 class InterfaceOptions(BaseOptions):
     fields = None  # type: Dict[str, Field]

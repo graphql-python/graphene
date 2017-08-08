@@ -6,8 +6,14 @@ from .unmountedtype import UnmountedType
 from .utils import yank_fields_from_attrs
 
 
+# For static type checking with Mypy
+MYPY = False
+if MYPY:
+    from typing import Dict, Callable
+
+
 class InputObjectTypeOptions(BaseOptions):
-    fields = None  # type: Dict[str, Field]
+    fields = None  # type: Dict[str, InputField]
     create_container = None  # type: Callable
 
 
