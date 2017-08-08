@@ -26,7 +26,6 @@ install:
     python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
     pip install flake8
-  fi
   elif [ "$TEST_TYPE" = mypy ]; then
     pip install mypy
   fi
