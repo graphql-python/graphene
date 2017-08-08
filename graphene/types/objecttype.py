@@ -8,7 +8,7 @@ from .utils import yank_fields_from_attrs
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
-    from typing import Dict, Iterable, Type
+    from typing import Dict, Iterable, Type  # NOQA
 
 
 class ObjectTypeOptions(BaseOptions):

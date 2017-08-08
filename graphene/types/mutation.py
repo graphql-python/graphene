@@ -11,8 +11,8 @@ from ..utils.deprecated import warn_deprecation
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
-    from .argument import Argument
-    from typing import Dict, Type, Callable
+    from .argument import Argument  # NOQA
+    from typing import Dict, Type, Callable  # NOQA
 
 
 class MutationOptions(ObjectTypeOptions):

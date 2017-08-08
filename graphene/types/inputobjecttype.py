@@ -9,7 +9,7 @@ from .utils import yank_fields_from_attrs
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
-    from typing import Dict, Callable
+    from typing import Dict, Callable  # NOQA
 
 
 class InputObjectTypeOptions(BaseOptions):

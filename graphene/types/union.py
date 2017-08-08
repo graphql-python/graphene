@@ -5,8 +5,8 @@ from .unmountedtype import UnmountedType
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
-    from .objecttype import ObjectType
-    from typing import Iterable, Type
+    from .objecttype import ObjectType  # NOQA
+    from typing import Iterable, Type  # NOQA
 
 
 class UnionOptions(BaseOptions):
@@ -42,6 +42,6 @@ class Union(UnmountedType, BaseType):
 
     @classmethod
     def resolve_type(cls, instance, info):
-        from .objecttype import ObjectType
+        from .objecttype import ObjectType  # NOQA
         if isinstance(instance, ObjectType):
             return type(instance)
