@@ -2,12 +2,11 @@ from collections import OrderedDict
 
 from graphql_relay import to_global_id
 
-from ...types import AbstractType, ObjectType, Schema, String
-from ..connection import Connection
-from ..node import Node
+from ...types import ObjectType, Schema, String
+from ..node import Node, is_node
 
 
-class SharedNodeFields(AbstractType):
+class SharedNodeFields(object):
 
     shared = String()
     something_else = String()
@@ -23,7 +22,7 @@ class MyNode(ObjectType):
     name = String()
 
     @staticmethod
-    def get_node(id, *_):
+    def get_node(info, id):
         return MyNode(name=str(id))
 
 
@@ -37,7 +36,7 @@ class MyOtherNode(SharedNodeFields, ObjectType):
         return 'extra field info.'
 
     @staticmethod
-    def get_node(id, *_):
+    def get_node(info, id):
         return MyOtherNode(shared=str(id))
 
 
@@ -47,20 +46,14 @@ class RootQuery(ObjectType):
     only_node = Node.Field(MyNode)
     only_node_lazy = Node.Field(lambda: MyNode)
 
+
 schema = Schema(query=RootQuery, types=[MyNode, MyOtherNode])
 
 
 def test_node_good():
     assert 'id' in MyNode._meta.fields
-
-
-def test_node_get_connection():
-    connection = MyNode.Connection
-    assert issubclass(connection, Connection)
-
-
-def test_node_get_connection_dont_duplicate():
-    assert MyNode.Connection == MyNode.Connection
+    assert is_node(MyNode)
+    assert not is_node(object)
 
 
 def test_node_query():
@@ -78,6 +71,15 @@ def test_subclassed_node_query():
     assert not executed.errors
     assert executed.data == OrderedDict({'node': OrderedDict(
         [('shared', '1'), ('extraField', 'extra field info.'), ('somethingElse', '----')])})
+
+
+def test_node_requesting_non_node():
+    executed = schema.execute(
+        '{ node(id:"%s") { __typename } } ' % Node.to_global_id("RootQuery", 1)
+    )
+    assert executed.data == {
+        'node': None
+    }
 
 
 def test_node_query_incorrect_id():
@@ -114,7 +116,7 @@ def test_node_field_only_type_wrong():
     )
     assert len(executed.errors) == 1
     assert str(executed.errors[0]) == 'Must receive an MyOtherNode id.'
-    assert executed.data == { 'onlyNode': None }
+    assert executed.data == {'onlyNode': None}
 
 
 def test_node_field_only_lazy_type():
@@ -131,7 +133,7 @@ def test_node_field_only_lazy_type_wrong():
     )
     assert len(executed.errors) == 1
     assert str(executed.errors[0]) == 'Must receive an MyOtherNode id.'
-    assert executed.data == { 'onlyNodeLazy': None }
+    assert executed.data == {'onlyNodeLazy': None}
 
 
 def test_str_schema():

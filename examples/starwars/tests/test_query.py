@@ -1,10 +1,12 @@
 from graphene.test import Client
+
 from ..data import setup
 from ..schema import schema
 
 setup()
 
 client = Client(schema)
+
 
 def test_hero_name_query(snapshot):
     query = '''
@@ -15,7 +17,6 @@ def test_hero_name_query(snapshot):
         }
     '''
     snapshot.assert_match(client.execute(query))
-    
 
 
 def test_hero_name_and_friends_query(snapshot):

@@ -1,9 +1,9 @@
 from collections import OrderedDict
 from itertools import chain
 
+from .dynamic import Dynamic
 from .mountedtype import MountedType
 from .structures import NonNull
-from .dynamic import Dynamic
 from .utils import get_type
 
 

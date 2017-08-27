@@ -1,10 +1,11 @@
-import pytest
 from functools import partial
+
+import pytest
 
 from ..argument import Argument
 from ..field import Field
-from ..structures import NonNull
 from ..scalars import String
+from ..structures import NonNull
 from .utils import MyLazyType
 
 
@@ -19,10 +20,11 @@ class MyInstance(object):
 def test_field_basic():
     MyType = object()
     args = {'my arg': Argument(True)}
-    resolver = lambda: None
+
+    def resolver(): return None
     deprecation_reason = 'Deprecated now'
     description = 'My Field'
-    my_default='something'
+    my_default = 'something'
     field = Field(
         MyType,
         name='name',
@@ -59,7 +61,7 @@ def test_field_default_value_not_callable():
 def test_field_source():
     MyType = object()
     field = Field(MyType, source='value')
-    assert field.resolver(MyInstance, {}, None, None) == MyInstance.value
+    assert field.resolver(MyInstance(), None) == MyInstance.value
 
 
 def test_field_with_lazy_type():
@@ -83,19 +85,20 @@ def test_field_not_source_and_resolver():
     MyType = object()
     with pytest.raises(Exception) as exc_info:
         Field(MyType, source='value', resolver=lambda: None)
-    assert str(exc_info.value) == 'A Field cannot have a source and a resolver in at the same time.'
+    assert str(
+        exc_info.value) == 'A Field cannot have a source and a resolver in at the same time.'
 
 
 def test_field_source_func():
     MyType = object()
     field = Field(MyType, source='value_func')
-    assert field.resolver(MyInstance(), {}, None, None) == MyInstance.value_func()
+    assert field.resolver(MyInstance(), None) == MyInstance.value_func()
 
 
 def test_field_source_method():
     MyType = object()
     field = Field(MyType, source='value_method')
-    assert field.resolver(MyInstance(), {}, None, None) == MyInstance().value_method()
+    assert field.resolver(MyInstance(), None) == MyInstance().value_method()
 
 
 def test_field_source_as_argument():

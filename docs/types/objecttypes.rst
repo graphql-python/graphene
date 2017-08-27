@@ -25,7 +25,7 @@ This example model defines a Person, with a first and a last name:
         last_name = graphene.String()
         full_name = graphene.String()
 
-        def resolve_full_name(self, args, context, info):
+        def resolve_full_name(self, info):
             return '{} {}'.format(self.first_name, self.last_name)
 
 **first\_name** and **last\_name** are fields of the ObjectType. Each
@@ -71,8 +71,7 @@ method in the class.
     class Query(graphene.ObjectType):
         reverse = graphene.String(word=graphene.String())
 
-        def resolve_reverse(self, args, context, info):
-            word = args.get('word')
+        def resolve_reverse(self, info, word):
             return word[::-1]
 
 Resolvers outside the class
@@ -84,8 +83,7 @@ A field can use a custom resolver from outside the class:
 
     import graphene
 
-    def reverse(root, args, context, info):
-        word = args.get('word')
+    def reverse(root, info, word):
         return word[::-1]
 
     class Query(graphene.ObjectType):

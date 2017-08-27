@@ -1,4 +1,5 @@
 import datetime
+
 import pytz
 
 from ..datetime import DateTime, Time
@@ -10,12 +11,11 @@ class Query(ObjectType):
     datetime = DateTime(_in=DateTime(name='in'))
     time = Time(_at=Time(name='at'))
 
-    def resolve_datetime(self, args, context, info):
-        _in = args.get('_in')
+    def resolve_datetime(self, info, _in=None):
         return _in
 
-    def resolve_time(self, args, context, info):
-        return args.get('_at')
+    def resolve_time(self, info, _at=None):
+        return _at
 
 
 schema = Schema(query=Query)

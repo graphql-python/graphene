@@ -49,8 +49,8 @@ def test_objecttype():
         foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
         bar = String(name='gizmo')
 
-        def resolve_foo(self, args, info):
-            return args.get('bar')
+        def resolve_foo(self, bar):
+            return bar
 
     typemap = TypeMap([MyObjectType])
     assert 'MyObjectType' in typemap
@@ -65,7 +65,7 @@ def test_objecttype():
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == 'Field description'
     f = MyObjectType.resolve_foo
-    assert foo_field.resolver == getattr(f, '__func__', f)
+    # assert foo_field.resolver == getattr(f, '__func__', f)
     assert foo_field.args == {
         'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x', out_name='bar')
     }
@@ -135,9 +135,17 @@ def test_inputobject():
     assert graphql_type.name == 'MyInputObjectType'
     assert graphql_type.description == 'Description'
 
+    # Container
+    container = graphql_type.create_container({'bar': 'oh!'})
+    assert isinstance(container, MyInputObjectType)
+    assert 'bar' in container
+    assert container.bar == 'oh!'
+    assert 'foo_bar' not in container
+
     fields = graphql_type.fields
     assert list(fields.keys()) == ['fooBar', 'gizmo', 'own']
-    assert fields['own'].type == graphql_type
+    own_field = fields['own']
+    assert own_field.type == graphql_type
     foo_field = fields['fooBar']
     assert isinstance(foo_field, GraphQLInputObjectField)
     assert foo_field.description == 'Field description'
@@ -196,5 +204,5 @@ def test_objecttype_with_possible_types():
     typemap = TypeMap([MyObjectType])
     graphql_type = typemap['MyObjectType']
     assert graphql_type.is_type_of
-    assert graphql_type.is_type_of({}, None, None) is True
-    assert graphql_type.is_type_of(MyObjectType(), None, None) is False
+    assert graphql_type.is_type_of({}, None) is True
+    assert graphql_type.is_type_of(MyObjectType(), None) is False

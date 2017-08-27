@@ -1,4 +1,5 @@
 from graphene.test import Client
+
 from ..data import setup
 from ..schema import schema
 

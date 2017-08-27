@@ -1,40 +1,41 @@
 import pytest
 
+from ..argument import Argument
+from ..dynamic import Dynamic
 from ..mutation import Mutation
 from ..objecttype import ObjectType
-from ..schema import Schema
-from ..argument import Argument
 from ..scalars import String
-from ..dynamic import Dynamic
+from ..schema import Schema
 
 
 def test_generate_mutation_no_args():
     class MyMutation(Mutation):
         '''Documentation'''
 
-        @classmethod
-        def mutate(cls, *args, **kwargs):
-            pass
+        def mutate(self, info, **args):
+            return args
 
     assert issubclass(MyMutation, ObjectType)
     assert MyMutation._meta.name == "MyMutation"
     assert MyMutation._meta.description == "Documentation"
-    assert MyMutation.Field().resolver == MyMutation.mutate
+    resolved = MyMutation.Field().resolver(None, None, name='Peter')
+    assert resolved == {'name': 'Peter'}
 
 
 def test_generate_mutation_with_meta():
     class MyMutation(Mutation):
+
         class Meta:
             name = 'MyOtherMutation'
             description = 'Documentation'
 
-        @classmethod
-        def mutate(cls, *args, **kwargs):
-            pass
+        def mutate(self, info, **args):
+            return args
 
     assert MyMutation._meta.name == "MyOtherMutation"
     assert MyMutation._meta.description == "Documentation"
-    assert MyMutation.Field().resolver == MyMutation.mutate
+    resolved = MyMutation.Field().resolver(None, None, name='Peter')
+    assert resolved == {'name': 'Peter'}
 
 
 def test_mutation_raises_exception_if_no_mutate():
@@ -52,24 +53,26 @@ def test_mutation_custom_output_type():
         name = String()
 
     class CreateUser(Mutation):
+
         class Input:
             name = String()
 
         Output = User
 
-        @classmethod
-        def mutate(cls, args, context, info):
-            name = args.get('name')
+        def mutate(self, info, name):
             return User(name=name)
 
     field = CreateUser.Field()
     assert field.type == User
     assert field.args == {'name': Argument(String)}
-    assert field.resolver == CreateUser.mutate
+    resolved = field.resolver(None, None, name='Peter')
+    assert isinstance(resolved, User)
+    assert resolved.name == 'Peter'
 
 
 def test_mutation_execution():
     class CreateUser(Mutation):
+
         class Input:
             name = String()
             dynamic = Dynamic(lambda: String())
@@ -78,9 +81,7 @@ def test_mutation_execution():
         name = String()
         dynamic = Dynamic(lambda: String())
 
-        def mutate(self, args, context, info):
-            name = args.get('name')
-            dynamic = args.get('dynamic')
+        def mutate(self, info, name, dynamic):
             return CreateUser(name=name, dynamic=dynamic)
 
     class Query(ObjectType):

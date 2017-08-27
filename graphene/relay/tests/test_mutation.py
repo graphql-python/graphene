@@ -1,62 +1,86 @@
 import pytest
 
-from ...types import (AbstractType, Argument, Field, InputField,
-                      InputObjectType, NonNull, ObjectType, Schema)
-from ...types.scalars import String
-from ..mutation import ClientIDMutation
-from ..node import Node
 from promise import Promise
 
+from ...types import (ID, Argument, Field, InputField, InputObjectType,
+                      NonNull, ObjectType, Schema)
+from ...types.scalars import String
+from ..mutation import ClientIDMutation
 
-class SharedFields(AbstractType):
+
+class SharedFields(object):
     shared = String()
 
 
 class MyNode(ObjectType):
-    class Meta:
-        interfaces = (Node, )
-
+    # class Meta:
+    #     interfaces = (Node, )
+    id = ID()
     name = String()
 
 
 class SaySomething(ClientIDMutation):
+
     class Input:
         what = String()
 
     phrase = String()
 
     @staticmethod
-    def mutate_and_get_payload(args, context, info):
-        what = args.get('what')
+    def mutate_and_get_payload(self, info, what, client_mutation_id=None):
         return SaySomething(phrase=str(what))
 
 
-class SaySomethingPromise(ClientIDMutation):
+class FixedSaySomething(object):
+    __slots__ = 'phrase',
+
+    def __init__(self, phrase):
+        self.phrase = phrase
+
+
+class SaySomethingFixed(ClientIDMutation):
+
     class Input:
         what = String()
 
     phrase = String()
 
     @staticmethod
-    def mutate_and_get_payload(args, context, info):
-        what = args.get('what')
+    def mutate_and_get_payload(self, info, what, client_mutation_id=None):
+        return FixedSaySomething(phrase=str(what))
+
+
+class SaySomethingPromise(ClientIDMutation):
+
+    class Input:
+        what = String()
+
+    phrase = String()
+
+    @staticmethod
+    def mutate_and_get_payload(self, info, what, client_mutation_id=None):
         return Promise.resolve(SaySomething(phrase=str(what)))
 
 
+# MyEdge = MyNode.Connection.Edge
+class MyEdge(ObjectType):
+    node = Field(MyNode)
+    cursor = String()
+
+
 class OtherMutation(ClientIDMutation):
+
     class Input(SharedFields):
         additional_field = String()
 
     name = String()
-    my_node_edge = Field(MyNode.Connection.Edge)
+    my_node_edge = Field(MyEdge)
 
-    @classmethod
-    def mutate_and_get_payload(cls, args, context, info):
-        shared = args.get('shared', '')
-        additionalField = args.get('additionalField', '')
-        edge_type = MyNode.Connection.Edge
+    @staticmethod
+    def mutate_and_get_payload(self, info, shared='', additional_field='', client_mutation_id=None):
+        edge_type = MyEdge
         return OtherMutation(
-            name=shared + additionalField,
+            name=shared + additional_field,
             my_node_edge=edge_type(cursor='1', node=MyNode(name='name')))
 
 
@@ -66,6 +90,7 @@ class RootQuery(ObjectType):
 
 class Mutation(ObjectType):
     say = SaySomething.Field()
+    say_fixed = SaySomethingFixed.Field()
     say_promise = SaySomethingPromise.Field()
     other = OtherMutation.Field()
 
@@ -86,6 +111,7 @@ def test_no_mutate_and_get_payload():
 def test_mutation():
     fields = SaySomething._meta.fields
     assert list(fields.keys()) == ['phrase', 'client_mutation_id']
+    assert SaySomething._meta.name == "SaySomethingPayload"
     assert isinstance(fields['phrase'], Field)
     field = SaySomething.Field()
     assert field.type == SaySomething
@@ -146,7 +172,14 @@ def test_node_query():
     assert executed.data == {'say': {'phrase': 'hello'}}
 
 
-def test_node_query():
+def test_node_query_fixed():
+    executed = schema.execute(
+        'mutation a { sayFixed(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
+    )
+    assert "Cannot set client_mutation_id in the payload object" in str(executed.errors[0])
+
+
+def test_node_query_promise():
     executed = schema.execute(
         'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
     )

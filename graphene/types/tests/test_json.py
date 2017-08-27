@@ -1,4 +1,3 @@
-import json
 
 from ..json import JSONString
 from ..objecttype import ObjectType
@@ -8,8 +7,7 @@ from ..schema import Schema
 class Query(ObjectType):
     json = JSONString(input=JSONString())
 
-    def resolve_json(self, args, context, info):
-        input = args.get('input')
+    def resolve_json(self, info, input):
         return input
 
 schema = Schema(query=Query)
@@ -19,7 +17,7 @@ def test_jsonstring_query():
     json_value = '{"key": "value"}'
 
     json_value_quoted = json_value.replace('"', '\\"')
-    result = schema.execute('''{ json(input: "%s") }'''%json_value_quoted)
+    result = schema.execute('''{ json(input: "%s") }''' % json_value_quoted)
     assert not result.errors
     assert result.data == {
         'json': json_value

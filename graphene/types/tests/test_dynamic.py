@@ -1,6 +1,6 @@
-from ..structures import List, NonNull
-from ..scalars import String
 from ..dynamic import Dynamic
+from ..scalars import String
+from ..structures import List, NonNull
 
 
 def test_dynamic():

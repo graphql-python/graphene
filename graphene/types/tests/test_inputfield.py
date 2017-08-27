@@ -1,4 +1,3 @@
-import pytest
 from functools import partial
 
 from ..inputfield import InputField

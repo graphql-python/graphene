@@ -12,15 +12,15 @@ Let’s build a basic GraphQL schema from scratch.
 Requirements
 ------------
 
--  Python (2.7, 3.2, 3.3, 3.4, 3.5, pypy)
--  Graphene (1.0)
+-  Python (2.7, 3.4, 3.5, 3.6, pypy)
+-  Graphene (2.0)
 
 Project setup
 -------------
 
 .. code:: bash
 
-    pip install "graphene>=1.0"
+    pip install "graphene>=2.0"
 
 Creating a basic Schema
 -----------------------
@@ -37,10 +37,10 @@ one field: ``hello`` and an input name. And when we query it, it should return `
     import graphene
 
     class Query(graphene.ObjectType):
-        hello = graphene.String(name=graphene.Argument(graphene.String, default_value="stranger"))
+        hello = graphene.String(name=graphene.String(default_value="stranger"))
 
-        def resolve_hello(self, args, context, info):
-            return 'Hello ' + args['name']
+        def resolve_hello(self, info, name):
+            return 'Hello ' + name
 
     schema = graphene.Schema(query=Query)
 

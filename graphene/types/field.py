@@ -8,11 +8,10 @@ from .structures import NonNull
 from .unmountedtype import UnmountedType
 from .utils import get_type
 
-
 base_type = type
 
 
-def source_resolver(source, root, args, context, info):
+def source_resolver(source, root, info, **args):
     resolved = getattr(root, source, None)
     if inspect.isfunction(resolved) or inspect.ismethod(resolved):
         return resolved()

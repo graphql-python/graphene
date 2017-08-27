@@ -80,3 +80,4 @@ target/
 # Databases
 *.sqlite3
 .vscode
+.mypy_cache

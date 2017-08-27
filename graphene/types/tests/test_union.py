@@ -47,6 +47,7 @@ def test_generate_union_with_no_types():
 
 def test_union_can_be_mounted():
     class MyUnion(Union):
+
         class Meta:
             types = (MyObjectType1, MyObjectType2)
 

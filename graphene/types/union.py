@@ -1,38 +1,19 @@
-import six
-
-from ..utils.is_base_type import is_base_type
-from ..utils.trim_docstring import trim_docstring
-from .options import Options
+from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 
 
-class UnionMeta(type):
-
-    def __new__(cls, name, bases, attrs):
-        # Also ensure initialization is only performed for subclasses of
-        # Union
-        if not is_base_type(bases, UnionMeta):
-            return type.__new__(cls, name, bases, attrs)
-
-        options = Options(
-            attrs.pop('Meta', None),
-            name=name,
-            description=trim_docstring(attrs.get('__doc__')),
-            types=(),
-        )
-
-        assert (
-            isinstance(options.types, (list, tuple)) and
-            len(options.types) > 0
-        ), 'Must provide types for Union {}.'.format(options.name)
-
-        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
-
-    def __str__(cls):  # noqa: N805
-        return cls._meta.name
+# For static type checking with Mypy
+MYPY = False
+if MYPY:
+    from .objecttype import ObjectType  # NOQA
+    from typing import Iterable, Type  # NOQA
 
 
-class Union(six.with_metaclass(UnionMeta, UnmountedType)):
+class UnionOptions(BaseOptions):
+    types = ()  # type: Iterable[Type[ObjectType]]
+
+
+class Union(UnmountedType, BaseType):
     '''
     Union Type Definition
 
@@ -40,6 +21,16 @@ class Union(six.with_metaclass(UnionMeta, UnmountedType)):
     is used to describe what types are possible as well as providing a function
     to determine which type is actually used when the field is resolved.
     '''
+    @classmethod
+    def __init_subclass_with_meta__(cls, types=None, **options):
+        assert (
+            isinstance(types, (list, tuple)) and
+            len(types) > 0
+        ), 'Must provide types for Union {name}.'.format(name=cls.__name__)
+
+        _meta = UnionOptions(cls)
+        _meta.types = types
+        super(Union, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def get_type(cls):
@@ -50,7 +41,7 @@ class Union(six.with_metaclass(UnionMeta, UnmountedType)):
         return cls
 
     @classmethod
-    def resolve_type(cls, instance, context, info):
-        from .objecttype import ObjectType
+    def resolve_type(cls, instance, info):
+        from .objecttype import ObjectType  # NOQA
         if isinstance(instance, ObjectType):
             return type(instance)

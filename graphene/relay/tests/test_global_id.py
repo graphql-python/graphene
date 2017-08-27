@@ -1,8 +1,8 @@
 from graphql_relay import to_global_id
 
-from ..node import Node, GlobalID
-from ...types import NonNull, ID, ObjectType, String
+from ...types import ID, NonNull, ObjectType, String
 from ...types.definitions import GrapheneObjectType
+from ..node import GlobalID, Node
 
 
 class CustomNode(Node):
@@ -48,7 +48,7 @@ def test_global_id_defaults_to_info_parent_type():
     my_id = '1'
     gid = GlobalID()
     id_resolver = gid.get_resolver(lambda *_: my_id)
-    my_global_id = id_resolver(None, None, None, Info(User))
+    my_global_id = id_resolver(None, Info(User))
     assert my_global_id == to_global_id(User._meta.name, my_id)
 
 
@@ -56,5 +56,5 @@ def test_global_id_allows_setting_customer_parent_type():
     my_id = '1'
     gid = GlobalID(parent_type=User)
     id_resolver = gid.get_resolver(lambda *_: my_id)
-    my_global_id = id_resolver(None, None, None, None)
+    my_global_id = id_resolver(None, None)
     assert my_global_id == to_global_id(User._meta.name, my_id)
