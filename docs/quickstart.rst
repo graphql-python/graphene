@@ -20,7 +20,7 @@ Project setup
 
 .. code:: bash
 
-    pip install "graphene>=2.0"
+    pip install "graphene>=2.0.dev"
 
 Creating a basic Schema
 -----------------------
