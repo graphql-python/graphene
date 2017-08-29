@@ -19,7 +19,7 @@ This example defines a Mutation:
         ok = graphene.Boolean()
         person = graphene.Field(lambda: Person)
 
-        def mutate(self, name):
+        def mutate(self, info, name):
             person = Person(name=name)
             ok = True
             return CreatePerson(person=person, ok=ok)
@@ -104,10 +104,7 @@ To use an InputField you define an InputObjectType that specifies the structure 
         person = graphene.Field(Person)
 
         @staticmethod
-        def mutate(root, person_data=None):
-            name = p_data.get('name')
-            age = p_data.get('age')
-
+        def mutate(root, info, person_data=None):
             person = Person(
                 name=person_data.name,
                 age=person_data.age
