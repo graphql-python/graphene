@@ -54,7 +54,7 @@ def test_mutation_custom_output_type():
 
     class CreateUser(Mutation):
 
-        class Input:
+        class Arguments:
             name = String()
 
         Output = User
@@ -73,7 +73,7 @@ def test_mutation_custom_output_type():
 def test_mutation_execution():
     class CreateUser(Mutation):
 
-        class Input:
+        class Arguments:
             name = String()
             dynamic = Dynamic(lambda: String())
             dynamic_none = Dynamic(lambda: None)
