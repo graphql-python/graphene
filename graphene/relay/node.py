@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from functools import partial
+from inspect import isclass
 
 from graphql_relay import from_global_id, to_global_id
 
@@ -12,12 +13,16 @@ def is_node(objecttype):
     '''
     Check if the given objecttype has Node as an interface
     '''
+    if not isclass(objecttype):
+        return False
+
     if not issubclass(objecttype, ObjectType):
         return False
 
     for i in objecttype._meta.interfaces:
         if issubclass(i, Node):
             return True
+
     return False
 
 
@@ -49,7 +54,8 @@ class NodeField(Field):
         self.field_type = type
 
         super(NodeField, self).__init__(
-            # If we don's specify a type, the field type will be the node interface
+            # If we don's specify a type, the field type will be the node
+            # interface
             type or node,
             description='The ID of the object',
             id=ID(required=True)
@@ -70,7 +76,8 @@ class AbstractNode(Interface):
         _meta.fields = OrderedDict(
             id=GlobalID(cls, description='The ID of the object.')
         )
-        super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super(AbstractNode, cls).__init_subclass_with_meta__(
+            _meta=_meta, **options)
 
 
 class Node(AbstractNode):
