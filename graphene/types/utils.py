@@ -28,6 +28,8 @@ def yank_fields_from_attrs(attrs, _as=None, sort=True):
     '''
     fields_with_names = []
     for attname, value in list(attrs.items()):
+        if attname.startswith('_'):
+            continue
         field = get_field_as(value, _as)
         if not field:
             continue

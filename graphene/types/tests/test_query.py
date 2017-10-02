@@ -297,6 +297,27 @@ def test_query_middlewares():
     assert executed.data == {'hello': 'dlroW', 'other': 'rehto'}
 
 
+def test_query_private_values():
+    class MyType(ObjectType):
+        _private = String()
+        public = String()
+
+    class Query(ObjectType):
+        field = Field(MyType)
+
+    hello_schema = Schema(Query)
+
+    executed = hello_schema.execute('{ field { Private } }')
+    assert executed.errors
+
+    executed = hello_schema.execute('{ field { _private } }')
+    assert executed.errors
+
+    executed = hello_schema.execute('{ field { public } }')
+    assert not executed.errors
+    assert executed.data == {'field': None}
+
+
 def test_objecttype_on_instances():
     class Ship:
 
@@ -442,8 +463,6 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
 
 
 def test_query_annotated_resolvers():
-    import json
-
     context = Context(key="context")
 
     class Query(ObjectType):

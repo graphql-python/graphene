@@ -65,7 +65,7 @@ def test_generate_objecttype_with_fields():
 
 def test_generate_objecttype_with_private_attributes():
     class MyObjectType(ObjectType):
-        _private_state = None
+        _private_state = Field(MyType)
 
     assert '_private_state' not in MyObjectType._meta.fields
     assert hasattr(MyObjectType, '_private_state')
