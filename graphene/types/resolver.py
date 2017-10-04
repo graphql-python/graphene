@@ -1,5 +1,11 @@
+from .enum import PyEnum
+
+
 def attr_resolver(attname, default_value, root, info, **args):
-    return getattr(root, attname, default_value)
+    value = getattr(root, attname, default_value)
+    if isinstance(value, PyEnum):
+        return value.value
+    return value
 
 
 def dict_resolver(attname, default_value, root, info, **args):
