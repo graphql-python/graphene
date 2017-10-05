@@ -52,6 +52,6 @@ Then we can start querying our schema:
 .. code:: python
 
     result = schema.execute('{ hello }')
-    print result.data['hello'] # "Hello stranger"
+    print(result.data['hello']) # "Hello stranger"
 
 Congrats! You got your first graphene schema working!
