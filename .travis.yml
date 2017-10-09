@@ -4,7 +4,7 @@ python:
 - 2.7
 - 3.5
 - 3.6
-- pypy
+- "pypy-5.3.1"
 before_install:
 - |
   if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
