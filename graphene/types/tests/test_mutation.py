@@ -36,6 +36,7 @@ def test_generate_mutation_with_meta():
     assert MyMutation._meta.description == "Documentation"
     resolved = MyMutation.Field().resolver(None, None, name='Peter')
     assert resolved == {'name': 'Peter'}
+    assert MyMutation.Field().description == "Documentation"
 
 
 def test_mutation_raises_exception_if_no_mutate():
