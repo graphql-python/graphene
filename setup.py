@@ -41,10 +41,10 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 tests_require = [
-    'pytest>=3.1.1',
-    'pytest-benchmark>=3.1.1',
-    'pytest-cov>=2.5.1',
-    'pytest-mock>=1.6.2',
+    'pytest',
+    'pytest-benchmark',
+    'pytest-cov',
+    'pytest-mock',
     'snapshottest',
     'coveralls',
     'six',
