@@ -7,6 +7,7 @@ from graphql_relay import from_global_id, to_global_id
 from ..types import ID, Field, Interface, ObjectType
 from ..types.utils import get_type
 from ..types.interface import InterfaceMeta
+from ..types.union import UnionMeta
 
 
 def is_node(objecttype):
@@ -98,9 +99,15 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
             return None
 
         if only_type:
-            assert graphene_type == only_type, (
-                'Must receive an {} id.'
-            ).format(graphene_type._meta.name)
+            if graphene_type != only_type and isinstance(only_type, UnionMeta):
+                union_types = only_type._meta.types
+                assert graphene_type in union_types, (
+                    'Must receive one of {} id.'
+                ).format(', '.join(map(lambda t: t._meta.name, union_types)))
+            else:
+                assert graphene_type == only_type, (
+                    'Must receive an {} id.'
+                ).format(graphene_type._meta.name)
 
         # We make sure the ObjectType implements the "Node" interface
         if cls not in graphene_type._meta.interfaces:
