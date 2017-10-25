@@ -1,8 +1,8 @@
-def attr_resolver(attname, default_value, root, args, context, info):
+def attr_resolver(attname, default_value, root, info, **args):
     return getattr(root, attname, default_value)
 
 
-def dict_resolver(attname, default_value, root, args, context, info):
+def dict_resolver(attname, default_value, root, info, **args):
     return root.get(attname, default_value)
 
 

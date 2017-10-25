@@ -1,9 +1,9 @@
 import pytest
 
-from ..schema import Schema
+from ..field import Field
 from ..objecttype import ObjectType
 from ..scalars import String
-from ..field import Field
+from ..schema import Schema
 
 
 class MyOtherType(ObjectType):

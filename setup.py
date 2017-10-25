@@ -1,22 +1,25 @@
-import sys
-
 from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
+import sys
+import ast
+import re
 
-if sys.version_info[0] < 3:
-    import __builtin__ as builtins
-else:
-    import builtins
+_version_re = re.compile(r'VERSION\s+=\s+(.*)')
 
-# This is a bit (!) hackish: we are setting a global variable so that the main
-# graphql __init__ can detect if it is being loaded by the setup routine, to
-# avoid attempting to load components that aren't built yet:
-# the numpy distutils extensions that are used by scikit-learn to recursively
-# build the compiled extensions in sub-packages is based on the Python import
-# machinery.
-builtins.__SETUP__ = True
+with open('graphene/__init__.py', 'rb') as f:
+    version = ast.literal_eval(_version_re.search(
+        f.read().decode('utf-8')).group(1))
 
-version = __import__('graphene').get_version()
+path_copy = sys.path[:]
+
+sys.path.append('graphene')
+try:
+    from pyutils.version import get_version
+    version = get_version(version)
+except Exception:
+    version = ".".join([str(v) for v in version])
+
+sys.path[:] = path_copy
 
 
 class PyTest(TestCommand):
@@ -38,9 +41,10 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 tests_require = [
-    'pytest>=2.7.2',
+    'pytest',
     'pytest-benchmark',
     'pytest-cov',
+    'pytest-mock',
     'snapshottest',
     'coveralls',
     'six',
@@ -78,13 +82,13 @@ setup(
 
     keywords='api graphql protocol rest relay graphene',
 
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests', 'tests.*']),
 
     install_requires=[
         'six>=1.10.0',
-        'graphql-core>=1.1',
+        'graphql-core>=2.0.dev',
         'graphql-relay>=0.4.5',
-        'promise>=2.0',
+        'promise>=2.1.dev',
     ],
     tests_require=tests_require,
     extras_require={

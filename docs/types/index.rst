@@ -10,6 +10,7 @@ Types Reference
    list-and-nonnull
    interfaces
    abstracttypes
+   unions
    objecttypes
    schema
    mutations

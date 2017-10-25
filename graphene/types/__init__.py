@@ -1,10 +1,12 @@
 # flake8: noqa
+from graphql import ResolveInfo
 
 from .objecttype import ObjectType
-from .abstracttype import AbstractType
 from .interface import Interface
 from .mutation import Mutation
 from .scalars import Scalar, String, ID, Int, Float, Boolean
+from .json import JSONString
+from .uuid import UUID
 from .schema import Schema
 from .structures import List, NonNull
 from .enum import Enum
@@ -14,10 +16,13 @@ from .argument import Argument
 from .inputobjecttype import InputObjectType
 from .dynamic import Dynamic
 from .union import Union
+from .context import Context
+
+# Deprecated
+from .abstracttype import AbstractType
 
 
 __all__ = [
-    'AbstractType',
     'ObjectType',
     'InputObjectType',
     'Interface',
@@ -31,10 +36,17 @@ __all__ = [
     'ID',
     'Int',
     'Float',
+    'JSONString',
+    'UUID',
     'Boolean',
     'List',
     'NonNull',
     'Argument',
     'Dynamic',
     'Union',
+    'Context',
+    'ResolveInfo',
+
+    # Deprecated
+    'AbstractType',
 ]

@@ -1,9 +1,9 @@
 from collections import OrderedDict
 from itertools import chain
 
+from .dynamic import Dynamic
 from .mountedtype import MountedType
 from .structures import NonNull
-from .dynamic import Dynamic
 from .utils import get_type
 
 
@@ -26,9 +26,9 @@ class Argument(MountedType):
 
     def __eq__(self, other):
         return isinstance(other, Argument) and (
-            self.name == other.name,
-            self.type == other.type,
-            self.default_value == other.default_value,
+            self.name == other.name and
+            self.type == other.type and
+            self.default_value == other.default_value and
             self.description == other.description
         )
 

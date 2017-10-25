@@ -1,6 +1,5 @@
 
 
-from ..abstracttype import AbstractType
 from ..argument import Argument
 from ..enum import Enum
 from ..field import Field
@@ -296,7 +295,7 @@ def test_stringifies_simple_types():
 
 
 def test_does_not_mutate_passed_field_definitions():
-    class CommonFields(AbstractType):
+    class CommonFields(object):
         field1 = String()
         field2 = String(id=String())
 
@@ -307,12 +306,8 @@ def test_does_not_mutate_passed_field_definitions():
         pass
 
     assert TestObject1._meta.fields == TestObject2._meta.fields
-    assert CommonFields._meta.fields == {
-        'field1': String(),
-        'field2': String(id=String()),
-    }
 
-    class CommonFields(AbstractType):
+    class CommonFields(object):
         field1 = String()
         field2 = String()
 
@@ -323,8 +318,3 @@ def test_does_not_mutate_passed_field_definitions():
         pass
 
     assert TestInputObject1._meta.fields == TestInputObject2._meta.fields
-
-    assert CommonFields._meta.fields == {
-        'field1': String(),
-        'field2': String(),
-    }

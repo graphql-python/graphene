@@ -2,9 +2,9 @@ language: python
 sudo: false
 python:
 - 2.7
-- 3.4
 - 3.5
-- pypy
+- 3.6
+- "pypy-5.3.1"
 before_install:
 - |
   if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
@@ -26,12 +26,18 @@ install:
     python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
     pip install flake8
+  elif [ "$TEST_TYPE" = mypy ]; then
+    pip install mypy
   fi
 script:
 - |
   if [ "$TEST_TYPE" = lint ]; then
     echo "Checking Python code lint."
     flake8 graphene
+    exit
+  elif [ "$TEST_TYPE" = mypy ]; then
+    echo "Checking Python types."
+    mypy graphene
     exit
   elif [ "$TEST_TYPE" = build ]; then
     py.test --cov=graphene graphene examples
@@ -51,6 +57,8 @@ matrix:
   include:
   - python: '2.7'
     env: TEST_TYPE=lint
+  - python: '3.6'
+    env: TEST_TYPE=mypy
 deploy:
   provider: pypi
   user: syrusakbary
@@ -58,3 +66,4 @@ deploy:
     tags: true
   password:
     secure: LHOp9DvYR+70vj4YVY8+JRNCKUOfYZREEUY3+4lMUpY7Zy5QwDfgEMXG64ybREH9dFldpUqVXRj53eeU3spfudSfh8NHkgqW7qihez2AhSnRc4dK6ooNfB+kLcSoJ4nUFGxdYImABc4V1hJvflGaUkTwDNYVxJF938bPaO797IvSbuI86llwqkvuK2Vegv9q/fy9sVGaF9VZIs4JgXwR5AyDR7FBArl+S84vWww4vTFD33hoE88VR4QvFY3/71BwRtQrnCMm7AOm31P9u29yi3bpzQpiOR2rHsgrsYdm597QzFKVxYwsmf9uAx2bpbSPy2WibunLePIvOFwm8xcfwnz4/J4ONBc5PSFmUytTWpzEnxb0bfUNLuYloIS24V6OZ8BfAhiYZ1AwySeJCQDM4Vk1V8IF6trTtyx5EW/uV9jsHCZ3LFsAD7UnFRTosIgN3SAK3ZWCEk5oF2IvjecsolEfkRXB3q9EjMkkuXRUeFDH2lWJLgNE27BzY6myvZVzPmfwZUsPBlPD/6w+WLSp97Rjgr9zS3T1d4ddqFM4ZYu04f2i7a/UUQqG+itzzuX5DWLPvzuNt37JB45mB9IsvxPyXZ6SkAcLl48NGyKok1f3vQnvphkfkl4lni29woKhaau8xlsuEDrcwOoeAsVcZXiItg+l+z2SlIwM0A06EvQ=
+  distributions: "sdist bdist_wheel"

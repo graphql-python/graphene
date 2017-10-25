@@ -21,9 +21,9 @@ subclass of ``relay.ClientIDMutation``.
         faction = graphene.Field(Faction)
 
         @classmethod
-        def mutate_and_get_payload(cls, input, context, info):
-            ship_name = input.get('ship_name')
-            faction_id = input.get('faction_id')
+        def mutate_and_get_payload(cls, root, info, **input):
+            ship_name = input.ship_name
+            faction_id = input.faction_id
             ship = create_ship(ship_name, faction_id)
             faction = get_faction(faction_id)
             return IntroduceShip(ship=ship, faction=faction)
@@ -46,7 +46,7 @@ Mutations can also accept files, that's how it will work with different integrat
          success = graphene.String()
 
         @classmethod
-        def mutate_and_get_payload(cls, input, context, info):
+        def mutate_and_get_payload(cls, root, info, **input):
             # When using it in Django, context will be the request
             files = context.FILES
             # Or, if used in Flask, context will be the flask global request

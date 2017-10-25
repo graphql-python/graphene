@@ -1,4 +1,4 @@
-Please read [UPGRADE-v1.0.md](/UPGRADE-v1.0.md) to learn how to upgrade to Graphene `1.0`.
+Please read [UPGRADE-v2.0.md](/UPGRADE-v2.0.md) to learn how to upgrade to Graphene `2.0`.
 
 ---
 
@@ -32,12 +32,12 @@ Also, Graphene is fully compatible with the GraphQL spec, working seamlessly wit
 For instaling graphene, just run this command in your shell
 
 ```bash
-pip install "graphene>=1.0"
+pip install "graphene>=2.0.dev"
 ```
 
-## 1.0 Upgrade Guide
+## 2.0 Upgrade Guide
 
-Please read [UPGRADE-v1.0.md](/UPGRADE-v1.0.md) to learn how to upgrade.
+Please read [UPGRADE-v2.0.md](/UPGRADE-v2.0.md) to learn how to upgrade.
 
 
 ## Examples
@@ -48,7 +48,7 @@ Here is one example for you to get started:
 class Query(graphene.ObjectType):
     hello = graphene.String(description='A typical hello world')
 
-    def resolve_hello(self, args, context, info):
+    def resolve_hello(self, info):
         return 'World'
 
 schema = graphene.Schema(query=Query)

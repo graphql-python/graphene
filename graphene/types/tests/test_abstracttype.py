@@ -1,10 +1,13 @@
+import pytest
 
-from ..abstracttype import AbstractType
-from ..field import Field
+from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
+from ..abstracttype import AbstractType
+from .. import abstracttype
+from ..field import Field
 
 
-class MyType(object):
+class MyType(ObjectType):
     pass
 
 
@@ -14,29 +17,24 @@ class MyScalar(UnmountedType):
         return MyType
 
 
-def test_generate_abstracttype_with_fields():
+def test_abstract_objecttype_warn_deprecation(mocker):
+    mocker.patch.object(abstracttype, 'warn_deprecation')
+
     class MyAbstractType(AbstractType):
-        field = Field(MyType)
+        field1 = MyScalar()
 
-    assert 'field' in MyAbstractType._meta.fields
-    assert isinstance(MyAbstractType._meta.fields['field'], Field)
+    assert abstracttype.warn_deprecation.called
 
 
-def test_generate_abstracttype_with_unmountedfields():
+def test_generate_objecttype_inherit_abstracttype():
     class MyAbstractType(AbstractType):
-        field = UnmountedType(MyType)
+        field1 = MyScalar()
 
-    assert 'field' in MyAbstractType._meta.fields
-    assert isinstance(MyAbstractType._meta.fields['field'], UnmountedType)
+    class MyObjectType(ObjectType, MyAbstractType):
+        field2 = MyScalar()
 
-
-def test_generate_abstracttype_inheritance():
-    class MyAbstractType1(AbstractType):
-        field1 = UnmountedType(MyType)
-
-    class MyAbstractType2(MyAbstractType1):
-        field2 = UnmountedType(MyType)
-
-    assert list(MyAbstractType2._meta.fields.keys()) == ['field1', 'field2']
-    assert not hasattr(MyAbstractType1, 'field1')
-    assert not hasattr(MyAbstractType2, 'field2')
+    assert MyObjectType._meta.description is None
+    assert MyObjectType._meta.interfaces == ()
+    assert MyObjectType._meta.name == "MyObjectType"
+    assert list(MyObjectType._meta.fields.keys()) == ['field1', 'field2']
+    assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]

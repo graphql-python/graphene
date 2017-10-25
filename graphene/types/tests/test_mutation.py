@@ -1,23 +1,25 @@
 import pytest
 
+from ..argument import Argument
+from ..dynamic import Dynamic
 from ..mutation import Mutation
 from ..objecttype import ObjectType
-from ..schema import Schema
 from ..scalars import String
-from ..dynamic import Dynamic
+from ..schema import Schema
 
 
 def test_generate_mutation_no_args():
     class MyMutation(Mutation):
         '''Documentation'''
-        @classmethod
-        def mutate(cls, *args, **kwargs):
-            pass
+
+        def mutate(self, info, **args):
+            return args
 
     assert issubclass(MyMutation, ObjectType)
     assert MyMutation._meta.name == "MyMutation"
     assert MyMutation._meta.description == "Documentation"
-    assert MyMutation.Field().resolver == MyMutation.mutate
+    resolved = MyMutation.Field().resolver(None, None, name='Peter')
+    assert resolved == {'name': 'Peter'}
 
 
 def test_generate_mutation_with_meta():
@@ -27,26 +29,51 @@ def test_generate_mutation_with_meta():
             name = 'MyOtherMutation'
             description = 'Documentation'
 
-        @classmethod
-        def mutate(cls, *args, **kwargs):
-            pass
+        def mutate(self, info, **args):
+            return args
 
     assert MyMutation._meta.name == "MyOtherMutation"
     assert MyMutation._meta.description == "Documentation"
-    assert MyMutation.Field().resolver == MyMutation.mutate
+    resolved = MyMutation.Field().resolver(None, None, name='Peter')
+    assert resolved == {'name': 'Peter'}
 
 
 def test_mutation_raises_exception_if_no_mutate():
     with pytest.raises(AssertionError) as excinfo:
+
         class MyMutation(Mutation):
             pass
 
-    assert "All mutations must define a mutate method in it" == str(excinfo.value)
+    assert "All mutations must define a mutate method in it" == str(
+        excinfo.value)
+
+
+def test_mutation_custom_output_type():
+    class User(ObjectType):
+        name = String()
+
+    class CreateUser(Mutation):
+
+        class Arguments:
+            name = String()
+
+        Output = User
+
+        def mutate(self, info, name):
+            return User(name=name)
+
+    field = CreateUser.Field()
+    assert field.type == User
+    assert field.args == {'name': Argument(String)}
+    resolved = field.resolver(None, None, name='Peter')
+    assert isinstance(resolved, User)
+    assert resolved.name == 'Peter'
 
 
 def test_mutation_execution():
     class CreateUser(Mutation):
-        class Input:
+
+        class Arguments:
             name = String()
             dynamic = Dynamic(lambda: String())
             dynamic_none = Dynamic(lambda: None)
@@ -54,9 +81,7 @@ def test_mutation_execution():
         name = String()
         dynamic = Dynamic(lambda: String())
 
-        def mutate(self, args, context, info):
-            name = args.get('name')
-            dynamic = args.get('dynamic')
+        def mutate(self, info, name, dynamic):
             return CreateUser(name=name, dynamic=dynamic)
 
     class Query(ObjectType):

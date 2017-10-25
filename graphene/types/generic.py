@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
+from graphene.types.scalars import MAX_INT, MIN_INT
 from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
-                                  StringValue, ListValue, ObjectValue)
+                                  ListValue, ObjectValue, StringValue)
 
-from graphene.types.scalars import MIN_INT, MAX_INT
 from .scalars import Scalar
 
 

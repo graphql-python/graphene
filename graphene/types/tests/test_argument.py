@@ -1,11 +1,12 @@
-import pytest
 from functools import partial
+
+import pytest
 
 from ..argument import Argument, to_arguments
 from ..field import Field
 from ..inputfield import InputField
-from ..structures import NonNull
 from ..scalars import String
+from ..structures import NonNull
 
 
 def test_argument():

@@ -1,45 +1,36 @@
-import six
+from collections import OrderedDict
 
-from ..utils.is_base_type import is_base_type
-from ..utils.trim_docstring import trim_docstring
-from .abstracttype import AbstractTypeMeta
+from .base import BaseOptions, BaseType
 from .inputfield import InputField
-from .options import Options
 from .unmountedtype import UnmountedType
-from .utils import get_base_fields, merge, yank_fields_from_attrs
+from .utils import yank_fields_from_attrs
 
 
-class InputObjectTypeMeta(AbstractTypeMeta):
-
-    def __new__(cls, name, bases, attrs):
-        # Also ensure initialization is only performed for subclasses of
-        # InputObjectType
-        if not is_base_type(bases, InputObjectTypeMeta):
-            return type.__new__(cls, name, bases, attrs)
-
-        options = Options(
-            attrs.pop('Meta', None),
-            name=name,
-            description=trim_docstring(attrs.get('__doc__')),
-            local_fields=None,
-        )
-
-        options.base_fields = get_base_fields(bases, _as=InputField)
-
-        if not options.local_fields:
-            options.local_fields = yank_fields_from_attrs(attrs, _as=InputField)
-
-        options.fields = merge(
-            options.base_fields,
-            options.local_fields
-        )
-        return type.__new__(cls, name, bases, dict(attrs, _meta=options))
-
-    def __str__(cls):  # noqa: N802
-        return cls._meta.name
+# For static type checking with Mypy
+MYPY = False
+if MYPY:
+    from typing import Dict, Callable  # NOQA
 
 
-class InputObjectType(six.with_metaclass(InputObjectTypeMeta, UnmountedType)):
+class InputObjectTypeOptions(BaseOptions):
+    fields = None  # type: Dict[str, InputField]
+    create_container = None  # type: Callable
+
+
+class InputObjectTypeContainer(dict, BaseType):
+    class Meta:
+        abstract = True
+
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+        for key, value in self.items():
+            setattr(self, key, value)
+
+    def __init_subclass__(cls, *args, **kwargs):
+        pass
+
+
+class InputObjectType(UnmountedType, BaseType):
     '''
     Input Object Type Definition
 
@@ -48,6 +39,22 @@ class InputObjectType(six.with_metaclass(InputObjectTypeMeta, UnmountedType)):
 
     Using `NonNull` will ensure that a value must be provided by the query
     '''
+
+    @classmethod
+    def __init_subclass_with_meta__(cls, container=None, **options):
+        _meta = InputObjectTypeOptions(cls)
+
+        fields = OrderedDict()
+        for base in reversed(cls.__mro__):
+            fields.update(
+                yank_fields_from_attrs(base.__dict__, _as=InputField)
+            )
+
+        _meta.fields = fields
+        if container is None:
+            container = type(cls.__name__, (InputObjectTypeContainer, cls), {})
+        _meta.container = container
+        super(InputObjectType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def get_type(cls):

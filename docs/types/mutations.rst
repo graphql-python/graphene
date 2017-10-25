@@ -13,15 +13,14 @@ This example defines a Mutation:
     import graphene
 
     class CreatePerson(graphene.Mutation):
-        class Input:
+        class Arguments:
             name = graphene.String()
 
         ok = graphene.Boolean()
         person = graphene.Field(lambda: Person)
 
-        @staticmethod
-        def mutate(root, args, context, info):
-            person = Person(name=args.get('name'))
+        def mutate(self, info, name):
+            person = Person(name=name)
             ok = True
             return CreatePerson(person=person, ok=ok)
 
@@ -90,30 +89,26 @@ InputFields are used in mutations to allow nested input data for mutations
 To use an InputField you define an InputObjectType that specifies the structure of your input data
 
 
-
-
 .. code:: python
 
     import graphene
 
     class PersonInput(graphene.InputObjectType):
-        name = graphene.String()
-        age = graphene.Int()
+        name = graphene.String(required=True)
+        age = graphene.Int(required=True)
 
     class CreatePerson(graphene.Mutation):
-        class Input:
-            person_data = graphene.Argument(PersonInput)
+        class Arguments:
+            person_data = PersonInput(required=True)
 
-        person = graphene.Field(lambda: Person)
+        person = graphene.Field(Person)
 
         @staticmethod
-        def mutate(root, args, context, info):
-            p_data = args.get('person_data')
-
-            name = p_data.get('name')
-            age = p_data.get('age')
-
-            person = Person(name=name, age=age)
+        def mutate(root, info, person_data=None):
+            person = Person(
+                name=person_data.name,
+                age=person_data.age
+            )
             return CreatePerson(person=person)
 
 

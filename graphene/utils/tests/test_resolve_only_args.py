@@ -1,12 +1,15 @@
 from ..resolve_only_args import resolve_only_args
+from .. import deprecated
 
 
-def test_resolve_only_args():
-
-    def resolver(*args, **kwargs):
-        return kwargs
+def test_resolve_only_args(mocker):
+    mocker.patch.object(deprecated, 'warn_deprecation')
+    def resolver(root, **args):
+        return root, args
 
     my_data = {'one': 1, 'two': 2}
 
-    wrapped = resolve_only_args(resolver)
-    assert wrapped(None, my_data, None, None) == my_data
+    wrapped_resolver = resolve_only_args(resolver)
+    assert deprecated.warn_deprecation.called
+    result = wrapped_resolver(1, 2, a=3)
+    assert result == (1, {'a': 3})
