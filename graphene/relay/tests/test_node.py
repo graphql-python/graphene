@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from graphql_relay import to_global_id
 
-from ...types import ObjectType, Schema, String
+from ...types import ObjectType, Schema, String, Union
 from ..node import Node, is_node
 
 
@@ -40,11 +40,27 @@ class MyOtherNode(SharedNodeFields, ObjectType):
         return MyOtherNode(shared=str(id))
 
 
+class DummyNode(SharedNodeFields, ObjectType):
+    class Meta:
+        interfaces = (Node, )
+
+    @staticmethod
+    def get_node(info, id):
+        return DummyNode(shared=str(id))
+
+
+class UnionNode(Union):
+    class Meta:
+        types = [MyNode, MyOtherNode]
+
+
 class RootQuery(ObjectType):
     first = String()
     node = Node.Field()
     only_node = Node.Field(MyNode)
     only_node_lazy = Node.Field(lambda: MyNode)
+    union_node = Node.Field(UnionNode)
+    dummy_node = Node.Field(DummyNode)
 
 
 schema = Schema(query=RootQuery, types=[MyNode, MyOtherNode])
@@ -71,6 +87,20 @@ def test_subclassed_node_query():
     assert not executed.errors
     assert executed.data == OrderedDict({'node': OrderedDict(
         [('shared', '1'), ('extraField', 'extra field info.'), ('somethingElse', '----')])})
+
+
+def test_union_node_query():
+    executed1 = schema.execute(
+        '{ unionNode(id:"%s") { __typename, ... on MyNode { name }, ... on MyOtherNode { shared } } }' % Node.to_global_id("MyNode", 1)
+    )
+    assert not executed1.errors
+    assert executed1.data == {'unionNode': {'__typename': 'MyNode', 'name': '1'}}
+
+    executed2 = schema.execute(
+        '{ unionNode(id:"%s") { __typename, ... on MyNode { name }, ... on MyOtherNode { shared } } }' % Node.to_global_id("MyOtherNode", 1)
+    )
+    assert not executed2.errors
+    assert executed2.data == {'unionNode': {'__typename': 'MyOtherNode', 'shared': '1'}}
 
 
 def test_node_requesting_non_node():
@@ -119,6 +149,17 @@ def test_node_field_only_type_wrong():
     assert executed.data == {'onlyNode': None}
 
 
+def test_union_node_field_only_type_wrong():
+    executed = schema.execute(
+        '{ unionNode(id:"%s") { __typename, ... on MyNode { name }, ... on MyOtherNode { shared } } }' % Node.to_global_id("DummyNode", 1)
+    )
+    from pprint import pprint
+    pprint(executed.data)
+    assert len(executed.errors) == 1
+    assert str(executed.errors[0]) == 'Must receive one of MyNode, MyOtherNode id.'
+    assert executed.data == {'unionNode': None}
+
+
 def test_node_field_only_lazy_type():
     executed = schema.execute(
         '{ onlyNodeLazy(id:"%s") { __typename, name } } ' % Node.to_global_id("MyNode", 1)
@@ -142,6 +183,12 @@ schema {
   query: RootQuery
 }
 
+type DummyNode implements Node {
+  id: ID!
+  shared: String
+  somethingElse: String
+}
+
 type MyNode implements Node {
   id: ID!
   name: String
@@ -163,5 +210,9 @@ type RootQuery {
   node(id: ID!): Node
   onlyNode(id: ID!): MyNode
   onlyNodeLazy(id: ID!): MyNode
+  unionNode(id: ID!): UnionNode
+  dummyNode(id: ID!): DummyNode
 }
+
+union UnionNode = MyNode | MyOtherNode
 """.lstrip()

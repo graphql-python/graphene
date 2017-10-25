@@ -100,7 +100,7 @@ class Node(AbstractNode):
             return None
 
         if only_type:
-            if graphene_type != only_type and isinstance(only_type, Union):
+            if graphene_type != only_type and issubclass(only_type, Union):
                 union_types = only_type._meta.types
                 assert graphene_type in union_types, (
                     'Must receive one of {} id.'
