@@ -96,7 +96,7 @@ class Node(AbstractNode):
         try:
             _type, _id = cls.from_global_id(global_id)
             graphene_type = info.schema.get_type(_type).graphene_type
-        except:
+        except Exception:
             return None
 
         if only_type:

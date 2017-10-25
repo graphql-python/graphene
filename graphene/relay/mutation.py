@@ -59,7 +59,7 @@ class ClientIDMutation(Mutation):
         def on_resolve(payload):
             try:
                 payload.client_mutation_id = input.get('client_mutation_id')
-            except:
+            except Exception:
                 raise Exception(
                     ('Cannot set client_mutation_id in the payload object {}'
                      ).format(repr(payload)))
