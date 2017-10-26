@@ -86,10 +86,10 @@ setup(
     packages=find_packages(exclude=['tests', 'tests.*']),
 
     install_requires=[
-        'six>=1.10.0',
-        'graphql-core>=2.0',
-        'graphql-relay>=0.4.5',
-        'promise>=2.1',
+        'six>=1.10.0,<2',
+        'graphql-core>=2.0,<3',
+        'graphql-relay>=0.4.5,<1',
+        'promise>=2.1,<3',
     ],
     tests_require=tests_require,
     extras_require={
