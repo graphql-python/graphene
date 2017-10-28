@@ -37,6 +37,7 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
+
 tests_require = [
     'pytest>=2.7.2',
     'pytest-benchmark',
@@ -81,10 +82,10 @@ setup(
     packages=find_packages(exclude=['tests']),
 
     install_requires=[
-        'six>=1.10.0',
-        'graphql-core>=1.1',
-        'graphql-relay>=0.4.5',
-        'promise>=2.0',
+        'six>=1.10.0,<2',
+        'graphql-core>=1.1,<2',
+        'graphql-relay>=0.4.5,<1',
+        'promise>=2.0,<2.1',
     ],
     tests_require=tests_require,
     extras_require={
