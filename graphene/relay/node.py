@@ -55,7 +55,8 @@ class NodeMeta(InterfaceMeta):
 
     def __new__(cls, name, bases, attrs):
         cls = InterfaceMeta.__new__(cls, name, bases, attrs)
-        cls._meta.fields['id'] = GlobalID(cls, description='The ID of the object.')
+        cls._meta.fields['id'] = GlobalID(
+            cls, description='The ID of the object.')
         return cls
 
 
@@ -68,7 +69,8 @@ class NodeField(Field):
         self.field_type = type
 
         super(NodeField, self).__init__(
-            # If we don's specify a type, the field type will be the node interface
+            # If we don's specify a type, the field type will be the node
+            # interface
             type or node,
             description='The ID of the object',
             id=ID(required=True)
@@ -94,7 +96,7 @@ class Node(six.with_metaclass(NodeMeta, Interface)):
         try:
             _type, _id = cls.from_global_id(global_id)
             graphene_type = info.schema.get_type(_type).graphene_type
-        except:
+        except Exception:
             return None
 
         if only_type:

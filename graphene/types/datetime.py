@@ -8,7 +8,7 @@ from .scalars import Scalar
 
 try:
     import iso8601
-except:
+except ImportError:
     raise ImportError(
         "iso8601 package is required for DateTime Scalar.\n"
         "You can install it using: pip install iso8601."

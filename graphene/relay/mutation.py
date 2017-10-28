@@ -23,7 +23,8 @@ class ClientIDMutationMeta(ObjectTypeMeta):
         base_name = re.sub('Payload$', '', name)
         if 'client_mutation_id' not in attrs:
             attrs['client_mutation_id'] = String(name='clientMutationId')
-        cls = ObjectTypeMeta.__new__(cls, '{}Payload'.format(base_name), bases, attrs)
+        cls = ObjectTypeMeta.__new__(
+            cls, '{}Payload'.format(base_name), bases, attrs)
         mutate_and_get_payload = getattr(cls, 'mutate_and_get_payload', None)
         if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:
             assert mutate_and_get_payload, (
@@ -39,8 +40,10 @@ class ClientIDMutationMeta(ObjectTypeMeta):
         else:
             bases += (input_class, )
         input_attrs['client_mutation_id'] = String(name='clientMutationId')
-        cls.Input = type('{}Input'.format(base_name), bases + (InputObjectType,), input_attrs)
-        cls.Field = partial(Field, cls, resolver=cls.mutate, input=Argument(cls.Input, required=True))
+        cls.Input = type('{}Input'.format(base_name), bases +
+                         (InputObjectType,), input_attrs)
+        cls.Field = partial(Field, cls, resolver=cls.mutate,
+                            input=Argument(cls.Input, required=True))
         return cls
 
 
@@ -53,7 +56,7 @@ class ClientIDMutation(six.with_metaclass(ClientIDMutationMeta, ObjectType)):
         def on_resolve(payload):
             try:
                 payload.client_mutation_id = input.get('clientMutationId')
-            except:
+            except Exception:
                 raise Exception((
                     'Cannot set client_mutation_id in the payload object {}'
                 ).format(repr(payload)))
