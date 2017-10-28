@@ -27,7 +27,7 @@ But also using instances of Enum:
 Value descriptions
 ------------------
 
-It's possible to add a description to a enum value, for that the enum value
+It's possible to add a description to an enum value, for that the enum value
 needs to have the ``description`` property on it.
 
 .. code:: python
