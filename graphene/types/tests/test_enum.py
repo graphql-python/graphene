@@ -76,8 +76,11 @@ def test_enum_from_builtin_enum_accepts_lambda_description():
 
         return 'New Hope Episode' if value == Episode.NEWHOPE else 'Other'
 
+    def custom_deprecation_reason(value):
+        return 'meh' if value == Episode.NEWHOPE else None
+
     PyEpisode = PyEnum('PyEpisode', 'NEWHOPE,EMPIRE,JEDI')
-    Episode = Enum.from_enum(PyEpisode, description=custom_description)
+    Episode = Enum.from_enum(PyEpisode, description=custom_description, deprecation_reason=custom_deprecation_reason)
 
     class Query(ObjectType):
         foo = Episode()
@@ -90,6 +93,10 @@ def test_enum_from_builtin_enum_accepts_lambda_description():
     assert GraphQLPyEpisode[0].name == 'NEWHOPE' and GraphQLPyEpisode[0].description == 'New Hope Episode'
     assert GraphQLPyEpisode[1].name == 'EMPIRE' and GraphQLPyEpisode[1].description == 'Other'
     assert GraphQLPyEpisode[2].name == 'JEDI' and GraphQLPyEpisode[2].description == 'Other'
+
+    assert GraphQLPyEpisode[0].name == 'NEWHOPE' and GraphQLPyEpisode[0].deprecation_reason == 'meh'
+    assert GraphQLPyEpisode[1].name == 'EMPIRE' and GraphQLPyEpisode[1].deprecation_reason == None
+    assert GraphQLPyEpisode[2].name == 'JEDI' and GraphQLPyEpisode[2].deprecation_reason == None
 
 
 def test_enum_from_python3_enum_uses_enum_doc():
