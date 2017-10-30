@@ -127,16 +127,27 @@ class TypeMap(GraphQLTypeMap):
     def construct_enum(self, map, type):
         values = OrderedDict()
         for name, value in type._meta.enum.__members__.items():
+            description = getattr(value, 'description', None)
+            deprecation_reason = getattr(value, 'deprecation_reason', None)
+            if not description and callable(type._meta.description):
+                description = type._meta.description(value)
+
+            if not deprecation_reason and callable(type._meta.deprecation_reason):
+                deprecation_reason = type._meta.deprecation_reason(value)
+
             values[name] = GraphQLEnumValue(
                 name=name,
                 value=value.value,
-                description=getattr(value, 'description', None),
-                deprecation_reason=getattr(value, 'deprecation_reason', None))
+                description=description,
+                deprecation_reason=deprecation_reason)
+
+        type_description = type._meta.description(None) if callable(type._meta.description) else type._meta.description
+
         return GrapheneEnumType(
             graphene_type=type,
             values=values,
             name=type._meta.name,
-            description=type._meta.description, )
+            description=type_description, )
 
     def construct_objecttype(self, map, type):
         if type._meta.name in map:

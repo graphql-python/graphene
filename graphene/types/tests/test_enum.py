@@ -1,3 +1,6 @@
+import six
+
+from ..schema import Schema, ObjectType
 from ..argument import Argument
 from ..enum import Enum, PyEnum
 from ..field import Field
@@ -61,6 +64,50 @@ def test_enum_from_builtin_enum():
 
     RGB = Enum.from_enum(PyRGB)
     assert RGB._meta.enum == PyRGB
+    assert RGB.RED
+    assert RGB.GREEN
+    assert RGB.BLUE
+
+
+def test_enum_from_builtin_enum_accepts_lambda_description():
+    def custom_description(value):
+        if not value:
+            return "StarWars Episodes"
+
+        return 'New Hope Episode' if value == Episode.NEWHOPE else 'Other'
+
+    PyEpisode = PyEnum('PyEpisode', 'NEWHOPE,EMPIRE,JEDI')
+    Episode = Enum.from_enum(PyEpisode, description=custom_description)
+
+    class Query(ObjectType):
+        foo = Episode()
+
+    schema = Schema(query=Query)
+
+    GraphQLPyEpisode = schema._type_map['PyEpisode'].values
+
+    assert schema._type_map['PyEpisode'].description == "StarWars Episodes"
+    assert GraphQLPyEpisode[0].name == 'NEWHOPE' and GraphQLPyEpisode[0].description == 'New Hope Episode'
+    assert GraphQLPyEpisode[1].name == 'EMPIRE' and GraphQLPyEpisode[1].description == 'Other'
+    assert GraphQLPyEpisode[2].name == 'JEDI' and GraphQLPyEpisode[2].description == 'Other'
+
+
+def test_enum_from_python3_enum_uses_enum_doc():
+    if not six.PY3:
+        return
+
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        """This is the description"""
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    RGB = Enum.from_enum(Color)
+    assert RGB._meta.enum == Color
+    assert RGB._meta.description == "This is the description"
+    assert RGB
     assert RGB.RED
     assert RGB.GREEN
     assert RGB.BLUE
