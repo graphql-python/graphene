@@ -48,7 +48,12 @@ class EnumMeta(SubclassWithMeta_Meta):
 
     def from_enum(cls, enum, description=None, deprecation_reason=None):  # noqa: N805
         description = description or enum.__doc__
-        meta_class = type('Meta', (object,), {'enum': enum, 'description': description, 'deprecation_reason': deprecation_reason})
+        meta_dict = {
+            'enum': enum,
+            'description': description,
+            'deprecation_reason': deprecation_reason
+        }
+        meta_class = type('Meta', (object,), meta_dict)
         return type(meta_class.enum.__name__, (Enum,), {'Meta': meta_class})
 
 
