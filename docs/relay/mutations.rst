@@ -48,7 +48,7 @@ Mutations can also accept files, that's how it will work with different integrat
         @classmethod
         def mutate_and_get_payload(cls, root, info, **input):
             # When using it in Django, context will be the request
-            files = context.FILES
+            files = info.context.FILES
             # Or, if used in Flask, context will be the flask global request
             # files = context.files
 
