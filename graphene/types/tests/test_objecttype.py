@@ -5,6 +5,8 @@ from ..interface import Interface
 from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
 from ..structures import NonNull
+from ..scalars import String
+from ..schema import Schema
 
 
 class MyType(Interface):
@@ -224,3 +226,29 @@ def test_objecttype_with_possible_types_and_is_type_of_should_raise():
         'MyObjectType.Meta.possible_types will cause type collision with '
         'MyObjectType.is_type_of. Please use one or other.'
     )
+
+
+def test_objecttype_no_fields_output():
+    class User(ObjectType):
+        name = String()
+
+    class Query(ObjectType):
+        user = Field(User)
+
+        def resolve_user(self, info):
+            return User()
+
+
+    schema = Schema(query=Query)
+    result = schema.execute(''' query basequery {
+        user {
+            name
+        }
+    }
+    ''')
+    assert not result.errors
+    assert result.data == {
+        'user': {
+            'name': None,
+        }
+    }

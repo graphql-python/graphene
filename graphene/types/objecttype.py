@@ -81,7 +81,7 @@ class ObjectType(BaseType):
 
         for name, field in fields_iter:
             try:
-                val = kwargs.pop(name)
+                val = kwargs.pop(name, None)
                 setattr(self, name, val)
             except KeyError:
                 pass

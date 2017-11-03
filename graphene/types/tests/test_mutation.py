@@ -105,3 +105,31 @@ def test_mutation_execution():
             'dynamic': 'dynamic',
         }
     }
+
+
+def test_mutation_no_fields_output():
+    class CreateUser(Mutation):
+        name = String()
+
+        def mutate(self, info):
+            return CreateUser()
+
+    class Query(ObjectType):
+        a = String()
+
+    class MyMutation(ObjectType):
+        create_user = CreateUser.Field()
+
+    schema = Schema(query=Query, mutation=MyMutation)
+    result = schema.execute(''' mutation mymutation {
+        createUser {
+            name
+        }
+    }
+    ''')
+    assert not result.errors
+    assert result.data == {
+        'createUser': {
+            'name': None,
+        }
+    }
