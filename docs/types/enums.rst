@@ -54,6 +54,13 @@ the ``Enum.from_enum`` function.
 
     graphene.Enum.from_enum(AlreadyExistingPyEnum)
 
+``Enum.from_enum`` supports a ``description`` and ``deprecation_reason`` lambdas as input so
+you can add description etc. to your enum without changing the original:
+
+.. code:: python
+
+    graphene.Enum.from_enum(AlreadyExistingPyEnum, description=lambda value: return 'foo' if value == AlreadyExistingPyEnum.Foo else 'bar')
+
 
 Notes
 -----
@@ -65,7 +72,7 @@ member getters.
 In the Python ``Enum`` implementation you can access a member by initing the Enum.
 
 .. code:: python
-    
+
     from enum import Enum
     class Color(Enum):
         RED = 1
@@ -78,7 +85,7 @@ In the Python ``Enum`` implementation you can access a member by initing the Enu
 However, in Graphene ``Enum`` you need to call get to have the same effect:
 
 .. code:: python
-    
+
     from graphene import Enum
     class Color(Enum):
         RED = 1
