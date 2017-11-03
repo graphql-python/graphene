@@ -18,10 +18,8 @@ Middlewares ``resolve`` is invoked with several arguments:
 
 - ``next`` represents the execution chain. Call ``next`` to continue evalution.
 - ``root`` is the root value object passed throughout the query.
-- ``args`` is the hash of arguments passed to the field.
-- ``context`` is the context object passed throughout the query.
 - ``info`` is the resolver info.
-
+- ``args`` is the hash of arguments passed to the field.
 
 Example
 -------
