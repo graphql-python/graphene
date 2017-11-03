@@ -23,8 +23,8 @@ class InputObjectTypeContainer(dict, BaseType):
 
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
-        for key, value in self.items():
-            setattr(self, key, value)
+        for key in self._meta.fields.keys():
+            setattr(self, key, self.get(key, None))
 
     def __init_subclass__(cls, *args, **kwargs):
         pass
