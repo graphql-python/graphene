@@ -15,6 +15,32 @@ except ImportError:
     )
 
 
+class Date(Scalar):
+    '''
+    The `Date` scalar type represents a Date
+    value as specified by
+    [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+    '''
+
+    @staticmethod
+    def serialize(date):
+        if isinstance(date, datetime.datetime):
+            date = date.date()
+        assert isinstance(date, datetime.date), (
+            'Received not compatible date "{}"'.format(repr(date))
+        )
+        return date.isoformat()
+
+    @classmethod
+    def parse_literal(cls, node):
+        if isinstance(node, ast.StringValue):
+            return cls.parse_value(node.value)
+
+    @staticmethod
+    def parse_value(value):
+        return iso8601.parse_date(value).date()
+
+
 class DateTime(Scalar):
     '''
     The `DateTime` scalar type represents a DateTime
