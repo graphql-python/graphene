@@ -1,10 +1,7 @@
 from collections import OrderedDict
 
 from .base import BaseOptions, BaseType
-from .field import Field
 from .inputfield import InputField
-from .objecttype import ObjectType
-from .scalars import Scalar
 from .structures import List, NonNull
 from .unmountedtype import UnmountedType
 from .utils import yank_fields_from_attrs
@@ -50,6 +47,7 @@ class InputObjectTypeContainer(dict, BaseType):
             return field_or_type._meta.container(value)
         else:
             return value
+
 
 class InputObjectType(UnmountedType, BaseType):
     '''
