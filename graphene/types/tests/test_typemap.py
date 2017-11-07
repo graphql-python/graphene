@@ -4,6 +4,7 @@ from graphql.type import (GraphQLArgument, GraphQLEnumType, GraphQLEnumValue,
                           GraphQLInputObjectType, GraphQLInterfaceType,
                           GraphQLObjectType, GraphQLString)
 
+from ..structures import List, NonNull
 from ..dynamic import Dynamic
 from ..enum import Enum
 from ..field import Field
@@ -11,7 +12,7 @@ from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
-from ..scalars import String
+from ..scalars import String, Int
 from ..typemap import TypeMap
 
 
@@ -119,10 +120,18 @@ def test_interface():
 
 
 def test_inputobject():
+    class OtherObjectType(InputObjectType):
+        thingy = NonNull(Int)
+
+    class MyInnerObjectType(InputObjectType):
+        some_field = String()
+        some_other_field = List(OtherObjectType)
+
     class MyInputObjectType(InputObjectType):
         '''Description'''
         foo_bar = String(description='Field description')
         bar = String(name='gizmo')
+        baz = NonNull(MyInnerObjectType)
         own = InputField(lambda: MyInputObjectType)
 
         def resolve_foo_bar(self, args, info):
@@ -136,14 +145,23 @@ def test_inputobject():
     assert graphql_type.description == 'Description'
 
     # Container
-    container = graphql_type.create_container({'bar': 'oh!'})
+    container = graphql_type.create_container({
+        'bar': 'oh!',
+        'baz': {
+            'some_other_field': [{'thingy': 1}, {'thingy': 2}]
+        }
+    })
     assert isinstance(container, MyInputObjectType)
     assert 'bar' in container
     assert container.bar == 'oh!'
     assert 'foo_bar' not in container
+    assert container.foo_bar is None
+    assert container.baz.some_field is None
+    assert container.baz.some_other_field[0].thingy == 1
+    assert container.baz.some_other_field[1].thingy == 2
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ['fooBar', 'gizmo', 'own']
+    assert list(fields.keys()) == ['fooBar', 'gizmo', 'baz', 'own']
     own_field = fields['own']
     assert own_field.type == graphql_type
     foo_field = fields['fooBar']

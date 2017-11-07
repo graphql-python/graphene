@@ -1,10 +1,13 @@
 from collections import OrderedDict
 
 from .base import BaseOptions, BaseType
+from .field import Field
 from .inputfield import InputField
+from .objecttype import ObjectType
+from .scalars import Scalar
+from .structures import List, NonNull
 from .unmountedtype import UnmountedType
 from .utils import yank_fields_from_attrs
-
 
 # For static type checking with Mypy
 MYPY = False
@@ -24,11 +27,29 @@ class InputObjectTypeContainer(dict, BaseType):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
         for key in self._meta.fields.keys():
-            setattr(self, key, self.get(key, None))
+            field = getattr(self, key, None)
+            if field is None or self.get(key, None) is None:
+                value = None
+            else:
+                value = InputObjectTypeContainer._get_typed_field_value(field, self[key])
+            setattr(self, key, value)
 
     def __init_subclass__(cls, *args, **kwargs):
         pass
 
+    @staticmethod
+    def _get_typed_field_value(field_or_type, value):
+        if isinstance(field_or_type, NonNull):
+            return InputObjectTypeContainer._get_typed_field_value(field_or_type.of_type, value)
+        elif isinstance(field_or_type, List):
+            return [
+                InputObjectTypeContainer._get_typed_field_value(field_or_type.of_type, v)
+                for v in value
+            ]
+        elif hasattr(field_or_type, '_meta') and hasattr(field_or_type._meta, 'container'):
+            return field_or_type._meta.container(value)
+        else:
+            return value
 
 class InputObjectType(UnmountedType, BaseType):
     '''
