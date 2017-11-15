@@ -39,7 +39,8 @@ def test_enum():
     assert graphql_enum.description == 'Description'
     values = graphql_enum.values
     assert values == [
-        GraphQLEnumValue(name='foo', value=1, description='Description foo=1', deprecation_reason='Is deprecated'),
+        GraphQLEnumValue(name='foo', value=1, description='Description foo=1',
+                         deprecation_reason='Is deprecated'),
         GraphQLEnumValue(name='bar', value=2, description='Description bar=2'),
     ]
 
@@ -47,7 +48,8 @@ def test_enum():
 def test_objecttype():
     class MyObjectType(ObjectType):
         '''Description'''
-        foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
+        foo = String(bar=String(description='Argument description',
+                                default_value='x'), description='Field description')
         bar = String(name='gizmo')
 
         def resolve_foo(self, bar):
@@ -92,8 +94,10 @@ def test_dynamic_objecttype():
 def test_interface():
     class MyInterface(Interface):
         '''Description'''
-        foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
-        bar = String(name='gizmo', first_arg=String(), other_arg=String(name='oth_arg'))
+        foo = String(bar=String(description='Argument description',
+                                default_value='x'), description='Field description')
+        bar = String(name='gizmo', first_arg=String(),
+                     other_arg=String(name='oth_arg'))
         own = Field(lambda: MyInterface)
 
         def resolve_foo(self, args, info):
@@ -144,12 +148,16 @@ def test_inputobject():
     assert graphql_type.name == 'MyInputObjectType'
     assert graphql_type.description == 'Description'
 
-    # Container
+    other_graphql_type = typemap['OtherObjectType']
+    inner_graphql_type = typemap['MyInnerObjectType']
     container = graphql_type.create_container({
         'bar': 'oh!',
-        'baz': {
-            'some_other_field': [{'thingy': 1}, {'thingy': 2}]
-        }
+        'baz': inner_graphql_type.create_container({
+            'some_other_field': [
+                other_graphql_type.create_container({'thingy': 1}),
+                other_graphql_type.create_container({'thingy': 2})
+            ]
+        })
     })
     assert isinstance(container, MyInputObjectType)
     assert 'bar' in container

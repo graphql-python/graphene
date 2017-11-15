@@ -2,7 +2,6 @@ from collections import OrderedDict
 
 from .base import BaseOptions, BaseType
 from .inputfield import InputField
-from .structures import List, NonNull
 from .unmountedtype import UnmountedType
 from .utils import yank_fields_from_attrs
 
@@ -14,7 +13,7 @@ if MYPY:
 
 class InputObjectTypeOptions(BaseOptions):
     fields = None  # type: Dict[str, InputField]
-    create_container = None  # type: Callable
+    container = None  # type: InputObjectTypeContainer
 
 
 class InputObjectTypeContainer(dict, BaseType):
@@ -24,29 +23,10 @@ class InputObjectTypeContainer(dict, BaseType):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
         for key in self._meta.fields.keys():
-            field = getattr(self, key, None)
-            if field is None or self.get(key, None) is None:
-                value = None
-            else:
-                value = InputObjectTypeContainer._get_typed_field_value(field, self[key])
-            setattr(self, key, value)
+            setattr(self, key, self.get(key, None))
 
     def __init_subclass__(cls, *args, **kwargs):
         pass
-
-    @staticmethod
-    def _get_typed_field_value(field_or_type, value):
-        if isinstance(field_or_type, NonNull):
-            return InputObjectTypeContainer._get_typed_field_value(field_or_type.of_type, value)
-        elif isinstance(field_or_type, List):
-            return [
-                InputObjectTypeContainer._get_typed_field_value(field_or_type.of_type, v)
-                for v in value
-            ]
-        elif hasattr(field_or_type, '_meta') and hasattr(field_or_type._meta, 'container'):
-            return field_or_type._meta.container(value)
-        else:
-            return value
 
 
 class InputObjectType(UnmountedType, BaseType):
@@ -73,7 +53,8 @@ class InputObjectType(UnmountedType, BaseType):
         if container is None:
             container = type(cls.__name__, (InputObjectTypeContainer, cls), {})
         _meta.container = container
-        super(InputObjectType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super(InputObjectType, cls).__init_subclass_with_meta__(
+            _meta=_meta, **options)
 
     @classmethod
     def get_type(cls):
