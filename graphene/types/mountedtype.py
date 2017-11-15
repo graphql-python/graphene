@@ -4,6 +4,8 @@ from .unmountedtype import UnmountedType
 
 class MountedType(OrderedType):
 
+    _mount_cls_override = None
+
     @classmethod
     def mounted(cls, unmounted):  # noqa: N802
         '''
@@ -13,7 +15,9 @@ class MountedType(OrderedType):
             '{} can\'t mount {}'
         ).format(cls.__name__, repr(unmounted))
 
-        return cls(
+        mount_cls = cls._mount_cls_override or cls
+
+        return mount_cls(
             unmounted.get_type(),
             *unmounted.args,
             _creation_counter=unmounted.creation_counter,
