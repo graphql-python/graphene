@@ -5,6 +5,8 @@ from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
+from ..scalars import String, Boolean
+from ..schema import Schema
 
 
 class MyType(object):
@@ -51,7 +53,8 @@ def test_ordered_fields_in_inputobjecttype():
         field = MyScalar()
         asa = InputField(MyType)
 
-    assert list(MyInputObjectType._meta.fields.keys()) == ['b', 'a', 'field', 'asa']
+    assert list(MyInputObjectType._meta.fields.keys()) == [
+        'b', 'a', 'field', 'asa']
 
 
 def test_generate_inputobjecttype_unmountedtype():
@@ -86,7 +89,8 @@ def test_generate_inputobjecttype_inherit_abstracttype():
         field2 = MyScalar(MyType)
 
     assert list(MyInputObjectType._meta.fields.keys()) == ['field1', 'field2']
-    assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [InputField, InputField]
+    assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [
+        InputField, InputField]
 
 
 def test_generate_inputobjecttype_inherit_abstracttype_reversed():
@@ -97,4 +101,34 @@ def test_generate_inputobjecttype_inherit_abstracttype_reversed():
         field2 = MyScalar(MyType)
 
     assert list(MyInputObjectType._meta.fields.keys()) == ['field1', 'field2']
-    assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [InputField, InputField]
+    assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [
+        InputField, InputField]
+
+
+def test_inputobjecttype_of_input():
+    class Child(InputObjectType):
+        first_name = String()
+        last_name = String()
+
+        @property
+        def full_name(self):
+            return "{} {}".format(self.first_name, self.last_name)
+
+    class Parent(InputObjectType):
+        child = InputField(Child)
+
+    class Query(ObjectType):
+        is_child = Boolean(parent=Parent())
+
+        def resolve_is_child(self, info, parent):
+            return isinstance(parent.child, Child) and parent.child.full_name == "Peter Griffin"
+
+    schema = Schema(query=Query)
+    result = schema.execute('''query basequery {
+        isChild(parent: {child: {firstName: "Peter", lastName: "Griffin"}})
+    }
+    ''')
+    assert not result.errors
+    assert result.data == {
+        'isChild': True
+    }

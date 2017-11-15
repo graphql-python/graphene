@@ -12,8 +12,8 @@ The basics:
 Quick example
 -------------
 
-This example model defines a ``Character`` interface with a name. ``Human``
-and ``Droid`` are two implementations of that interface.
+This example model defines several ObjectTypes with their own fields.
+``SearchResult`` is the implementation of ``Union`` of this object types.
 
 .. code:: python
 
