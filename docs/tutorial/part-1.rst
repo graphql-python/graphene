@@ -1,3 +1,5 @@
+.. _tutorial-part-1:
+
 Create your first schema
 ========================
 
