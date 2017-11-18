@@ -53,3 +53,5 @@ Then we can start querying our schema:
 
 Later we will show you how to serve the schema under an HTTP endpoint
 so that it can be used with JavaScript clients.
+
+Let's now continue with :ref:`tutorial-part-2`.
