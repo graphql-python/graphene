@@ -11,6 +11,7 @@ Graphene defines the following base Scalar Types:
 
 Graphene also provides custom scalars for Dates, Times, and JSON:
 
+- ``graphene.types.datetime.Date``
 - ``graphene.types.datetime.DateTime``
 - ``graphene.types.datetime.Time``
 - ``graphene.types.json.JSONString``
