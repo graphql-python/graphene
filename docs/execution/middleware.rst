@@ -56,10 +56,10 @@ logs the time it takes to resolve each field
         start = timer()
         return_value = next(root, info, **args)
         duration = timer() - start
-        logger.debug("{parent_type}.{field_name}: {duration}".format(
+        logger.debug("{parent_type}.{field_name}: {duration} ms".format(
             parent_type=root._meta.name if root else '',
             field_name=info.field_name,
-            duration=duration
+            duration=round(duration * 1000, 2)
         ))
         return return_value
 
