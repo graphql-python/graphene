@@ -30,18 +30,54 @@ Base scalars
 
 Graphene defines the following base Scalar Types:
 
-- ``graphene.String``
-- ``graphene.Int``
-- ``graphene.Float``
-- ``graphene.Boolean``
-- ``graphene.ID``
+``graphene.String``
+
+    Represents textual data, represented as UTF-8
+    character sequences. The String type is most often used by GraphQL to
+    represent free-form human-readable text.
+
+``graphene.Int``
+
+    Represents non-fractional signed whole numeric
+    values. Int can represent values between `-(2^53 - 1)` and `2^53 - 1` since
+    represented in JSON as double-precision floating point numbers specified
+    by `IEEE 754 <http://en.wikipedia.org/wiki/IEEE_floating_point>`_.
+
+``graphene.Float``
+
+    Represents signed double-precision fractional
+    values as specified by
+    `IEEE 754 <http://en.wikipedia.org/wiki/IEEE_floating_point>`_.
+
+``graphene.Boolean``
+
+    Represents `true` or `false`.
+
+``graphene.ID``
+
+    Represents a unique identifier, often used to
+    refetch an object or as key for a cache. The ID type appears in a JSON
+    response as a String; however, it is not intended to be human-readable.
+    When expected as an input type, any string (such as `"4"`) or integer
+    (such as `4`) input value will be accepted as an ID.
 
 Graphene also provides custom scalars for Dates, Times, and JSON:
 
-- ``graphene.types.datetime.Date``
-- ``graphene.types.datetime.DateTime``
-- ``graphene.types.datetime.Time``
-- ``graphene.types.json.JSONString``
+``graphene.types.datetime.Date``
+
+    Represents a Date value as specified by `iso8601 <https://en.wikipedia.org/wiki/ISO_8601>`_.
+
+``graphene.types.datetime.DateTime``
+
+    Represents a DateTime value as specified by `iso8601 <https://en.wikipedia.org/wiki/ISO_8601>`_.
+
+``graphene.types.datetime.Time``
+
+    Represents a Time value as specified by `iso8601 <https://en.wikipedia.org/wiki/ISO_8601>`_.
+
+``graphene.types.json.JSONString``
+
+    Represents a JSON string.
 
 
 Custom scalars
