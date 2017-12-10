@@ -1,6 +1,33 @@
 Scalars
 =======
 
+All Scalar types accept the following arguments. All are optional:
+
+``name``: *string*
+
+    Override the name of the Field.
+
+``description``: *string*
+
+    A description of the type to show in the GraphiQL browser.
+
+``required``: *boolean*
+
+    If ``True``, the server will enforce a value for this field. See `NonNull <./list-and-nonnull.html#nonnull>`_. Default is ``False``.
+
+``deprecation_reason``: *string*
+
+    Provide a deprecation reason for the Field.
+
+``default_value``: *any*
+
+    Provide a default value for the Field.
+
+
+
+Base scalars
+------------
+
 Graphene defines the following base Scalar Types:
 
 - ``graphene.String``
