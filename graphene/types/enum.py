@@ -60,8 +60,9 @@ class EnumMeta(SubclassWithMeta_Meta):
 class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
 
     @classmethod
-    def __init_subclass_with_meta__(cls, enum=None, **options):
-        _meta = EnumOptions(cls)
+    def __init_subclass_with_meta__(cls, enum=None, _meta=None, **options):
+        if not _meta:
+            _meta = EnumOptions(cls)
         _meta.enum = enum or cls.__enum__
         _meta.deprecation_reason = options.pop('deprecation_reason', None)
         for key, value in _meta.enum.__members__.items():

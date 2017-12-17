@@ -40,8 +40,9 @@ class InputObjectType(UnmountedType, BaseType):
     '''
 
     @classmethod
-    def __init_subclass_with_meta__(cls, container=None, **options):
-        _meta = InputObjectTypeOptions(cls)
+    def __init_subclass_with_meta__(cls, container=None, _meta=None, **options):
+        if not _meta:
+            _meta = InputObjectTypeOptions(cls)
 
         fields = OrderedDict()
         for base in reversed(cls.__mro__):
