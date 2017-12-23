@@ -55,7 +55,7 @@ Example of a custom node:
             return '{}:{}'.format(type, id)
 
         @staticmethod
-        def get_node_from_global_id(info global_id, only_type=None):
+        def get_node_from_global_id(info, global_id, only_node=None):
             type, id = global_id.split(':')
             if only_node:
                 # We assure that the node type that we want to retrieve
