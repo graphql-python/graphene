@@ -1,13 +1,38 @@
 import re
 
 
-# From this response in Stackoverflow
-# http://stackoverflow.com/a/19053800/1072990
 def to_camel_case(snake_str):
-    components = snake_str.split('_')
-    # We capitalize the first letter of each component except the first one
-    # with the 'title' method and join them together.
-    return components[0] + "".join(x.title() if x else '_' for x in components[1:])
+    """
+    Return a camel-cased version of a snake-cased string.
+
+    Leading underscores and multiple consecutive underscores are kept
+    intact.
+
+    :param snake_str: A snake-cased string.
+    :return: A camel-cased string.
+    """
+    # Find all subcomponents in a snake-cased string, including
+    # any trailing underscores, which are treated as a separate
+    # component.
+    snake_case_sub_strings = re.findall(r'(_*[a-zA-Z]+|_+$)', snake_str)
+
+    # The first variable is unchanged case-wise (and leading
+    # underscores preserved as-is).
+    camel_case_sub_strings = [snake_case_sub_strings[0]]
+
+    for s in snake_case_sub_strings[1:]:
+        # We reset the camel casing algorithm if more than one
+        # underscore is encountered.  The endswith handles any
+        # trailing underscores in the original snake-cased
+        # variable.
+        if s.startswith('__') or s.endswith('_'):
+            camel_case_sub_strings.append(s)
+            continue
+
+        # Otherwise we replace '_name' with 'Name', for example.
+        camel_case_sub_strings.append(s[1:].title())
+
+    return ''.join(camel_case_sub_strings)
 
 
 # From this response in Stackoverflow
