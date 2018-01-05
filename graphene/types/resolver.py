@@ -6,7 +6,13 @@ def dict_resolver(attname, default_value, root, info, **args):
     return root.get(attname, default_value)
 
 
-default_resolver = attr_resolver
+def dict_or_attr_resolver(attname, default_value, root, info, **args):
+    if isinstance(root, dict):
+        return dict_resolver(attname, default_value, root, info, **args)
+    return attr_resolver(attname, default_value, root, info, **args)
+
+
+default_resolver = dict_or_attr_resolver
 
 
 def set_default_resolver(resolver):
