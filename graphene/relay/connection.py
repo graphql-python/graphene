@@ -73,7 +73,7 @@ class Connection(ObjectType):
         edge = type(edge_name, edge_bases, {})
         cls.Edge = edge
 
-        _meta.name = name
+        options['name'] = name
         _meta.node = node
         _meta.fields = OrderedDict([
             ('page_info', Field(PageInfo, name='pageInfo', required=True)),
