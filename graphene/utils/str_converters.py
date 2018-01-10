@@ -1,13 +1,13 @@
 import re
 
 
-# From this response in Stackoverflow
+# Adapted from this response in Stackoverflow
 # http://stackoverflow.com/a/19053800/1072990
 def to_camel_case(snake_str):
     components = snake_str.split('_')
     # We capitalize the first letter of each component except the first one
-    # with the 'title' method and join them together.
-    return components[0] + "".join(x.title() if x else '_' for x in components[1:])
+    # with the 'capitalize' method and join them together.
+    return components[0] + ''.join(x.capitalize() if x else '_' for x in components[1:])
 
 
 # From this response in Stackoverflow
