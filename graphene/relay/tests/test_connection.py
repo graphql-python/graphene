@@ -52,6 +52,21 @@ def test_connection_inherit_abstracttype():
     assert list(fields.keys()) == ['page_info', 'edges', 'extra']
 
 
+def test_connection_name():
+    custom_name = "MyObjectCustomNameConnection"
+
+    class BaseConnection(object):
+        extra = String()
+
+    class MyObjectConnection(BaseConnection, Connection):
+
+        class Meta:
+            node = MyObject
+            name = custom_name
+
+    assert MyObjectConnection._meta.name == custom_name
+
+
 def test_edge():
     class MyObjectConnection(Connection):
 
@@ -122,8 +137,9 @@ def test_connectionfield_node_deprecated():
     field = ConnectionField(MyObject)
     with pytest.raises(Exception) as exc_info:
         field.type
-    
+
     assert "ConnectionField's now need a explicit ConnectionType for Nodes." in str(exc_info.value)
+
 
 def test_connectionfield_custom_args():
     class MyObjectConnection(Connection):
