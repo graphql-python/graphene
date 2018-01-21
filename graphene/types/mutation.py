@@ -54,7 +54,10 @@ class Mutation(ObjectType):
                     ).format(name=cls.__name__))
 
             if input_class:
-                arguments = props(input_class)
+                if isinstance(input_class, dict):
+                    arguments = input_class
+                else:
+                    arguments = props(input_class)
             else:
                 arguments = {}
 
