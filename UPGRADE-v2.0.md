@@ -21,7 +21,7 @@ developer has to write to use them.
 
 
 > The type metaclasses are now deleted as they are no longer necessary.  If your code was depending
-> on this strategy for creating custom attrs, see an [example on how to do it in 2.0](https://github.com/graphql-python/graphene/blob/2.0/graphene/tests/issues/test_425.py).
+> on this strategy for creating custom attrs, see an [example on how to do it in 2.0](https://github.com/graphql-python/graphene/blob/v2.0.0/graphene/tests/issues/test_425.py).
 
 ## Deprecations
 
