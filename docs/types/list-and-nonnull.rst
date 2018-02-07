@@ -48,3 +48,24 @@ Lists work in a similar way: We can use a type modifier to mark a type as a
 ``List``, which indicates that this field will return a list of that type.
 It works the same for arguments, where the validation step will expect a list
 for that value.
+
+NonNull Lists
+-------------
+
+By default items in a list will be considered nullable. To define a list without
+any nullable items the type needs to be marked as ``NonNull``. For example:
+
+.. code:: python
+
+    import graphene
+
+    class Character(graphene.ObjectType):
+        appears_in = graphene.List(graphene.NonNull(graphene.String))
+
+The above results in the type definition:
+
+.. code::
+
+    type Character {
+        appearsIn: [String!]
+    }
