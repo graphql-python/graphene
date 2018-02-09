@@ -76,7 +76,12 @@ class Mutation(ObjectType):
         super(Mutation, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
-    def Field(cls, *args, **kwargs):
+    def Field(cls, name=None, description=None, deprecation_reason=None):
         return Field(
-            cls._meta.output, args=cls._meta.arguments, resolver=cls._meta.resolver
+            cls._meta.output,
+            args=cls._meta.arguments,
+            resolver=cls._meta.resolver,
+            name=name,
+            description=description,
+            deprecation_reason=deprecation_reason,
         )
