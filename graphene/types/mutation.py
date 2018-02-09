@@ -78,5 +78,6 @@ class Mutation(ObjectType):
     @classmethod
     def Field(cls, *args, **kwargs):
         return Field(
-            cls._meta.output, args=cls._meta.arguments, resolver=cls._meta.resolver
+            cls._meta.output, args=cls._meta.arguments, resolver=cls._meta.resolver,
+            description=cls._meta.description
         )
