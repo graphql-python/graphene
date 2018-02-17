@@ -115,9 +115,6 @@ class IterableConnectionField(Field):
 
     @classmethod
     def resolve_connection(cls, connection_type, args, resolved):
-        if isinstance(connection_type, NonNull):
-            connection_type = connection_type.of_type
-
         if isinstance(resolved, connection_type):
             return resolved
 
@@ -138,6 +135,9 @@ class IterableConnectionField(Field):
     @classmethod
     def connection_resolver(cls, resolver, connection_type, root, info, **args):
         resolved = resolver(root, info, **args)
+
+        if isinstance(connection_type, NonNull):
+            connection_type = connection_type.of_type
 
         on_resolve = partial(cls.resolve_connection, connection_type, args)
         if is_thenable(resolved):
