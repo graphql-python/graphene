@@ -99,7 +99,10 @@ class IterableConnectionField(Field):
     def type(self):
         type = super(IterableConnectionField, self).type
         connection_type = type
-        if is_node(type):
+        if isinstance(type, NonNull):
+            connection_type = type.of_type
+
+        if is_node(connection_type):
             raise Exception(
                 "ConnectionField's now need a explicit ConnectionType for Nodes.\n"
                 "Read more: https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#node-connections"
@@ -108,10 +111,13 @@ class IterableConnectionField(Field):
         assert issubclass(connection_type, Connection), (
             '{} type have to be a subclass of Connection. Received "{}".'
         ).format(self.__class__.__name__, connection_type)
-        return connection_type
+        return type
 
     @classmethod
     def resolve_connection(cls, connection_type, args, resolved):
+        if isinstance(connection_type, NonNull):
+            connection_type = connection_type.of_type
+
         if isinstance(resolved, connection_type):
             return resolved
 
