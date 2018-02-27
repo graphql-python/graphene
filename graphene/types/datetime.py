@@ -38,8 +38,10 @@ class Date(Scalar):
 
     @staticmethod
     def parse_value(value):
-        return iso8601.parse_date(value).date()
-
+        try:
+            return iso8601.parse_date(value).date()
+        except iso8601.ParseError:
+            return None
 
 class DateTime(Scalar):
     '''
@@ -62,8 +64,10 @@ class DateTime(Scalar):
 
     @staticmethod
     def parse_value(value):
-        return iso8601.parse_date(value)
-
+        try:
+            return iso8601.parse_date(value)
+        except iso8601.ParseError:
+            return None
 
 class Time(Scalar):
     '''
@@ -87,5 +91,8 @@ class Time(Scalar):
 
     @classmethod
     def parse_value(cls, value):
-        dt = iso8601.parse_date('{}T{}'.format(cls.epoch_date, value))
-        return datetime.time(dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)
+        try:
+            dt = iso8601.parse_date('{}T{}'.format(cls.epoch_date, value))
+            return datetime.time(dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)
+        except iso8601.ParseError:
+            return None
