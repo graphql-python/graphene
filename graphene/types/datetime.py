@@ -43,6 +43,7 @@ class Date(Scalar):
         except iso8601.ParseError:
             return None
 
+
 class DateTime(Scalar):
     '''
     The `DateTime` scalar type represents a DateTime
@@ -68,6 +69,7 @@ class DateTime(Scalar):
             return iso8601.parse_date(value)
         except iso8601.ParseError:
             return None
+
 
 class Time(Scalar):
     '''
