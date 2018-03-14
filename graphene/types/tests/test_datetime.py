@@ -34,7 +34,7 @@ def test_datetime_query():
     assert result.data == {'datetime': isoformat}
 
 
-def test_datetime_query():
+def test_date_query():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc).date()
     isoformat = now.isoformat()
 
