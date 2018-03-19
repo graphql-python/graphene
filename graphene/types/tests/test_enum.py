@@ -80,7 +80,8 @@ def test_enum_from_builtin_enum_accepts_lambda_description():
         return 'meh' if value == Episode.NEWHOPE else None
 
     PyEpisode = PyEnum('PyEpisode', 'NEWHOPE,EMPIRE,JEDI')
-    Episode = Enum.from_enum(PyEpisode, description=custom_description, deprecation_reason=custom_deprecation_reason)
+    Episode = Enum.from_enum(PyEpisode, description=custom_description,
+                             deprecation_reason=custom_deprecation_reason)
 
     class Query(ObjectType):
         foo = Episode()
@@ -214,3 +215,19 @@ def test_enum_to_enum_comparison_should_differ():
     assert RGB1.RED != RGB2.RED
     assert RGB1.GREEN != RGB2.GREEN
     assert RGB1.BLUE != RGB2.BLUE
+
+
+def test_enum_skip_meta_from_members():
+    class RGB1(Enum):
+        class Meta:
+            name = 'RGB'
+
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    assert dict(RGB1._meta.enum.__members__) == {
+        'RED': RGB1.RED,
+        'GREEN': RGB1.GREEN,
+        'BLUE': RGB1.BLUE,
+    }

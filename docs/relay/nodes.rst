@@ -55,12 +55,12 @@ Example of a custom node:
             return '{}:{}'.format(type, id)
 
         @staticmethod
-        def get_node_from_global_id(info, global_id, only_node=None):
+        def get_node_from_global_id(info, global_id, only_type=None):
             type, id = global_id.split(':')
-            if only_node:
+            if only_type:
                 # We assure that the node type that we want to retrieve
                 # is the same that was indicated in the field type
-                assert type == only_node._meta.name, 'Received not compatible node.'
+                assert type == only_type._meta.name, 'Received not compatible node.'
 
             if type == 'User':
                 return get_user(id)

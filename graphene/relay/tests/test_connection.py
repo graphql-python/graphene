@@ -1,6 +1,6 @@
 import pytest
 
-from ...types import Argument, Field, Int, List, NonNull, ObjectType, String
+from ...types import Argument, Field, Int, List, NonNull, ObjectType, String, Schema
 from ..connection import Connection, ConnectionField, PageInfo
 from ..node import Node
 
@@ -155,3 +155,23 @@ def test_connectionfield_custom_args():
         'last': Argument(Int),
         'extra': Argument(String),
     }
+
+
+def test_connectionfield_required():
+    class MyObjectConnection(Connection):
+
+        class Meta:
+            node = MyObject
+
+    class Query(ObjectType):
+        test_connection = ConnectionField(MyObjectConnection, required=True)
+
+        def resolve_test_connection(root, info, **args):
+            return []
+
+    schema = Schema(query=Query)
+    executed = schema.execute(
+        '{ testConnection { edges { cursor } } }'
+    )
+    assert not executed.errors
+    assert executed.data == {'testConnection': {'edges': []}}
