@@ -129,7 +129,6 @@ class IterableConnectionField(Field):
             edge_type=connection_type.Edge,
             pageinfo_type=PageInfo
         )
-        connection.iterable = resolved
         return connection
 
     @classmethod
