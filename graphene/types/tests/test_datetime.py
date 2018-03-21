@@ -2,6 +2,8 @@ import datetime
 
 import pytz
 
+from graphql import GraphQLError
+
 from ..datetime import DateTime, Date, Time
 from ..objecttype import ObjectType
 from ..schema import Schema
@@ -34,7 +36,7 @@ def test_datetime_query():
     assert result.data == {'datetime': isoformat}
 
 
-def test_datetime_query():
+def test_date_query():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc).date()
     isoformat = now.isoformat()
 
@@ -53,6 +55,32 @@ def test_time_query():
     assert not result.errors
     assert result.data == {'time': isoformat}
 
+def test_bad_datetime_query():
+    not_a_date = "Some string that's not a date"
+
+    result = schema.execute('''{ datetime(in: "%s") }''' % not_a_date)
+    
+    assert len(result.errors) == 1
+    assert isinstance(result.errors[0], GraphQLError)
+    assert result.data == None
+
+def test_bad_date_query():
+    not_a_date = "Some string that's not a date"
+    
+    result = schema.execute('''{ date(in: "%s") }''' % not_a_date)
+    
+    assert len(result.errors) == 1
+    assert isinstance(result.errors[0], GraphQLError)
+    assert result.data == None
+
+def test_bad_time_query():
+    not_a_date = "Some string that's not a date"
+
+    result = schema.execute('''{ time(at: "%s") }''' % not_a_date)
+
+    assert len(result.errors) == 1
+    assert isinstance(result.errors[0], GraphQLError)
+    assert result.data == None
 
 def test_datetime_query_variable():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc)
