@@ -44,6 +44,8 @@ def test_generate_objecttype():
     assert MyObjectType._meta.description == "Documentation"
     assert MyObjectType._meta.interfaces == tuple()
     assert MyObjectType._meta.fields == {}
+    assert repr(
+        MyObjectType) == "<MyObjectType meta=<ObjectTypeOptions name='MyObjectType'>>"
 
 
 def test_generate_objecttype_with_meta():
@@ -65,7 +67,6 @@ def test_generate_lazy_objecttype():
 
     class InnerObjectType(ObjectType):
         field = Field(MyType)
-    
 
     assert MyObjectType._meta.name == "MyObjectType"
     example_field = MyObjectType._meta.fields['example']
@@ -115,7 +116,8 @@ def test_generate_objecttype_inherit_abstracttype():
     assert MyObjectType._meta.interfaces == ()
     assert MyObjectType._meta.name == "MyObjectType"
     assert list(MyObjectType._meta.fields.keys()) == ['field1', 'field2']
-    assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
+    assert list(map(type, MyObjectType._meta.fields.values())) == [
+        Field, Field]
 
 
 def test_generate_objecttype_inherit_abstracttype_reversed():
@@ -129,7 +131,8 @@ def test_generate_objecttype_inherit_abstracttype_reversed():
     assert MyObjectType._meta.interfaces == ()
     assert MyObjectType._meta.name == "MyObjectType"
     assert list(MyObjectType._meta.fields.keys()) == ['field1', 'field2']
-    assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
+    assert list(map(type, MyObjectType._meta.fields.values())) == [
+        Field, Field]
 
 
 def test_generate_objecttype_unmountedtype():
@@ -145,7 +148,8 @@ def test_parent_container_get_fields():
 
 
 def test_parent_container_interface_get_fields():
-    assert list(ContainerWithInterface._meta.fields.keys()) == ['ifield', 'field1', 'field2']
+    assert list(ContainerWithInterface._meta.fields.keys()) == [
+        'ifield', 'field1', 'field2']
 
 
 def test_objecttype_as_container_only_args():
@@ -182,7 +186,8 @@ def test_objecttype_as_container_invalid_kwargs():
     with pytest.raises(TypeError) as excinfo:
         Container(unexisting_field="3")
 
-    assert "'unexisting_field' is an invalid keyword argument for Container" == str(excinfo.value)
+    assert "'unexisting_field' is an invalid keyword argument for Container" == str(
+        excinfo.value)
 
 
 def test_objecttype_container_benchmark(benchmark):
@@ -238,7 +243,6 @@ def test_objecttype_no_fields_output():
         def resolve_user(self, info):
             return User()
 
-
     schema = Schema(query=Query)
     result = schema.execute(''' query basequery {
         user {
@@ -252,3 +256,12 @@ def test_objecttype_no_fields_output():
             'name': None,
         }
     }
+
+
+def test_abstract_objecttype_can_str():
+    class MyObjectType(ObjectType):
+        class Meta:
+            abstract = True
+        field = MyScalar()
+
+    assert str(MyObjectType) == "MyObjectType"

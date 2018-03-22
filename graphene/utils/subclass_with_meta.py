@@ -6,9 +6,15 @@ from .props import props
 
 
 class SubclassWithMeta_Meta(InitSubclassMeta):
+    _meta = None
+
+    def __str__(cls):
+        if cls._meta:
+            return cls._meta.name
+        return cls.__name__
 
     def __repr__(cls):
-        return cls._meta.name
+        return "<{} meta={}>".format(cls.__name__, repr(cls._meta))
 
 
 class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
@@ -24,7 +30,8 @@ class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
             elif isclass(_Meta):
                 _meta_props = props(_Meta)
             else:
-                raise Exception("Meta have to be either a class or a dict. Received {}".format(_Meta))
+                raise Exception(
+                    "Meta have to be either a class or a dict. Received {}".format(_Meta))
             delattr(cls, "Meta")
         options = dict(meta_options, **_meta_props)
 
