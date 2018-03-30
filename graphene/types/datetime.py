@@ -3,16 +3,9 @@ from __future__ import absolute_import
 import datetime
 
 from graphql.language import ast
+from aniso8601 import parse_datetime, parse_date, parse_time
 
 from .scalars import Scalar
-
-try:
-    import iso8601
-except ImportError:
-    raise ImportError(
-        "iso8601 package is required for DateTime Scalar.\n"
-        "You can install it using: pip install iso8601."
-    )
 
 
 class Date(Scalar):
@@ -39,8 +32,8 @@ class Date(Scalar):
     @staticmethod
     def parse_value(value):
         try:
-            return iso8601.parse_date(value).date()
-        except iso8601.ParseError:
+            return parse_date(value)
+        except ValueError:
             return None
 
 
@@ -66,8 +59,8 @@ class DateTime(Scalar):
     @staticmethod
     def parse_value(value):
         try:
-            return iso8601.parse_date(value)
-        except iso8601.ParseError:
+            return parse_datetime(value)
+        except ValueError:
             return None
 
 
@@ -77,7 +70,6 @@ class Time(Scalar):
     specified by
     [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
     '''
-    epoch_date = '1970-01-01'
 
     @staticmethod
     def serialize(time):
@@ -94,7 +86,6 @@ class Time(Scalar):
     @classmethod
     def parse_value(cls, value):
         try:
-            dt = iso8601.parse_date('{}T{}'.format(cls.epoch_date, value))
-            return datetime.time(dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)
-        except iso8601.ParseError:
+            return parse_time(value)
+        except ValueError:
             return None

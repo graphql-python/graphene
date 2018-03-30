@@ -5,6 +5,7 @@ from .objecttype import ObjectType
 from .interface import Interface
 from .mutation import Mutation
 from .scalars import Scalar, String, ID, Int, Float, Boolean
+from .datetime import Date, DateTime, Time
 from .json import JSONString
 from .uuid import UUID
 from .schema import Schema
@@ -36,6 +37,9 @@ __all__ = [
     'ID',
     'Int',
     'Float',
+    'Date',
+    'DateTime',
+    'Time',
     'JSONString',
     'UUID',
     'Boolean',

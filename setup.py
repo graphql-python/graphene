@@ -90,6 +90,7 @@ setup(
         'graphql-core>=2.0,<3',
         'graphql-relay>=0.4.5,<1',
         'promise>=2.1,<3',
+        'aniso8601>=3,<4',
     ],
     tests_require=tests_require,
     extras_require={
