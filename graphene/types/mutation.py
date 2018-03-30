@@ -50,7 +50,8 @@ class Mutation(ObjectType):
                     warn_deprecation((
                         "Please use {name}.Arguments instead of {name}.Input."
                         "Input is now only used in ClientMutationID.\n"
-                        "Read more: https://github.com/graphql-python/graphene/blob/2.0/UPGRADE-v2.0.md#mutation-input"
+                        "Read more:"
+                        " https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#mutation-input"
                     ).format(name=cls.__name__))
 
             if input_class:
@@ -72,10 +73,17 @@ class Mutation(ObjectType):
         _meta.resolver = resolver
         _meta.arguments = arguments
 
-        super(Mutation, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super(Mutation, cls).__init_subclass_with_meta__(
+            _meta=_meta, **options)
 
     @classmethod
-    def Field(cls, *args, **kwargs):
+    def Field(cls, name=None, description=None, deprecation_reason=None, required=False):
         return Field(
-            cls._meta.output, args=cls._meta.arguments, resolver=cls._meta.resolver
+            cls._meta.output,
+            args=cls._meta.arguments,
+            resolver=cls._meta.resolver,
+            name=name,
+            description=description,
+            deprecation_reason=deprecation_reason,
+            required=required,
         )

@@ -21,7 +21,7 @@ class BaseOptions(object):
             raise Exception("Can't modify frozen Options {0}".format(self))
 
     def __repr__(self):
-        return "<{} type={}>".format(self.__class__.__name__, self.class_type.__name__)
+        return "<{} name={}>".format(self.__class__.__name__, repr(self.name))
 
 
 class BaseType(SubclassWithMeta):

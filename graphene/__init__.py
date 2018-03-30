@@ -34,7 +34,7 @@ from .utils.resolve_only_args import resolve_only_args
 from .utils.module_loading import lazy_import
 
 
-VERSION = (2, 0, 0, 'final', 0)
+VERSION = (2, 0, 1, 'final', 0)
 
 __version__ = get_version(VERSION)
 

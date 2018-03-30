@@ -27,7 +27,11 @@ class EnumOptions(BaseOptions):
 class EnumMeta(SubclassWithMeta_Meta):
 
     def __new__(cls, name, bases, classdict, **options):
-        enum = PyEnum(cls.__name__, OrderedDict(classdict, __eq__=eq_enum))
+        enum_members = OrderedDict(classdict, __eq__=eq_enum)
+        # We remove the Meta attribute from the class to not collide
+        # with the enum values.
+        enum_members.pop('Meta', None)
+        enum = PyEnum(cls.__name__, enum_members)
         return SubclassWithMeta_Meta.__new__(cls, name, bases, OrderedDict(classdict, __enum__=enum), **options)
 
     def get(cls, value):
@@ -60,8 +64,9 @@ class EnumMeta(SubclassWithMeta_Meta):
 class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
 
     @classmethod
-    def __init_subclass_with_meta__(cls, enum=None, **options):
-        _meta = EnumOptions(cls)
+    def __init_subclass_with_meta__(cls, enum=None, _meta=None, **options):
+        if not _meta:
+            _meta = EnumOptions(cls)
         _meta.enum = enum or cls.__enum__
         _meta.deprecation_reason = options.pop('deprecation_reason', None)
         for key, value in _meta.enum.__members__.items():

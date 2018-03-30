@@ -1,9 +1,11 @@
+import pytest
 
 from graphql.type import (GraphQLArgument, GraphQLEnumType, GraphQLEnumValue,
                           GraphQLField, GraphQLInputObjectField,
                           GraphQLInputObjectType, GraphQLInterfaceType,
                           GraphQLObjectType, GraphQLString)
 
+from ..structures import List, NonNull
 from ..dynamic import Dynamic
 from ..enum import Enum
 from ..field import Field
@@ -11,8 +13,8 @@ from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
-from ..scalars import String
-from ..typemap import TypeMap
+from ..scalars import String, Int
+from ..typemap import TypeMap, resolve_type
 
 
 def test_enum():
@@ -38,7 +40,8 @@ def test_enum():
     assert graphql_enum.description == 'Description'
     values = graphql_enum.values
     assert values == [
-        GraphQLEnumValue(name='foo', value=1, description='Description foo=1', deprecation_reason='Is deprecated'),
+        GraphQLEnumValue(name='foo', value=1, description='Description foo=1',
+                         deprecation_reason='Is deprecated'),
         GraphQLEnumValue(name='bar', value=2, description='Description bar=2'),
     ]
 
@@ -46,7 +49,8 @@ def test_enum():
 def test_objecttype():
     class MyObjectType(ObjectType):
         '''Description'''
-        foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
+        foo = String(bar=String(description='Argument description',
+                                default_value='x'), description='Field description')
         bar = String(name='gizmo')
 
         def resolve_foo(self, bar):
@@ -91,8 +95,10 @@ def test_dynamic_objecttype():
 def test_interface():
     class MyInterface(Interface):
         '''Description'''
-        foo = String(bar=String(description='Argument description', default_value='x'), description='Field description')
-        bar = String(name='gizmo', first_arg=String(), other_arg=String(name='oth_arg'))
+        foo = String(bar=String(description='Argument description',
+                                default_value='x'), description='Field description')
+        bar = String(name='gizmo', first_arg=String(),
+                     other_arg=String(name='oth_arg'))
         own = Field(lambda: MyInterface)
 
         def resolve_foo(self, args, info):
@@ -119,10 +125,18 @@ def test_interface():
 
 
 def test_inputobject():
+    class OtherObjectType(InputObjectType):
+        thingy = NonNull(Int)
+
+    class MyInnerObjectType(InputObjectType):
+        some_field = String()
+        some_other_field = List(OtherObjectType)
+
     class MyInputObjectType(InputObjectType):
         '''Description'''
         foo_bar = String(description='Field description')
         bar = String(name='gizmo')
+        baz = NonNull(MyInnerObjectType)
         own = InputField(lambda: MyInputObjectType)
 
         def resolve_foo_bar(self, args, info):
@@ -135,15 +149,28 @@ def test_inputobject():
     assert graphql_type.name == 'MyInputObjectType'
     assert graphql_type.description == 'Description'
 
-    # Container
-    container = graphql_type.create_container({'bar': 'oh!'})
+    other_graphql_type = typemap['OtherObjectType']
+    inner_graphql_type = typemap['MyInnerObjectType']
+    container = graphql_type.create_container({
+        'bar': 'oh!',
+        'baz': inner_graphql_type.create_container({
+            'some_other_field': [
+                other_graphql_type.create_container({'thingy': 1}),
+                other_graphql_type.create_container({'thingy': 2})
+            ]
+        })
+    })
     assert isinstance(container, MyInputObjectType)
     assert 'bar' in container
     assert container.bar == 'oh!'
     assert 'foo_bar' not in container
+    assert container.foo_bar is None
+    assert container.baz.some_field is None
+    assert container.baz.some_other_field[0].thingy == 1
+    assert container.baz.some_other_field[1].thingy == 2
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ['fooBar', 'gizmo', 'own']
+    assert list(fields.keys()) == ['fooBar', 'gizmo', 'baz', 'own']
     own_field = fields['own']
     assert own_field.type == graphql_type
     foo_field = fields['fooBar']
@@ -206,3 +233,22 @@ def test_objecttype_with_possible_types():
     assert graphql_type.is_type_of
     assert graphql_type.is_type_of({}, None) is True
     assert graphql_type.is_type_of(MyObjectType(), None) is False
+
+
+def test_resolve_type_with_missing_type():
+    class MyObjectType(ObjectType):
+        foo_bar = String()
+
+    class MyOtherObjectType(ObjectType):
+        fizz_buzz = String()
+
+    def resolve_type_func(root, info):
+        return MyOtherObjectType
+
+    typemap = TypeMap([MyObjectType])
+    with pytest.raises(AssertionError) as excinfo:
+        resolve_type(
+            resolve_type_func, typemap, 'MyOtherObjectType', {}, {}
+        )
+
+    assert 'MyOtherObjectTyp' in str(excinfo.value)

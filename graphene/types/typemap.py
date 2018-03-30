@@ -46,7 +46,10 @@ def resolve_type(resolve_type_func, map, type_name, root, info):
 
     if inspect.isclass(_type) and issubclass(_type, ObjectType):
         graphql_type = map.get(_type._meta.name)
-        assert graphql_type and graphql_type.graphene_type == _type, (
+        assert graphql_type, "Can't find type {} in schema".format(
+            _type._meta.name
+        )
+        assert graphql_type.graphene_type == _type, (
             'The type {} does not match with the associated graphene type {}.'
         ).format(_type, graphql_type.graphene_type)
         return graphql_type

@@ -31,7 +31,10 @@ class Date(Scalar):
 
     @staticmethod
     def parse_value(value):
-        return parse_date(value)
+        try:
+            return parse_date(value)
+        except ValueError:
+            return None
 
 
 class DateTime(Scalar):
@@ -55,7 +58,10 @@ class DateTime(Scalar):
 
     @staticmethod
     def parse_value(value):
-        return parse_datetime(value)
+        try:
+            return parse_datetime(value)
+        except ValueError:
+            return None
 
 
 class Time(Scalar):
@@ -79,4 +85,7 @@ class Time(Scalar):
 
     @classmethod
     def parse_value(cls, value):
-        return parse_time(value)
+        try:
+            return parse_time(value)
+        except ValueError:
+            return None

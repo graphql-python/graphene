@@ -5,7 +5,6 @@ from .inputfield import InputField
 from .unmountedtype import UnmountedType
 from .utils import yank_fields_from_attrs
 
-
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
@@ -14,7 +13,7 @@ if MYPY:
 
 class InputObjectTypeOptions(BaseOptions):
     fields = None  # type: Dict[str, InputField]
-    create_container = None  # type: Callable
+    container = None  # type: InputObjectTypeContainer
 
 
 class InputObjectTypeContainer(dict, BaseType):
@@ -23,8 +22,8 @@ class InputObjectTypeContainer(dict, BaseType):
 
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
-        for key, value in self.items():
-            setattr(self, key, value)
+        for key in self._meta.fields.keys():
+            setattr(self, key, self.get(key, None))
 
     def __init_subclass__(cls, *args, **kwargs):
         pass
@@ -41,8 +40,9 @@ class InputObjectType(UnmountedType, BaseType):
     '''
 
     @classmethod
-    def __init_subclass_with_meta__(cls, container=None, **options):
-        _meta = InputObjectTypeOptions(cls)
+    def __init_subclass_with_meta__(cls, container=None, _meta=None, **options):
+        if not _meta:
+            _meta = InputObjectTypeOptions(cls)
 
         fields = OrderedDict()
         for base in reversed(cls.__mro__):
@@ -54,7 +54,8 @@ class InputObjectType(UnmountedType, BaseType):
         if container is None:
             container = type(cls.__name__, (InputObjectTypeContainer, cls), {})
         _meta.container = container
-        super(InputObjectType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super(InputObjectType, cls).__init_subclass_with_meta__(
+            _meta=_meta, **options)
 
     @classmethod
     def get_type(cls):
