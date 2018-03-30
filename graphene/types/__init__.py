@@ -18,6 +18,7 @@ from .inputobjecttype import InputObjectType
 from .dynamic import Dynamic
 from .union import Union
 from .context import Context
+from .datetime import Date, DateTime, Time
 
 # Deprecated
 from .abstracttype import AbstractType
@@ -50,6 +51,9 @@ __all__ = [
     'Union',
     'Context',
     'ResolveInfo',
+    'Date',
+    'DateTime',
+    'Time',
 
     # Deprecated
     'AbstractType',
