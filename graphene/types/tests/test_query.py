@@ -9,9 +9,9 @@ from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
-from ..scalars import Int, String
+from ..scalars import Int, String, Boolean
 from ..schema import Schema
-from ..structures import List
+from ..structures import List, NonNull
 from ..union import Union
 from ..context import Context
 
@@ -475,3 +475,23 @@ def test_query_annotated_resolvers():
     result = test_schema.execute('{ info }', "base")
     assert not result.errors
     assert result.data == {'info': 'base-info'}
+
+
+def test_default_as_kwarg_to_NonNull():
+    # Related to https://github.com/graphql-python/graphene/issues/702
+    class User(ObjectType):
+        name = String()
+        is_admin = NonNull(Boolean, default_value=False)
+
+    class Query(ObjectType):
+        user = Field(User)
+
+        def resolve_user(self, *args, **kwargs):
+            return User(name="foo")
+
+    schema = Schema(query=Query)
+    expected = {'user': {'name': 'foo', 'isAdmin': False}}
+    result = schema.execute("{ user { name isAdmin } }")
+
+    assert not result.errors
+    assert result.data == expected
