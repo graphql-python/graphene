@@ -24,7 +24,7 @@ This example defines a Mutation:
             ok = True
             return CreatePerson(person=person, ok=ok)
 
-**person** and **ok** are the output fields of the Mutation when is
+**person** and **ok** are the output fields of the Mutation when it is
 resolved.
 
 **Input** attributes are the arguments that the Mutation
