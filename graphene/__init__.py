@@ -20,7 +20,8 @@ from .types import (
     Dynamic,
     Union,
     Context,
-    ResolveInfo
+    ResolveInfo,
+    GenericScalar,
 )
 from .relay import (
     Node,
@@ -76,6 +77,7 @@ __all__ = [
     'lazy_import',
     'Context',
     'ResolveInfo',
+    'GenericScalar',
 
     # Deprecated
     'AbstractType',
