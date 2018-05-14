@@ -31,6 +31,6 @@ def test_list_non_null():
 def test_partial():
     def __type(_type):
         return _type
-    dynamic = Dynamic(partial(__type(String)))
+    dynamic = Dynamic(partial(__type, String))
     assert dynamic.get_type() == String
     assert str(dynamic.get_type()) == 'String'
