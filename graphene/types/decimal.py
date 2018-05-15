@@ -15,7 +15,7 @@ class Decimal(Scalar):
             'Received not compatible Decimal "{}"'.format(repr(dec))
         )
         return str(dec)
-    
+
     @classmethod
     def parse_literal(cls, node):
         if isinstance(node, ast.StringValue):
