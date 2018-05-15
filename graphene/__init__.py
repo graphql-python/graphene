@@ -12,6 +12,7 @@ from .types import (
     Scalar,
     String, ID, Int, Float, Boolean,
     Date, DateTime, Time,
+    Decimal,
     JSONString,
     UUID,
     List, NonNull,

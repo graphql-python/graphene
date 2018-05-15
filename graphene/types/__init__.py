@@ -6,6 +6,7 @@ from .interface import Interface
 from .mutation import Mutation
 from .scalars import Scalar, String, ID, Int, Float, Boolean
 from .datetime import Date, DateTime, Time
+from .decimal import Decimal
 from .json import JSONString
 from .uuid import UUID
 from .schema import Schema
