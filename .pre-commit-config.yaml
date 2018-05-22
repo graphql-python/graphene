@@ -1,0 +1,17 @@
+-   repo: git://github.com/pre-commit/pre-commit-hooks
+    sha: v0.8.0
+    hooks:
+    -   id: autopep8-wrapper
+        args:
+        - -i
+        - --ignore=E128,E309,E501
+        exclude: ^docs/.*$
+    -   id: check-json
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: end-of-file-fixer
+        exclude: ^docs/.*$
+    -   id: trailing-whitespace
+    -   id: pretty-format-json
+        args:
+        - --autofix

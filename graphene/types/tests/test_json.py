@@ -10,6 +10,7 @@ class Query(ObjectType):
     def resolve_json(self, info, input):
         return input
 
+
 schema = Schema(query=Query)
 
 

@@ -278,7 +278,7 @@ Now you can create abstact types super easily, without the need of subclassing t
 class Base(ObjectType):
     class Meta:
         abstract = True
-    
+
     id = ID()
 
     def resolve_id(self, info):
