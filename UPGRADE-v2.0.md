@@ -200,7 +200,7 @@ class MyObject(ObjectType):
 
 ## Mutation.mutate
 
-Now only receives (`self`, `info`, `**args`) and if not a @classmethod
+Now only receives (`self`, `info`, `**args`) and is not a @classmethod
 
 Before:
 
