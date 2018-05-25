@@ -18,7 +18,7 @@ class BaseOptions(object):
         if not self._frozen:
             super(BaseOptions, self).__setattr__(name, value)
         else:
-            raise Exception("Can't modify frozen Options {0}".format(self))
+            raise Exception("Can't modify frozen Options {}".format(self))
 
     def __repr__(self):
         return "<{} name={}>".format(self.__class__.__name__, repr(self.name))

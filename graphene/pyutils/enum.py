@@ -170,7 +170,7 @@ class EnumMeta(type):
                                                          first_enum)
         # save enum items into separate mapping so they don't get baked into
         # the new class
-        members = dict((k, classdict[k]) for k in classdict._member_names)
+        members = {k: classdict[k] for k in classdict._member_names}
         for name in classdict._member_names:
             del classdict[name]
 
@@ -192,14 +192,14 @@ class EnumMeta(type):
                 _order_ += aliases
 
         # check for illegal enum names (any others?)
-        invalid_names = set(members) & set(['mro'])
+        invalid_names = set(members) & {'mro'}
         if invalid_names:
             raise ValueError('Invalid enum member name(s): %s' % (
                 ', '.join(invalid_names), ))
 
         # save attributes from super classes so we know if we can take
         # the shortcut of storing members in the class dict
-        base_attributes = set([a for b in bases for a in b.__dict__])
+        base_attributes = {a for b in bases for a in b.__dict__}
         # create our new Enum type
         enum_class = super(EnumMeta, metacls).__new__(metacls, cls, bases, classdict)
         enum_class._member_names_ = []               # names in random order
@@ -831,7 +831,7 @@ def _convert(cls, name, module, filter, source=None):
         source = vars(source)
     else:
         source = module_globals
-    members = dict((name, value) for name, value in source.items() if filter(name))
+    members = {name: value for name, value in source.items() if filter(name)}
     cls = cls(name, members, module=module)
     cls.__reduce_ex__ = _reduce_ex_by_name
     module_globals.update(cls.__members__)
