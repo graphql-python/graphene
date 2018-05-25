@@ -1,8 +1,10 @@
 import pytest
 from ..annotate import annotate
 
+
 def func(a, b, *c, **d):
     pass
+
 
 annotations = {
     'a': int,
@@ -11,8 +13,11 @@ annotations = {
     'd': dict
 }
 
+
 def func_with_annotations(a, b, *c, **d):
     pass
+
+
 func_with_annotations.__annotations__ = annotations
 
 

@@ -4,6 +4,7 @@ from .. import deprecated
 
 def test_resolve_only_args(mocker):
     mocker.patch.object(deprecated, 'warn_deprecation')
+
     def resolver(root, **args):
         return root, args
 

@@ -55,23 +55,26 @@ def test_time_query():
     assert not result.errors
     assert result.data == {'time': isoformat}
 
+
 def test_bad_datetime_query():
     not_a_date = "Some string that's not a date"
 
     result = schema.execute('''{ datetime(in: "%s") }''' % not_a_date)
-    
+
     assert len(result.errors) == 1
     assert isinstance(result.errors[0], GraphQLError)
     assert result.data == None
 
+
 def test_bad_date_query():
     not_a_date = "Some string that's not a date"
-    
+
     result = schema.execute('''{ date(in: "%s") }''' % not_a_date)
-    
+
     assert len(result.errors) == 1
     assert isinstance(result.errors[0], GraphQLError)
     assert result.data == None
+
 
 def test_bad_time_query():
     not_a_date = "Some string that's not a date"
@@ -81,6 +84,7 @@ def test_bad_time_query():
     assert len(result.errors) == 1
     assert isinstance(result.errors[0], GraphQLError)
     assert result.data == None
+
 
 def test_datetime_query_variable():
     now = datetime.datetime.now().replace(tzinfo=pytz.utc)

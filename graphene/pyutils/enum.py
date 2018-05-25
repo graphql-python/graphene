@@ -662,6 +662,8 @@ def __new__(cls, value):
             if member.value == value:
                 return member
     raise ValueError("%s is not a valid %s" % (value, cls.__name__))
+
+
 temp_enum_dict['__new__'] = __new__
 del __new__
 
@@ -669,12 +671,16 @@ del __new__
 def __repr__(self):
     return "<%s.%s: %r>" % (
         self.__class__.__name__, self._name_, self._value_)
+
+
 temp_enum_dict['__repr__'] = __repr__
 del __repr__
 
 
 def __str__(self):
     return "%s.%s" % (self.__class__.__name__, self._name_)
+
+
 temp_enum_dict['__str__'] = __str__
 del __str__
 
@@ -705,6 +711,8 @@ def __format__(self, format_spec):
         cls = self._member_type_
         val = self.value
     return cls.__format__(val, format_spec)
+
+
 temp_enum_dict['__format__'] = __format__
 del __format__
 
@@ -751,6 +759,8 @@ def __eq__(self, other):
     if isinstance(other, self.__class__):
         return self is other
     return NotImplemented
+
+
 temp_enum_dict['__eq__'] = __eq__
 del __eq__
 
@@ -759,18 +769,24 @@ def __ne__(self, other):
     if isinstance(other, self.__class__):
         return self is not other
     return NotImplemented
+
+
 temp_enum_dict['__ne__'] = __ne__
 del __ne__
 
 
 def __hash__(self):
     return hash(self._name_)
+
+
 temp_enum_dict['__hash__'] = __hash__
 del __hash__
 
 
 def __reduce_ex__(self, proto):
     return self.__class__, (self._value_, )
+
+
 temp_enum_dict['__reduce_ex__'] = __reduce_ex__
 del __reduce_ex__
 
@@ -785,6 +801,8 @@ del __reduce_ex__
 @_RouteClassAttributeToGetattr
 def name(self):
     return self._name_
+
+
 temp_enum_dict['name'] = name
 del name
 
@@ -792,6 +810,8 @@ del name
 @_RouteClassAttributeToGetattr
 def value(self):
     return self._value_
+
+
 temp_enum_dict['value'] = value
 del value
 
@@ -817,6 +837,8 @@ def _convert(cls, name, module, filter, source=None):
     module_globals.update(cls.__members__)
     module_globals[name] = cls
     return cls
+
+
 temp_enum_dict['_convert'] = _convert
 del _convert
 

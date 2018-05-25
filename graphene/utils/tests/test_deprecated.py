@@ -5,14 +5,14 @@ from ..deprecated import deprecated as deprecated_decorator, warn_deprecation
 
 def test_warn_deprecation(mocker):
     mocker.patch.object(deprecated.warnings, 'warn')
-    
+
     warn_deprecation("OH!")
     deprecated.warnings.warn.assert_called_with('OH!', stacklevel=2, category=DeprecationWarning)
 
 
 def test_deprecated_decorator(mocker):
     mocker.patch.object(deprecated, 'warn_deprecation')
-    
+
     @deprecated_decorator
     def my_func():
         return True
@@ -24,7 +24,7 @@ def test_deprecated_decorator(mocker):
 
 def test_deprecated_class(mocker):
     mocker.patch.object(deprecated, 'warn_deprecation')
-    
+
     @deprecated_decorator
     class X:
         pass
@@ -36,7 +36,7 @@ def test_deprecated_class(mocker):
 
 def test_deprecated_decorator_text(mocker):
     mocker.patch.object(deprecated, 'warn_deprecation')
-    
+
     @deprecated_decorator("Deprecation text")
     def my_func():
         return True
@@ -48,7 +48,7 @@ def test_deprecated_decorator_text(mocker):
 
 def test_deprecated_class_text(mocker):
     mocker.patch.object(deprecated, 'warn_deprecation')
-    
+
     @deprecated_decorator("Deprecation text")
     class X:
         pass
@@ -60,6 +60,6 @@ def test_deprecated_class_text(mocker):
 
 def test_deprecated_other_object(mocker):
     mocker.patch.object(deprecated, 'warn_deprecation')
-    
+
     with pytest.raises(TypeError) as exc_info:
         deprecated_decorator({})
