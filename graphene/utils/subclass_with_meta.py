@@ -1,5 +1,6 @@
-import six
 from inspect import isclass
+
+import six
 
 from ..pyutils.init_subclass import InitSubclassMeta
 from .props import props

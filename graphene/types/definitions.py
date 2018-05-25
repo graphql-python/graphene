@@ -1,6 +1,9 @@
-from graphql import (GraphQLEnumType, GraphQLInputObjectType,
-                     GraphQLInterfaceType, GraphQLObjectType,
-                     GraphQLScalarType, GraphQLUnionType)
+from graphql import GraphQLEnumType
+from graphql import GraphQLInputObjectType
+from graphql import GraphQLInterfaceType
+from graphql import GraphQLObjectType
+from graphql import GraphQLScalarType
+from graphql import GraphQLUnionType
 
 
 class GrapheneGraphQLType(object):

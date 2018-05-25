@@ -1,9 +1,12 @@
 import re
 from collections import OrderedDict
 
-from promise import Promise, is_thenable
+from promise import is_thenable
+from promise import Promise
 
-from ..types import Field, InputObjectType, String
+from ..types import Field
+from ..types import InputObjectType
+from ..types import String
 from ..types.mutation import Mutation
 
 

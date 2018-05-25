@@ -1,5 +1,4 @@
 # https://github.com/graphql-python/graphene/issues/313
-
 import graphene
 
 

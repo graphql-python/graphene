@@ -1,8 +1,12 @@
 from graphql_relay import to_global_id
 
-from ...types import ID, NonNull, ObjectType, String
+from ...types import ID
+from ...types import NonNull
+from ...types import ObjectType
+from ...types import String
 from ...types.definitions import GrapheneObjectType
-from ..node import GlobalID, Node
+from ..node import GlobalID
+from ..node import Node
 
 
 class CustomNode(Node):

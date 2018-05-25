@@ -3,7 +3,8 @@ from functools import partial
 import pytest
 
 from ..scalars import String
-from ..structures import List, NonNull
+from ..structures import List
+from ..structures import NonNull
 from .utils import MyLazyType
 
 

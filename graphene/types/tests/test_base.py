@@ -1,6 +1,7 @@
 import pytest
 
-from ..base import BaseType, BaseOptions
+from ..base import BaseOptions
+from ..base import BaseType
 
 
 class CustomOptions(BaseOptions):

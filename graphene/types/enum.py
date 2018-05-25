@@ -2,12 +2,11 @@ from collections import OrderedDict
 
 import six
 
-from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
-
-from .base import BaseOptions, BaseType
-from .unmountedtype import UnmountedType
-
 from ..pyutils.compat import Enum as PyEnum
+from .base import BaseOptions
+from .base import BaseType
+from .unmountedtype import UnmountedType
+from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 
 
 def eq_enum(self, other):

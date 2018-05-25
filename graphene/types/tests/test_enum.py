@@ -1,10 +1,12 @@
 import six
 
-from ..schema import Schema, ObjectType
 from ..argument import Argument
-from ..enum import Enum, PyEnum
+from ..enum import Enum
+from ..enum import PyEnum
 from ..field import Field
 from ..inputfield import InputField
+from ..schema import ObjectType
+from ..schema import Schema
 
 
 def test_enum_construction():

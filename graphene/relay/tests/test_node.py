@@ -2,8 +2,11 @@ from collections import OrderedDict
 
 from graphql_relay import to_global_id
 
-from ...types import ObjectType, Schema, String
-from ..node import Node, is_node
+from ...types import ObjectType
+from ...types import Schema
+from ...types import String
+from ..node import is_node
+from ..node import Node
 
 
 class SharedNodeFields(object):

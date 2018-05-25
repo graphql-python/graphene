@@ -1,9 +1,11 @@
 # https://github.com/graphql-python/graphene/issues/425
 # Adapted for Graphene 2.0
-
-from graphene.types.objecttype import ObjectType, ObjectTypeOptions
-from graphene.types.inputobjecttype import InputObjectType, InputObjectTypeOptions
-from graphene.types.enum import Enum, EnumOptions
+from graphene.types.enum import Enum
+from graphene.types.enum import EnumOptions
+from graphene.types.inputobjecttype import InputObjectType
+from graphene.types.inputobjecttype import InputObjectTypeOptions
+from graphene.types.objecttype import ObjectType
+from graphene.types.objecttype import ObjectTypeOptions
 
 
 # ObjectType

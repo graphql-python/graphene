@@ -1,14 +1,24 @@
 import re
-from collections import Iterable, OrderedDict
+from collections import Iterable
+from collections import OrderedDict
 from functools import partial
 
 from graphql_relay import connection_from_list
-from promise import Promise, is_thenable
+from promise import is_thenable
+from promise import Promise
 
-from ..types import (Boolean, Enum, Int, Interface, List, NonNull, Scalar,
-                     String, Union)
+from ..types import Boolean
+from ..types import Enum
+from ..types import Int
+from ..types import Interface
+from ..types import List
+from ..types import NonNull
+from ..types import Scalar
+from ..types import String
+from ..types import Union
 from ..types.field import Field
-from ..types.objecttype import ObjectType, ObjectTypeOptions
+from ..types.objecttype import ObjectType
+from ..types.objecttype import ObjectTypeOptions
 from .node import is_node
 
 

@@ -1,15 +1,20 @@
 import inspect
 
-from graphql import GraphQLSchema, graphql, is_type, GraphQLObjectType
-from graphql.type.directives import (GraphQLDirective, GraphQLIncludeDirective,
-                                     GraphQLSkipDirective)
+from graphql import graphql
+from graphql import GraphQLObjectType
+from graphql import GraphQLSchema
+from graphql import is_type
+from graphql.type.directives import GraphQLDirective
+from graphql.type.directives import GraphQLIncludeDirective
+from graphql.type.directives import GraphQLSkipDirective
 from graphql.type.introspection import IntrospectionSchema
 from graphql.utils.introspection_query import introspection_query
 from graphql.utils.schema_printer import print_schema
 
 from .definitions import GrapheneGraphQLType
 from .objecttype import ObjectType
-from .typemap import TypeMap, is_graphene_type
+from .typemap import is_graphene_type
+from .typemap import TypeMap
 
 
 def assert_valid_root_type(_type):

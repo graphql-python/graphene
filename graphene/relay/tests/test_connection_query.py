@@ -3,8 +3,12 @@ from collections import OrderedDict
 from graphql_relay.utils import base64
 from promise import Promise
 
-from ...types import ObjectType, Schema, String
-from ..connection import Connection, ConnectionField, PageInfo
+from ...types import ObjectType
+from ...types import Schema
+from ...types import String
+from ..connection import Connection
+from ..connection import ConnectionField
+from ..connection import PageInfo
 from ..node import Node
 
 letter_chars = ['A', 'B', 'C', 'D', 'E']

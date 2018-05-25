@@ -2,19 +2,29 @@ import inspect
 from collections import OrderedDict
 from functools import partial
 
-from graphql import (GraphQLArgument, GraphQLBoolean, GraphQLField,
-                     GraphQLFloat, GraphQLID, GraphQLInputObjectField,
-                     GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLString)
+from graphql import GraphQLArgument
+from graphql import GraphQLBoolean
+from graphql import GraphQLField
+from graphql import GraphQLFloat
+from graphql import GraphQLID
+from graphql import GraphQLInputObjectField
+from graphql import GraphQLInt
+from graphql import GraphQLList
+from graphql import GraphQLNonNull
+from graphql import GraphQLString
 from graphql.execution.executor import get_default_resolve_type_fn
 from graphql.type import GraphQLEnumValue
 from graphql.type.typemap import GraphQLTypeMap
 
 from ..utils.get_unbound_function import get_unbound_function
 from ..utils.str_converters import to_camel_case
-from .definitions import (GrapheneEnumType, GrapheneGraphQLType,
-                          GrapheneInputObjectType, GrapheneInterfaceType,
-                          GrapheneObjectType, GrapheneScalarType,
-                          GrapheneUnionType)
+from .definitions import GrapheneEnumType
+from .definitions import GrapheneGraphQLType
+from .definitions import GrapheneInputObjectType
+from .definitions import GrapheneInterfaceType
+from .definitions import GrapheneObjectType
+from .definitions import GrapheneScalarType
+from .definitions import GrapheneUnionType
 from .dynamic import Dynamic
 from .enum import Enum
 from .field import Field
@@ -22,8 +32,14 @@ from .inputobjecttype import InputObjectType
 from .interface import Interface
 from .objecttype import ObjectType
 from .resolver import get_default_resolver
-from .scalars import ID, Boolean, Float, Int, Scalar, String
-from .structures import List, NonNull
+from .scalars import Boolean
+from .scalars import Float
+from .scalars import ID
+from .scalars import Int
+from .scalars import Scalar
+from .scalars import String
+from .structures import List
+from .structures import NonNull
 from .union import Union
 from .utils import get_field_as
 

@@ -1,9 +1,11 @@
 import six
+from graphql.language.ast import BooleanValue
+from graphql.language.ast import FloatValue
+from graphql.language.ast import IntValue
+from graphql.language.ast import StringValue
 
-from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
-                                  StringValue)
-
-from .base import BaseOptions, BaseType
+from .base import BaseOptions
+from .base import BaseType
 from .unmountedtype import UnmountedType
 
 

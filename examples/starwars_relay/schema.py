@@ -1,7 +1,10 @@
 import graphene
+from .data import create_ship
+from .data import get_empire
+from .data import get_faction
+from .data import get_rebels
+from .data import get_ship
 from graphene import relay
-
-from .data import create_ship, get_empire, get_faction, get_rebels, get_ship
 
 
 class Ship(graphene.ObjectType):

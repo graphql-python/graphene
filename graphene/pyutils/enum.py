@@ -1,5 +1,4 @@
 """Python Enumerations"""
-
 import sys as _sys
 
 __all__ = ['Enum', 'IntEnum', 'unique']

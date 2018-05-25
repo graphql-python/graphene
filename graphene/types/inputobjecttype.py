@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
-from .base import BaseOptions, BaseType
+from .base import BaseOptions
+from .base import BaseType
 from .inputfield import InputField
 from .unmountedtype import UnmountedType
 from .utils import yank_fields_from_attrs
