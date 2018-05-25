@@ -12,15 +12,15 @@ from .objecttype import ObjectType
 from .typemap import TypeMap, is_graphene_type
 
 
-def assert_valid_root_type(_type):
-    if _type is None:
+def assert_valid_root_type(type_):
+    if type_ is None:
         return
     is_graphene_objecttype = inspect.isclass(
-        _type) and issubclass(_type, ObjectType)
-    is_graphql_objecttype = isinstance(_type, GraphQLObjectType)
+        type_) and issubclass(type_, ObjectType)
+    is_graphql_objecttype = isinstance(type_, GraphQLObjectType)
     assert is_graphene_objecttype or is_graphql_objecttype, (
         "Type {} is not a valid ObjectType."
-    ).format(_type)
+    ).format(type_)
 
 
 class Schema(GraphQLSchema):
@@ -72,26 +72,26 @@ class Schema(GraphQLSchema):
 
         Example: using schema.Query for accessing the "Query" type in the Schema
         '''
-        _type = super(Schema, self).get_type(type_name)
-        if _type is None:
+        type_ = super(Schema, self).get_type(type_name)
+        if type_ is None:
             raise AttributeError(
                 'Type "{}" not found in the Schema'.format(type_name))
-        if isinstance(_type, GrapheneGraphQLType):
-            return _type.graphene_type
-        return _type
+        if isinstance(type_, GrapheneGraphQLType):
+            return type_.graphene_type
+        return type_
 
-    def get_graphql_type(self, _type):
-        if not _type:
-            return _type
-        if is_type(_type):
-            return _type
-        if is_graphene_type(_type):
-            graphql_type = self.get_type(_type._meta.name)
+    def get_graphql_type(self, type_):
+        if not type_:
+            return type_
+        if is_type(type_):
+            return type_
+        if is_graphene_type(type_):
+            graphql_type = self.get_type(type_._meta.name)
             assert graphql_type, "Type {} not found in this schema.".format(
-                _type._meta.name)
-            assert graphql_type.graphene_type == _type
+                type_._meta.name)
+            assert graphql_type.graphene_type == type_
             return graphql_type
-        raise Exception("{} is not a valid GraphQL type.".format(_type))
+        raise Exception("{} is not a valid GraphQL type.".format(type_))
 
     def execute(self, *args, **kwargs):
         return graphql(self, *args, **kwargs)
@@ -105,8 +105,8 @@ class Schema(GraphQLSchema):
     def __str__(self):
         return print_schema(self)
 
-    def lazy(self, _type):
-        return lambda: self.get_type(_type)
+    def lazy(self, type_):
+        return lambda: self.get_type(type_)
 
     def build_typemap(self):
         initial_types = [
