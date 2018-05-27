@@ -1,6 +1,7 @@
 import six
-from ..pyutils.compat import signature, func_name
 
+from ..pyutils.compat import func_name
+from ..pyutils.compat import signature
 from .deprecated import warn_deprecation
 
 

@@ -1,6 +1,8 @@
 import graphene
-
-from .data import get_character, get_droid, get_hero, get_human
+from .data import get_character
+from .data import get_droid
+from .data import get_hero
+from .data import get_human
 
 
 class Episode(graphene.Enum):

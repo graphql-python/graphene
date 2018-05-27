@@ -1,5 +1,5 @@
-from ..utils.subclass_with_meta import SubclassWithMeta
 from ..utils.deprecated import warn_deprecation
+from ..utils.subclass_with_meta import SubclassWithMeta
 
 
 class AbstractType(SubclassWithMeta):

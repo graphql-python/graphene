@@ -1,10 +1,15 @@
 from __future__ import unicode_literals
 
-from graphene.types.scalars import MAX_INT, MIN_INT
-from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
-                                  ListValue, ObjectValue, StringValue)
+from graphql.language.ast import BooleanValue
+from graphql.language.ast import FloatValue
+from graphql.language.ast import IntValue
+from graphql.language.ast import ListValue
+from graphql.language.ast import ObjectValue
+from graphql.language.ast import StringValue
 
 from .scalars import Scalar
+from graphene.types.scalars import MAX_INT
+from graphene.types.scalars import MIN_INT
 
 
 class GenericScalar(Scalar):

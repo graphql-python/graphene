@@ -1,4 +1,5 @@
-from ..enum import _is_dunder, _is_sunder
+from ..enum import _is_dunder
+from ..enum import _is_sunder
 
 
 def test__is_dunder():

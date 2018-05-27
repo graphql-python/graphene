@@ -2,7 +2,8 @@ from functools import partial
 
 import pytest
 
-from ..argument import Argument, to_arguments
+from ..argument import Argument
+from ..argument import to_arguments
 from ..field import Field
 from ..inputfield import InputField
 from ..scalars import String

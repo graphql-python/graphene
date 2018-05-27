@@ -1,19 +1,26 @@
 import json
 from functools import partial
 
-from graphql import GraphQLError, Source, execute, parse, ResolveInfo
+from graphql import execute
+from graphql import GraphQLError
+from graphql import parse
+from graphql import ResolveInfo
+from graphql import Source
 
+from ..context import Context
 from ..dynamic import Dynamic
 from ..field import Field
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
-from ..scalars import Int, String, Boolean
+from ..scalars import Boolean
+from ..scalars import Int
+from ..scalars import String
 from ..schema import Schema
-from ..structures import List, NonNull
+from ..structures import List
+from ..structures import NonNull
 from ..union import Union
-from ..context import Context
 
 
 def test_query():

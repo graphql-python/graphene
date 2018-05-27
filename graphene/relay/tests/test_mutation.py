@@ -1,9 +1,14 @@
 import pytest
-
 from promise import Promise
 
-from ...types import (ID, Argument, Field, InputField, InputObjectType,
-                      NonNull, ObjectType, Schema)
+from ...types import Argument
+from ...types import Field
+from ...types import ID
+from ...types import InputField
+from ...types import InputObjectType
+from ...types import NonNull
+from ...types import ObjectType
+from ...types import Schema
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
 

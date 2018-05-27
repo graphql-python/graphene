@@ -1,5 +1,3 @@
-
-
 from ..argument import Argument
 from ..enum import Enum
 from ..field import Field
@@ -7,9 +5,12 @@ from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
-from ..scalars import Boolean, Int, String
+from ..scalars import Boolean
+from ..scalars import Int
+from ..scalars import String
 from ..schema import Schema
-from ..structures import List, NonNull
+from ..structures import List
+from ..structures import NonNull
 from ..union import Union
 
 

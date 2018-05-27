@@ -1,7 +1,16 @@
 import pytest
 
-from ...types import Argument, Field, Int, List, NonNull, ObjectType, String, Schema
-from ..connection import Connection, ConnectionField, PageInfo
+from ...types import Argument
+from ...types import Field
+from ...types import Int
+from ...types import List
+from ...types import NonNull
+from ...types import ObjectType
+from ...types import Schema
+from ...types import String
+from ..connection import Connection
+from ..connection import ConnectionField
+from ..connection import PageInfo
 from ..node import Node
 
 

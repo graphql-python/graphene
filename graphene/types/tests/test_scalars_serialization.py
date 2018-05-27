@@ -1,4 +1,7 @@
-from ..scalars import Boolean, Float, Int, String
+from ..scalars import Boolean
+from ..scalars import Float
+from ..scalars import Int
+from ..scalars import String
 
 
 def test_serializes_output_int():

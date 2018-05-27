@@ -1,8 +1,10 @@
 import inspect
-from collections import Mapping, OrderedDict
+from collections import Mapping
+from collections import OrderedDict
 from functools import partial
 
-from .argument import Argument, to_arguments
+from .argument import Argument
+from .argument import to_arguments
 from .mountedtype import MountedType
 from .structures import NonNull
 from .unmountedtype import UnmountedType

@@ -1,11 +1,14 @@
 import pytest
+from graphql.type import GraphQLArgument
+from graphql.type import GraphQLEnumType
+from graphql.type import GraphQLEnumValue
+from graphql.type import GraphQLField
+from graphql.type import GraphQLInputObjectField
+from graphql.type import GraphQLInputObjectType
+from graphql.type import GraphQLInterfaceType
+from graphql.type import GraphQLObjectType
+from graphql.type import GraphQLString
 
-from graphql.type import (GraphQLArgument, GraphQLEnumType, GraphQLEnumValue,
-                          GraphQLField, GraphQLInputObjectField,
-                          GraphQLInputObjectType, GraphQLInterfaceType,
-                          GraphQLObjectType, GraphQLString)
-
-from ..structures import List, NonNull
 from ..dynamic import Dynamic
 from ..enum import Enum
 from ..field import Field
@@ -13,8 +16,12 @@ from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
-from ..scalars import String, Int
-from ..typemap import TypeMap, resolve_type
+from ..scalars import Int
+from ..scalars import String
+from ..structures import List
+from ..structures import NonNull
+from ..typemap import resolve_type
+from ..typemap import TypeMap
 
 
 def test_enum():

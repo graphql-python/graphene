@@ -15,3 +15,7 @@
     -   id: pretty-format-json
         args:
         - --autofix
+-   repo: git://github.com/asottile/reorder_python_imports
+    sha: v0.3.2
+    hooks:
+    -   id: reorder-python-imports

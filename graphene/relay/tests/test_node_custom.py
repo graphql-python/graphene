@@ -1,7 +1,10 @@
 from graphql import graphql
 
-from ...types import Interface, ObjectType, Schema
-from ...types.scalars import Int, String
+from ...types import Interface
+from ...types import ObjectType
+from ...types import Schema
+from ...types.scalars import Int
+from ...types.scalars import String
 from ..node import Node
 
 
