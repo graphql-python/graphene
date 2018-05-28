@@ -4,12 +4,12 @@ REBUILD_FLAG =
 all: venv test
 
 .PHONY: venv
-venv: .venv.touch
+venv: .venv.touch install-hooks
 	tox -e venv $(REBUILD_FLAG)
 
 .PHONY: tests test
 tests: test
-test: .venv.touch
+test: .venv.touch install-hooks
 	tox $(REBUILD_FLAG)
 
 .venv.touch: setup.py requirements-dev.txt
