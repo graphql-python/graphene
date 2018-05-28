@@ -96,7 +96,7 @@ You can also run the benchmarks with:
 py.test graphene --benchmark-only
 ```
 
-graphene supports several versions of Python. To make sure that changes do not break compatibility with any of those versions, we use `tox` to create virtualenvs for each python version and run tests with that version. To run against all python versions defined in the `tox.ini` config file, just run: 
+Graphene supports several versions of Python. To make sure that changes do not break compatibility with any of those versions, we use `tox` to create virtualenvs for each python version and run tests with that version. To run against all python versions defined in the `tox.ini` config file, just run: 
 ```sh
 tox
 ```
