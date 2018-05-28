@@ -144,7 +144,8 @@ class TypeMap(GraphQLTypeMap):
                 description=description,
                 deprecation_reason=deprecation_reason)
 
-        type_description = type_._meta.description(None) if callable(type_._meta.description) else type_._meta.description
+        type_description = type_._meta.description(None)\
+            if callable(type_._meta.description) else type_._meta.description
 
         return GrapheneEnumType(
             graphene_type=type_,
