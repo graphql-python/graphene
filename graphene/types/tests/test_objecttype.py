@@ -3,10 +3,10 @@ import pytest
 from ..field import Field
 from ..interface import Interface
 from ..objecttype import ObjectType
-from ..unmountedtype import UnmountedType
-from ..structures import NonNull
 from ..scalars import String
 from ..schema import Schema
+from ..structures import NonNull
+from ..unmountedtype import UnmountedType
 
 
 class MyType(Interface):

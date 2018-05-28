@@ -1,4 +1,5 @@
 import pytest
+
 from ..annotate import annotate
 
 

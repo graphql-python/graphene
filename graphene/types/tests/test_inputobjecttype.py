@@ -4,9 +4,9 @@ from ..field import Field
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..objecttype import ObjectType
-from ..unmountedtype import UnmountedType
-from ..scalars import String, Boolean
+from ..scalars import Boolean, String
 from ..schema import Schema
+from ..unmountedtype import UnmountedType
 
 
 class MyType(object):
