@@ -101,7 +101,7 @@ Here is a simple example on how our tests will look if we use ``pytest``:
 If we are using ``unittest``:
 
 .. code:: python
-    
+
     from snapshottest import TestCase
 
     class APITestCase(TestCase):

@@ -41,7 +41,7 @@ Mutations can also accept files, that's how it will work with different integrat
          class Input:
              pass
              # nothing needed for uploading file
-     
+
          # your return fields
          success = graphene.String()
 
