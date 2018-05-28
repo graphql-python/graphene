@@ -25,6 +25,7 @@ def test_issue():
         class Query(graphene.ObjectType):
             things = relay.ConnectionField(MyUnion)
 
-        schema = graphene.Schema(query=Query)
-
-    assert str(exc_info.value) == 'IterableConnectionField type have to be a subclass of Connection. Received "MyUnion".'
+    assert str(exc_info.value) == (
+        'IterableConnectionField type have to be a subclass of Connection. '
+        'Received "MyUnion".'
+    )

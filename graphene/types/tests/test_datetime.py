@@ -62,7 +62,7 @@ def test_bad_datetime_query():
 
     assert len(result.errors) == 1
     assert isinstance(result.errors[0], GraphQLError)
-    assert result.data == None
+    assert result.data is None
 
 
 def test_bad_date_query():
@@ -72,7 +72,7 @@ def test_bad_date_query():
 
     assert len(result.errors) == 1
     assert isinstance(result.errors[0], GraphQLError)
-    assert result.data == None
+    assert result.data is None
 
 
 def test_bad_time_query():
@@ -82,7 +82,7 @@ def test_bad_time_query():
 
     assert len(result.errors) == 1
     assert isinstance(result.errors[0], GraphQLError)
-    assert result.data == None
+    assert result.data is None
 
 
 def test_datetime_query_variable():
