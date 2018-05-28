@@ -1,5 +1,4 @@
 import pytest
-
 from promise import Promise
 
 from ...types import (ID, Argument, Field, InputField, InputObjectType,

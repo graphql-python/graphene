@@ -1,10 +1,10 @@
 import pytest
 
+from .. import abstracttype
+from ..abstracttype import AbstractType
+from ..field import Field
 from ..objecttype import ObjectType
 from ..unmountedtype import UnmountedType
-from ..abstracttype import AbstractType
-from .. import abstracttype
-from ..field import Field
 
 
 class MyType(ObjectType):

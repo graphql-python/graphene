@@ -1,11 +1,9 @@
 import pytest
-
 from graphql.type import (GraphQLArgument, GraphQLEnumType, GraphQLEnumValue,
                           GraphQLField, GraphQLInputObjectField,
                           GraphQLInputObjectType, GraphQLInterfaceType,
                           GraphQLObjectType, GraphQLString)
 
-from ..structures import List, NonNull
 from ..dynamic import Dynamic
 from ..enum import Enum
 from ..field import Field
@@ -13,7 +11,8 @@ from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
-from ..scalars import String, Int
+from ..scalars import Int, String
+from ..structures import List, NonNull
 from ..typemap import TypeMap, resolve_type
 
 

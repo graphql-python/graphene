@@ -1,7 +1,6 @@
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 
-
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
