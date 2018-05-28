@@ -1,11 +1,4 @@
 import os
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-# html_theme = 'alabaster'
-# if on_rtd:
-#     html_theme = 'sphinx_rtd_theme'
 import sphinx_graphene_theme
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -138,6 +131,12 @@ todo_include_todos = True
 
 # -- Options for HTML output ----------------------------------------------
 
+# The theme to use for HTML and HTML Help pages.  See the documentation for
+# a list of builtin themes.
+#
+# html_theme = 'alabaster'
+# if on_rtd:
+#     html_theme = 'sphinx_rtd_theme'
 
 html_theme = "sphinx_graphene_theme"
 
