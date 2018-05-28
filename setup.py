@@ -1,8 +1,9 @@
-from setuptools import find_packages, setup
-from setuptools.command.test import test as TestCommand
-import sys
 import ast
 import re
+import sys
+
+from setuptools import find_packages, setup
+from setuptools.command.test import test as TestCommand
 
 _version_re = re.compile(r'VERSION\s+=\s+(.*)')
 

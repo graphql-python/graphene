@@ -1,5 +1,4 @@
 import six
-
 from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
                                   StringValue)
 

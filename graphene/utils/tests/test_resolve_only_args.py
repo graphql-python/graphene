@@ -1,5 +1,5 @@
-from ..resolve_only_args import resolve_only_args
 from .. import deprecated
+from ..resolve_only_args import resolve_only_args
 
 
 def test_resolve_only_args(mocker):
