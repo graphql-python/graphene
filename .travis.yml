@@ -22,7 +22,7 @@ before_install:
 install:
 - |
   if [ "$TEST_TYPE" = build ]; then
-    pip install -e .[test]
+    pip install -r requirements-dev.txt
     python setup.py develop
   elif [ "$TEST_TYPE" = lint ]; then
     pip install flake8
