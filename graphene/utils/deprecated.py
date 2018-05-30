@@ -6,13 +6,11 @@ string_types = (type(b''), type(u''))
 
 
 def warn_deprecation(text):
-    warnings.simplefilter('always', DeprecationWarning)
     warnings.warn(
         text,
         category=DeprecationWarning,
         stacklevel=2
     )
-    warnings.simplefilter('default', DeprecationWarning)
 
 
 def deprecated(reason):
