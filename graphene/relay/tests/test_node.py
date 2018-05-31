@@ -115,7 +115,7 @@ def test_node_field_only_type_wrong():
         '{ onlyNode(id:"%s") { __typename, name } } ' % Node.to_global_id("MyOtherNode", 1)
     )
     assert len(executed.errors) == 1
-    assert str(executed.errors[0]) == 'Must receive an MyOtherNode id.'
+    assert str(executed.errors[0]) == 'Must receive a MyNode id.'
     assert executed.data == {'onlyNode': None}
 
 
@@ -132,7 +132,7 @@ def test_node_field_only_lazy_type_wrong():
         '{ onlyNodeLazy(id:"%s") { __typename, name } } ' % Node.to_global_id("MyOtherNode", 1)
     )
     assert len(executed.errors) == 1
-    assert str(executed.errors[0]) == 'Must receive an MyOtherNode id.'
+    assert str(executed.errors[0]) == 'Must receive a MyNode id.'
     assert executed.data == {'onlyNodeLazy': None}
 
 
