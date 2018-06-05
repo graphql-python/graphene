@@ -8,8 +8,6 @@ def test_resolve_only_args(mocker):
     def resolver(root, **args):
         return root, args
 
-    my_data = {'one': 1, 'two': 2}
-
     wrapped_resolver = resolve_only_args(resolver)
     assert deprecated.warn_deprecation.called
     result = wrapped_resolver(1, 2, a=3)

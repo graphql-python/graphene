@@ -442,8 +442,6 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
 
 
 def test_query_annotated_resolvers():
-    import json
-
     context = Context(key="context")
 
     class Query(ObjectType):

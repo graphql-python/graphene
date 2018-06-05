@@ -56,8 +56,7 @@ schema = Schema(Query)
 
 letters = OrderedDict()
 for i, letter in enumerate(letter_chars):
-    l = Letter(id=i, letter=letter)
-    letters[letter] = l
+    letters[letter] = Letter(id=i, letter=letter)
 
 
 def edges(selected_letters):
@@ -74,8 +73,8 @@ def edges(selected_letters):
 
 
 def cursor_for(ltr):
-    l = letters[ltr]
-    return base64('arrayconnection:%s' % l.id)
+    letter = letters[ltr]
+    return base64('arrayconnection:%s' % letter.id)
 
 
 def execute(args=''):

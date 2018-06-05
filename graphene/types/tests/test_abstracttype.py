@@ -1,5 +1,3 @@
-import pytest
-
 from .. import abstracttype
 from ..abstracttype import AbstractType
 from ..field import Field

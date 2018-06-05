@@ -2,8 +2,7 @@
 # Adapted for Graphene 2.0
 
 from graphene.types.enum import Enum, EnumOptions
-from graphene.types.inputobjecttype import (InputObjectType,
-                                            InputObjectTypeOptions)
+from graphene.types.inputobjecttype import InputObjectType
 from graphene.types.objecttype import ObjectType, ObjectTypeOptions
 
 

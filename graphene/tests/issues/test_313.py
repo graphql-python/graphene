@@ -1,7 +1,6 @@
 # https://github.com/graphql-python/graphene/issues/313
 
 import graphene
-from graphene import resolve_only_args
 
 
 class Query(graphene.ObjectType):
