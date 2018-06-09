@@ -13,6 +13,7 @@ repos:
     -   id: end-of-file-fixer
         exclude: ^docs/.*$
     -   id: trailing-whitespace
+        exclude: README.md
     -   id: pretty-format-json
         args:
         - --autofix
