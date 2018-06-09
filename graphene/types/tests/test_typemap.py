@@ -67,8 +67,7 @@ def test_objecttype():
     foo_field = fields['foo']
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == 'Field description'
-    f = MyObjectType.resolve_foo
-    # assert foo_field.resolver == getattr(f, '__func__', f)
+
     assert foo_field.args == {
         'bar': GraphQLArgument(GraphQLString, description='Argument description', default_value='x', out_name='bar')
     }

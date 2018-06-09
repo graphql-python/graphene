@@ -198,6 +198,32 @@ class MyObject(ObjectType):
         return ...
 ```
 
+## Node.get_node_from_global_id
+
+The parameters' order of `get_node_from_global_id` method has changed. You may need to adjust your [Node Root Field](http://docs.graphene-python.org/en/latest/relay/nodes/#node-root-field) and maybe other places that uses this method to obtain an object.
+
+Before:
+```python
+class RootQuery(object):
+    ...
+    node = Field(relay.Node, id=ID(required=True))
+
+    def resolve_node(self, args, context, info):
+        node = relay.Node.get_node_from_global_id(args['id'], context, info)
+        return node
+```
+
+Now:
+```python
+class RootQuery(object):
+    ...
+    node = Field(relay.Node, id=ID(required=True))
+
+    def resolve_node(self, info, id):
+        node = relay.Node.get_node_from_global_id(info, id)
+        return node
+```
+
 ## Mutation.mutate
 
 Now only receives (`self`, `info`, `**args`) and is not a @classmethod
