@@ -1,5 +1,6 @@
+repos:
 -   repo: git://github.com/pre-commit/pre-commit-hooks
-    sha: v0.8.0
+    rev: v1.2.3
     hooks:
     -   id: autopep8-wrapper
         args:
@@ -15,3 +16,11 @@
     -   id: pretty-format-json
         args:
         - --autofix
+-   repo: https://github.com/asottile/seed-isort-config
+    rev: v1.0.0
+    hooks:
+    -   id: seed-isort-config
+-   repo: https://github.com/pre-commit/mirrors-isort
+    rev: v4.3.4
+    hooks:
+    -   id: isort

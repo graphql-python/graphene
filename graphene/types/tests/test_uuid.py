@@ -1,6 +1,6 @@
-from ..uuid import UUID
 from ..objecttype import ObjectType
 from ..schema import Schema
+from ..uuid import UUID
 
 
 class Query(ObjectType):

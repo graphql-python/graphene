@@ -1,6 +1,8 @@
 import pytest
+
 from .. import deprecated
-from ..deprecated import deprecated as deprecated_decorator, warn_deprecation
+from ..deprecated import deprecated as deprecated_decorator
+from ..deprecated import warn_deprecation
 
 
 def test_warn_deprecation(mocker):

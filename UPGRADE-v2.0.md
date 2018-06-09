@@ -207,7 +207,7 @@ Before:
 ```python
 class SomeMutation(Mutation):
     ...
-    
+
     @classmethod
     def mutate(cls, instance, args, context, info):
         ...
@@ -218,7 +218,7 @@ With 2.0:
 ```python
 class SomeMutation(Mutation):
     ...
-    
+
     def mutate(self, info, **args):
         ...
 ```
@@ -231,7 +231,7 @@ class SomeMutation(Mutation):
         first_name = String(required=True)
         last_name = String(required=True)
     ...
-    
+
     def mutate(self, info, first_name, last_name):
         ...
 ```
@@ -250,7 +250,7 @@ If you are using Middelwares, you need to some adjustments:
 Before:
 
 ```python
-class MyGrapheneMiddleware(object):    
+class MyGrapheneMiddleware(object):  
     def resolve(self, next_mw, root, args, context, info):
 
         ## Middleware code
@@ -261,7 +261,7 @@ class MyGrapheneMiddleware(object):
 With 2.0:
 
 ```python
-class MyGrapheneMiddleware(object):    
+class MyGrapheneMiddleware(object):  
     def resolve(self, next_mw, root, info, **args):
         context = info.context
 
