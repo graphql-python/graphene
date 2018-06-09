@@ -63,5 +63,5 @@ def test_deprecated_class_text(mocker):
 def test_deprecated_other_object(mocker):
     mocker.patch.object(deprecated, 'warn_deprecation')
 
-    with pytest.raises(TypeError) as exc_info:
+    with pytest.raises(TypeError):
         deprecated_decorator({})

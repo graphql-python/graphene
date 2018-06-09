@@ -50,7 +50,10 @@ class InputObjectType(UnmountedType, BaseType):
                 yank_fields_from_attrs(base.__dict__, _as=InputField)
             )
 
-        _meta.fields = fields
+        if _meta.fields:
+            _meta.fields.update(fields)
+        else:
+            _meta.fields = fields
         if container is None:
             container = type(cls.__name__, (InputObjectTypeContainer, cls), {})
         _meta.container = container

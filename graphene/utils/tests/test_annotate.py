@@ -34,6 +34,6 @@ def test_annotate_with_params():
 
 def test_annotate_with_wront_params():
     with pytest.raises(Exception) as exc_info:
-        annotated_func = annotate(p=int, _trigger_warning=False)(func)
+        annotate(p=int, _trigger_warning=False)(func)
 
     assert str(exc_info.value) == 'The key p is not a function parameter in the function "func".'

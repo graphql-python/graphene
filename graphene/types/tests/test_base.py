@@ -1,5 +1,3 @@
-import pytest
-
 from ..base import BaseOptions, BaseType
 
 
