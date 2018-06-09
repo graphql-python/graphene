@@ -1,6 +1,6 @@
 repos:
 -   repo: git://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.3
+    rev: v1.3.0
     hooks:
     -   id: autopep8-wrapper
         args:
@@ -17,7 +17,7 @@ repos:
         args:
         - --autofix
 -   repo: https://github.com/asottile/seed-isort-config
-    rev: v1.0.0
+    rev: v1.0.1
     hooks:
     -   id: seed-isort-config
 -   repo: https://github.com/pre-commit/mirrors-isort
