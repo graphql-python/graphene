@@ -13,7 +13,9 @@ matrix:
        python: pypy-5.7.1
     -  env: TOXENV=pre-commit
        python: 3.6
-install: pip install coveralls tox mypy
+install:
+  - pip install coveralls tox mypy
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then pip install mypy; fi
 script: tox
 after_success: coveralls
 cache:
