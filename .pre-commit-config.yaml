@@ -17,6 +17,10 @@ repos:
         args:
         - --autofix
     -   id: flake8
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v1.2.0
+    hooks:
+    -   id: pyupgrade
 -   repo: https://github.com/asottile/seed-isort-config
     rev: v1.0.0
     hooks:

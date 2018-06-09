@@ -52,7 +52,7 @@ def signature(obj):
     '''Get a signature object for the passed callable.'''
 
     if not callable(obj):
-        raise TypeError('{0!r} is not a callable object'.format(obj))
+        raise TypeError('{!r} is not a callable object'.format(obj))
 
     if isinstance(obj, types.MethodType):
         sig = signature(obj.__func__)
@@ -99,7 +99,7 @@ def signature(obj):
         try:
             ba = sig.bind_partial(*partial_args, **partial_keywords)
         except TypeError as ex:
-            msg = 'partial object {0!r} has incorrect arguments'.format(obj)
+            msg = 'partial object {!r} has incorrect arguments'.format(obj)
             raise ValueError(msg)
 
         for arg_name, arg_value in ba.arguments.items():
@@ -166,10 +166,10 @@ def signature(obj):
 
     if isinstance(obj, types.BuiltinFunctionType):
         # Raise a nicer error message for builtins
-        msg = 'no signature found for builtin function {0!r}'.format(obj)
+        msg = 'no signature found for builtin function {!r}'.format(obj)
         raise ValueError(msg)
 
-    raise ValueError('callable {0!r} is not supported by signature'.format(obj))
+    raise ValueError('callable {!r} is not supported by signature'.format(obj))
 
 
 class _void(object):
@@ -190,7 +190,7 @@ class _ParameterKind(int):
         return self._name
 
     def __repr__(self):
-        return '<_ParameterKind: {0!r}>'.format(self._name)
+        return '<_ParameterKind: {!r}>'.format(self._name)
 
 
 _POSITIONAL_ONLY = _ParameterKind(0, name='POSITIONAL_ONLY')
@@ -238,7 +238,7 @@ class Parameter(object):
 
         if default is not _empty:
             if kind in (_VAR_POSITIONAL, _VAR_KEYWORD):
-                msg = '{0} parameters cannot have default values'.format(kind)
+                msg = '{} parameters cannot have default values'.format(kind)
                 raise ValueError(msg)
         self._default = default
         self._annotation = annotation
@@ -251,7 +251,7 @@ class Parameter(object):
         else:
             name = str(name)
             if kind != _POSITIONAL_ONLY and not re.match(r'[a-z_]\w*$', name, re.I):
-                msg = '{0!r} is not a valid parameter name'.format(name)
+                msg = '{!r} is not a valid parameter name'.format(name)
                 raise ValueError(msg)
             self._name = name
 
@@ -302,15 +302,15 @@ class Parameter(object):
         if kind == _POSITIONAL_ONLY:
             if formatted is None:
                 formatted = ''
-            formatted = '<{0}>'.format(formatted)
+            formatted = '<{}>'.format(formatted)
 
         # Add annotation and default value
         if self._annotation is not _empty:
-            formatted = '{0}:{1}'.format(formatted,
+            formatted = '{}:{}'.format(formatted,
                                        formatannotation(self._annotation))
 
         if self._default is not _empty:
-            formatted = '{0}={1}'.format(formatted, repr(self._default))
+            formatted = '{}={}'.format(formatted, repr(self._default))
 
         if kind == _VAR_POSITIONAL:
             formatted = '*' + formatted
@@ -320,11 +320,11 @@ class Parameter(object):
         return formatted
 
     def __repr__(self):
-        return '<{0} at {1:#x} {2!r}>'.format(self.__class__.__name__,
+        return '<{} at {:#x} {!r}>'.format(self.__class__.__name__,
                                            id(self), self.name)
 
     def __hash__(self):
-        msg = "unhashable type: '{0}'".format(self.__class__.__name__)
+        msg = "unhashable type: '{}'".format(self.__class__.__name__)
         raise TypeError(msg)
 
     def __eq__(self, other):
@@ -421,7 +421,7 @@ class BoundArguments(object):
         return kwargs
 
     def __hash__(self):
-        msg = "unhashable type: '{0}'".format(self.__class__.__name__)
+        msg = "unhashable type: '{}'".format(self.__class__.__name__)
         raise TypeError(msg)
 
     def __eq__(self, other):
@@ -489,7 +489,7 @@ class Signature(object):
                         param = param.replace(name=name)
 
                     if name in params:
-                        msg = 'duplicate parameter name: {0!r}'.format(name)
+                        msg = 'duplicate parameter name: {!r}'.format(name)
                         raise ValueError(msg)
                     params[name] = param
             else:
@@ -504,7 +504,7 @@ class Signature(object):
         '''Constructs Signature for the given python function'''
 
         if not isinstance(func, types.FunctionType):
-            raise TypeError('{0!r} is not a Python function'.format(func))
+            raise TypeError('{!r} is not a Python function'.format(func))
 
         Parameter = cls._parameter_cls
 
@@ -599,7 +599,7 @@ class Signature(object):
                           return_annotation=return_annotation)
 
     def __hash__(self):
-        msg = "unhashable type: '{0}'".format(self.__class__.__name__)
+        msg = "unhashable type: '{}'".format(self.__class__.__name__)
         raise TypeError(msg)
 
     def __eq__(self, other):
@@ -608,8 +608,8 @@ class Signature(object):
                 len(self.parameters) != len(other.parameters)):
             return False
 
-        other_positions = dict((param, idx)
-                           for idx, param in enumerate(other.parameters.keys()))
+        other_positions = {param: idx
+                           for idx, param in enumerate(other.parameters.keys())}
 
         for idx, (param_name, param) in enumerate(self.parameters.items()):
             if param.kind == _KEYWORD_ONLY:
@@ -799,10 +799,10 @@ class Signature(object):
 
             result.append(formatted)
 
-        rendered = '({0})'.format(', '.join(result))
+        rendered = '({})'.format(', '.join(result))
 
         if self.return_annotation is not _empty:
             anno = formatannotation(self.return_annotation)
-            rendered += ' -> {0}'.format(anno)
+            rendered += ' -> {}'.format(anno)
 
         return rendered
