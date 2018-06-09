@@ -1,0 +1,12 @@
+-e .
+pytest
+pytest-benchmark
+pytest-cov
+pytest-mock
+snapshottest
+coveralls
+six
+mock
+pytz
+iso8601
+pre-commit
