@@ -83,7 +83,7 @@ For example, you can define a field ``hero`` that resolves to any
         hero = graphene.Field(
             Character,
             required=True,
-            episode=graphene.Field(Episode, required=True)
+            episode=graphene.Int(required=True)
         )
 
         def resolve_hero(_, info, episode):
@@ -91,6 +91,8 @@ For example, you can define a field ``hero`` that resolves to any
             if episode == 5:
                 return get_human(name='Luke Skywalker')
             return get_droid(name='R2-D2')
+
+    schema = graphene.Schema(query=Query, types=[Human, Droid])
 
 This allows you to directly query for fields that exist on the Character interface
 as well as selecting specific fields on any type that implments the interface
@@ -100,7 +102,7 @@ For example, the following query:
 
 .. code::
 
-    query HeroForEpisode($episode: Episode!) {
+    query HeroForEpisode($episode: Int!) {
         hero(episode: $episode) {
             __typename
             name
@@ -140,3 +142,32 @@ And different data with the variables ``{ "episode": 5 }``:
             }
         }
     }
+
+Resolving data objects to types
+-------------------------------
+
+As you build out your schema in Graphene it is common for your resolvers to
+return objects that represent the data backing your GraphQL types rather than
+instances of the Graphene types (e.g. Django or SQLAlchemy models). However
+when you start using Interfaces you might come across this error:
+
+.. code::
+
+    "Abstract type Character must resolve to an Object type at runtime for field Query.hero ..."
+
+This happens because Graphene doesn't have enough information to convert the
+data object into a Graphene type needed to resolve the ``Interface``. To solve
+this you can define a ``resolve_type`` class method on the ``Interface`` which
+maps a data object to a Graphene type:
+
+.. code:: python
+
+    class Character(graphene.Interface):
+        id = graphene.ID(required=True)
+        name = graphene.String(required=True)
+
+        @classmethod
+        def resolve_type(cls, instance, info):
+            if instance.type == 'DROID':
+                return Droid
+            return Human
