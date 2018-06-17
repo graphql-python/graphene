@@ -8,9 +8,9 @@ Types Reference
    enums
    scalars
    list-and-nonnull
-   interfaces
-   abstracttypes
-   unions
    objecttypes
+   interfaces
+   unions
    schema
    mutations
+   abstracttypes
