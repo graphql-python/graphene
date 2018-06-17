@@ -142,10 +142,11 @@ And different data with the variables ``{ "episode": 5 }``:
 Resolving data objects to types
 -------------------------------
 
-As you build out your schema in Graphene it is common for your resolvers to
+As you build out your schema in Graphene it's common for your resolvers to
 return objects that represent the data backing your GraphQL types rather than
-instances of the Graphene types (e.g. Django or SQLAlchemy models). However
-when you start using Interfaces you might come across this error:
+instances of the Graphene types (e.g. Django or SQLAlchemy models). This works
+well with ``ObjectType`` and ``Scalar`` fields, however when you start using
+Interfaces you might come across this error:
 
 .. code::
 
