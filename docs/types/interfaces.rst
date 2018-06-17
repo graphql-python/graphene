@@ -15,7 +15,6 @@ character in the Star Wars trilogy:
         id = graphene.ID(required=True)
         name = graphene.String(required=True)
         friends = graphene.List(lambda: Character)
-        appears_in = graphene.List(Episode, required=True)
 
 
 Any ObjectType that implements ``Character`` will have these exact fields, with
@@ -51,14 +50,12 @@ The full GraphQL schema defition will look like this:
         id: ID!
         name: String!
         friends: [Character]
-        appearsIn: [Episode]!
     }
 
     type Human implements Character {
         id: ID!
         name: String!
         friends: [Character]
-        appearsIn: [Episode]!
         starships: [Starship]
         homePlanet: String
     }
@@ -67,7 +64,6 @@ The full GraphQL schema defition will look like this:
         id: ID!
         name: String!
         friends: [Character]
-        appearsIn: [Episode]!
         primaryFunction: String
     }
 
