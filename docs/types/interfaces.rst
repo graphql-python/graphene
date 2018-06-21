@@ -154,7 +154,7 @@ Interfaces you might come across this error:
 
 This happens because Graphene doesn't have enough information to convert the
 data object into a Graphene type needed to resolve the ``Interface``. To solve
-this you can define a ``resolve_type`` class method on the ``Interface`` which
+this you can define a ``_resolve_type`` class method on the ``Interface`` which
 maps a data object to a Graphene type:
 
 .. code:: python
@@ -164,7 +164,7 @@ maps a data object to a Graphene type:
         name = graphene.String(required=True)
 
         @classmethod
-        def resolve_type(cls, instance, info):
+        def _resolve_type(cls, instance, info):
             if instance.type == 'DROID':
                 return Droid
             return Human
