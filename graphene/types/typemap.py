@@ -194,8 +194,8 @@ class TypeMap(GraphQLTypeMap):
             return _type
 
         _resolve_type = None
-        if type.resolve_type:
-            _resolve_type = partial(resolve_type, type.resolve_type, map,
+        if type._resolve_type:
+            _resolve_type = partial(resolve_type, type._resolve_type, map,
                                     type._meta.name)
         return GrapheneInterfaceType(
             graphene_type=type,
@@ -216,8 +216,8 @@ class TypeMap(GraphQLTypeMap):
 
     def construct_union(self, map, type):
         _resolve_type = None
-        if type.resolve_type:
-            _resolve_type = partial(resolve_type, type.resolve_type, map,
+        if type._resolve_type:
+            _resolve_type = partial(resolve_type, type._resolve_type, map,
                                     type._meta.name)
 
         def types():

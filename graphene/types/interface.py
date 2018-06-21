@@ -42,7 +42,7 @@ class Interface(BaseType):
         super(Interface, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
-    def resolve_type(cls, instance, info):
+    def _resolve_type(cls, instance, info):
         from .objecttype import ObjectType
         if isinstance(instance, ObjectType):
             return type(instance)
