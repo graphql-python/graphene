@@ -76,7 +76,7 @@ We should receive:
     {
         "createPerson": {
             "person" : {
-                name: "Peter"
+                "name": "Peter"
             },
             "ok": true
         }
@@ -116,7 +116,7 @@ Note that  **name** and **age** are part of **person_data** now
 
 Using the above mutation your new query would look like this:
 
-.. code:: json
+.. code::
 
     mutation myFirstMutation {
         createPerson(personData: {name:"Peter", age: 24}) {
@@ -143,3 +143,41 @@ as complex of input data as you need
         name = graphene.String()
         latlng = graphene.InputField(LatLngInput)
 
+Output type example
+-------------------
+To return an existing ObjectType instead of a mutation-specific type, set the **Output** attribute to the desired ObjectType:
+
+.. code:: python
+
+    import graphene
+
+    class CreatePerson(graphene.Mutation):
+        class Arguments:
+            name = graphene.String()
+
+        Output = Person
+
+        def mutate(self, info, name):
+            return Person(name=name)
+
+Then, if we query (``schema.execute(query_str)``) the following:
+
+.. code::
+
+    mutation myFirstMutation {
+        createPerson(name:"Peter") {
+            name
+            __typename
+        }
+    }
+
+We should receive:
+
+.. code:: json
+
+    {
+        "createPerson": {
+            "name": "Peter",
+            "__typename": "Person"
+        }
+    }
