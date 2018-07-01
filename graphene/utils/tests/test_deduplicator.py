@@ -169,8 +169,8 @@ TEST_DATA = {
         '1198359': {
             'name': 'King Arthur: Legend of the Sword',
             'synopsis': (
-                "When the child Arthur’s father is murdered, Vortigern, "
-                "Arthur’s uncle, seizes the crown. Robbed of his birthright and "
+                "When the child Arthur's father is murdered, Vortigern, "
+                "Arthur's uncle, seizes the crown. Robbed of his birthright and "
                 "with no idea who he truly is..."
             ),
         },
@@ -238,8 +238,8 @@ def test_example_end_to_end():
                     'id': 'TW92aWU6Tm9uZQ==',
                     'name': 'King Arthur: Legend of the Sword',
                     'synopsis': (
-                        "When the child Arthur’s father is murdered, Vortigern, "
-                        "Arthur’s uncle, seizes the crown. Robbed of his birthright and "
+                        "When the child Arthur's father is murdered, Vortigern, "
+                        "Arthur's uncle, seizes the crown. Robbed of his birthright and "
                         "with no idea who he truly is..."
                     ),
                 },
