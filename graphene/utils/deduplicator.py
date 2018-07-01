@@ -1,8 +1,4 @@
-from collections import defaultdict, Mapping, OrderedDict
-
-
-def nested_dict():
-    return defaultdict(nested_dict)
+from collections import Mapping, OrderedDict
 
 
 def deflate(node, index=None, path=None):
@@ -13,24 +9,15 @@ def deflate(node, index=None, path=None):
 
     if node and 'id' in node and '__typename' in node:
         route = ','.join(path)
+        cache_key = ':'.join([route, str(node['__typename']), str(node['id'])])
 
-        if (
-            route in index and
-            node['__typename'] in index[route] and
-            index[route][node['__typename']].get(node['id'])
-        ):
+        if index.get(cache_key) is True:
             return {
                 '__typename': node['__typename'],
                 'id': node['id'],
             }
         else:
-            if route not in index:
-                index[route] = {}
-
-            if node['__typename'] not in index[route]:
-                index[route][node['__typename']] = {}
-
-            index[route][node['__typename']][node['id']] = True
+            index[cache_key] = True
 
     field_names = node.keys()
     result = OrderedDict()
