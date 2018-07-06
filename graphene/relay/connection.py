@@ -46,12 +46,17 @@ class Connection(ObjectType):
     @classmethod
     def __init_subclass_with_meta__(cls, node=None, name=None, **options):
         _meta = ConnectionOptions(cls)
-        assert node, "You have to provide a node in {}.Meta".format(cls.__name__)
-        assert issubclass(
-            node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
-        ), ('Received incompatible node "{}" for Connection {}.').format(
-            node, cls.__name__
-        )
+        if not node:
+            raise AssertionError(
+                "You have to provide a node in {}.Meta"
+                .format(cls.__name__)
+            )
+
+        if not issubclass(node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)):
+            raise AssertionError(
+                'Received incompatible node "{}" for Connection {}.'
+                .format(node, cls.__name__)
+            )
 
         base_name = re.sub("Connection$", "", name or cls.__name__) or node._meta.name
         if not name:
@@ -107,9 +112,11 @@ class IterableConnectionField(Field):
                 "Read more: https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#node-connections"
             )
 
-        assert issubclass(connection_type, Connection), (
-            '{} type have to be a subclass of Connection. Received "{}".'
-        ).format(self.__class__.__name__, connection_type)
+        if not issubclass(connection_type, Connection):
+            raise AssertionError(
+                '{} type have to be a subclass of Connection. Received "{}".'
+                .format(self.__class__.__name__, connection_type)
+            )
         return type
 
     @classmethod
@@ -117,10 +124,14 @@ class IterableConnectionField(Field):
         if isinstance(resolved, connection_type):
             return resolved
 
-        assert isinstance(resolved, Iterable), (
-            "Resolved value from the connection field have to be iterable or instance of {}. "
-            'Received "{}"'
-        ).format(connection_type, resolved)
+        if not isinstance(resolved, Iterable):
+            raise AssertionError(
+                '''
+                    Resolved value from the connection field have to be iterable or instance of {}.
+                    Received "{}"
+                '''
+                .format(connection_type, resolved)
+            )
         connection = connection_from_list(
             resolved,
             args,
