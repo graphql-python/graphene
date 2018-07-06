@@ -13,6 +13,7 @@ repos:
     -   id: end-of-file-fixer
         exclude: ^docs/.*$
     -   id: trailing-whitespace
+        exclude: README.md
     -   id: pretty-format-json
         args:
         - --autofix
@@ -22,7 +23,7 @@ repos:
     hooks:
     -   id: pyupgrade
 -   repo: https://github.com/asottile/seed-isort-config
-    rev: v1.0.0
+    rev: v1.0.1
     hooks:
     -   id: seed-isort-config
 -   repo: https://github.com/pre-commit/mirrors-isort
