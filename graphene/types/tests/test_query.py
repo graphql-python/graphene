@@ -17,17 +17,19 @@ from ..union import Union
 
 
 def test_query():
+
     class Query(ObjectType):
-        hello = String(resolver=lambda *_: 'World')
+        hello = String(resolver=lambda *_: "World")
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello }')
+    executed = hello_schema.execute("{ hello }")
     assert not executed.errors
-    assert executed.data == {'hello': 'World'}
+    assert executed.data == {"hello": "World"}
 
 
 def test_query_source():
+
     class Root(object):
         _hello = "World"
 
@@ -39,12 +41,13 @@ def test_query_source():
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello }', Root())
+    executed = hello_schema.execute("{ hello }", Root())
     assert not executed.errors
-    assert executed.data == {'hello': 'World'}
+    assert executed.data == {"hello": "World"}
 
 
 def test_query_union():
+
     class one_object(object):
         pass
 
@@ -78,18 +81,13 @@ def test_query_union():
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ unions { __typename } }')
+    executed = hello_schema.execute("{ unions { __typename } }")
     assert not executed.errors
-    assert executed.data == {
-        'unions': [{
-            '__typename': 'One'
-        }, {
-            '__typename': 'Two'
-        }]
-    }
+    assert executed.data == {"unions": [{"__typename": "One"}, {"__typename": "Two"}]}
 
 
 def test_query_interface():
+
     class one_object(object):
         pass
 
@@ -102,7 +100,7 @@ def test_query_interface():
     class One(ObjectType):
 
         class Meta:
-            interfaces = (MyInterface, )
+            interfaces = (MyInterface,)
 
         one = String()
 
@@ -113,7 +111,7 @@ def test_query_interface():
     class Two(ObjectType):
 
         class Meta:
-            interfaces = (MyInterface, )
+            interfaces = (MyInterface,)
 
         two = String()
 
@@ -129,47 +127,48 @@ def test_query_interface():
 
     hello_schema = Schema(Query, types=[One, Two])
 
-    executed = hello_schema.execute('{ interfaces { __typename } }')
+    executed = hello_schema.execute("{ interfaces { __typename } }")
     assert not executed.errors
     assert executed.data == {
-        'interfaces': [{
-            '__typename': 'One'
-        }, {
-            '__typename': 'Two'
-        }]
+        "interfaces": [{"__typename": "One"}, {"__typename": "Two"}]
     }
 
 
 def test_query_dynamic():
+
     class Query(ObjectType):
-        hello = Dynamic(lambda: String(resolver=lambda *_: 'World'))
-        hellos = Dynamic(lambda: List(String, resolver=lambda *_: ['Worlds']))
-        hello_field = Dynamic(lambda: Field(
-            String, resolver=lambda *_: 'Field World'))
+        hello = Dynamic(lambda: String(resolver=lambda *_: "World"))
+        hellos = Dynamic(lambda: List(String, resolver=lambda *_: ["Worlds"]))
+        hello_field = Dynamic(lambda: Field(String, resolver=lambda *_: "Field World"))
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello hellos helloField }')
+    executed = hello_schema.execute("{ hello hellos helloField }")
     assert not executed.errors
-    assert executed.data == {'hello': 'World', 'hellos': [
-        'Worlds'], 'helloField': 'Field World'}
+    assert executed.data == {
+        "hello": "World",
+        "hellos": ["Worlds"],
+        "helloField": "Field World",
+    }
 
 
 def test_query_default_value():
+
     class MyType(ObjectType):
         field = String()
 
     class Query(ObjectType):
-        hello = Field(MyType, default_value=MyType(field='something else!'))
+        hello = Field(MyType, default_value=MyType(field="something else!"))
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello { field } }')
+    executed = hello_schema.execute("{ hello { field } }")
     assert not executed.errors
-    assert executed.data == {'hello': {'field': 'something else!'}}
+    assert executed.data == {"hello": {"field": "something else!"}}
 
 
 def test_query_wrong_default_value():
+
     class MyType(ObjectType):
         field = String()
 
@@ -178,73 +177,81 @@ def test_query_wrong_default_value():
             return isinstance(root, MyType)
 
     class Query(ObjectType):
-        hello = Field(MyType, default_value='hello')
+        hello = Field(MyType, default_value="hello")
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello { field } }')
+    executed = hello_schema.execute("{ hello { field } }")
     assert len(executed.errors) == 1
-    assert executed.errors[0].message == GraphQLError(
-        'Expected value of type "MyType" but got: str.').message
-    assert executed.data == {'hello': None}
+    assert (
+        executed.errors[0].message
+        == GraphQLError('Expected value of type "MyType" but got: str.').message
+    )
+    assert executed.data == {"hello": None}
 
 
 def test_query_default_value_ignored_by_resolver():
+
     class MyType(ObjectType):
         field = String()
 
     class Query(ObjectType):
-        hello = Field(MyType, default_value='hello',
-                      resolver=lambda *_: MyType(field='no default.'))
+        hello = Field(
+            MyType,
+            default_value="hello",
+            resolver=lambda *_: MyType(field="no default."),
+        )
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello { field } }')
+    executed = hello_schema.execute("{ hello { field } }")
     assert not executed.errors
-    assert executed.data == {'hello': {'field': 'no default.'}}
+    assert executed.data == {"hello": {"field": "no default."}}
 
 
 def test_query_resolve_function():
+
     class Query(ObjectType):
         hello = String()
 
         def resolve_hello(self, info):
-            return 'World'
+            return "World"
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute('{ hello }')
+    executed = hello_schema.execute("{ hello }")
     assert not executed.errors
-    assert executed.data == {'hello': 'World'}
+    assert executed.data == {"hello": "World"}
 
 
 def test_query_arguments():
+
     class Query(ObjectType):
         test = String(a_str=String(), a_int=Int())
 
         def resolve_test(self, info, **args):
-            return json.dumps([self, args], separators=(',', ':'))
+            return json.dumps([self, args], separators=(",", ":"))
 
     test_schema = Schema(Query)
 
-    result = test_schema.execute('{ test }', None)
+    result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {'test': '[null,{}]'}
+    assert result.data == {"test": "[null,{}]"}
 
-    result = test_schema.execute('{ test(aStr: "String!") }', 'Source!')
+    result = test_schema.execute('{ test(aStr: "String!") }', "Source!")
     assert not result.errors
-    assert result.data == {'test': '["Source!",{"a_str":"String!"}]'}
+    assert result.data == {"test": '["Source!",{"a_str":"String!"}]'}
 
-    result = test_schema.execute(
-        '{ test(aInt: -123, aStr: "String!") }', 'Source!')
+    result = test_schema.execute('{ test(aInt: -123, aStr: "String!") }', "Source!")
     assert not result.errors
     assert result.data in [
-        {'test': '["Source!",{"a_str":"String!","a_int":-123}]'},
-        {'test': '["Source!",{"a_int":-123,"a_str":"String!"}]'}
+        {"test": '["Source!",{"a_str":"String!","a_int":-123}]'},
+        {"test": '["Source!",{"a_int":-123,"a_str":"String!"}]'},
     ]
 
 
 def test_query_input_field():
+
     class Input(InputObjectType):
         a_field = String()
         recursive_field = InputField(lambda: Input)
@@ -253,37 +260,38 @@ def test_query_input_field():
         test = String(a_input=Input())
 
         def resolve_test(self, info, **args):
-            return json.dumps([self, args], separators=(',', ':'))
+            return json.dumps([self, args], separators=(",", ":"))
 
     test_schema = Schema(Query)
 
-    result = test_schema.execute('{ test }', None)
+    result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {'test': '[null,{}]'}
+    assert result.data == {"test": "[null,{}]"}
+
+    result = test_schema.execute('{ test(aInput: {aField: "String!"} ) }', "Source!")
+    assert not result.errors
+    assert result.data == {"test": '["Source!",{"a_input":{"a_field":"String!"}}]'}
 
     result = test_schema.execute(
-        '{ test(aInput: {aField: "String!"} ) }', 'Source!')
+        '{ test(aInput: {recursiveField: {aField: "String!"}}) }', "Source!"
+    )
     assert not result.errors
     assert result.data == {
-        'test': '["Source!",{"a_input":{"a_field":"String!"}}]'}
-
-    result = test_schema.execute(
-        '{ test(aInput: {recursiveField: {aField: "String!"}}) }', 'Source!')
-    assert not result.errors
-    assert result.data == {
-        'test': '["Source!",{"a_input":{"recursive_field":{"a_field":"String!"}}}]'}
+        "test": '["Source!",{"a_input":{"recursive_field":{"a_field":"String!"}}}]'
+    }
 
 
 def test_query_middlewares():
+
     class Query(ObjectType):
         hello = String()
         other = String()
 
         def resolve_hello(self, info):
-            return 'World'
+            return "World"
 
         def resolve_other(self, info):
-            return 'other'
+            return "other"
 
     def reversed_middleware(next, *args, **kwargs):
         p = next(*args, **kwargs)
@@ -292,12 +300,14 @@ def test_query_middlewares():
     hello_schema = Schema(Query)
 
     executed = hello_schema.execute(
-        '{ hello, other }', middleware=[reversed_middleware])
+        "{ hello, other }", middleware=[reversed_middleware]
+    )
     assert not executed.errors
-    assert executed.data == {'hello': 'dlroW', 'other': 'rehto'}
+    assert executed.data == {"hello": "dlroW", "other": "rehto"}
 
 
 def test_objecttype_on_instances():
+
     class Ship:
 
         def __init__(self, name):
@@ -314,12 +324,12 @@ def test_objecttype_on_instances():
         ship = Field(ShipType)
 
         def resolve_ship(self, info):
-            return Ship(name='xwing')
+            return Ship(name="xwing")
 
     schema = Schema(query=Query)
-    executed = schema.execute('{ ship { name } }')
+    executed = schema.execute("{ ship { name } }")
     assert not executed.errors
-    assert executed.data == {'ship': {'name': 'xwing'}}
+    assert executed.data == {"ship": {"name": "xwing"}}
 
 
 def test_big_list_query_benchmark(benchmark):
@@ -333,10 +343,10 @@ def test_big_list_query_benchmark(benchmark):
 
     hello_schema = Schema(Query)
 
-    big_list_query = partial(hello_schema.execute, '{ allInts }')
+    big_list_query = partial(hello_schema.execute, "{ allInts }")
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allInts': list(big_list)}
+    assert result.data == {"allInts": list(big_list)}
 
 
 def test_big_list_query_compiled_query_benchmark(benchmark):
@@ -349,16 +359,17 @@ def test_big_list_query_compiled_query_benchmark(benchmark):
             return big_list
 
     hello_schema = Schema(Query)
-    source = Source('{ allInts }')
+    source = Source("{ allInts }")
     query_ast = parse(source)
 
     big_list_query = partial(execute, hello_schema, query_ast)
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allInts': list(big_list)}
+    assert result.data == {"allInts": list(big_list)}
 
 
 def test_big_list_of_containers_query_benchmark(benchmark):
+
     class Container(ObjectType):
         x = Int()
 
@@ -372,14 +383,14 @@ def test_big_list_of_containers_query_benchmark(benchmark):
 
     hello_schema = Schema(Query)
 
-    big_list_query = partial(hello_schema.execute, '{ allContainers { x } }')
+    big_list_query = partial(hello_schema.execute, "{ allContainers { x } }")
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allContainers': [
-        {'x': c.x} for c in big_container_list]}
+    assert result.data == {"allContainers": [{"x": c.x} for c in big_container_list]}
 
 
 def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
+
     class Container(ObjectType):
         x = Int()
         y = Int()
@@ -396,15 +407,20 @@ def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
 
     hello_schema = Schema(Query)
 
-    big_list_query = partial(hello_schema.execute,
-                             '{ allContainers { x, y, z, o } }')
+    big_list_query = partial(hello_schema.execute, "{ allContainers { x, y, z, o } }")
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allContainers': [
-        {'x': c.x, 'y': c.y, 'z': c.z, 'o': c.o} for c in big_container_list]}
+    assert result.data == {
+        "allContainers": [
+            {"x": c.x, "y": c.y, "z": c.z, "o": c.o} for c in big_container_list
+        ]
+    }
 
 
-def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark(benchmark):
+def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark(
+    benchmark
+):
+
     class Container(ObjectType):
         x = Int()
         y = Int()
@@ -433,12 +449,14 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
 
     hello_schema = Schema(Query)
 
-    big_list_query = partial(hello_schema.execute,
-                             '{ allContainers { x, y, z, o } }')
+    big_list_query = partial(hello_schema.execute, "{ allContainers { x, y, z, o } }")
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {'allContainers': [
-        {'x': c.x, 'y': c.y, 'z': c.z, 'o': c.o} for c in big_container_list]}
+    assert result.data == {
+        "allContainers": [
+            {"x": c.x, "y": c.y, "z": c.z, "o": c.o} for c in big_container_list
+        ]
+    }
 
 
 def test_query_annotated_resolvers():
@@ -464,15 +482,15 @@ def test_query_annotated_resolvers():
 
     result = test_schema.execute('{ annotated(id:"self") }', "base")
     assert not result.errors
-    assert result.data == {'annotated': 'base-self'}
+    assert result.data == {"annotated": "base-self"}
 
-    result = test_schema.execute('{ context }', "base", context_value=context)
+    result = test_schema.execute("{ context }", "base", context_value=context)
     assert not result.errors
-    assert result.data == {'context': 'base-context'}
+    assert result.data == {"context": "base-context"}
 
-    result = test_schema.execute('{ info }', "base")
+    result = test_schema.execute("{ info }", "base")
     assert not result.errors
-    assert result.data == {'info': 'base-info'}
+    assert result.data == {"info": "base-info"}
 
 
 def test_default_as_kwarg_to_NonNull():
@@ -488,7 +506,7 @@ def test_default_as_kwarg_to_NonNull():
             return User(name="foo")
 
     schema = Schema(query=Query)
-    expected = {'user': {'name': 'foo', 'isAdmin': False}}
+    expected = {"user": {"name": "foo", "isAdmin": False}}
     result = schema.execute("{ user { name isAdmin } }")
 
     assert not result.errors

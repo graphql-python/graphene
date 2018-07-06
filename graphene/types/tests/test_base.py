@@ -6,6 +6,7 @@ class CustomOptions(BaseOptions):
 
 
 class CustomType(BaseType):
+
     @classmethod
     def __init_subclass_with_meta__(cls, **options):
         _meta = CustomOptions(cls)
@@ -13,6 +14,7 @@ class CustomType(BaseType):
 
 
 def test_basetype():
+
     class MyBaseType(CustomType):
         pass
 
@@ -22,8 +24,10 @@ def test_basetype():
 
 
 def test_basetype_nones():
+
     class MyBaseType(CustomType):
-        '''Documentation'''
+        """Documentation"""
+
         class Meta:
             name = None
             description = None
@@ -34,11 +38,13 @@ def test_basetype_nones():
 
 
 def test_basetype_custom():
+
     class MyBaseType(CustomType):
-        '''Documentation'''
+        """Documentation"""
+
         class Meta:
-            name = 'Base'
-            description = 'Desc'
+            name = "Base"
+            description = "Desc"
 
     assert isinstance(MyBaseType._meta, CustomOptions)
     assert MyBaseType._meta.name == "Base"
@@ -46,7 +52,7 @@ def test_basetype_custom():
 
 
 def test_basetype_create():
-    MyBaseType = CustomType.create_type('MyBaseType')
+    MyBaseType = CustomType.create_type("MyBaseType")
 
     assert isinstance(MyBaseType._meta, CustomOptions)
     assert MyBaseType._meta.name == "MyBaseType"
@@ -54,7 +60,7 @@ def test_basetype_create():
 
 
 def test_basetype_create_extra():
-    MyBaseType = CustomType.create_type('MyBaseType', name='Base', description='Desc')
+    MyBaseType = CustomType.create_type("MyBaseType", name="Base", description="Desc")
 
     assert isinstance(MyBaseType._meta, CustomOptions)
     assert MyBaseType._meta.name == "Base"

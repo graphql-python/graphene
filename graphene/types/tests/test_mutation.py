@@ -10,8 +10,9 @@ from ..structures import NonNull
 
 
 def test_generate_mutation_no_args():
+
     class MyMutation(Mutation):
-        '''Documentation'''
+        """Documentation"""
 
         def mutate(self, info, **args):
             return args
@@ -19,24 +20,25 @@ def test_generate_mutation_no_args():
     assert issubclass(MyMutation, ObjectType)
     assert MyMutation._meta.name == "MyMutation"
     assert MyMutation._meta.description == "Documentation"
-    resolved = MyMutation.Field().resolver(None, None, name='Peter')
-    assert resolved == {'name': 'Peter'}
+    resolved = MyMutation.Field().resolver(None, None, name="Peter")
+    assert resolved == {"name": "Peter"}
 
 
 def test_generate_mutation_with_meta():
+
     class MyMutation(Mutation):
 
         class Meta:
-            name = 'MyOtherMutation'
-            description = 'Documentation'
+            name = "MyOtherMutation"
+            description = "Documentation"
 
         def mutate(self, info, **args):
             return args
 
     assert MyMutation._meta.name == "MyOtherMutation"
     assert MyMutation._meta.description == "Documentation"
-    resolved = MyMutation.Field().resolver(None, None, name='Peter')
-    assert resolved == {'name': 'Peter'}
+    resolved = MyMutation.Field().resolver(None, None, name="Peter")
+    assert resolved == {"name": "Peter"}
 
 
 def test_mutation_raises_exception_if_no_mutate():
@@ -45,11 +47,11 @@ def test_mutation_raises_exception_if_no_mutate():
         class MyMutation(Mutation):
             pass
 
-    assert "All mutations must define a mutate method in it" == str(
-        excinfo.value)
+    assert "All mutations must define a mutate method in it" == str(excinfo.value)
 
 
 def test_mutation_custom_output_type():
+
     class User(ObjectType):
         name = String()
 
@@ -65,13 +67,14 @@ def test_mutation_custom_output_type():
 
     field = CreateUser.Field()
     assert field.type == User
-    assert field.args == {'name': Argument(String)}
-    resolved = field.resolver(None, None, name='Peter')
+    assert field.args == {"name": Argument(String)}
+    resolved = field.resolver(None, None, name="Peter")
     assert isinstance(resolved, User)
-    assert resolved.name == 'Peter'
+    assert resolved.name == "Peter"
 
 
 def test_mutation_execution():
+
     class CreateUser(Mutation):
 
         class Arguments:
@@ -92,23 +95,21 @@ def test_mutation_execution():
         create_user = CreateUser.Field()
 
     schema = Schema(query=Query, mutation=MyMutation)
-    result = schema.execute(''' mutation mymutation {
+    result = schema.execute(
+        """ mutation mymutation {
         createUser(name:"Peter", dynamic: "dynamic") {
             name
             dynamic
         }
     }
-    ''')
+    """
+    )
     assert not result.errors
-    assert result.data == {
-        'createUser': {
-            'name': 'Peter',
-            'dynamic': 'dynamic',
-        }
-    }
+    assert result.data == {"createUser": {"name": "Peter", "dynamic": "dynamic"}}
 
 
 def test_mutation_no_fields_output():
+
     class CreateUser(Mutation):
         name = String()
 
@@ -122,21 +123,20 @@ def test_mutation_no_fields_output():
         create_user = CreateUser.Field()
 
     schema = Schema(query=Query, mutation=MyMutation)
-    result = schema.execute(''' mutation mymutation {
+    result = schema.execute(
+        """ mutation mymutation {
         createUser {
             name
         }
     }
-    ''')
+    """
+    )
     assert not result.errors
-    assert result.data == {
-        'createUser': {
-            'name': None,
-        }
-    }
+    assert result.data == {"createUser": {"name": None}}
 
 
 def test_mutation_allow_to_have_custom_args():
+
     class CreateUser(Mutation):
 
         class Arguments:
@@ -149,12 +149,12 @@ def test_mutation_allow_to_have_custom_args():
 
     class MyMutation(ObjectType):
         create_user = CreateUser.Field(
-            description='Create a user',
-            deprecation_reason='Is deprecated',
-            required=True
+            description="Create a user",
+            deprecation_reason="Is deprecated",
+            required=True,
         )
 
-    field = MyMutation._meta.fields['create_user']
-    assert field.description == 'Create a user'
-    assert field.deprecation_reason == 'Is deprecated'
+    field = MyMutation._meta.fields["create_user"]
+    assert field.description == "Create a user"
+    assert field.deprecation_reason == "Is deprecated"
     assert field.type == NonNull(CreateUser)

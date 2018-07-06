@@ -12,13 +12,14 @@ class SharedNodeFields(object):
     something_else = String()
 
     def resolve_something_else(*_):
-        return '----'
+        return "----"
 
 
 class MyNode(ObjectType):
 
     class Meta:
-        interfaces = (Node, )
+        interfaces = (Node,)
+
     name = String()
 
     @staticmethod
@@ -30,10 +31,10 @@ class MyOtherNode(SharedNodeFields, ObjectType):
     extra_field = String()
 
     class Meta:
-        interfaces = (Node, )
+        interfaces = (Node,)
 
     def resolve_extra_field(self, *_):
-        return 'extra field info.'
+        return "extra field info."
 
     @staticmethod
     def get_node(info, id):
@@ -51,7 +52,7 @@ schema = Schema(query=RootQuery, types=[MyNode, MyOtherNode])
 
 
 def test_node_good():
-    assert 'id' in MyNode._meta.fields
+    assert "id" in MyNode._meta.fields
     assert is_node(MyNode)
     assert not is_node(object)
 
@@ -61,25 +62,33 @@ def test_node_query():
         '{ node(id:"%s") { ... on MyNode { name } } }' % Node.to_global_id("MyNode", 1)
     )
     assert not executed.errors
-    assert executed.data == {'node': {'name': '1'}}
+    assert executed.data == {"node": {"name": "1"}}
 
 
 def test_subclassed_node_query():
     executed = schema.execute(
-        '{ node(id:"%s") { ... on MyOtherNode { shared, extraField, somethingElse } } }' %
-        to_global_id("MyOtherNode", 1))
+        '{ node(id:"%s") { ... on MyOtherNode { shared, extraField, somethingElse } } }'
+        % to_global_id("MyOtherNode", 1)
+    )
     assert not executed.errors
-    assert executed.data == OrderedDict({'node': OrderedDict(
-        [('shared', '1'), ('extraField', 'extra field info.'), ('somethingElse', '----')])})
+    assert executed.data == OrderedDict(
+        {
+            "node": OrderedDict(
+                [
+                    ("shared", "1"),
+                    ("extraField", "extra field info."),
+                    ("somethingElse", "----"),
+                ]
+            )
+        }
+    )
 
 
 def test_node_requesting_non_node():
     executed = schema.execute(
         '{ node(id:"%s") { __typename } } ' % Node.to_global_id("RootQuery", 1)
     )
-    assert executed.data == {
-        'node': None
-    }
+    assert executed.data == {"node": None}
 
 
 def test_node_query_incorrect_id():
@@ -87,7 +96,7 @@ def test_node_query_incorrect_id():
         '{ node(id:"%s") { ... on MyNode { name } } }' % "something:2"
     )
     assert not executed.errors
-    assert executed.data == {'node': None}
+    assert executed.data == {"node": None}
 
 
 def test_node_field():
@@ -107,37 +116,42 @@ def test_node_field_only_type():
         '{ onlyNode(id:"%s") { __typename, name } } ' % Node.to_global_id("MyNode", 1)
     )
     assert not executed.errors
-    assert executed.data == {'onlyNode': {'__typename': 'MyNode', 'name': '1'}}
+    assert executed.data == {"onlyNode": {"__typename": "MyNode", "name": "1"}}
 
 
 def test_node_field_only_type_wrong():
     executed = schema.execute(
-        '{ onlyNode(id:"%s") { __typename, name } } ' % Node.to_global_id("MyOtherNode", 1)
+        '{ onlyNode(id:"%s") { __typename, name } } '
+        % Node.to_global_id("MyOtherNode", 1)
     )
     assert len(executed.errors) == 1
-    assert str(executed.errors[0]) == 'Must receive a MyNode id.'
-    assert executed.data == {'onlyNode': None}
+    assert str(executed.errors[0]) == "Must receive a MyNode id."
+    assert executed.data == {"onlyNode": None}
 
 
 def test_node_field_only_lazy_type():
     executed = schema.execute(
-        '{ onlyNodeLazy(id:"%s") { __typename, name } } ' % Node.to_global_id("MyNode", 1)
+        '{ onlyNodeLazy(id:"%s") { __typename, name } } '
+        % Node.to_global_id("MyNode", 1)
     )
     assert not executed.errors
-    assert executed.data == {'onlyNodeLazy': {'__typename': 'MyNode', 'name': '1'}}
+    assert executed.data == {"onlyNodeLazy": {"__typename": "MyNode", "name": "1"}}
 
 
 def test_node_field_only_lazy_type_wrong():
     executed = schema.execute(
-        '{ onlyNodeLazy(id:"%s") { __typename, name } } ' % Node.to_global_id("MyOtherNode", 1)
+        '{ onlyNodeLazy(id:"%s") { __typename, name } } '
+        % Node.to_global_id("MyOtherNode", 1)
     )
     assert len(executed.errors) == 1
-    assert str(executed.errors[0]) == 'Must receive a MyNode id.'
-    assert executed.data == {'onlyNodeLazy': None}
+    assert str(executed.errors[0]) == "Must receive a MyNode id."
+    assert executed.data == {"onlyNodeLazy": None}
 
 
 def test_str_schema():
-    assert str(schema) == """
+    assert (
+        str(schema)
+        == """
 schema {
   query: RootQuery
 }
@@ -165,3 +179,4 @@ type RootQuery {
   onlyNodeLazy(id: ID!): MyNode
 }
 """.lstrip()
+    )

@@ -6,12 +6,12 @@ class MountedType(OrderedType):
 
     @classmethod
     def mounted(cls, unmounted):  # noqa: N802
-        '''
+        """
         Mount the UnmountedType instance
-        '''
-        assert isinstance(unmounted, UnmountedType), (
-            '{} can\'t mount {}'
-        ).format(cls.__name__, repr(unmounted))
+        """
+        assert isinstance(unmounted, UnmountedType), ("{} can't mount {}").format(
+            cls.__name__, repr(unmounted)
+        )
 
         return cls(
             unmounted.get_type(),

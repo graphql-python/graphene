@@ -12,8 +12,10 @@ def annotate(_func=None, _trigger_warning=True, **annotations):
         )
 
     if not _func:
+
         def _func(f):
             return annotate(f, **annotations)
+
         return _func
 
     func_signature = signature(_func)
@@ -22,12 +24,9 @@ def annotate(_func=None, _trigger_warning=True, **annotations):
     for key, value in annotations.items():
         assert key in func_signature.parameters, (
             'The key {key} is not a function parameter in the function "{func_name}".'
-        ).format(
-            key=key,
-            func_name=func_name(_func)
-        )
+        ).format(key=key, func_name=func_name(_func))
 
-    func_annotations = getattr(_func, '__annotations__', None)
+    func_annotations = getattr(_func, "__annotations__", None)
     if func_annotations is None:
         _func.__annotations__ = annotations
     else:

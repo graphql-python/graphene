@@ -2,11 +2,6 @@ repos:
 -   repo: git://github.com/pre-commit/pre-commit-hooks
     rev: v1.3.0
     hooks:
-    -   id: autopep8-wrapper
-        args:
-        - -i
-        - --ignore=E128,E309,E501
-        exclude: ^docs/.*$
     -   id: check-json
     -   id: check-yaml
     -   id: debug-statements

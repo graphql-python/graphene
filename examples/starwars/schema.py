@@ -23,27 +23,23 @@ class Character(graphene.Interface):
 class Human(graphene.ObjectType):
 
     class Meta:
-        interfaces = (Character, )
+        interfaces = (Character,)
+
     home_planet = graphene.String()
 
 
 class Droid(graphene.ObjectType):
 
     class Meta:
-        interfaces = (Character, )
+        interfaces = (Character,)
+
     primary_function = graphene.String()
 
 
 class Query(graphene.ObjectType):
-    hero = graphene.Field(Character,
-                          episode=Episode()
-                          )
-    human = graphene.Field(Human,
-                           id=graphene.String()
-                           )
-    droid = graphene.Field(Droid,
-                           id=graphene.String()
-                           )
+    hero = graphene.Field(Character, episode=Episode())
+    human = graphene.Field(Human, id=graphene.String())
+    droid = graphene.Field(Droid, id=graphene.String())
 
     def resolve_hero(self, info, episode=None):
         return get_hero(episode)

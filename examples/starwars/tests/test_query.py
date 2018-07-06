@@ -9,18 +9,18 @@ client = Client(schema)
 
 
 def test_hero_name_query(snapshot):
-    query = '''
+    query = """
         query HeroNameQuery {
           hero {
             name
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_hero_name_and_friends_query(snapshot):
-    query = '''
+    query = """
         query HeroNameAndFriendsQuery {
           hero {
             id
@@ -30,12 +30,12 @@ def test_hero_name_and_friends_query(snapshot):
             }
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_nested_query(snapshot):
-    query = '''
+    query = """
         query NestedQuery {
           hero {
             name
@@ -48,76 +48,70 @@ def test_nested_query(snapshot):
             }
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_fetch_luke_query(snapshot):
-    query = '''
+    query = """
         query FetchLukeQuery {
           human(id: "1000") {
             name
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_fetch_some_id_query(snapshot):
-    query = '''
+    query = """
         query FetchSomeIDQuery($someId: String!) {
           human(id: $someId) {
             name
           }
         }
-    '''
-    params = {
-        'someId': '1000',
-    }
+    """
+    params = {"someId": "1000"}
     snapshot.assert_match(client.execute(query, variable_values=params))
 
 
 def test_fetch_some_id_query2(snapshot):
-    query = '''
+    query = """
         query FetchSomeIDQuery($someId: String!) {
           human(id: $someId) {
             name
           }
         }
-    '''
-    params = {
-        'someId': '1002',
-    }
+    """
+    params = {"someId": "1002"}
     snapshot.assert_match(client.execute(query, variable_values=params))
 
 
 def test_invalid_id_query(snapshot):
-    query = '''
+    query = """
         query humanQuery($id: String!) {
           human(id: $id) {
             name
           }
         }
-    '''
-    params = {
-        'id': 'not a valid id',
-    }
+    """
+    params = {"id": "not a valid id"}
     snapshot.assert_match(client.execute(query, variable_values=params))
 
 
 def test_fetch_luke_aliased(snapshot):
-    query = '''
+    query = """
         query FetchLukeAliased {
           luke: human(id: "1000") {
             name
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_fetch_luke_and_leia_aliased(snapshot):
-    query = '''
+    query = """
         query FetchLukeAndLeiaAliased {
           luke: human(id: "1000") {
             name
@@ -126,12 +120,12 @@ def test_fetch_luke_and_leia_aliased(snapshot):
             name
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_duplicate_fields(snapshot):
-    query = '''
+    query = """
         query DuplicateFields {
           luke: human(id: "1000") {
             name
@@ -142,12 +136,12 @@ def test_duplicate_fields(snapshot):
             homePlanet
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_use_fragment(snapshot):
-    query = '''
+    query = """
         query UseFragment {
           luke: human(id: "1000") {
             ...HumanFragment
@@ -160,29 +154,29 @@ def test_use_fragment(snapshot):
           name
           homePlanet
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_check_type_of_r2(snapshot):
-    query = '''
+    query = """
         query CheckTypeOfR2 {
           hero {
             __typename
             name
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_check_type_of_luke(snapshot):
-    query = '''
+    query = """
         query CheckTypeOfLuke {
           hero(episode: EMPIRE) {
             __typename
             name
           }
         }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
