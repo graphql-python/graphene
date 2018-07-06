@@ -17,7 +17,6 @@ from ..union import Union
 
 
 def test_query():
-
     class Query(ObjectType):
         hello = String(resolver=lambda *_: "World")
 
@@ -29,7 +28,6 @@ def test_query():
 
 
 def test_query_source():
-
     class Root(object):
         _hello = "World"
 
@@ -47,7 +45,6 @@ def test_query_source():
 
 
 def test_query_union():
-
     class one_object(object):
         pass
 
@@ -69,7 +66,6 @@ def test_query_union():
             return isinstance(root, two_object)
 
     class MyUnion(Union):
-
         class Meta:
             types = (One, Two)
 
@@ -87,7 +83,6 @@ def test_query_union():
 
 
 def test_query_interface():
-
     class one_object(object):
         pass
 
@@ -98,7 +93,6 @@ def test_query_interface():
         base = String()
 
     class One(ObjectType):
-
         class Meta:
             interfaces = (MyInterface,)
 
@@ -109,7 +103,6 @@ def test_query_interface():
             return isinstance(root, one_object)
 
     class Two(ObjectType):
-
         class Meta:
             interfaces = (MyInterface,)
 
@@ -135,7 +128,6 @@ def test_query_interface():
 
 
 def test_query_dynamic():
-
     class Query(ObjectType):
         hello = Dynamic(lambda: String(resolver=lambda *_: "World"))
         hellos = Dynamic(lambda: List(String, resolver=lambda *_: ["Worlds"]))
@@ -153,7 +145,6 @@ def test_query_dynamic():
 
 
 def test_query_default_value():
-
     class MyType(ObjectType):
         field = String()
 
@@ -168,7 +159,6 @@ def test_query_default_value():
 
 
 def test_query_wrong_default_value():
-
     class MyType(ObjectType):
         field = String()
 
@@ -191,7 +181,6 @@ def test_query_wrong_default_value():
 
 
 def test_query_default_value_ignored_by_resolver():
-
     class MyType(ObjectType):
         field = String()
 
@@ -210,7 +199,6 @@ def test_query_default_value_ignored_by_resolver():
 
 
 def test_query_resolve_function():
-
     class Query(ObjectType):
         hello = String()
 
@@ -225,7 +213,6 @@ def test_query_resolve_function():
 
 
 def test_query_arguments():
-
     class Query(ObjectType):
         test = String(a_str=String(), a_int=Int())
 
@@ -251,7 +238,6 @@ def test_query_arguments():
 
 
 def test_query_input_field():
-
     class Input(InputObjectType):
         a_field = String()
         recursive_field = InputField(lambda: Input)
@@ -282,7 +268,6 @@ def test_query_input_field():
 
 
 def test_query_middlewares():
-
     class Query(ObjectType):
         hello = String()
         other = String()
@@ -307,9 +292,7 @@ def test_query_middlewares():
 
 
 def test_objecttype_on_instances():
-
     class Ship:
-
         def __init__(self, name):
             self.name = name
 
@@ -369,7 +352,6 @@ def test_big_list_query_compiled_query_benchmark(benchmark):
 
 
 def test_big_list_of_containers_query_benchmark(benchmark):
-
     class Container(ObjectType):
         x = Int()
 
@@ -390,7 +372,6 @@ def test_big_list_of_containers_query_benchmark(benchmark):
 
 
 def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
-
     class Container(ObjectType):
         x = Int()
         y = Int()
@@ -420,7 +401,6 @@ def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
 def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark(
     benchmark
 ):
-
     class Container(ObjectType):
         x = Int()
         y = Int()

@@ -12,7 +12,6 @@ class SpecialOptions(ObjectTypeOptions):
 
 
 class SpecialObjectType(ObjectType):
-
     @classmethod
     def __init_subclass_with_meta__(cls, other_attr="default", **options):
         _meta = SpecialOptions(cls)
@@ -23,9 +22,7 @@ class SpecialObjectType(ObjectType):
 
 
 def test_special_objecttype_could_be_subclassed():
-
     class MyType(SpecialObjectType):
-
         class Meta:
             other_attr = "yeah!"
 
@@ -33,7 +30,6 @@ def test_special_objecttype_could_be_subclassed():
 
 
 def test_special_objecttype_could_be_subclassed_default():
-
     class MyType(SpecialObjectType):
         pass
 
@@ -41,7 +37,6 @@ def test_special_objecttype_could_be_subclassed_default():
 
 
 def test_special_objecttype_inherit_meta_options():
-
     class MyType(SpecialObjectType):
         pass
 
@@ -56,7 +51,6 @@ class SpecialInputObjectTypeOptions(ObjectTypeOptions):
 
 
 class SpecialInputObjectType(InputObjectType):
-
     @classmethod
     def __init_subclass_with_meta__(cls, other_attr="default", **options):
         _meta = SpecialInputObjectTypeOptions(cls)
@@ -67,9 +61,7 @@ class SpecialInputObjectType(InputObjectType):
 
 
 def test_special_inputobjecttype_could_be_subclassed():
-
     class MyInputObjectType(SpecialInputObjectType):
-
         class Meta:
             other_attr = "yeah!"
 
@@ -77,7 +69,6 @@ def test_special_inputobjecttype_could_be_subclassed():
 
 
 def test_special_inputobjecttype_could_be_subclassed_default():
-
     class MyInputObjectType(SpecialInputObjectType):
         pass
 
@@ -85,7 +76,6 @@ def test_special_inputobjecttype_could_be_subclassed_default():
 
 
 def test_special_inputobjecttype_inherit_meta_options():
-
     class MyInputObjectType(SpecialInputObjectType):
         pass
 
@@ -98,7 +88,6 @@ class SpecialEnumOptions(EnumOptions):
 
 
 class SpecialEnum(Enum):
-
     @classmethod
     def __init_subclass_with_meta__(cls, other_attr="default", **options):
         _meta = SpecialEnumOptions(cls)
@@ -107,9 +96,7 @@ class SpecialEnum(Enum):
 
 
 def test_special_enum_could_be_subclassed():
-
     class MyEnum(SpecialEnum):
-
         class Meta:
             other_attr = "yeah!"
 
@@ -117,7 +104,6 @@ def test_special_enum_could_be_subclassed():
 
 
 def test_special_enum_could_be_subclassed_default():
-
     class MyEnum(SpecialEnum):
         pass
 
@@ -125,7 +111,6 @@ def test_special_enum_could_be_subclassed_default():
 
 
 def test_special_enum_inherit_meta_options():
-
     class MyEnum(SpecialEnum):
         pass
 

@@ -6,7 +6,6 @@ from ..node import Node
 
 
 class CustomNode(Node):
-
     class Meta:
         name = "Node"
 
@@ -28,7 +27,6 @@ class BasePhoto(Interface):
 
 
 class User(ObjectType):
-
     class Meta:
         interfaces = [CustomNode]
 
@@ -36,7 +34,6 @@ class User(ObjectType):
 
 
 class Photo(ObjectType):
-
     class Meta:
         interfaces = [CustomNode, BasePhoto]
 

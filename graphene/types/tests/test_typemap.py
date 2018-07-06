@@ -24,9 +24,9 @@ from ..typemap import TypeMap, resolve_type
 
 
 def test_enum():
-
     class MyEnum(Enum):
         """Description"""
+
         foo = 1
         bar = 2
 
@@ -58,9 +58,9 @@ def test_enum():
 
 
 def test_objecttype():
-
     class MyObjectType(ObjectType):
         """Description"""
+
         foo = String(
             bar=String(description="Argument description", default_value="x"),
             description="Field description",
@@ -94,9 +94,9 @@ def test_objecttype():
 
 
 def test_dynamic_objecttype():
-
     class MyObjectType(ObjectType):
         """Description"""
+
         bar = Dynamic(lambda: Field(String))
         own = Field(lambda: MyObjectType)
 
@@ -112,9 +112,9 @@ def test_dynamic_objecttype():
 
 
 def test_interface():
-
     class MyInterface(Interface):
         """Description"""
+
         foo = String(
             bar=String(description="Argument description", default_value="x"),
             description="Field description",
@@ -151,7 +151,6 @@ def test_interface():
 
 
 def test_inputobject():
-
     class OtherObjectType(InputObjectType):
         thingy = NonNull(Int)
 
@@ -161,6 +160,7 @@ def test_inputobject():
 
     class MyInputObjectType(InputObjectType):
         """Description"""
+
         foo_bar = String(description="Field description")
         bar = String(name="gizmo")
         baz = NonNull(MyInnerObjectType)
@@ -210,9 +210,9 @@ def test_inputobject():
 
 
 def test_objecttype_camelcase():
-
     class MyObjectType(ObjectType):
         """Description"""
+
         foo_bar = String(bar_foo=String())
 
     typemap = TypeMap([MyObjectType])
@@ -232,9 +232,9 @@ def test_objecttype_camelcase():
 
 
 def test_objecttype_camelcase_disabled():
-
     class MyObjectType(ObjectType):
         """Description"""
+
         foo_bar = String(bar_foo=String())
 
     typemap = TypeMap([MyObjectType], auto_camelcase=False)
@@ -254,7 +254,6 @@ def test_objecttype_camelcase_disabled():
 
 
 def test_objecttype_with_possible_types():
-
     class MyObjectType(ObjectType):
         """Description"""
 
@@ -271,7 +270,6 @@ def test_objecttype_with_possible_types():
 
 
 def test_resolve_type_with_missing_type():
-
     class MyObjectType(ObjectType):
         foo_bar = String()
 

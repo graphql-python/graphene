@@ -106,9 +106,7 @@ TEST_DATA = {
 
 
 def test_example_end_to_end():
-
     class Movie(graphene.ObjectType):
-
         class Meta:
             interfaces = (relay.Node,)
             default_resolver = dict_resolver
@@ -117,7 +115,6 @@ def test_example_end_to_end():
         synopsis = graphene.String(required=True)
 
     class Event(graphene.ObjectType):
-
         class Meta:
             interfaces = (relay.Node,)
             default_resolver = dict_resolver

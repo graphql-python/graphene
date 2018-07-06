@@ -10,7 +10,6 @@ class MyType(ObjectType):
 
 
 class MyScalar(UnmountedType):
-
     def get_type(self):
         return MyType
 
@@ -25,7 +24,6 @@ def test_abstract_objecttype_warn_deprecation(mocker):
 
 
 def test_generate_objecttype_inherit_abstracttype():
-
     class MyAbstractType(AbstractType):
         field1 = MyScalar()
 

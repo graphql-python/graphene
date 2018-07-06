@@ -21,7 +21,6 @@ class Character(graphene.Interface):
 
 
 class Human(graphene.ObjectType):
-
     class Meta:
         interfaces = (Character,)
 
@@ -29,7 +28,6 @@ class Human(graphene.ObjectType):
 
 
 class Droid(graphene.ObjectType):
-
     class Meta:
         interfaces = (Character,)
 

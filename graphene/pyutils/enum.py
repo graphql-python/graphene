@@ -208,7 +208,7 @@ class EnumMeta(type):
         invalid_names = set(members) & {"mro"}
         if invalid_names:
             raise ValueError(
-                "Invalid enum member name(s): %s" % (", ".join(invalid_names),)
+                "Invalid enum member name(s): {}".format(", ".join(invalid_names))
             )
 
         # save attributes from super classes so we know if we can take
@@ -682,7 +682,7 @@ def __new__(cls, value):
         for member in cls._member_map_.values():
             if member.value == value:
                 return member
-    raise ValueError("%s is not a valid %s" % (value, cls.__name__))
+    raise ValueError("{} is not a valid {}".format(value, cls.__name__))
 
 
 temp_enum_dict["__new__"] = __new__
@@ -690,7 +690,7 @@ del __new__
 
 
 def __repr__(self):
-    return "<%s.%s: %r>" % (self.__class__.__name__, self._name_, self._value_)
+    return "<{}.{}: {!r}>".format(self.__class__.__name__, self._name_, self._value_)
 
 
 temp_enum_dict["__repr__"] = __repr__
@@ -698,7 +698,7 @@ del __repr__
 
 
 def __str__(self):
-    return "%s.%s" % (self.__class__.__name__, self._name_)
+    return "{}.{}".format(self.__class__.__name__, self._name_)
 
 
 temp_enum_dict["__str__"] = __str__
@@ -907,9 +907,9 @@ def unique(enumeration):
             duplicates.append((name, member.name))
     if duplicates:
         duplicate_names = ", ".join(
-            ["%s -> %s" % (alias, name) for (alias, name) in duplicates]
+            ["{} -> {}".format(alias, name) for (alias, name) in duplicates]
         )
         raise ValueError(
-            "duplicate names found in %r: %s" % (enumeration, duplicate_names)
+            "duplicate names found in {!r}: {}".format(enumeration, duplicate_names)
         )
     return enumeration

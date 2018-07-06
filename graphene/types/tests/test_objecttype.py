@@ -23,7 +23,6 @@ class MyInterface(Interface):
 
 
 class ContainerWithInterface(ObjectType):
-
     class Meta:
         interfaces = (MyInterface,)
 
@@ -32,13 +31,11 @@ class ContainerWithInterface(ObjectType):
 
 
 class MyScalar(UnmountedType):
-
     def get_type(self):
         return MyType
 
 
 def test_generate_objecttype():
-
     class MyObjectType(ObjectType):
         """Documentation"""
 
@@ -53,9 +50,7 @@ def test_generate_objecttype():
 
 
 def test_generate_objecttype_with_meta():
-
     class MyObjectType(ObjectType):
-
         class Meta:
             name = "MyOtherObjectType"
             description = "Documentation"
@@ -67,7 +62,6 @@ def test_generate_objecttype_with_meta():
 
 
 def test_generate_lazy_objecttype():
-
     class MyObjectType(ObjectType):
         example = Field(lambda: InnerObjectType, required=True)
 
@@ -81,7 +75,6 @@ def test_generate_lazy_objecttype():
 
 
 def test_generate_objecttype_with_fields():
-
     class MyObjectType(ObjectType):
         field = Field(MyType)
 
@@ -89,7 +82,6 @@ def test_generate_objecttype_with_fields():
 
 
 def test_generate_objecttype_with_private_attributes():
-
     class MyObjectType(ObjectType):
         _private_state = None
 
@@ -104,7 +96,6 @@ def test_generate_objecttype_with_private_attributes():
 
 
 def test_ordered_fields_in_objecttype():
-
     class MyObjectType(ObjectType):
         b = Field(MyType)
         a = Field(MyType)
@@ -115,7 +106,6 @@ def test_ordered_fields_in_objecttype():
 
 
 def test_generate_objecttype_inherit_abstracttype():
-
     class MyAbstractType(object):
         field1 = MyScalar()
 
@@ -130,7 +120,6 @@ def test_generate_objecttype_inherit_abstracttype():
 
 
 def test_generate_objecttype_inherit_abstracttype_reversed():
-
     class MyAbstractType(object):
         field1 = MyScalar()
 
@@ -145,7 +134,6 @@ def test_generate_objecttype_inherit_abstracttype_reversed():
 
 
 def test_generate_objecttype_unmountedtype():
-
     class MyObjectType(ObjectType):
         field = MyScalar()
 
@@ -205,14 +193,12 @@ def test_objecttype_as_container_invalid_kwargs():
 
 
 def test_objecttype_container_benchmark(benchmark):
-
     @benchmark
     def create_objecttype():
         Container(field1="field1", field2="field2")
 
 
 def test_generate_objecttype_description():
-
     class MyObjectType(ObjectType):
         """
         Documentation
@@ -224,9 +210,7 @@ def test_generate_objecttype_description():
 
 
 def test_objecttype_with_possible_types():
-
     class MyObjectType(ObjectType):
-
         class Meta:
             possible_types = (dict,)
 
@@ -237,7 +221,6 @@ def test_objecttype_with_possible_types_and_is_type_of_should_raise():
     with pytest.raises(AssertionError) as excinfo:
 
         class MyObjectType(ObjectType):
-
             class Meta:
                 possible_types = (dict,)
 
@@ -252,7 +235,6 @@ def test_objecttype_with_possible_types_and_is_type_of_should_raise():
 
 
 def test_objecttype_no_fields_output():
-
     class User(ObjectType):
         name = String()
 
@@ -276,9 +258,7 @@ def test_objecttype_no_fields_output():
 
 
 def test_abstract_objecttype_can_str():
-
     class MyObjectType(ObjectType):
-
         class Meta:
             abstract = True
 

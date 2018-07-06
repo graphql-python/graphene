@@ -22,7 +22,6 @@ class Query(graphene.ObjectType):
 
 
 class CreateAddress(graphene.Mutation):
-
     class Arguments:
         geo = GeoInput(required=True)
 

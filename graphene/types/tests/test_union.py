@@ -15,7 +15,6 @@ class MyObjectType2(ObjectType):
 
 
 def test_generate_union():
-
     class MyUnion(Union):
         """Documentation"""
 
@@ -28,9 +27,7 @@ def test_generate_union():
 
 
 def test_generate_union_with_meta():
-
     class MyUnion(Union):
-
         class Meta:
             name = "MyOtherUnion"
             description = "Documentation"
@@ -50,9 +47,7 @@ def test_generate_union_with_no_types():
 
 
 def test_union_can_be_mounted():
-
     class MyUnion(Union):
-
         class Meta:
             types = (MyObjectType1, MyObjectType2)
 

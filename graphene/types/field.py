@@ -19,7 +19,6 @@ def source_resolver(source, root, info, **args):
 
 
 class Field(MountedType):
-
     def __init__(
         self,
         type,

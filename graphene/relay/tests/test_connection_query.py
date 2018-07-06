@@ -11,7 +11,6 @@ letter_chars = ["A", "B", "C", "D", "E"]
 
 
 class Letter(ObjectType):
-
     class Meta:
         interfaces = (Node,)
 
@@ -19,7 +18,6 @@ class Letter(ObjectType):
 
 
 class LetterConnection(Connection):
-
     class Meta:
         node = Letter
 

@@ -3,7 +3,6 @@ from .unmountedtype import UnmountedType
 
 
 class MountedType(OrderedType):
-
     @classmethod
     def mounted(cls, unmounted):  # noqa: N802
         """

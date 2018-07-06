@@ -186,7 +186,6 @@ class _empty(object):
 
 
 class _ParameterKind(int):
-
     def __new__(self, *args, **kwargs):
         obj = int.__new__(self, *args)
         obj._name = kwargs["name"]

@@ -40,7 +40,6 @@ class ConnectionOptions(ObjectTypeOptions):
 
 
 class Connection(ObjectType):
-
     class Meta:
         abstract = True
 
@@ -88,7 +87,6 @@ class Connection(ObjectType):
 
 
 class IterableConnectionField(Field):
-
     def __init__(self, type, *args, **kwargs):
         kwargs.setdefault("before", String())
         kwargs.setdefault("after", String())

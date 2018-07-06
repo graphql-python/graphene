@@ -16,7 +16,6 @@ class SharedNodeFields(object):
 
 
 class MyNode(ObjectType):
-
     class Meta:
         interfaces = (Node,)
 

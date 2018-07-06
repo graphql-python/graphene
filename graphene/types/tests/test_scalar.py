@@ -3,7 +3,6 @@ from ..scalars import Scalar
 
 
 def test_scalar():
-
     class JSONScalar(Scalar):
         """Documentation"""
 

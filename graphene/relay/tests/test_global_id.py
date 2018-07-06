@@ -6,13 +6,11 @@ from ..node import GlobalID, Node
 
 
 class CustomNode(Node):
-
     class Meta:
         name = "Node"
 
 
 class User(ObjectType):
-
     class Meta:
         interfaces = [CustomNode]
 
@@ -20,7 +18,6 @@ class User(ObjectType):
 
 
 class Info(object):
-
     def __init__(self, parent_type):
         self.parent_type = GrapheneObjectType(
             graphene_type=parent_type,

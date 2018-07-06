@@ -6,7 +6,6 @@ class CustomOptions(BaseOptions):
 
 
 class CustomType(BaseType):
-
     @classmethod
     def __init_subclass_with_meta__(cls, **options):
         _meta = CustomOptions(cls)
@@ -14,7 +13,6 @@ class CustomType(BaseType):
 
 
 def test_basetype():
-
     class MyBaseType(CustomType):
         pass
 
@@ -24,7 +22,6 @@ def test_basetype():
 
 
 def test_basetype_nones():
-
     class MyBaseType(CustomType):
         """Documentation"""
 
@@ -38,7 +35,6 @@ def test_basetype_nones():
 
 
 def test_basetype_custom():
-
     class MyBaseType(CustomType):
         """Documentation"""
 

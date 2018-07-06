@@ -18,7 +18,6 @@ class Ship(graphene.ObjectType):
 
 
 class ShipConnection(relay.Connection):
-
     class Meta:
         node = Ship
 
@@ -44,7 +43,6 @@ class Faction(graphene.ObjectType):
 
 
 class IntroduceShip(relay.ClientIDMutation):
-
     class Input:
         ship_name = graphene.String(required=True)
         faction_id = graphene.String(required=True)

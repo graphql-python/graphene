@@ -24,7 +24,6 @@ class EnumOptions(BaseOptions):
 
 
 class EnumMeta(SubclassWithMeta_Meta):
-
     def __new__(cls, name, bases, classdict, **options):
         enum_members = OrderedDict(classdict, __eq__=eq_enum)
         # We remove the Meta attribute from the class to not collide
@@ -63,7 +62,6 @@ class EnumMeta(SubclassWithMeta_Meta):
 
 
 class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
-
     @classmethod
     def __init_subclass_with_meta__(cls, enum=None, _meta=None, **options):
         if not _meta:

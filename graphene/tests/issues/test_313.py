@@ -16,13 +16,11 @@ class Error(graphene.ObjectType):
 
 
 class CreatePostResult(graphene.Union):
-
     class Meta:
         types = [Success, Error]
 
 
 class CreatePost(graphene.Mutation):
-
     class Input:
         text = graphene.String(required=True)
 

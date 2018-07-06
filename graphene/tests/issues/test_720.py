@@ -7,7 +7,6 @@ import graphene
 
 
 class MyInputClass(graphene.InputObjectType):
-
     @classmethod
     def __init_subclass_with_meta__(
         cls, container=None, _meta=None, fields=None, **options
@@ -21,7 +20,6 @@ class MyInputClass(graphene.InputObjectType):
 
 
 class MyInput(MyInputClass):
-
     class Meta:
         fields = dict(x=graphene.Field(graphene.Int))
 

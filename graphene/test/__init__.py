@@ -27,7 +27,6 @@ def format_execution_result(execution_result, format_error):
 
 
 class Client(object):
-
     def __init__(self, schema, format_error=None, **execute_options):
         assert isinstance(schema, Schema)
         self.schema = schema

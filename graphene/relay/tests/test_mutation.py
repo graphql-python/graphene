@@ -27,7 +27,6 @@ class MyNode(ObjectType):
 
 
 class SaySomething(ClientIDMutation):
-
     class Input:
         what = String()
 
@@ -46,7 +45,6 @@ class FixedSaySomething(object):
 
 
 class SaySomethingFixed(ClientIDMutation):
-
     class Input:
         what = String()
 
@@ -58,7 +56,6 @@ class SaySomethingFixed(ClientIDMutation):
 
 
 class SaySomethingPromise(ClientIDMutation):
-
     class Input:
         what = String()
 
@@ -76,7 +73,6 @@ class MyEdge(ObjectType):
 
 
 class OtherMutation(ClientIDMutation):
-
     class Input(SharedFields):
         additional_field = String()
 

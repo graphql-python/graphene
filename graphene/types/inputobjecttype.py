@@ -17,7 +17,6 @@ class InputObjectTypeOptions(BaseOptions):
 
 
 class InputObjectTypeContainer(dict, BaseType):
-
     class Meta:
         abstract = True
 

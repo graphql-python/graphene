@@ -10,7 +10,6 @@ from ..structures import NonNull
 
 
 def test_generate_mutation_no_args():
-
     class MyMutation(Mutation):
         """Documentation"""
 
@@ -25,9 +24,7 @@ def test_generate_mutation_no_args():
 
 
 def test_generate_mutation_with_meta():
-
     class MyMutation(Mutation):
-
         class Meta:
             name = "MyOtherMutation"
             description = "Documentation"
@@ -51,12 +48,10 @@ def test_mutation_raises_exception_if_no_mutate():
 
 
 def test_mutation_custom_output_type():
-
     class User(ObjectType):
         name = String()
 
     class CreateUser(Mutation):
-
         class Arguments:
             name = String()
 
@@ -74,9 +69,7 @@ def test_mutation_custom_output_type():
 
 
 def test_mutation_execution():
-
     class CreateUser(Mutation):
-
         class Arguments:
             name = String()
             dynamic = Dynamic(lambda: String())
@@ -109,7 +102,6 @@ def test_mutation_execution():
 
 
 def test_mutation_no_fields_output():
-
     class CreateUser(Mutation):
         name = String()
 
@@ -136,9 +128,7 @@ def test_mutation_no_fields_output():
 
 
 def test_mutation_allow_to_have_custom_args():
-
     class CreateUser(Mutation):
-
         class Arguments:
             name = String()
 

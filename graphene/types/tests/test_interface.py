@@ -8,13 +8,11 @@ class MyType(object):
 
 
 class MyScalar(UnmountedType):
-
     def get_type(self):
         return MyType
 
 
 def test_generate_interface():
-
     class MyInterface(Interface):
         """Documentation"""
 
@@ -24,9 +22,7 @@ def test_generate_interface():
 
 
 def test_generate_interface_with_meta():
-
     class MyInterface(Interface):
-
         class Meta:
             name = "MyOtherInterface"
             description = "Documentation"
@@ -36,7 +32,6 @@ def test_generate_interface_with_meta():
 
 
 def test_generate_interface_with_fields():
-
     class MyInterface(Interface):
         field = Field(MyType)
 
@@ -44,7 +39,6 @@ def test_generate_interface_with_fields():
 
 
 def test_ordered_fields_in_interface():
-
     class MyInterface(Interface):
         b = Field(MyType)
         a = Field(MyType)
@@ -55,7 +49,6 @@ def test_ordered_fields_in_interface():
 
 
 def test_generate_interface_unmountedtype():
-
     class MyInterface(Interface):
         field = MyScalar()
 
@@ -64,7 +57,6 @@ def test_generate_interface_unmountedtype():
 
 
 def test_generate_interface_inherit_abstracttype():
-
     class MyAbstractType(object):
         field1 = MyScalar()
 
@@ -76,7 +68,6 @@ def test_generate_interface_inherit_abstracttype():
 
 
 def test_generate_interface_inherit_interface():
-
     class MyBaseInterface(Interface):
         field1 = MyScalar()
 
@@ -89,7 +80,6 @@ def test_generate_interface_inherit_interface():
 
 
 def test_generate_interface_inherit_abstracttype_reversed():
-
     class MyAbstractType(object):
         field1 = MyScalar()
 

@@ -25,7 +25,6 @@ class BaseOptions(object):
 
 
 class BaseType(SubclassWithMeta):
-
     @classmethod
     def create_type(cls, class_name, **options):
         return type(class_name, (cls,), {"Meta": options})

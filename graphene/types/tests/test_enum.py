@@ -8,9 +8,9 @@ from ..schema import ObjectType, Schema
 
 
 def test_enum_construction():
-
     class RGB(Enum):
         """Description"""
+
         RED = 1
         GREEN = 2
         BLUE = 3
@@ -32,9 +32,7 @@ def test_enum_construction():
 
 
 def test_enum_construction_meta():
-
     class RGB(Enum):
-
         class Meta:
             name = "RGBEnum"
             description = "Description"
@@ -65,7 +63,6 @@ def test_enum_from_builtin_enum():
 
 
 def test_enum_from_builtin_enum_accepts_lambda_description():
-
     def custom_description(value):
         if not value:
             return "StarWars Episodes"
@@ -125,6 +122,7 @@ def test_enum_from_python3_enum_uses_enum_doc():
 
     class Color(PyEnum):
         """This is the description"""
+
         RED = 1
         GREEN = 2
         BLUE = 3
@@ -139,7 +137,6 @@ def test_enum_from_python3_enum_uses_enum_doc():
 
 
 def test_enum_value_from_class():
-
     class RGB(Enum):
         RED = 1
         GREEN = 2
@@ -151,7 +148,6 @@ def test_enum_value_from_class():
 
 
 def test_enum_value_as_unmounted_field():
-
     class RGB(Enum):
         RED = 1
         GREEN = 2
@@ -164,7 +160,6 @@ def test_enum_value_as_unmounted_field():
 
 
 def test_enum_value_as_unmounted_inputfield():
-
     class RGB(Enum):
         RED = 1
         GREEN = 2
@@ -177,7 +172,6 @@ def test_enum_value_as_unmounted_inputfield():
 
 
 def test_enum_value_as_unmounted_argument():
-
     class RGB(Enum):
         RED = 1
         GREEN = 2
@@ -190,7 +184,6 @@ def test_enum_value_as_unmounted_argument():
 
 
 def test_enum_can_be_compared():
-
     class RGB(Enum):
         RED = 1
         GREEN = 2
@@ -202,7 +195,6 @@ def test_enum_can_be_compared():
 
 
 def test_enum_can_be_initialzied():
-
     class RGB(Enum):
         RED = 1
         GREEN = 2
@@ -214,7 +206,6 @@ def test_enum_can_be_initialzied():
 
 
 def test_enum_can_retrieve_members():
-
     class RGB(Enum):
         RED = 1
         GREEN = 2
@@ -226,7 +217,6 @@ def test_enum_can_retrieve_members():
 
 
 def test_enum_to_enum_comparison_should_differ():
-
     class RGB1(Enum):
         RED = 1
         GREEN = 2
@@ -243,9 +233,7 @@ def test_enum_to_enum_comparison_should_differ():
 
 
 def test_enum_skip_meta_from_members():
-
     class RGB1(Enum):
-
         class Meta:
             name = "RGB"
 

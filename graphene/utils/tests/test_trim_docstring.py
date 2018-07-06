@@ -2,7 +2,6 @@ from ..trim_docstring import trim_docstring
 
 
 def test_trim_docstring():
-
     class WellDocumentedObject(object):
         """
         This object is very well-documented. It has multiple lines in its

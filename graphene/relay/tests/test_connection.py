@@ -6,7 +6,6 @@ from ..node import Node
 
 
 class MyObject(ObjectType):
-
     class Meta:
         interfaces = [Node]
 
@@ -14,7 +13,6 @@ class MyObject(ObjectType):
 
 
 def test_connection():
-
     class MyObjectConnection(Connection):
         extra = String()
 
@@ -41,12 +39,10 @@ def test_connection():
 
 
 def test_connection_inherit_abstracttype():
-
     class BaseConnection(object):
         extra = String()
 
     class MyObjectConnection(BaseConnection, Connection):
-
         class Meta:
             node = MyObject
 
@@ -62,7 +58,6 @@ def test_connection_name():
         extra = String()
 
     class MyObjectConnection(BaseConnection, Connection):
-
         class Meta:
             node = MyObject
             name = custom_name
@@ -71,9 +66,7 @@ def test_connection_name():
 
 
 def test_edge():
-
     class MyObjectConnection(Connection):
-
         class Meta:
             node = MyObject
 
@@ -93,12 +86,10 @@ def test_edge():
 
 
 def test_edge_with_bases():
-
     class BaseEdge(object):
         extra = String()
 
     class MyObjectConnection(Connection):
-
         class Meta:
             node = MyObject
 
@@ -129,9 +120,7 @@ def test_pageinfo():
 
 
 def test_connectionfield():
-
     class MyObjectConnection(Connection):
-
         class Meta:
             node = MyObject
 
@@ -155,9 +144,7 @@ def test_connectionfield_node_deprecated():
 
 
 def test_connectionfield_custom_args():
-
     class MyObjectConnection(Connection):
-
         class Meta:
             node = MyObject
 
@@ -174,9 +161,7 @@ def test_connectionfield_custom_args():
 
 
 def test_connectionfield_required():
-
     class MyObjectConnection(Connection):
-
         class Meta:
             node = MyObject
 

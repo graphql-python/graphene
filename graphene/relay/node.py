@@ -27,7 +27,6 @@ def is_node(objecttype):
 
 
 class GlobalID(Field):
-
     def __init__(self, node=None, parent_type=None, required=True, *args, **kwargs):
         super(GlobalID, self).__init__(ID, required=required, *args, **kwargs)
         self.node = node or Node
@@ -49,7 +48,6 @@ class GlobalID(Field):
 
 
 class NodeField(Field):
-
     def __init__(self, node, type=False, deprecation_reason=None, name=None, **kwargs):
         assert issubclass(node, Node), "NodeField can only operate in Nodes"
         self.node_type = node
@@ -68,7 +66,6 @@ class NodeField(Field):
 
 
 class AbstractNode(Interface):
-
     class Meta:
         abstract = True
 

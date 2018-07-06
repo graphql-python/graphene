@@ -14,11 +14,11 @@ repos:
         - --autofix
     -   id: flake8
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v1.2.0
+    rev: v1.4.0
     hooks:
     -   id: pyupgrade
 -   repo: https://github.com/ambv/black
-    rev: stable
+    rev: 18.6b4
     hooks:
     - id: black
       language_version: python3.6

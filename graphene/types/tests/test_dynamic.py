@@ -30,7 +30,6 @@ def test_list_non_null():
 
 
 def test_partial():
-
     def __type(_type):
         return _type
 

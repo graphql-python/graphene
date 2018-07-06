@@ -20,6 +20,7 @@ class SubclassWithMeta_Meta(InitSubclassMeta):
 
 class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
     """This class improves __init_subclass__ to receive automatically the options from meta"""
+
     # We will only have the metaclass in Python 2
     def __init_subclass__(cls, **meta_options):
         """This method just terminates the super() chain"""

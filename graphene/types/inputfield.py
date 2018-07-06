@@ -4,7 +4,6 @@ from .utils import get_type
 
 
 class InputField(MountedType):
-
     def __init__(
         self,
         type,

@@ -14,13 +14,11 @@ class MyType(object):
 
 
 class MyScalar(UnmountedType):
-
     def get_type(self):
         return MyType
 
 
 def test_generate_inputobjecttype():
-
     class MyInputObjectType(InputObjectType):
         """Documentation"""
 
@@ -30,9 +28,7 @@ def test_generate_inputobjecttype():
 
 
 def test_generate_inputobjecttype_with_meta():
-
     class MyInputObjectType(InputObjectType):
-
         class Meta:
             name = "MyOtherInputObjectType"
             description = "Documentation"
@@ -42,7 +38,6 @@ def test_generate_inputobjecttype_with_meta():
 
 
 def test_generate_inputobjecttype_with_fields():
-
     class MyInputObjectType(InputObjectType):
         field = Field(MyType)
 
@@ -50,7 +45,6 @@ def test_generate_inputobjecttype_with_fields():
 
 
 def test_ordered_fields_in_inputobjecttype():
-
     class MyInputObjectType(InputObjectType):
         b = InputField(MyType)
         a = InputField(MyType)
@@ -61,7 +55,6 @@ def test_ordered_fields_in_inputobjecttype():
 
 
 def test_generate_inputobjecttype_unmountedtype():
-
     class MyInputObjectType(InputObjectType):
         field = MyScalar(MyType)
 
@@ -70,7 +63,6 @@ def test_generate_inputobjecttype_unmountedtype():
 
 
 def test_generate_inputobjecttype_as_argument():
-
     class MyInputObjectType(InputObjectType):
         field = MyScalar()
 
@@ -87,7 +79,6 @@ def test_generate_inputobjecttype_as_argument():
 
 
 def test_generate_inputobjecttype_inherit_abstracttype():
-
     class MyAbstractType(object):
         field1 = MyScalar(MyType)
 
@@ -102,7 +93,6 @@ def test_generate_inputobjecttype_inherit_abstracttype():
 
 
 def test_generate_inputobjecttype_inherit_abstracttype_reversed():
-
     class MyAbstractType(object):
         field1 = MyScalar(MyType)
 
@@ -117,7 +107,6 @@ def test_generate_inputobjecttype_inherit_abstracttype_reversed():
 
 
 def test_inputobjecttype_of_input():
-
     class Child(InputObjectType):
         first_name = String()
         last_name = String()

@@ -15,13 +15,11 @@ class SomeTypeTwo(graphene.ObjectType):
 
 
 class MyUnion(graphene.Union):
-
     class Meta:
         types = (SomeTypeOne, SomeTypeTwo)
 
 
 def test_issue():
-
     class Query(graphene.ObjectType):
         things = relay.ConnectionField(MyUnion)
 

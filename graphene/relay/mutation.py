@@ -8,7 +8,6 @@ from ..types.mutation import Mutation
 
 
 class ClientIDMutation(Mutation):
-
     class Meta:
         abstract = True
 
@@ -58,7 +57,6 @@ class ClientIDMutation(Mutation):
 
     @classmethod
     def mutate(cls, root, info, input):
-
         def on_resolve(payload):
             try:
                 payload.client_mutation_id = input.get("client_mutation_id")

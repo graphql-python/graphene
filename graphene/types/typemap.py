@@ -74,7 +74,6 @@ def is_type_of_from_possible_types(possible_types, root, info):
 
 
 class TypeMap(GraphQLTypeMap):
-
     def __init__(self, types, auto_camelcase=True, schema=None):
         self.auto_camelcase = auto_camelcase
         self.schema = schema

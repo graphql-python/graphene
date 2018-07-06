@@ -56,7 +56,6 @@ class MyInterface(Interface):
 
 
 class MyUnion(Union):
-
     class Meta:
         types = (Article,)
 
@@ -116,7 +115,6 @@ def test_defines_a_subscription_schema():
 
 
 def test_includes_nested_input_objects_in_the_map():
-
     class NestedInputObject(InputObjectType):
         value = String()
 
@@ -135,12 +133,10 @@ def test_includes_nested_input_objects_in_the_map():
 
 
 def test_includes_interfaces_thunk_subtypes_in_the_type_map():
-
     class SomeInterface(Interface):
         f = Int()
 
     class SomeSubtype(ObjectType):
-
         class Meta:
             interfaces = (SomeInterface,)
 
@@ -153,7 +149,6 @@ def test_includes_interfaces_thunk_subtypes_in_the_type_map():
 
 
 def test_includes_types_in_union():
-
     class SomeType(ObjectType):
         a = String()
 
@@ -161,7 +156,6 @@ def test_includes_types_in_union():
         b = String()
 
     class MyUnion(Union):
-
         class Meta:
             types = (SomeType, OtherType)
 
@@ -175,7 +169,6 @@ def test_includes_types_in_union():
 
 
 def test_maps_enum():
-
     class SomeType(ObjectType):
         a = String()
 
@@ -183,7 +176,6 @@ def test_maps_enum():
         b = String()
 
     class MyUnion(Union):
-
         class Meta:
             types = (SomeType, OtherType)
 
@@ -197,12 +189,10 @@ def test_maps_enum():
 
 
 def test_includes_interfaces_subtypes_in_the_type_map():
-
     class SomeInterface(Interface):
         f = Int()
 
     class SomeSubtype(ObjectType):
-
         class Meta:
             interfaces = (SomeInterface,)
 
@@ -293,7 +283,6 @@ def test_stringifies_simple_types():
 
 
 def test_does_not_mutate_passed_field_definitions():
-
     class CommonFields(object):
         field1 = String()
         field2 = String(id=String())
