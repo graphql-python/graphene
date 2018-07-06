@@ -9,7 +9,8 @@ from ..schema import ObjectType, Schema
 
 def test_enum_construction():
     class RGB(Enum):
-        '''Description'''
+        """Description"""
+
         RED = 1
         GREEN = 2
         BLUE = 3
@@ -18,49 +19,41 @@ def test_enum_construction():
         def description(self):
             return "Description {}".format(self.name)
 
-    assert RGB._meta.name == 'RGB'
-    assert RGB._meta.description == 'Description'
+    assert RGB._meta.name == "RGB"
+    assert RGB._meta.description == "Description"
 
     values = RGB._meta.enum.__members__.values()
-    assert sorted([v.name for v in values]) == [
-        'BLUE',
-        'GREEN',
-        'RED'
-    ]
+    assert sorted([v.name for v in values]) == ["BLUE", "GREEN", "RED"]
     assert sorted([v.description for v in values]) == [
-        'Description BLUE',
-        'Description GREEN',
-        'Description RED'
+        "Description BLUE",
+        "Description GREEN",
+        "Description RED",
     ]
 
 
 def test_enum_construction_meta():
     class RGB(Enum):
-
         class Meta:
-            name = 'RGBEnum'
-            description = 'Description'
+            name = "RGBEnum"
+            description = "Description"
+
         RED = 1
         GREEN = 2
         BLUE = 3
 
-    assert RGB._meta.name == 'RGBEnum'
-    assert RGB._meta.description == 'Description'
+    assert RGB._meta.name == "RGBEnum"
+    assert RGB._meta.description == "Description"
 
 
 def test_enum_instance_construction():
-    RGB = Enum('RGB', 'RED,GREEN,BLUE')
+    RGB = Enum("RGB", "RED,GREEN,BLUE")
 
     values = RGB._meta.enum.__members__.values()
-    assert sorted([v.name for v in values]) == [
-        'BLUE',
-        'GREEN',
-        'RED'
-    ]
+    assert sorted([v.name for v in values]) == ["BLUE", "GREEN", "RED"]
 
 
 def test_enum_from_builtin_enum():
-    PyRGB = PyEnum('RGB', 'RED,GREEN,BLUE')
+    PyRGB = PyEnum("RGB", "RED,GREEN,BLUE")
 
     RGB = Enum.from_enum(PyRGB)
     assert RGB._meta.enum == PyRGB
@@ -74,30 +67,51 @@ def test_enum_from_builtin_enum_accepts_lambda_description():
         if not value:
             return "StarWars Episodes"
 
-        return 'New Hope Episode' if value == Episode.NEWHOPE else 'Other'
+        return "New Hope Episode" if value == Episode.NEWHOPE else "Other"
 
     def custom_deprecation_reason(value):
-        return 'meh' if value == Episode.NEWHOPE else None
+        return "meh" if value == Episode.NEWHOPE else None
 
-    PyEpisode = PyEnum('PyEpisode', 'NEWHOPE,EMPIRE,JEDI')
-    Episode = Enum.from_enum(PyEpisode, description=custom_description,
-                             deprecation_reason=custom_deprecation_reason)
+    PyEpisode = PyEnum("PyEpisode", "NEWHOPE,EMPIRE,JEDI")
+    Episode = Enum.from_enum(
+        PyEpisode,
+        description=custom_description,
+        deprecation_reason=custom_deprecation_reason,
+    )
 
     class Query(ObjectType):
         foo = Episode()
 
     schema = Schema(query=Query)
 
-    GraphQLPyEpisode = schema._type_map['PyEpisode'].values
+    GraphQLPyEpisode = schema._type_map["PyEpisode"].values
 
-    assert schema._type_map['PyEpisode'].description == "StarWars Episodes"
-    assert GraphQLPyEpisode[0].name == 'NEWHOPE' and GraphQLPyEpisode[0].description == 'New Hope Episode'
-    assert GraphQLPyEpisode[1].name == 'EMPIRE' and GraphQLPyEpisode[1].description == 'Other'
-    assert GraphQLPyEpisode[2].name == 'JEDI' and GraphQLPyEpisode[2].description == 'Other'
+    assert schema._type_map["PyEpisode"].description == "StarWars Episodes"
+    assert (
+        GraphQLPyEpisode[0].name == "NEWHOPE"
+        and GraphQLPyEpisode[0].description == "New Hope Episode"
+    )
+    assert (
+        GraphQLPyEpisode[1].name == "EMPIRE"
+        and GraphQLPyEpisode[1].description == "Other"
+    )
+    assert (
+        GraphQLPyEpisode[2].name == "JEDI"
+        and GraphQLPyEpisode[2].description == "Other"
+    )
 
-    assert GraphQLPyEpisode[0].name == 'NEWHOPE' and GraphQLPyEpisode[0].deprecation_reason == 'meh'
-    assert GraphQLPyEpisode[1].name == 'EMPIRE' and GraphQLPyEpisode[1].deprecation_reason is None
-    assert GraphQLPyEpisode[2].name == 'JEDI' and GraphQLPyEpisode[2].deprecation_reason is None
+    assert (
+        GraphQLPyEpisode[0].name == "NEWHOPE"
+        and GraphQLPyEpisode[0].deprecation_reason == "meh"
+    )
+    assert (
+        GraphQLPyEpisode[1].name == "EMPIRE"
+        and GraphQLPyEpisode[1].deprecation_reason is None
+    )
+    assert (
+        GraphQLPyEpisode[2].name == "JEDI"
+        and GraphQLPyEpisode[2].deprecation_reason is None
+    )
 
 
 def test_enum_from_python3_enum_uses_enum_doc():
@@ -108,6 +122,7 @@ def test_enum_from_python3_enum_uses_enum_doc():
 
     class Color(PyEnum):
         """This is the description"""
+
         RED = 1
         GREEN = 2
         BLUE = 3
@@ -196,9 +211,9 @@ def test_enum_can_retrieve_members():
         GREEN = 2
         BLUE = 3
 
-    assert RGB['RED'] == RGB.RED
-    assert RGB['GREEN'] == RGB.GREEN
-    assert RGB['BLUE'] == RGB.BLUE
+    assert RGB["RED"] == RGB.RED
+    assert RGB["GREEN"] == RGB.GREEN
+    assert RGB["BLUE"] == RGB.BLUE
 
 
 def test_enum_to_enum_comparison_should_differ():
@@ -220,14 +235,14 @@ def test_enum_to_enum_comparison_should_differ():
 def test_enum_skip_meta_from_members():
     class RGB1(Enum):
         class Meta:
-            name = 'RGB'
+            name = "RGB"
 
         RED = 1
         GREEN = 2
         BLUE = 3
 
     assert dict(RGB1._meta.enum.__members__) == {
-        'RED': RGB1.RED,
-        'GREEN': RGB1.GREEN,
-        'BLUE': RGB1.BLUE,
+        "RED": RGB1.RED,
+        "GREEN": RGB1.GREEN,
+        "BLUE": RGB1.BLUE,
     }

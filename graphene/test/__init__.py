@@ -10,7 +10,7 @@ def default_format_error(error):
     if isinstance(error, GraphQLError):
         return format_graphql_error(error)
 
-    return {'message': six.text_type(error)}
+    return {"message": six.text_type(error)}
 
 
 def format_execution_result(execution_result, format_error):
@@ -18,18 +18,15 @@ def format_execution_result(execution_result, format_error):
         response = {}
 
         if execution_result.errors:
-            response['errors'] = [
-                format_error(e) for e in execution_result.errors
-            ]
+            response["errors"] = [format_error(e) for e in execution_result.errors]
 
         if not execution_result.invalid:
-            response['data'] = execution_result.data
+            response["data"] = execution_result.data
 
         return response
 
 
 class Client(object):
-
     def __init__(self, schema, format_error=None, **execute_options):
         assert isinstance(schema, Schema)
         self.schema = schema
@@ -40,8 +37,7 @@ class Client(object):
         return format_execution_result(result, self.format_error)
 
     def execute(self, *args, **kwargs):
-        executed = self.schema.execute(*args,
-                                       **dict(self.execute_options, **kwargs))
+        executed = self.schema.execute(*args, **dict(self.execute_options, **kwargs))
         if is_thenable(executed):
             return Promise.resolve(executed).then(self.format_result)
 

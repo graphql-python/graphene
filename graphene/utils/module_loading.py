@@ -11,7 +11,7 @@ def import_string(dotted_path, dotted_attributes=None):
     attribute path. Raise ImportError if the import failed.
     """
     try:
-        module_path, class_name = dotted_path.rsplit('.', 1)
+        module_path, class_name = dotted_path.rsplit(".", 1)
     except ValueError:
         raise ImportError("%s doesn't look like a module path" % dotted_path)
 
@@ -20,14 +20,15 @@ def import_string(dotted_path, dotted_attributes=None):
     try:
         result = getattr(module, class_name)
     except AttributeError:
-        raise ImportError('Module "%s" does not define a "%s" attribute/class' % (
-            module_path, class_name)
+        raise ImportError(
+            'Module "%s" does not define a "%s" attribute/class'
+            % (module_path, class_name)
         )
 
     if not dotted_attributes:
         return result
     else:
-        attributes = dotted_attributes.split('.')
+        attributes = dotted_attributes.split(".")
         traveled_attributes = []
         try:
             for attribute in attributes:
@@ -35,9 +36,10 @@ def import_string(dotted_path, dotted_attributes=None):
                 result = getattr(result, attribute)
             return result
         except AttributeError:
-            raise ImportError('Module "%s" does not define a "%s" attribute inside attribute/class "%s"' % (
-                module_path, '.'.join(traveled_attributes), class_name
-            ))
+            raise ImportError(
+                'Module "%s" does not define a "%s" attribute inside attribute/class "%s"'
+                % (module_path, ".".join(traveled_attributes), class_name)
+            )
 
 
 def lazy_import(dotted_path, dotted_attributes=None):

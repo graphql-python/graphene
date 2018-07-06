@@ -16,20 +16,18 @@ class Error(graphene.ObjectType):
 
 
 class CreatePostResult(graphene.Union):
-
     class Meta:
         types = [Success, Error]
 
 
 class CreatePost(graphene.Mutation):
-
     class Input:
         text = graphene.String(required=True)
 
     result = graphene.Field(CreatePostResult)
 
     def mutate(self, info, text):
-        result = Success(yeah='yeah')
+        result = Success(yeah="yeah")
 
         return CreatePost(result=result)
 
@@ -37,11 +35,12 @@ class CreatePost(graphene.Mutation):
 class Mutations(graphene.ObjectType):
     create_post = CreatePost.Field()
 
+
 # tests.py
 
 
 def test_create_post():
-    query_string = '''
+    query_string = """
     mutation {
       createPost(text: "Try this out") {
         result {
@@ -49,10 +48,10 @@ def test_create_post():
         }
       }
     }
-    '''
+    """
 
     schema = graphene.Schema(query=Query, mutation=Mutations)
     result = schema.execute(query_string)
 
     assert not result.errors
-    assert result.data['createPost']['result']['__typename'] == 'Success'
+    assert result.data["createPost"]["result"]["__typename"] == "Success"

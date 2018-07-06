@@ -15,7 +15,6 @@ class SomeTypeTwo(graphene.ObjectType):
 
 
 class MyUnion(graphene.Union):
-
     class Meta:
         types = (SomeTypeOne, SomeTypeTwo)
 
@@ -28,6 +27,6 @@ def test_issue():
         graphene.Schema(query=Query)
 
     assert str(exc_info.value) == (
-        'IterableConnectionField type have to be a subclass of Connection. '
+        "IterableConnectionField type have to be a subclass of Connection. "
         'Received "MyUnion".'
     )

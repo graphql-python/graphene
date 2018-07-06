@@ -30,14 +30,14 @@ class InputObjectTypeContainer(dict, BaseType):
 
 
 class InputObjectType(UnmountedType, BaseType):
-    '''
+    """
     Input Object Type Definition
 
     An input object defines a structured collection of fields which may be
     supplied to a field argument.
 
     Using `NonNull` will ensure that a value must be provided by the query
-    '''
+    """
 
     @classmethod
     def __init_subclass_with_meta__(cls, container=None, _meta=None, **options):
@@ -46,9 +46,7 @@ class InputObjectType(UnmountedType, BaseType):
 
         fields = OrderedDict()
         for base in reversed(cls.__mro__):
-            fields.update(
-                yank_fields_from_attrs(base.__dict__, _as=InputField)
-            )
+            fields.update(yank_fields_from_attrs(base.__dict__, _as=InputField))
 
         if _meta.fields:
             _meta.fields.update(fields)
@@ -57,13 +55,12 @@ class InputObjectType(UnmountedType, BaseType):
         if container is None:
             container = type(cls.__name__, (InputObjectTypeContainer, cls), {})
         _meta.container = container
-        super(InputObjectType, cls).__init_subclass_with_meta__(
-            _meta=_meta, **options)
+        super(InputObjectType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def get_type(cls):
-        '''
+        """
         This function is called when the unmounted type (InputObjectType instance)
         is mounted (as a Field, InputField or Argument)
-        '''
+        """
         return cls

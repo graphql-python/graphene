@@ -8,13 +8,15 @@ from .scalars import Scalar
 
 
 class UUID(Scalar):
-    '''UUID'''
+    """UUID"""
 
     @staticmethod
     def serialize(uuid):
         if isinstance(uuid, str):
             uuid = _UUID(uuid)
-        assert isinstance(uuid, _UUID), "Expected UUID instance, received {}".format(uuid)
+        assert isinstance(uuid, _UUID), "Expected UUID instance, received {}".format(
+            uuid
+        )
         return str(uuid)
 
     @staticmethod

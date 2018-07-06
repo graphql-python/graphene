@@ -1,7 +1,13 @@
 from __future__ import unicode_literals
 
-from graphql.language.ast import (BooleanValue, FloatValue, IntValue,
-                                  ListValue, ObjectValue, StringValue)
+from graphql.language.ast import (
+    BooleanValue,
+    FloatValue,
+    IntValue,
+    ListValue,
+    ObjectValue,
+    StringValue,
+)
 
 from graphene.types.scalars import MAX_INT, MIN_INT
 
@@ -35,6 +41,9 @@ class GenericScalar(Scalar):
         elif isinstance(ast, ListValue):
             return [GenericScalar.parse_literal(value) for value in ast.values]
         elif isinstance(ast, ObjectValue):
-            return {field.name.value: GenericScalar.parse_literal(field.value) for field in ast.fields}
+            return {
+                field.name.value: GenericScalar.parse_literal(field.value)
+                for field in ast.fields
+            }
         else:
             return None
