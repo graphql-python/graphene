@@ -264,10 +264,10 @@ class TypeMap(GraphQLTypeMap):
             for objecttype in type._meta.types:
                 self.graphene_reducer(map, objecttype)
                 internal_type = map[objecttype._meta.name]
-                if internal_type.graphql_type != objecttype:
+                if internal_type.graphene_type != objecttype:
                     raise AssertionError(
                         "Found different types with the same name in the schema: {}, {}."
-                        .format(internal_type.graphql_type, objecttype)
+                        .format(internal_type.graphene_type, objecttype)
                     )
                 union_types.append(internal_type)
             return union_types

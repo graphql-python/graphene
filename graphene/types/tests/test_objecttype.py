@@ -7,6 +7,7 @@ from ..scalars import String
 from ..schema import Schema
 from ..structures import NonNull
 from ..unmountedtype import UnmountedType
+import re
 
 
 class MyType(Interface):
@@ -228,11 +229,13 @@ def test_objecttype_with_possible_types_and_is_type_of_should_raise():
             def is_type_of(cls, root, context, info):
                 return False
 
-    assert str(excinfo.value) == (
-        "MyObjectType.Meta.possible_types will cause type collision with "
-        "MyObjectType.is_type_of. Please use one or other."
-    )
-
+    assertion_message = '''
+        MyObjectType.Meta.possible_types will cause type collision with MyObjectType.is_type_of.
+        Please use one or other.
+    '''
+    space_removed_excinfo = str(excinfo.value).replace(" ", "")
+    space_removed_assertion_message = assertion_message.replace(" ", "")
+    assert space_removed_assertion_message == space_removed_excinfo
 
 def test_objecttype_no_fields_output():
     class User(ObjectType):
