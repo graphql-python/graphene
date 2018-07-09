@@ -14,7 +14,7 @@ class Dynamic(MountedType):
         super(Dynamic, self).__init__(_creation_counter=_creation_counter)
         if not (inspect.isfunction(type) or isinstance(type, partial)):
             raise AssertionError(
-                'type is expected to be a function or an instance of partial'
+                "type is expected to be a function or an instance of partial"
             )
         self.type = type
         self.with_schema = with_schema

@@ -20,10 +20,7 @@ class Date(Scalar):
         if isinstance(date, datetime.datetime):
             date = date.date()
         if not isinstance(date, datetime.date):
-            raise AssertionError(
-                'Received not compatible date "{}"'
-                .format(repr(date))
-            )
+            raise AssertionError('Received not compatible date "{}"'.format(repr(date)))
         return date.isoformat()
 
     @classmethod
@@ -50,8 +47,7 @@ class DateTime(Scalar):
     def serialize(dt):
         if not isinstance(dt, (datetime.datetime, datetime.date)):
             raise AssertionError(
-                'Received not compatible datetime "{}"'
-                .format(repr(dt))
+                'Received not compatible datetime "{}"'.format(repr(dt))
             )
         return dt.isoformat()
 
@@ -78,10 +74,7 @@ class Time(Scalar):
     @staticmethod
     def serialize(time):
         if not isinstance(time, datetime.time):
-            raise AssertionError(
-                'Received not compatible time "{}"'
-                .format(repr(time))
-            )
+            raise AssertionError('Received not compatible time "{}"'.format(repr(time)))
         return time.isoformat()
 
     @classmethod

@@ -47,8 +47,9 @@ class ClientIDMutation(Mutation):
         if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:
             if not mutate_and_get_payload:
                 raise AssertionError(
-                    "{name}.mutate_and_get_payload method is required in a ClientIDMutation."
-                    .format(name=name or cls.__name__)
+                    "{name}.mutate_and_get_payload method is required in a ClientIDMutation.".format(
+                        name=name or cls.__name__
+                    )
                 )
 
         if not name:

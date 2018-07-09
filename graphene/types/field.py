@@ -37,17 +37,17 @@ class Field(MountedType):
 
         if args and not isinstance(args, Mapping):
             raise AssertionError(
-                'Arguments in a field have to be a mapping, received "{}".'
-                .format(args)
+                'Arguments in a field have to be a mapping, received "{}".'.format(args)
             )
         if source and resolver:
             raise AssertionError(
-                'A Field cannot have a source and a resolver in at the same time.'
+                "A Field cannot have a source and a resolver in at the same time."
             )
         if callable(default_value):
             raise AssertionError(
-                'The default value can not be a function but received "{}".'
-                .format(base_type(default_value))
+                'The default value can not be a function but received "{}".'.format(
+                    base_type(default_value)
+                )
             )
 
         if required:

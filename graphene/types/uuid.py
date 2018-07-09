@@ -15,10 +15,7 @@ class UUID(Scalar):
         if isinstance(uuid, str):
             uuid = _UUID(uuid)
         if not isinstance(uuid, _UUID):
-            raise AssertionError(
-                "Expected UUID instance, received {}"
-                .format(uuid)
-            )
+            raise AssertionError("Expected UUID instance, received {}".format(uuid))
         return str(uuid)
 
     @staticmethod

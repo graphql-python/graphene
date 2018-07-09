@@ -48,14 +48,14 @@ class Connection(ObjectType):
         _meta = ConnectionOptions(cls)
         if not node:
             raise AssertionError(
-                "You have to provide a node in {}.Meta"
-                .format(cls.__name__)
+                "You have to provide a node in {}.Meta".format(cls.__name__)
             )
 
         if not issubclass(node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)):
             raise AssertionError(
-                'Received incompatible node "{}" for Connection {}.'
-                .format(node, cls.__name__)
+                'Received incompatible node "{}" for Connection {}.'.format(
+                    node, cls.__name__
+                )
             )
 
         base_name = re.sub("Connection$", "", name or cls.__name__) or node._meta.name
@@ -114,8 +114,9 @@ class IterableConnectionField(Field):
 
         if not issubclass(connection_type, Connection):
             raise AssertionError(
-                '{} type have to be a subclass of Connection. Received "{}".'
-                .format(self.__class__.__name__, connection_type)
+                '{} type have to be a subclass of Connection. Received "{}".'.format(
+                    self.__class__.__name__, connection_type
+                )
             )
         return type
 
@@ -126,11 +127,12 @@ class IterableConnectionField(Field):
 
         if not isinstance(resolved, Iterable):
             raise AssertionError(
-                '''
+                """
                     Resolved value from the connection field have to be iterable or instance of {}.
                     Received "{}"
-                '''
-                .format(connection_type, resolved)
+                """.format(
+                    connection_type, resolved
+                )
             )
         connection = connection_from_list(
             resolved,

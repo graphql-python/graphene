@@ -75,8 +75,7 @@ def to_arguments(args, extra_args=None):
         arg_name = default_name or arg.name
         if arg_name in arguments:
             raise AssertionError(
-                'More than one Argument have same name "{}".'
-                .format(arg_name)
+                'More than one Argument have same name "{}".'.format(arg_name)
             )
         arguments[arg_name] = arg
 

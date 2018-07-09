@@ -12,7 +12,7 @@ default_resolver = attr_resolver
 def set_default_resolver(resolver):
     global default_resolver
     if not callable(resolver):
-    	raise AssertionError('Received non-callable resolver.')
+        raise AssertionError("Received non-callable resolver.")
     default_resolver = resolver
 
 

@@ -62,13 +62,13 @@ def resolve_type(resolve_type_func, map, type_name, root, info):
         graphql_type = map.get(_type._meta.name)
         if not graphql_type:
             raise AssertionError(
-                "Can't find type {} in schema"
-                .format(_type._meta.name)
+                "Can't find type {} in schema".format(_type._meta.name)
             )
         if graphql_type.graphene_type != _type:
             raise AssertionError(
-                'The type {} does not match with the associated graphene type {}.'
-                .format(_type, graphql_type.graphene_type)
+                "The type {} does not match with the associated graphene type {}.".format(
+                    _type, graphql_type.graphene_type
+                )
             )
         return graphql_type
 
@@ -102,8 +102,9 @@ class TypeMap(GraphQLTypeMap):
             if isinstance(_type, GrapheneGraphQLType):
                 if _type.graphene_type is not type:
                     raise AssertionError(
-                        'Found different types with the same name in the schema: {}, {}.'
-                        .format(_type.graphene_type, type)
+                        "Found different types with the same name in the schema: {}, {}.".format(
+                            _type.graphene_type, type
+                        )
                     )
             return map
 
@@ -183,8 +184,9 @@ class TypeMap(GraphQLTypeMap):
             if isinstance(_type, GrapheneGraphQLType):
                 if _type.graphene_type != type:
                     raise AssertionError(
-                        'Found different types with the same name in the schema: {}, {}.'
-                        .format(_type.graphene_type, type)
+                        "Found different types with the same name in the schema: {}, {}.".format(
+                            _type.graphene_type, type
+                        )
                     )
             return _type
 
@@ -195,8 +197,9 @@ class TypeMap(GraphQLTypeMap):
                 internal_type = map[interface._meta.name]
                 if internal_type.graphene_type != interface:
                     raise AssertionError(
-                        'Found different types with the same name in the schema: {}, {}.'
-                        .format(internal_type.graphene_type, interface)
+                        "Found different types with the same name in the schema: {}, {}.".format(
+                            internal_type.graphene_type, interface
+                        )
                     )
                 interfaces.append(internal_type)
             return interfaces
@@ -223,8 +226,9 @@ class TypeMap(GraphQLTypeMap):
             if isinstance(_type, GrapheneInterfaceType):
                 if _type.graphene_type != type:
                     raise AssertionError(
-                       'Found different types with the same name in the schema: {}, {}.'
-                        .format(_type.graphene_type, type)
+                        "Found different types with the same name in the schema: {}, {}.".format(
+                            _type.graphene_type, type
+                        )
                     )
             return _type
 
@@ -266,8 +270,9 @@ class TypeMap(GraphQLTypeMap):
                 internal_type = map[objecttype._meta.name]
                 if internal_type.graphene_type != objecttype:
                     raise AssertionError(
-                        "Found different types with the same name in the schema: {}, {}."
-                        .format(internal_type.graphene_type, objecttype)
+                        "Found different types with the same name in the schema: {}, {}.".format(
+                            internal_type.graphene_type, objecttype
+                        )
                     )
                 union_types.append(internal_type)
             return union_types

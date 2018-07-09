@@ -49,11 +49,12 @@ class ObjectType(BaseType):
 
         if possible_types and cls.is_type_of:
             raise AssertionError(
-                '''
+                """
                     {name}.Meta.possible_types will cause type collision with {name}.is_type_of.
                     Please use one or other.
-                '''
-                .format(name=cls.__name__)
+                """.format(
+                    name=cls.__name__
+                )
             )
 
         if _meta.fields:

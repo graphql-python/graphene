@@ -45,13 +45,9 @@ def get_complete_version(version=None):
         from graphene import VERSION as version
     else:
         if len(version) is not 5:
-            raise AssertionError(
-                "Version needs to be 5"
-            )
-        if version[3] not in ('alpha', 'beta', 'rc', 'final'):
-            raise AssertionError(
-                "Release version is unkown"
-            )
+            raise AssertionError("Version needs to be 5")
+        if version[3] not in ("alpha", "beta", "rc", "final"):
+            raise AssertionError("Release version is unkown")
 
     return version
 

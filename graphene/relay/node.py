@@ -48,11 +48,9 @@ class GlobalID(Field):
 
 
 class NodeField(Field):
-
-    def __init__(self, node, type=False, deprecation_reason=None,
-                 name=None, **kwargs):
+    def __init__(self, node, type=False, deprecation_reason=None, name=None, **kwargs):
         if not issubclass(node, Node):
-            raise AssertionError('NodeField can only operate in Nodes')
+            raise AssertionError("NodeField can only operate in Nodes")
         self.node_type = node
         self.field_type = type
 
@@ -103,8 +101,7 @@ class Node(AbstractNode):
         if only_type:
             if graphene_type != only_type:
                 raise AssertionError(
-                    'Must receive a {} id.'
-                    .format(only_type._meta.name)
+                    "Must receive a {} id.".format(only_type._meta.name)
                 )
 
         # We make sure the ObjectType implements the "Node" interface

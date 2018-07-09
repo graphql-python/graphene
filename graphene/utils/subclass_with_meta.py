@@ -44,11 +44,12 @@ class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
         if abstract:
             if options:
                 raise AssertionError(
-                    '''
+                    """
                        Abstract types can only contain the abstract attribute.
                        Received: abstract, {option_keys}
-                    '''
-                    .format(option_keys=', '.join(options.keys()))
+                    """.format(
+                        option_keys=", ".join(options.keys())
+                    )
                 )
         else:
             super_class = super(cls, cls)
