@@ -148,3 +148,47 @@ def test_mutation_allow_to_have_custom_args():
     assert field.description == "Create a user"
     assert field.deprecation_reason == "Is deprecated"
     assert field.type == NonNull(CreateUser)
+
+
+def test_mutation_as_subclass():
+    class BaseCreateUser(Mutation):
+
+        class Arguments:
+            name = String()
+
+        name = String()
+
+        def mutate(self, info, **args):
+            return args
+
+    class CreateUserWithPlanet(BaseCreateUser):
+
+        class Arguments(BaseCreateUser.Arguments):
+            planet = String()
+
+        planet = String()
+
+        def mutate(self, info, **args):
+            return CreateUserWithPlanet(**args)
+
+    class MyMutation(ObjectType):
+        create_user_with_planet = CreateUserWithPlanet.Field()
+
+    class Query(ObjectType):
+        a = String()
+
+    schema = Schema(query=Query, mutation=MyMutation)
+    result = schema.execute(''' mutation mymutation {
+        createUserWithPlanet(name:"Peter", planet: "earth") {
+            name
+            planet
+        }
+    }
+    ''')
+    assert not result.errors
+    assert result.data == {
+        'createUserWithPlanet': {
+            'name': 'Peter',
+            'planet': 'earth',
+        }
+    }
