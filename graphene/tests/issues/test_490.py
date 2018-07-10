@@ -11,14 +11,14 @@ class Query(graphene.ObjectType):
 
 
 def test_issue():
-    query_string = '''
+    query_string = """
     query myQuery {
       someField(from: "Oh")
     }
-    '''
+    """
 
     schema = graphene.Schema(query=Query)
     result = schema.execute(query_string)
 
     assert not result.errors
-    assert result.data['someField'] == 'Oh'
+    assert result.data["someField"] == "Oh"

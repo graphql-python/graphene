@@ -35,7 +35,9 @@ def test_schema_get_type_error():
 
 def test_schema_str():
     schema = Schema(Query)
-    assert str(schema) == """schema {
+    assert (
+        str(schema)
+        == """schema {
   query: Query
 }
 
@@ -47,8 +49,9 @@ type Query {
   inner: MyOtherType
 }
 """
+    )
 
 
 def test_schema_introspect():
     schema = Schema(Query)
-    assert '__schema' in schema.introspect()
+    assert "__schema" in schema.introspect()

@@ -10,9 +10,11 @@ def test_trim_docstring():
         Multiple paragraphs too
         """
 
-    assert (trim_docstring(WellDocumentedObject.__doc__) ==
-            "This object is very well-documented. It has multiple lines in its\n"
-            "description.\n\nMultiple paragraphs too")
+    assert (
+        trim_docstring(WellDocumentedObject.__doc__)
+        == "This object is very well-documented. It has multiple lines in its\n"
+        "description.\n\nMultiple paragraphs too"
+    )
 
     class UndocumentedObject(object):
         pass

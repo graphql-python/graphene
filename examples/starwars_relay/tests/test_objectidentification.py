@@ -13,19 +13,19 @@ def test_str_schema(snapshot):
 
 
 def test_correctly_fetches_id_name_rebels(snapshot):
-    query = '''
+    query = """
       query RebelsQuery {
         rebels {
           id
           name
         }
       }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_correctly_refetches_rebels(snapshot):
-    query = '''
+    query = """
       query RebelsRefetchQuery {
         node(id: "RmFjdGlvbjox") {
           id
@@ -34,24 +34,24 @@ def test_correctly_refetches_rebels(snapshot):
           }
         }
       }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_correctly_fetches_id_name_empire(snapshot):
-    query = '''
+    query = """
       query EmpireQuery {
         empire {
           id
           name
         }
       }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_correctly_refetches_empire(snapshot):
-    query = '''
+    query = """
       query EmpireRefetchQuery {
         node(id: "RmFjdGlvbjoy") {
           id
@@ -60,12 +60,12 @@ def test_correctly_refetches_empire(snapshot):
           }
         }
       }
-    '''
+    """
     snapshot.assert_match(client.execute(query))
 
 
 def test_correctly_refetches_xwing(snapshot):
-    query = '''
+    query = """
       query XWingRefetchQuery {
         node(id: "U2hpcDox") {
           id
@@ -74,5 +74,5 @@ def test_correctly_refetches_xwing(snapshot):
           }
         }
       }
-    '''
+    """
     snapshot.assert_match(client.execute(query))

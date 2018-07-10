@@ -56,13 +56,12 @@ class MyInterface(Interface):
 
 
 class MyUnion(Union):
-
     class Meta:
-        types = (Article, )
+        types = (Article,)
 
 
 class MyEnum(Enum):
-    foo = 'foo'
+    foo = "foo"
 
 
 class MyInputObjectType(InputObjectType):
@@ -74,24 +73,24 @@ def test_defines_a_query_only_schema():
 
     assert blog_schema.get_query_type().graphene_type == Query
 
-    article_field = Query._meta.fields['article']
+    article_field = Query._meta.fields["article"]
     assert article_field.type == Article
-    assert article_field.type._meta.name == 'Article'
+    assert article_field.type._meta.name == "Article"
 
     article_field_type = article_field.type
     assert issubclass(article_field_type, ObjectType)
 
-    title_field = article_field_type._meta.fields['title']
+    title_field = article_field_type._meta.fields["title"]
     assert title_field.type == String
 
-    author_field = article_field_type._meta.fields['author']
+    author_field = article_field_type._meta.fields["author"]
     author_field_type = author_field.type
     assert issubclass(author_field_type, ObjectType)
-    recent_article_field = author_field_type._meta.fields['recent_article']
+    recent_article_field = author_field_type._meta.fields["recent_article"]
 
     assert recent_article_field.type == Article
 
-    feed_field = Query._meta.fields['feed']
+    feed_field = Query._meta.fields["feed"]
     assert feed_field.type.of_type == Article
 
 
@@ -100,9 +99,9 @@ def test_defines_a_mutation_schema():
 
     assert blog_schema.get_mutation_type().graphene_type == Mutation
 
-    write_mutation = Mutation._meta.fields['write_article']
+    write_mutation = Mutation._meta.fields["write_article"]
     assert write_mutation.type == Article
-    assert write_mutation.type._meta.name == 'Article'
+    assert write_mutation.type._meta.name == "Article"
 
 
 def test_defines_a_subscription_schema():
@@ -110,9 +109,9 @@ def test_defines_a_subscription_schema():
 
     assert blog_schema.get_subscription_type().graphene_type == Subscription
 
-    subscription = Subscription._meta.fields['article_subscribe']
+    subscription = Subscription._meta.fields["article_subscribe"]
     assert subscription.type == Article
-    assert subscription.type._meta.name == 'Article'
+    assert subscription.type._meta.name == "Article"
 
 
 def test_includes_nested_input_objects_in_the_map():
@@ -128,13 +127,9 @@ def test_includes_nested_input_objects_in_the_map():
     class SomeSubscription(Mutation):
         subscribe_to_something = Field(Article, input=Argument(SomeInputObject))
 
-    schema = Schema(
-        query=Query,
-        mutation=SomeMutation,
-        subscription=SomeSubscription
-    )
+    schema = Schema(query=Query, mutation=SomeMutation, subscription=SomeSubscription)
 
-    assert schema.get_type_map()['NestedInputObject'].graphene_type is NestedInputObject
+    assert schema.get_type_map()["NestedInputObject"].graphene_type is NestedInputObject
 
 
 def test_includes_interfaces_thunk_subtypes_in_the_type_map():
@@ -142,19 +137,15 @@ def test_includes_interfaces_thunk_subtypes_in_the_type_map():
         f = Int()
 
     class SomeSubtype(ObjectType):
-
         class Meta:
-            interfaces = (SomeInterface, )
+            interfaces = (SomeInterface,)
 
     class Query(ObjectType):
         iface = Field(lambda: SomeInterface)
 
-    schema = Schema(
-        query=Query,
-        types=[SomeSubtype]
-    )
+    schema = Schema(query=Query, types=[SomeSubtype])
 
-    assert schema.get_type_map()['SomeSubtype'].graphene_type is SomeSubtype
+    assert schema.get_type_map()["SomeSubtype"].graphene_type is SomeSubtype
 
 
 def test_includes_types_in_union():
@@ -165,19 +156,16 @@ def test_includes_types_in_union():
         b = String()
 
     class MyUnion(Union):
-
         class Meta:
             types = (SomeType, OtherType)
 
     class Query(ObjectType):
         union = Field(MyUnion)
 
-    schema = Schema(
-        query=Query,
-    )
+    schema = Schema(query=Query)
 
-    assert schema.get_type_map()['OtherType'].graphene_type is OtherType
-    assert schema.get_type_map()['SomeType'].graphene_type is SomeType
+    assert schema.get_type_map()["OtherType"].graphene_type is OtherType
+    assert schema.get_type_map()["SomeType"].graphene_type is SomeType
 
 
 def test_maps_enum():
@@ -188,19 +176,16 @@ def test_maps_enum():
         b = String()
 
     class MyUnion(Union):
-
         class Meta:
             types = (SomeType, OtherType)
 
     class Query(ObjectType):
         union = Field(MyUnion)
 
-    schema = Schema(
-        query=Query,
-    )
+    schema = Schema(query=Query)
 
-    assert schema.get_type_map()['OtherType'].graphene_type is OtherType
-    assert schema.get_type_map()['SomeType'].graphene_type is SomeType
+    assert schema.get_type_map()["OtherType"].graphene_type is OtherType
+    assert schema.get_type_map()["SomeType"].graphene_type is SomeType
 
 
 def test_includes_interfaces_subtypes_in_the_type_map():
@@ -208,33 +193,29 @@ def test_includes_interfaces_subtypes_in_the_type_map():
         f = Int()
 
     class SomeSubtype(ObjectType):
-
         class Meta:
-            interfaces = (SomeInterface, )
+            interfaces = (SomeInterface,)
 
     class Query(ObjectType):
         iface = Field(SomeInterface)
 
-    schema = Schema(
-        query=Query,
-        types=[SomeSubtype]
-    )
+    schema = Schema(query=Query, types=[SomeSubtype])
 
-    assert schema.get_type_map()['SomeSubtype'].graphene_type is SomeSubtype
+    assert schema.get_type_map()["SomeSubtype"].graphene_type is SomeSubtype
 
 
 def test_stringifies_simple_types():
-    assert str(Int) == 'Int'
-    assert str(Article) == 'Article'
-    assert str(MyInterface) == 'MyInterface'
-    assert str(MyUnion) == 'MyUnion'
-    assert str(MyEnum) == 'MyEnum'
-    assert str(MyInputObjectType) == 'MyInputObjectType'
-    assert str(NonNull(Int)) == 'Int!'
-    assert str(List(Int)) == '[Int]'
-    assert str(NonNull(List(Int))) == '[Int]!'
-    assert str(List(NonNull(Int))) == '[Int!]'
-    assert str(List(List(Int))) == '[[Int]]'
+    assert str(Int) == "Int"
+    assert str(Article) == "Article"
+    assert str(MyInterface) == "MyInterface"
+    assert str(MyUnion) == "MyUnion"
+    assert str(MyEnum) == "MyEnum"
+    assert str(MyInputObjectType) == "MyInputObjectType"
+    assert str(NonNull(Int)) == "Int!"
+    assert str(List(Int)) == "[Int]"
+    assert str(NonNull(List(Int))) == "[Int]!"
+    assert str(List(NonNull(Int))) == "[Int!]"
+    assert str(List(List(Int))) == "[[Int]]"
 
 
 # def test_identifies_input_types():
