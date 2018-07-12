@@ -2,7 +2,7 @@ import six
 
 from ..pyutils.compat import func_name, signature
 from .deprecated import warn_deprecation
-from .comparison_helper import raise_assertion_if_true
+from .comparison_helper import raise_assertion_if
 
 
 def annotate(_func=None, _trigger_warning=True, **annotations):
@@ -27,7 +27,7 @@ def annotate(_func=None, _trigger_warning=True, **annotations):
         assertion_message = 'The key {key} is not a function parameter in the function "{func_name}".'
                                 .format(key=key, func_name=func_name(_func)
 
-        raise_assertion_if_true(
+        raise_assertion_if(
             condition=func_param is None,
             message=assertion_message
             )

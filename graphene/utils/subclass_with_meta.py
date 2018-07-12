@@ -44,9 +44,9 @@ class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
         error_message = """
                        Abstract types can only contain the abstract attribute.
                        Received: abstract, {option_keys}
-                    """.format(option_keys=", ".join(options.keys())  
+                    """.format(option_keys=", ".join(options.keys())
 
-        raise_assertion_if_true(condition=options and abstract, message=error_message)
+        raise_assertion_if(condition=options and abstract, message=error_message)
 
         else:
             super_class = super(cls, cls)

@@ -5,7 +5,7 @@ from .field import Field
 from .interface import Interface
 from .utils import yank_fields_from_attrs
 
-from ..utils.comparison_helper import raise_assertion_if_true
+from ..utils.comparison_helper import raise_assertion_if
 
 # For static type checking with Mypy
 MYPY = False
@@ -54,7 +54,7 @@ class ObjectType(BaseType):
             Please use one or other.
         """.format(name=cls.__name__)
 
-        raise_assertion_if_true(
+        raise_assertion_if(
             condition=possible_types and cls.is_type_of,
             message=error_message
         )

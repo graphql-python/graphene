@@ -9,7 +9,7 @@ from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
 from .node import is_node
-from ..utils.comparison_helper import raise_assertion_if_true
+from ..utils.comparison_helper import raise_assertion_if
 
 
 class PageInfo(ObjectType):
@@ -49,8 +49,8 @@ class Connection(ObjectType):
         _meta = ConnectionOptions(cls)
 
         error_message = "You have to provide a node in {}.Meta".format(cls.__name__)
-        raise_assertion_if_true(
-                condition=not node, 
+        raise_assertion_if(
+                condition=not node,
                 message=error_message
             )
 
@@ -58,7 +58,7 @@ class Connection(ObjectType):
                 node, cls.__name__
             )
         condition = not issubclass(node, (Scalar, Enum, ObjectType, Interface, Union, NonNull))
-        raise_assertion_if_true(
+        raise_assertion_if(
                 condition=condition,
                 message=error_message
             )
@@ -119,7 +119,7 @@ class IterableConnectionField(Field):
 
         error_message = '{} type have to be a subclass of Connection. Received "{}".'
                             .format(self.__class__.__name__, connection_type)
-        raise_assertion_if_true(
+        raise_assertion_if(
                 condition= not issubclass(connection_type, Connection),
                 message=error_message
             )

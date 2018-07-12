@@ -1,4 +1,4 @@
-from ..utils.comparison_helper import raise_assertion_if_true
+from ..utils.comparison_helper import raise_assertion_if
 
 def attr_resolver(attname, default_value, root, info, **args):
     return getattr(root, attname, default_value)
@@ -14,7 +14,7 @@ default_resolver = attr_resolver
 def set_default_resolver(resolver):
     global default_resolver
 
-    raise_assertion_if_true(
+    raise_assertion_if(
         condition=not callable(resolver),
         message="Received non-callable resolver."
     )
