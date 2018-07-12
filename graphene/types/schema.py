@@ -13,15 +13,17 @@ from graphql.utils.schema_printer import print_schema
 from .definitions import GrapheneGraphQLType
 from .objecttype import ObjectType
 from .typemap import TypeMap, is_graphene_type
-
+from ..utils.comparison_helper import raise_assertion_if_true
 
 def assert_valid_root_type(_type):
     if _type is None:
         return
     is_graphene_objecttype = inspect.isclass(_type) and issubclass(_type, ObjectType)
     is_graphql_objecttype = isinstance(_type, GraphQLObjectType)
-    if not (is_graphene_objecttype or is_graphql_objecttype):
-        raise AssertionError("Type {} is not a valid ObjectType.".format(_type))
+    raise_assertion_if_true(
+        condition=not (is_graphene_objecttype or is_graphql_objecttype),
+        message="Type {} is not a valid ObjectType.".format(_type)
+    )
 
 
 class Schema(GraphQLSchema):
@@ -52,12 +54,10 @@ class Schema(GraphQLSchema):
         if directives is None:
             directives = [GraphQLIncludeDirective, GraphQLSkipDirective]
 
-        if not all(isinstance(d, GraphQLDirective) for d in directives):
-            raise AssertionError(
-                "Schema directives must be List[GraphQLDirective] if provided but got: {}.".format(
-                    directives
-                )
-            )
+        raise_assertion_if_true(
+            condition=not all(isinstance(d, GraphQLDirective) for d in directives),
+            message="Schema directives must be List[GraphQLDirective] if provided but got: {}.".format(directives)
+        )
         self._directives = directives
         self.build_typemap()
 
@@ -91,16 +91,19 @@ class Schema(GraphQLSchema):
             return _type
         if is_graphene_type(_type):
             graphql_type = self.get_type(_type._meta.name)
-            if not graphql_type:
-                raise AssertionError(
-                    "Type {} not found in this schema.".format(_type._meta.name)
-                )
-            if graphql_type.graphene_type != _type:
-                raise AssertionError(
-                    "The type {} does not match with the associated graphene type {}.".format(
-                        _type, graphql_type.graphene_type
-                    )
-                )
+
+            raise_assertion_if_true(
+                condition=not graphql_type,
+                message="Type {} not found in this schema.".format(_type._meta.name)
+            )
+
+            error_message = "The type {} does not match with the associated graphene type {}."
+                                .format(_type, graphql_type.graphene_type)
+            raise_assertion_if_true(
+                condition=graphql_type.graphene_type is not _type,
+                message=error_message
+            )
+
             return graphql_type
         raise Exception("{} is not a valid GraphQL type.".format(_type))
 

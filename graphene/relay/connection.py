@@ -9,6 +9,7 @@ from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
 from .node import is_node
+from ..utils.comparison_helper import raise_assertion_if_true
 
 
 class PageInfo(ObjectType):
@@ -46,16 +47,20 @@ class Connection(ObjectType):
     @classmethod
     def __init_subclass_with_meta__(cls, node=None, name=None, **options):
         _meta = ConnectionOptions(cls)
-        if not node:
-            raise AssertionError(
-                "You have to provide a node in {}.Meta".format(cls.__name__)
+
+        error_message = "You have to provide a node in {}.Meta".format(cls.__name__)
+        raise_assertion_if_true(
+                condition=not node, 
+                message=error_message
             )
 
-        if not issubclass(node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)):
-            raise AssertionError(
-                'Received incompatible node "{}" for Connection {}.'.format(
-                    node, cls.__name__
-                )
+        error_message = 'Received incompatible node "{}" for Connection {}.'.format(
+                node, cls.__name__
+            )
+        condition = not issubclass(node, (Scalar, Enum, ObjectType, Interface, Union, NonNull))
+        raise_assertion_if_true(
+                condition=condition,
+                message=error_message
             )
 
         base_name = re.sub("Connection$", "", name or cls.__name__) or node._meta.name
@@ -112,11 +117,11 @@ class IterableConnectionField(Field):
                 "Read more: https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#node-connections"
             )
 
-        if not issubclass(connection_type, Connection):
-            raise AssertionError(
-                '{} type have to be a subclass of Connection. Received "{}".'.format(
-                    self.__class__.__name__, connection_type
-                )
+        error_message = '{} type have to be a subclass of Connection. Received "{}".'
+                            .format(self.__class__.__name__, connection_type)
+        raise_assertion_if_true(
+                condition= not issubclass(connection_type, Connection),
+                message=error_message
             )
         return type
 

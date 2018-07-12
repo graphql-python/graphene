@@ -5,6 +5,8 @@ from .field import Field
 from .interface import Interface
 from .utils import yank_fields_from_attrs
 
+from ..utils.comparison_helper import raise_assertion_if_true
+
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
@@ -47,15 +49,15 @@ class ObjectType(BaseType):
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=Field))
 
-        if possible_types and cls.is_type_of:
-            raise AssertionError(
-                """
-                    {name}.Meta.possible_types will cause type collision with {name}.is_type_of.
-                    Please use one or other.
-                """.format(
-                    name=cls.__name__
-                )
-            )
+        error_message = """
+            {name}.Meta.possible_types will cause type collision with {name}.is_type_of.
+            Please use one or other.
+        """.format(name=cls.__name__)
+
+        raise_assertion_if_true(
+            condition=possible_types and cls.is_type_of,
+            message=error_message
+        )
 
         if _meta.fields:
             _meta.fields.update(fields)

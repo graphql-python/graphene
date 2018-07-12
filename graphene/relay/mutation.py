@@ -5,6 +5,7 @@ from promise import Promise, is_thenable
 
 from ..types import Field, InputObjectType, String
 from ..types.mutation import Mutation
+from ..utils.comparison_helper import raise_assertion_if_true
 
 
 class ClientIDMutation(Mutation):
@@ -18,8 +19,7 @@ class ClientIDMutation(Mutation):
         input_class = getattr(cls, "Input", None)
         base_name = re.sub("Payload$", "", name or cls.__name__)
 
-        if output:
-            raise AssertionError("Can't specify any output")
+        raise_assertion_if_true(condition=output, message="Can't specify any output")
 
         if arguments:
             raise AssertionError("Can't specify any arguments")
