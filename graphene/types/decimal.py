@@ -1,4 +1,6 @@
-import decimal
+from __future__ import absolute_import
+
+from decimal import Decimal as _Decimal
 
 from graphql.language import ast
 
@@ -11,7 +13,9 @@ class Decimal(Scalar):
     """
     @staticmethod
     def serialize(dec):
-        assert isinstance(dec, decimal.Decimal), (
+        if isinstance(dec, str):
+            dec = _Decimal(dec)
+        assert isinstance(dec, _Decimal), (
             'Received not compatible Decimal "{}"'.format(repr(dec))
         )
         return str(dec)
@@ -24,6 +28,6 @@ class Decimal(Scalar):
     @staticmethod
     def parse_value(value):
         try:
-            return decimal.Decimal(value)
+            return _Decimal(value)
         except ValueError:
             return None

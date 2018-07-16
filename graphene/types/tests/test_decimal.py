@@ -21,6 +21,7 @@ def test_decimal_string_query():
     assert result.data == {
         'decimal': str(decimal_value)
     }
+    assert decimal.Decimal(result.data['decimal']) == decimal_value
 
 
 def test_decimal_string_query_variable():
@@ -34,6 +35,7 @@ def test_decimal_string_query_variable():
     assert result.data == {
         'decimal': str(decimal_value)
     }
+    assert decimal.Decimal(result.data['decimal']) == decimal_value
 
 
 def test_bad_decimal_query():
