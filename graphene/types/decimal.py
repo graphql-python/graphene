@@ -11,12 +11,13 @@ class Decimal(Scalar):
     """
     The `Decimal` scalar type represents a python Decimal.
     """
+
     @staticmethod
     def serialize(dec):
         if isinstance(dec, str):
             dec = _Decimal(dec)
-        assert isinstance(dec, _Decimal), (
-            'Received not compatible Decimal "{}"'.format(repr(dec))
+        assert isinstance(dec, _Decimal), 'Received not compatible Decimal "{}"'.format(
+            repr(dec)
         )
         return str(dec)
 
