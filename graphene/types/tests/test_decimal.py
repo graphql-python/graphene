@@ -40,4 +40,4 @@ def test_bad_decimal_query():
 
     result = schema.execute("""{ decimal(input: "%s") }""" % not_a_decimal)
     assert len(result.errors) == 1
-    assert result.data == None
+    assert result.data is None

@@ -66,6 +66,7 @@ __all__ = [
     "Date",
     "DateTime",
     "Time",
+    "Decimal",
     "JSONString",
     "UUID",
     "List",
