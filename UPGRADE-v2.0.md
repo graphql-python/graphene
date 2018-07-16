@@ -122,6 +122,13 @@ def resolve_my_field(self, info, my_arg):
     return ...
 ```
 
+**PS.: Take care with receiving args like `my_arg` as above. This doesn't work for optional (non-required) arguments as stantard `Connection`'s arguments (first, before, after, before).**
+You may need something like this:
+
+```python
+def resolve_my_field(self, info, known_field1, known_field2, **args): ## get other args with: args.get('arg_key')
+```
+
 And, if you need the context in the resolver, you can use `info.context`:
 
 ```python
@@ -191,14 +198,104 @@ class MyObject(ObjectType):
         return ...
 ```
 
+## Node.get_node_from_global_id
+
+The parameters' order of `get_node_from_global_id` method has changed. You may need to adjust your [Node Root Field](http://docs.graphene-python.org/en/latest/relay/nodes/#node-root-field) and maybe other places that uses this method to obtain an object.
+
+Before:
+```python
+class RootQuery(object):
+    ...
+    node = Field(relay.Node, id=ID(required=True))
+
+    def resolve_node(self, args, context, info):
+        node = relay.Node.get_node_from_global_id(args['id'], context, info)
+        return node
+```
+
+Now:
+```python
+class RootQuery(object):
+    ...
+    node = Field(relay.Node, id=ID(required=True))
+
+    def resolve_node(self, info, id):
+        node = relay.Node.get_node_from_global_id(info, id)
+        return node
+```
+
 ## Mutation.mutate
 
-Now only receives (`root`, `info`, `**args`)
+Now only receives (`self`, `info`, `**args`) and is not a @classmethod
+
+Before:
+
+```python
+class SomeMutation(Mutation):
+    ...
+
+    @classmethod
+    def mutate(cls, instance, args, context, info):
+        ...
+```
+
+With 2.0:
+
+```python
+class SomeMutation(Mutation):
+    ...
+
+    def mutate(self, info, **args):
+        ...
+```
+
+With 2.0 you can also get your declared (as above) `args` this way:
+
+```python
+class SomeMutation(Mutation):
+    class Arguments:
+        first_name = String(required=True)
+        last_name = String(required=True)
+    ...
+
+    def mutate(self, info, first_name, last_name):
+        ...
+```
+
 
 
 ## ClientIDMutation.mutate_and_get_payload
 
 Now only receives (`root`, `info`, `**input`)
+
+
+### Middlewares
+
+If you are using Middelwares, you need to some adjustments:
+
+Before:
+
+```python
+class MyGrapheneMiddleware(object):  
+    def resolve(self, next_mw, root, args, context, info):
+
+        ## Middleware code
+
+        return next_mw(root, args, context, info)
+```
+
+With 2.0:
+
+```python
+class MyGrapheneMiddleware(object):  
+    def resolve(self, next_mw, root, info, **args):
+        context = info.context
+
+        ## Middleware code
+
+        info.context = context
+        return next_mw(root, info, **args)```
+```
 
 
 ## New Features
@@ -278,7 +375,7 @@ Now you can create abstact types super easily, without the need of subclassing t
 class Base(ObjectType):
     class Meta:
         abstract = True
-    
+
     id = ID()
 
     def resolve_id(self, info):

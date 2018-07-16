@@ -2,17 +2,11 @@ import functools
 import inspect
 import warnings
 
-string_types = (type(b''), type(u''))
+string_types = (type(b""), type(u""))
 
 
 def warn_deprecation(text):
-    warnings.simplefilter('always', DeprecationWarning)
-    warnings.warn(
-        text,
-        category=DeprecationWarning,
-        stacklevel=2
-    )
-    warnings.simplefilter('default', DeprecationWarning)
+    warnings.warn(text, category=DeprecationWarning, stacklevel=2)
 
 
 def deprecated(reason):
@@ -41,9 +35,7 @@ def deprecated(reason):
 
             @functools.wraps(func1)
             def new_func1(*args, **kwargs):
-                warn_deprecation(
-                    fmt1.format(name=func1.__name__, reason=reason),
-                )
+                warn_deprecation(fmt1.format(name=func1.__name__, reason=reason))
                 return func1(*args, **kwargs)
 
             return new_func1
@@ -69,9 +61,7 @@ def deprecated(reason):
 
         @functools.wraps(func2)
         def new_func2(*args, **kwargs):
-            warn_deprecation(
-                fmt2.format(name=func2.__name__),
-            )
+            warn_deprecation(fmt2.format(name=func2.__name__))
             return func2(*args, **kwargs)
 
         return new_func2

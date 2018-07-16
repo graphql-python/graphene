@@ -1,0 +1,24 @@
+repos:
+-   repo: git://github.com/pre-commit/pre-commit-hooks
+    rev: v1.3.0
+    hooks:
+    -   id: check-json
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: end-of-file-fixer
+        exclude: ^docs/.*$
+    -   id: trailing-whitespace
+        exclude: README.md
+    -   id: pretty-format-json
+        args:
+        - --autofix
+    -   id: flake8
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v1.4.0
+    hooks:
+    -   id: pyupgrade
+-   repo: https://github.com/ambv/black
+    rev: 18.6b4
+    hooks:
+    - id: black
+      language_version: python3.6

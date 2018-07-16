@@ -8,7 +8,7 @@ from .scalars import Scalar
 
 
 class JSONString(Scalar):
-    '''JSON String'''
+    """JSON String"""
 
     @staticmethod
     def serialize(dt):

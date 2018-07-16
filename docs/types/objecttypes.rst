@@ -50,7 +50,7 @@ A resolver is a method that resolves certain fields within a
 ``ObjectType``. If not specififed otherwise, the resolver of a
 field is the ``resolve_{field_name}`` method on the ``ObjectType``.
 
-By default resolvers take the arguments ``args``, ``context`` and ``info``.
+By default resolvers take the arguments ``info`` and ``*args``.
 
 NOTE: The resolvers on a ``ObjectType`` are always treated as ``staticmethod``\ s,
 so the first argument to the resolver method ``self`` (or ``root``) need

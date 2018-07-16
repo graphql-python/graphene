@@ -22,7 +22,6 @@ class Query(graphene.ObjectType):
 
 
 class CreateAddress(graphene.Mutation):
-    
     class Arguments:
         geo = GeoInput(required=True)
 
@@ -37,42 +36,34 @@ class Mutation(graphene.ObjectType):
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
-query = '''
+query = """
     query something{
       address(geo: {lat:32.2, lng:12}) {
         latlng
       }
     }
-'''
-mutation = '''
+"""
+mutation = """
     mutation addAddress{
       createAddress(geo: {lat:32.2, lng:12}) {
         latlng
       }
     }
-'''
+"""
 
 
 def test_query():
     result = schema.execute(query)
     assert not result.errors
-    assert result.data == {
-        'address': {
-            'latlng': "(32.2,12.0)",
-        }
-    }
+    assert result.data == {"address": {"latlng": "(32.2,12.0)"}}
 
 
 def test_mutation():
     result = schema.execute(mutation)
     assert not result.errors
-    assert result.data == {
-        'createAddress': {
-            'latlng': "(32.2,12.0)",
-        }
-    }
+    assert result.data == {"createAddress": {"latlng": "(32.2,12.0)"}}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     result = schema.execute(query)
-    print(result.data['address']['latlng'])
+    print(result.data["address"]["latlng"])

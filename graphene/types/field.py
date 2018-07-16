@@ -19,18 +19,27 @@ def source_resolver(source, root, info, **args):
 
 
 class Field(MountedType):
-
-    def __init__(self, type, args=None, resolver=None, source=None,
-                 deprecation_reason=None, name=None, description=None,
-                 required=False, _creation_counter=None, default_value=None,
-                 **extra_args):
+    def __init__(
+        self,
+        type,
+        args=None,
+        resolver=None,
+        source=None,
+        deprecation_reason=None,
+        name=None,
+        description=None,
+        required=False,
+        _creation_counter=None,
+        default_value=None,
+        **extra_args
+    ):
         super(Field, self).__init__(_creation_counter=_creation_counter)
         assert not args or isinstance(args, Mapping), (
             'Arguments in a field have to be a mapping, received "{}".'
         ).format(args)
-        assert not (source and resolver), (
-            'A Field cannot have a source and a resolver in at the same time.'
-        )
+        assert not (
+            source and resolver
+        ), "A Field cannot have a source and a resolver in at the same time."
         assert not callable(default_value), (
             'The default value can not be a function but received "{}".'
         ).format(base_type(default_value))
@@ -40,12 +49,12 @@ class Field(MountedType):
 
         # Check if name is actually an argument of the field
         if isinstance(name, (Argument, UnmountedType)):
-            extra_args['name'] = name
+            extra_args["name"] = name
             name = None
 
         # Check if source is actually an argument of the field
         if isinstance(source, (Argument, UnmountedType)):
-            extra_args['source'] = source
+            extra_args["source"] = source
             source = None
 
         self.name = name

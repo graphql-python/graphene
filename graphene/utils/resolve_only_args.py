@@ -1,8 +1,9 @@
 from functools import wraps
+
 from .deprecated import deprecated
 
 
-@deprecated('This function is deprecated')
+@deprecated("This function is deprecated")
 def resolve_only_args(func):
     @wraps(func)
     def wrapped_func(root, info, **args):

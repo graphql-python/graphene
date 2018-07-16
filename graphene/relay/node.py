@@ -10,9 +10,9 @@ from ..types.utils import get_type
 
 
 def is_node(objecttype):
-    '''
+    """
     Check if the given objecttype has Node as an interface
-    '''
+    """
     if not isclass(objecttype):
         return False
 
@@ -27,7 +27,6 @@ def is_node(objecttype):
 
 
 class GlobalID(Field):
-
     def __init__(self, node=None, parent_type=None, required=True, *args, **kwargs):
         super(GlobalID, self).__init__(ID, required=required, *args, **kwargs)
         self.node = node or Node
@@ -41,15 +40,16 @@ class GlobalID(Field):
 
     def get_resolver(self, parent_resolver):
         return partial(
-            self.id_resolver, parent_resolver, self.node, parent_type_name=self.parent_type_name
+            self.id_resolver,
+            parent_resolver,
+            self.node,
+            parent_type_name=self.parent_type_name,
         )
 
 
 class NodeField(Field):
-
-    def __init__(self, node, type=False, deprecation_reason=None,
-                 name=None, **kwargs):
-        assert issubclass(node, Node), 'NodeField can only operate in Nodes'
+    def __init__(self, node, type=False, deprecation_reason=None, name=None, **kwargs):
+        assert issubclass(node, Node), "NodeField can only operate in Nodes"
         self.node_type = node
         self.field_type = type
 
@@ -57,8 +57,8 @@ class NodeField(Field):
             # If we don's specify a type, the field type will be the node
             # interface
             type or node,
-            description='The ID of the object',
-            id=ID(required=True)
+            description="The ID of the object",
+            id=ID(required=True),
         )
 
     def get_resolver(self, parent_resolver):
@@ -66,7 +66,6 @@ class NodeField(Field):
 
 
 class AbstractNode(Interface):
-
     class Meta:
         abstract = True
 
@@ -74,14 +73,13 @@ class AbstractNode(Interface):
     def __init_subclass_with_meta__(cls, **options):
         _meta = InterfaceOptions(cls)
         _meta.fields = OrderedDict(
-            id=GlobalID(cls, description='The ID of the object.')
+            id=GlobalID(cls, description="The ID of the object.")
         )
-        super(AbstractNode, cls).__init_subclass_with_meta__(
-            _meta=_meta, **options)
+        super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
 
 class Node(AbstractNode):
-    '''An object with an ID'''
+    """An object with an ID"""
 
     @classmethod
     def Field(cls, *args, **kwargs):  # noqa: N802
@@ -100,15 +98,15 @@ class Node(AbstractNode):
             return None
 
         if only_type:
-            assert graphene_type == only_type, (
-                'Must receive an {} id.'
-            ).format(graphene_type._meta.name)
+            assert graphene_type == only_type, ("Must receive a {} id.").format(
+                only_type._meta.name
+            )
 
         # We make sure the ObjectType implements the "Node" interface
         if cls not in graphene_type._meta.interfaces:
             return None
 
-        get_node = getattr(graphene_type, 'get_node', None)
+        get_node = getattr(graphene_type, "get_node", None)
         if get_node:
             return get_node(info, _id)
 

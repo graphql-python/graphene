@@ -88,7 +88,7 @@ Naively, if ``me``, ``bestFriend`` and ``friends`` each need to request the back
 there could be at most 13 database requests!
 
 
-When using DataLoader, we could define the User type using our previous example with 
+When using DataLoader, we could define the User type using our previous example with
 leaner code and at most 4 database requests, and possibly fewer if there are cache hits.
 
 

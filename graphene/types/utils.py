@@ -10,9 +10,9 @@ from .unmountedtype import UnmountedType
 
 
 def get_field_as(value, _as=None):
-    '''
+    """
     Get type mounted
-    '''
+    """
     if isinstance(value, MountedType):
         return value
     elif isinstance(value, UnmountedType):
@@ -22,10 +22,10 @@ def get_field_as(value, _as=None):
 
 
 def yank_fields_from_attrs(attrs, _as=None, sort=True):
-    '''
+    """
     Extract all the fields in given attributes (dict)
     and return them ordered
-    '''
+    """
     fields_with_names = []
     for attname, value in list(attrs.items()):
         field = get_field_as(value, _as)
