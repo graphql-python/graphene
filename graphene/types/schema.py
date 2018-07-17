@@ -14,6 +14,7 @@ from .definitions import GrapheneGraphQLType
 from .objecttype import ObjectType
 from .typemap import TypeMap, is_graphene_type
 
+
 def assert_valid_root_type(_type):
     if _type is None:
         return

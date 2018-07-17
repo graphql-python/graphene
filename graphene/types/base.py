@@ -1,6 +1,7 @@
 from ..utils.subclass_with_meta import SubclassWithMeta
 from ..utils.trim_docstring import trim_docstring
 
+
 class BaseOptions(object):
     name = None  # type: str
     description = None  # type: str

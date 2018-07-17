@@ -3,10 +3,6 @@ from __future__ import unicode_literals
 import datetime
 import os
 import subprocess
-<<<<<<< HEAD
-from .comparison_helper import raise_assertion_if
-=======
->>>>>>> parent of 41dcbdc... DRY-ed up
 
 
 def get_version(version=None):

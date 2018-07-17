@@ -6,6 +6,7 @@ from graphql.language import ast
 
 from .scalars import Scalar
 
+
 class UUID(Scalar):
     """UUID"""
 
