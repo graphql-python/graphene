@@ -7,9 +7,6 @@ from graphql_relay import from_global_id, to_global_id
 from ..types import ID, Field, Interface, ObjectType
 from ..types.interface import InterfaceOptions
 from ..types.utils import get_type
-from ..utils.comparison_helper import raise_assertion_if
-
-
 
 
 def is_node(objecttype):
@@ -52,10 +49,8 @@ class GlobalID(Field):
 
 class NodeField(Field):
     def __init__(self, node, type=False, deprecation_reason=None, name=None, **kwargs):
-        raise_assertion_if(
-            condition= not issubclass(node, Node),
-            message="NodeField can only operate in Nodes"
-        )
+        if not issubclass(node, Node):
+            raise AssertionError("NodeField can only operate in Nodes")
         self.node_type = node
         self.field_type = type
 
@@ -103,10 +98,12 @@ class Node(AbstractNode):
         except Exception:
             return None
 
-        raise_assertion_if(
-            condition=only_type and (graphene_type is not only_type),
-            message="Must receive a {} id.".format(only_type._meta.name)
-        )
+        if only_type:
+            if graphene_type != only_type:
+                raise AssertionError(
+                    "Must receive a {} id.".format(only_type._meta.name)
+                )
+
         # We make sure the ObjectType implements the "Node" interface
         if cls not in graphene_type._meta.interfaces:
             return None

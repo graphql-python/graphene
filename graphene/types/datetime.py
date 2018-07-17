@@ -6,7 +6,6 @@ from aniso8601 import parse_date, parse_datetime, parse_time
 from graphql.language import ast
 
 from .scalars import Scalar
-from ..utils.comparison_helper import raise_assertion_if
 
 class Date(Scalar):
     """
@@ -19,10 +18,8 @@ class Date(Scalar):
     def serialize(date):
         if isinstance(date, datetime.datetime):
             date = date.date()
-        raise_assertion_if(
-            condition=not isinstance(date, datetime.date),
-            message='Received not compatible date "{}"'.format(repr(date))
-        )
+        if not isinstance(date, datetime.date):
+            raise AssertionError('Received not compatible date "{}"'.format(repr(date)))
         return date.isoformat()
 
     @classmethod
@@ -47,11 +44,10 @@ class DateTime(Scalar):
 
     @staticmethod
     def serialize(dt):
-
-        raise_assertion_if(
-            condition=not isinstance(dt, (datetime.datetime, datetime.date)),
-            message='Received not compatible datetime "{}"'.format(repr(dt))
-        )
+        if not isinstance(dt, (datetime.datetime, datetime.date)):
+            raise AssertionError(
+                'Received not compatible datetime "{}"'.format(repr(dt))
+            )
         return dt.isoformat()
 
     @classmethod
@@ -76,10 +72,8 @@ class Time(Scalar):
 
     @staticmethod
     def serialize(time):
-        raise_assertion_if(
-            condition= not isinstance(time, datetime.time),
-            message='Received not compatible time "{}"'.format(repr(time))
-        )
+        if not isinstance(time, datetime.time):
+            raise AssertionError('Received not compatible time "{}"'.format(repr(time)))
         return time.isoformat()
 
     @classmethod

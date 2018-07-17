@@ -3,8 +3,6 @@ from functools import partial
 
 from .mountedtype import MountedType
 
-from ..utils.comparison_helper import raise_assertion_if
-
 
 class Dynamic(MountedType):
     """
@@ -14,10 +12,10 @@ class Dynamic(MountedType):
 
     def __init__(self, type, with_schema=False, _creation_counter=None):
         super(Dynamic, self).__init__(_creation_counter=_creation_counter)
-        raise_assertion_if(
-            condition=not (inspect.isfunction(type) or isinstance(type, partial)),
-            message="type is expected to be a function or an instance of partial"
-        )
+        if not (inspect.isfunction(type) or isinstance(type, partial)):
+            raise AssertionError(
+                "type is expected to be a function or an instance of partial"
+            )
         self.type = type
         self.with_schema = with_schema
 
