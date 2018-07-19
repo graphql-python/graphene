@@ -152,7 +152,6 @@ def test_mutation_allow_to_have_custom_args():
 
 def test_mutation_as_subclass():
     class BaseCreateUser(Mutation):
-
         class Arguments:
             name = String()
 
@@ -162,7 +161,6 @@ def test_mutation_as_subclass():
             return args
 
     class CreateUserWithPlanet(BaseCreateUser):
-
         class Arguments(BaseCreateUser.Arguments):
             planet = String()
 
@@ -178,17 +176,14 @@ def test_mutation_as_subclass():
         a = String()
 
     schema = Schema(query=Query, mutation=MyMutation)
-    result = schema.execute(''' mutation mymutation {
+    result = schema.execute(
+        """ mutation mymutation {
         createUserWithPlanet(name:"Peter", planet: "earth") {
             name
             planet
         }
     }
-    ''')
+    """
+    )
     assert not result.errors
-    assert result.data == {
-        'createUserWithPlanet': {
-            'name': 'Peter',
-            'planet': 'earth',
-        }
-    }
+    assert result.data == {"createUserWithPlanet": {"name": "Peter", "planet": "earth"}}
