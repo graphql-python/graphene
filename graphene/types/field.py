@@ -34,15 +34,21 @@ class Field(MountedType):
         **extra_args
     ):
         super(Field, self).__init__(_creation_counter=_creation_counter)
-        assert not args or isinstance(args, Mapping), (
-            'Arguments in a field have to be a mapping, received "{}".'
-        ).format(args)
-        assert not (
-            source and resolver
-        ), "A Field cannot have a source and a resolver in at the same time."
-        assert not callable(default_value), (
-            'The default value can not be a function but received "{}".'
-        ).format(base_type(default_value))
+
+        if args and not isinstance(args, Mapping):
+            raise AssertionError(
+                'Arguments in a field have to be a mapping, received "{}".'.format(args)
+            )
+        if source and resolver:
+            raise AssertionError(
+                "A Field cannot have a source and a resolver in at the same time."
+            )
+        if callable(default_value):
+            raise AssertionError(
+                'The default value can not be a function but received "{}".'.format(
+                    base_type(default_value)
+                )
+            )
 
         if required:
             type = NonNull(type)

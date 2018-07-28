@@ -9,6 +9,7 @@ from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
 from .node import is_node
+from ..utils.comparison_helper import raise_assertion_if
 
 
 class PageInfo(ObjectType):
@@ -46,11 +47,17 @@ class Connection(ObjectType):
     @classmethod
     def __init_subclass_with_meta__(cls, node=None, name=None, **options):
         _meta = ConnectionOptions(cls)
-        assert node, "You have to provide a node in {}.Meta".format(cls.__name__)
-        assert issubclass(
-            node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
-        ), ('Received incompatible node "{}" for Connection {}.').format(
+        error_message = "You have to provide a node in {}.Meta".format(cls.__name__)
+        raise_assertion_if(condition=not node, message=error_message)
+
+        error_message = 'Received incompatible node "{}" for Connection {}.'.format(
             node, cls.__name__
+        )
+        raise_assertion_if(
+            condition=not issubclass(
+                node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
+            ),
+            error_message=error_message,
         )
 
         base_name = re.sub("Connection$", "", name or cls.__name__) or node._meta.name
@@ -101,15 +108,20 @@ class IterableConnectionField(Field):
         if isinstance(type, NonNull):
             connection_type = type.of_type
 
-        if is_node(connection_type):
-            raise Exception(
-                "ConnectionField's now need a explicit ConnectionType for Nodes.\n"
-                "Read more: https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#node-connections"
-            )
+        error_message = """
+            ConnectionField's now need a explicit ConnectionType for Nodes.
+            Read more: https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#node-connections
+        """
+        raise_assertion_if(
+            condition=is_node(connection_type), error_message=error_message
+        )
 
-        assert issubclass(connection_type, Connection), (
-            '{} type have to be a subclass of Connection. Received "{}".'
-        ).format(self.__class__.__name__, connection_type)
+        error_message = '{} type have to be a subclass of Connection. Received "{}".'.format(
+            self.__class__.__name__, connection_type
+        )
+        raise_assertion_if(
+            condition=not issubclass(connection_type, Connection), message=error_message
+        )
         return type
 
     @classmethod
@@ -117,10 +129,16 @@ class IterableConnectionField(Field):
         if isinstance(resolved, connection_type):
             return resolved
 
-        assert isinstance(resolved, Iterable), (
-            "Resolved value from the connection field have to be iterable or instance of {}. "
-            'Received "{}"'
-        ).format(connection_type, resolved)
+        error_message = """
+            Resolved value from the connection field have to be iterable or instance of {}.
+            Received "{}"
+         """.format(
+            connection_type, resolved
+        )
+        raise_assertion_if(
+            condition=not isinstance(resolved, Iterable), message=error_message
+        )
+
         connection = connection_from_list(
             resolved,
             args,

@@ -14,9 +14,8 @@ class UUID(Scalar):
     def serialize(uuid):
         if isinstance(uuid, str):
             uuid = _UUID(uuid)
-        assert isinstance(uuid, _UUID), "Expected UUID instance, received {}".format(
-            uuid
-        )
+        if not isinstance(uuid, _UUID):
+            raise AssertionError("Expected UUID instance, received {}".format(uuid))
         return str(uuid)
 
     @staticmethod

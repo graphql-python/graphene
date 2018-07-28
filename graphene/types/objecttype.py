@@ -47,10 +47,15 @@ class ObjectType(BaseType):
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=Field))
 
-        assert not (possible_types and cls.is_type_of), (
-            "{name}.Meta.possible_types will cause type collision with {name}.is_type_of. "
-            "Please use one or other."
-        ).format(name=cls.__name__)
+        if possible_types and cls.is_type_of:
+            raise AssertionError(
+                """
+                    {name}.Meta.possible_types will cause type collision with {name}.is_type_of.
+                    Please use one or other.
+                """.format(
+                    name=cls.__name__
+                )
+            )
 
         if _meta.fields:
             _meta.fields.update(fields)
