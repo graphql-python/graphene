@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 import os
 import subprocess
+from ..utils.comparison_helper import raise_assertion_if
 
 
 def get_version(version=None):
@@ -44,10 +45,14 @@ def get_complete_version(version=None):
     if version is None:
         from graphene import VERSION as version
     else:
-        if len(version) is not 5:
-            raise AssertionError("Version needs to be 5")
-        if version[3] not in ("alpha", "beta", "rc", "final"):
-            raise AssertionError("Release version is unkown")
+        raise_assertion_if(
+            condition=len(version) is not 5, message="Version needs to be 5"
+        )
+
+        raise_assertion_if(
+            condition=version[3] not in ("alpha", "beta", "rc", "final"),
+            message="Release version is unkown",
+        )
 
     return version
 
