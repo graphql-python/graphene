@@ -44,7 +44,7 @@ class ObjectType(BaseType):
                 condition=issubclass(interface, Interface),
                 message='All interfaces of {} must be a subclass of Interface. Received "{}".'.format(
                     cls.__name__, interface
-                )
+                ),
             )
             fields.update(interface._meta.fields)
 
@@ -53,11 +53,10 @@ class ObjectType(BaseType):
 
         raise_assertion_if_not(
             condition=not (possible_types and cls.is_type_of),
-            message=("{name}.Meta.possible_types will cause type collision with {name}.is_type_of. " \
-                "Please use one or other.".format(
-                    name=cls.__name__
-                )
-            )
+            message=(
+                "{name}.Meta.possible_types will cause type collision with {name}.is_type_of. "
+                "Please use one or other.".format(name=cls.__name__)
+            ),
         )
 
         if _meta.fields:

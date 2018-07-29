@@ -11,7 +11,7 @@ class MountedType(OrderedType):
         """
         raise_assertion_if_not(
             condition=isinstance(unmounted, UnmountedType),
-            message="{} can't mount {}".format(cls.__name__, repr(unmounted))
+            message="{} can't mount {}".format(cls.__name__, repr(unmounted)),
         )
 
         return cls(

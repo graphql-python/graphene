@@ -7,7 +7,6 @@ from graphql_relay import from_global_id, to_global_id
 from ..types import ID, Field, Interface, ObjectType
 from ..types.interface import InterfaceOptions
 from ..types.utils import get_type
-from ..utils.comparison_helper import raise_assertion_if_not
 
 
 def is_node(objecttype):

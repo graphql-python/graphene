@@ -7,7 +7,6 @@ from .props import props
 from .comparison_helper import raise_assertion_if_not
 
 
-
 class SubclassWithMeta_Meta(InitSubclassMeta):
     _meta = None
 
@@ -46,10 +45,10 @@ class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
         if abstract:
             raise_assertion_if_not(
                 condition=not options,
-                message="Abstract types can only contain the abstract attribute. " \
-                    "Received: abstract, {option_keys}".format(
-                        option_keys=", ".join(options.keys())
-                )
+                message="Abstract types can only contain the abstract attribute. "
+                "Received: abstract, {option_keys}".format(
+                    option_keys=", ".join(options.keys())
+                ),
             )
         else:
             super_class = super(cls, cls)

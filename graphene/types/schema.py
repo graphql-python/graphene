@@ -23,7 +23,7 @@ def assert_valid_root_type(_type):
     is_graphql_objecttype = isinstance(_type, GraphQLObjectType)
     raise_assertion_if_not(
         condition=is_graphene_objecttype or is_graphql_objecttype,
-        message="Type {} is not a valid ObjectType.".format(_type)
+        message="Type {} is not a valid ObjectType.".format(_type),
     )
 
 
@@ -59,7 +59,7 @@ class Schema(GraphQLSchema):
             condition=all(isinstance(d, GraphQLDirective) for d in directives),
             message="Schema directives must be List[GraphQLDirective] if provided but got: {}.".format(
                 directives
-            )
+            ),
         )
         self._directives = directives
         self.build_typemap()

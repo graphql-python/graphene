@@ -46,12 +46,11 @@ def get_complete_version(version=None):
         from graphene import VERSION as version
     else:
         raise_assertion_if_not(
-            condition=len(version) is 5,
-            message="Wrong tuple provided"
+            condition=len(version) is 5, message="Wrong tuple provided"
         )
         raise_assertion_if_not(
             condition=version[3] in ("alpha", "beta", "rc", "final"),
-            message="Version not correct."
+            message="Version not correct.",
         )
 
     return version

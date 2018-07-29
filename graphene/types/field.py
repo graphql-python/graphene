@@ -39,19 +39,19 @@ class Field(MountedType):
             condition=not args or isinstance(args, Mapping),
             message='Arguments in a field have to be a mapping, received "{}".'.format(
                 args
-            )
+            ),
         )
 
         raise_assertion_if_not(
-            condition=not(source and resolver),
-            message="A Field cannot have a source and a resolver in at the same time."
+            condition=not (source and resolver),
+            message="A Field cannot have a source and a resolver in at the same time.",
         )
 
         raise_assertion_if_not(
             condition=not callable(default_value),
             message='The default value can not be a function but received "{}".'.format(
                 base_type(default_value)
-            )
+            ),
         )
 
         if required:

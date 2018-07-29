@@ -76,9 +76,7 @@ def to_arguments(args, extra_args=None):
         arg_name = default_name or arg.name
         raise_assertion_if_not(
             condition=arg_name not in arguments,
-            message='More than one Argument have same name "{}".'.format(
-                arg_name
-            )
+            message='More than one Argument have same name "{}".'.format(arg_name),
         )
         arguments[arg_name] = arg
 

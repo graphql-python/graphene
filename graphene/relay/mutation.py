@@ -17,14 +17,10 @@ class ClientIDMutation(Mutation):
         input_class = getattr(cls, "Input", None)
         base_name = re.sub("Payload$", "", name or cls.__name__)
 
-        raise_assertion_if_not(
-            condition=not output,
-            message="Can't specify any output"
-        )
+        raise_assertion_if_not(condition=not output, message="Can't specify any output")
 
         raise_assertion_if_not(
-            condition=not arguments,
-            message="Can't specify any arguments"
+            condition=not arguments, message="Can't specify any arguments"
         )
 
         bases = (InputObjectType,)
@@ -50,10 +46,8 @@ class ClientIDMutation(Mutation):
         if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:
             raise_assertion_if_not(
                 condition=mutate_and_get_payload,
-                message="{name}.mutate_and_get_payload method is required" \
-                        " in a ClientIDMutation.".format(
-                            name=name or cls.__name__
-                )
+                message="{name}.mutate_and_get_payload method is required"
+                " in a ClientIDMutation.".format(name=name or cls.__name__),
             )
 
         if not name:

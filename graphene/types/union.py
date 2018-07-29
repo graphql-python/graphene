@@ -26,7 +26,7 @@ class Union(UnmountedType, BaseType):
     def __init_subclass_with_meta__(cls, types=None, **options):
         raise_assertion_if_not(
             condition=isinstance(types, (list, tuple)) and len(types) > 0,
-            message="Must provide types for Union {name}.".format(name=cls.__name__)
+            message="Must provide types for Union {name}.".format(name=cls.__name__),
         )
         _meta = UnionOptions(cls)
         _meta.types = types

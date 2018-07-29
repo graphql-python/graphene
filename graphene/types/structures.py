@@ -72,7 +72,7 @@ class NonNull(Structure):
             condition=not isinstance(self._of_type, NonNull),
             message="Can only create NonNull of a Nullable GraphQLType but got: {}.".format(
                 self._of_type
-            )
+            ),
         )
 
     def __str__(self):

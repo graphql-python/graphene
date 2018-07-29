@@ -55,7 +55,7 @@ class Connection(ObjectType):
         _meta = ConnectionOptions(cls)
         raise_assertion_if_not(
             condition=node,
-            message="You have to provide a node in {}.Meta".format(cls.__name__)
+            message="You have to provide a node in {}.Meta".format(cls.__name__),
         )
         raise_assertion_if_not(
             condition=issubclass(
@@ -63,7 +63,7 @@ class Connection(ObjectType):
             ),
             message=('Received incompatible node "{}" for Connection {}.').format(
                 node, cls.__name__
-            )
+            ),
         )
 
         base_name = re.sub("Connection$", "", name or cls.__name__) or node._meta.name
@@ -143,7 +143,7 @@ class IterableConnectionField(Field):
             condition=issubclass(connection_type, Connection),
             message='{} type have to be a subclass of Connection. Received "{}".'.format(
                 self.__class__.__name__, connection_type
-            )
+            ),
         )
         return type
 
@@ -159,7 +159,7 @@ class IterableConnectionField(Field):
                 Received "{}"
             """.format(
                 connection_type, resolved
-            )
+            ),
         )
 
         connection = connection_from_list(

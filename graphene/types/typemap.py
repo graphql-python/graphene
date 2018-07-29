@@ -63,13 +63,13 @@ def resolve_type(resolve_type_func, map, type_name, root, info):
         graphql_type = map.get(_type._meta.name)
         raise_assertion_if_not(
             condition=graphql_type,
-            message="Can't find type {} in schema".format(_type._meta.name)
+            message="Can't find type {} in schema".format(_type._meta.name),
         )
         raise_assertion_if_not(
             condition=graphql_type.graphene_type is _type,
             message="The type {} does not match with the associated graphene type {}.".format(
                 _type, graphql_type.graphene_type
-            )
+            ),
         )
         return graphql_type
 
@@ -105,7 +105,7 @@ class TypeMap(GraphQLTypeMap):
                     condition=_type.graphene_type is type,
                     message="Found different types with the same name in the schema: {}, {}.".format(
                         _type.graphene_type, type
-                    )
+                    ),
                 )
             return map
 
@@ -187,7 +187,7 @@ class TypeMap(GraphQLTypeMap):
                     condition=_type.graphene_type is type,
                     message="Found different types with the same name in the schema: {}, {}.".format(
                         _type.graphene_type, type
-                    )
+                    ),
                 )
             return _type
 
@@ -226,7 +226,7 @@ class TypeMap(GraphQLTypeMap):
                     condition=_type.graphene_type is type,
                     message="Found different types with the same name in the schema: {}, {}.".format(
                         _type.graphene_type, type
-                    )
+                    ),
                 )
             return _type
 

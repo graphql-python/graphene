@@ -17,7 +17,7 @@ class UUID(Scalar):
             uuid = _UUID(uuid)
         raise_assertion_if_not(
             condition=isinstance(uuid, _UUID),
-            message="Expected UUID instance, received {}".format(uuid)
+            message="Expected UUID instance, received {}".format(uuid),
         )
         return str(uuid)
 
