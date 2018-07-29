@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 import os
 import subprocess
+from ..utils.comparison_helper import raise_assertion_if_not
 
 
 def get_version(version=None):
@@ -44,8 +45,14 @@ def get_complete_version(version=None):
     if version is None:
         from graphene import VERSION as version
     else:
-        assert len(version) == 5
-        assert version[3] in ("alpha", "beta", "rc", "final")
+        raise_assertion_if_not(
+            condition=len(version) is 5,
+            message="Wrong tuple provided"
+        )
+        raise_assertion_if_not(
+            condition=version[3] in ("alpha", "beta", "rc", "final"),
+            message="Version not correct."
+        )
 
     return version
 

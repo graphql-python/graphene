@@ -5,6 +5,7 @@ from .dynamic import Dynamic
 from .mountedtype import MountedType
 from .structures import NonNull
 from .utils import get_type
+from ..utils.comparison_helper import raise_assertion_if_not
 
 
 class Argument(MountedType):
@@ -73,10 +74,11 @@ def to_arguments(args, extra_args=None):
             raise ValueError('Unknown argument "{}".'.format(default_name))
 
         arg_name = default_name or arg.name
-        assert (
-            arg_name not in arguments
-        ), 'More than one Argument have same name "{}".'.format(
-            arg_name
+        raise_assertion_if_not(
+            condition=arg_name not in arguments,
+            message='More than one Argument have same name "{}".'.format(
+                arg_name
+            )
         )
         arguments[arg_name] = arg
 

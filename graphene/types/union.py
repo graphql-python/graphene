@@ -1,5 +1,6 @@
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
+from ..utils.comparison_helper import raise_assertion_if_not
 
 # For static type checking with Mypy
 MYPY = False
@@ -23,10 +24,10 @@ class Union(UnmountedType, BaseType):
 
     @classmethod
     def __init_subclass_with_meta__(cls, types=None, **options):
-        assert (
-            isinstance(types, (list, tuple)) and len(types) > 0
-        ), "Must provide types for Union {name}.".format(name=cls.__name__)
-
+        raise_assertion_if_not(
+            condition=isinstance(types, (list, tuple)) and len(types) > 0,
+            message="Must provide types for Union {name}.".format(name=cls.__name__)
+        )
         _meta = UnionOptions(cls)
         _meta.types = types
         super(Union, cls).__init_subclass_with_meta__(_meta=_meta, **options)

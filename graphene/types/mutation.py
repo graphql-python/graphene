@@ -6,6 +6,7 @@ from ..utils.props import props
 from .field import Field
 from .objecttype import ObjectType, ObjectTypeOptions
 from .utils import yank_fields_from_attrs
+from ..utils.comparison_helper import raise_assertion_if_not
 
 # For static type checking with Mypy
 MYPY = False
@@ -62,7 +63,10 @@ class Mutation(ObjectType):
 
         if not resolver:
             mutate = getattr(cls, "mutate", None)
-            assert mutate, "All mutations must define a mutate method in it"
+            raise_assertion_if_not(
+                condition=mutate,
+                message="All mutations must define a mutate method in it"
+            ) 
             resolver = get_unbound_function(mutate)
 
         if _meta.fields:

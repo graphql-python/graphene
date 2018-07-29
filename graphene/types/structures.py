@@ -1,5 +1,6 @@
 from .unmountedtype import UnmountedType
 from .utils import get_type
+from ..utils.comparison_helper import raise_assertion_if_not
 
 
 class Structure(UnmountedType):
@@ -67,9 +68,12 @@ class NonNull(Structure):
 
     def __init__(self, *args, **kwargs):
         super(NonNull, self).__init__(*args, **kwargs)
-        assert not isinstance(self._of_type, NonNull), (
-            "Can only create NonNull of a Nullable GraphQLType but got: {}."
-        ).format(self._of_type)
+        raise_assertion_if_not(
+            condition=not isinstance(self._of_type, NonNull),
+            message="Can only create NonNull of a Nullable GraphQLType but got: {}.".format(
+                self._of_type
+            )
+        )
 
     def __str__(self):
         return "{}!".format(self.of_type)

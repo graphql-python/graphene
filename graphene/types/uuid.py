@@ -5,6 +5,7 @@ from uuid import UUID as _UUID
 from graphql.language import ast
 
 from .scalars import Scalar
+from ..utils.comparison_helper import raise_assertion_if_not
 
 
 class UUID(Scalar):
@@ -14,8 +15,9 @@ class UUID(Scalar):
     def serialize(uuid):
         if isinstance(uuid, str):
             uuid = _UUID(uuid)
-        assert isinstance(uuid, _UUID), "Expected UUID instance, received {}".format(
-            uuid
+        raise_assertion_if_not(
+            condition=isinstance(uuid, _UUID),
+            message="Expected UUID instance, received {}".format(uuid)
         )
         return str(uuid)
 

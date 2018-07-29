@@ -13,6 +13,7 @@ from graphql.utils.schema_printer import print_schema
 from .definitions import GrapheneGraphQLType
 from .objecttype import ObjectType
 from .typemap import TypeMap, is_graphene_type
+from ..utils.comparison_helper import raise_assertion_if_not
 
 
 def assert_valid_root_type(_type):
@@ -20,9 +21,10 @@ def assert_valid_root_type(_type):
         return
     is_graphene_objecttype = inspect.isclass(_type) and issubclass(_type, ObjectType)
     is_graphql_objecttype = isinstance(_type, GraphQLObjectType)
-    assert is_graphene_objecttype or is_graphql_objecttype, (
-        "Type {} is not a valid ObjectType."
-    ).format(_type)
+    raise_assertion_if_not(
+        condition=is_graphene_objecttype or is_graphql_objecttype,
+        message="Type {} is not a valid ObjectType.".format(_type)
+    )
 
 
 class Schema(GraphQLSchema):
@@ -53,10 +55,11 @@ class Schema(GraphQLSchema):
         if directives is None:
             directives = [GraphQLIncludeDirective, GraphQLSkipDirective]
 
-        assert all(
-            isinstance(d, GraphQLDirective) for d in directives
-        ), "Schema directives must be List[GraphQLDirective] if provided but got: {}.".format(
-            directives
+        raise_assertion_if_not(
+            condition=all(isinstance(d, GraphQLDirective) for d in directives),
+            message="Schema directives must be List[GraphQLDirective] if provided but got: {}.".format(
+                directives
+            )
         )
         self._directives = directives
         self.build_typemap()
