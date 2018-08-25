@@ -39,11 +39,11 @@ def test_dict_resolver_default_value():
 
 
 def test_dict_or_attr_resolver():
-    resolved = dict_or_attr_resolver('attr', None, demo_dict, info, **args)
-    assert resolved == 'value'
+    resolved = dict_or_attr_resolver("attr", None, demo_dict, info, **args)
+    assert resolved == "value"
 
-    resolved = dict_or_attr_resolver('attr', None, demo_obj, info, **args)
-    assert resolved == 'value'
+    resolved = dict_or_attr_resolver("attr", None, demo_obj, info, **args)
+    assert resolved == "value"
 
 
 def test_get_default_resolver_is_attr_resolver():
