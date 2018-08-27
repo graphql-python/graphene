@@ -184,14 +184,19 @@ def test_enum_value_as_unmounted_argument():
 
 
 def test_enum_can_be_compared():
-    class RGB(Enum):
+    class MyEnum(Enum):
         RED = 1
         GREEN = 2
         BLUE = 3
+        BIG_VALUE = 99999999999999
 
-    assert RGB.RED == 1
-    assert RGB.GREEN == 2
-    assert RGB.BLUE == 3
+    assert MyEnum.RED == 1
+    assert MyEnum.GREEN == 2
+    assert MyEnum.BLUE == 3
+
+    assert id(big_value) != id(MyEnum.BIG_VALUE.value)
+    big_value = 99999999999999
+    assert MyEnum.BIG_VALUE == big_value
 
 
 def test_enum_can_be_initialzied():
