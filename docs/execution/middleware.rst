@@ -41,6 +41,18 @@ And then execute it with:
 
     result = schema.execute('THE QUERY', middleware=[AuthorizationMiddleware()])
 
+Or set it up in the default middleware to be executed for every query in settings.py:
+
+.. code:: python
+
+    GRAPHENE = {
+        'SCHEMA': 'my_app.schema.schema'
+        'MIDDLEWARE': (
+            'graphene_django.debug.DjangoDebugMiddleware',
+            'mymodule.AuthorizationMiddleware'
+        )
+    }
+
 
 Functional example
 ------------------
@@ -69,3 +81,4 @@ And then execute it with:
 .. code:: python
 
     result = schema.execute('THE QUERY', middleware=[timing_middleware])
+    
