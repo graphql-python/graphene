@@ -28,7 +28,7 @@ def test_jsonstring_query_variable():
 
     result = schema.execute(
         """query Test($json: JSONString){ json(input: $json) }""",
-        variable_values={"json": json_value},
+        variables={"json": json_value},
     )
     assert not result.errors
     assert result.data == {"json": json_value}

@@ -72,7 +72,7 @@ def test_fetch_some_id_query(snapshot):
         }
     """
     params = {"someId": "1000"}
-    snapshot.assert_match(client.execute(query, variable_values=params))
+    snapshot.assert_match(client.execute(query, variables=params))
 
 
 def test_fetch_some_id_query2(snapshot):
@@ -84,7 +84,7 @@ def test_fetch_some_id_query2(snapshot):
         }
     """
     params = {"someId": "1002"}
-    snapshot.assert_match(client.execute(query, variable_values=params))
+    snapshot.assert_match(client.execute(query, variables=params))
 
 
 def test_invalid_id_query(snapshot):
@@ -96,7 +96,7 @@ def test_invalid_id_query(snapshot):
         }
     """
     params = {"id": "not a valid id"}
-    snapshot.assert_match(client.execute(query, variable_values=params))
+    snapshot.assert_match(client.execute(query, variables=params))
 
 
 def test_fetch_luke_aliased(snapshot):
