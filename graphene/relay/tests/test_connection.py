@@ -138,7 +138,7 @@ def test_connectionfield_node_deprecated():
     with pytest.raises(Exception) as exc_info:
         field.type
 
-    assert "ConnectionField's now need a explicit ConnectionType for Nodes." in str(
+    assert "ConnectionFields now need a explicit ConnectionType for Nodes." in str(
         exc_info.value
     )
 
