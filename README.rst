@@ -107,8 +107,8 @@ this project. While developing, run new and existing tests with:
 
 .. code:: sh
 
-    py.test PATH/TO/MY/DIR/test_test.py # Single file
-    py.test PATH/TO/MY/DIR/ # All tests in directory
+    py.test graphene/relay/tests/test_node.py # Single file
+    py.test graphene/relay # All tests in directory
 
 Add the ``-s`` flag if you have introduced breakpoints into the code for
 debugging. Add the ``-v`` ("verbose") flag to get more detailed test

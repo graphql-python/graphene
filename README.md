@@ -80,8 +80,8 @@ pip install -e ".[test]"
 Well-written tests and maintaining good test coverage is important to this project. While developing, run new and existing tests with:
 
 ```sh
-py.test PATH/TO/MY/DIR/test_test.py # Single file
-py.test PATH/TO/MY/DIR/ # All tests in directory
+py.test graphene/relay/tests/test_node.py # Single file
+py.test graphene/relay # All tests in directory
 ```
 
 Add the `-s` flag if you have introduced breakpoints into the code for debugging.
