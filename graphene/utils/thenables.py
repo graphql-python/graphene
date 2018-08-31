@@ -6,10 +6,13 @@ This includes:
 """
 
 try:
-    from promise import Promise, is_thenable
+    from promise import Promise, is_thenable  # type: ignore
 except ImportError:
 
-    def is_thenable(obj):
+    class Promise(object):  # type: ignore
+        pass
+
+    def is_thenable(obj):  # type: ignore
         return False
 
 
@@ -28,7 +31,7 @@ def maybe_thenable(obj, on_resolve):
     returning the same type of object inputed.
     If the object is not thenable, it should return on_resolve(obj)
     """
-    if isawaitable(obj):
+    if isawaitable(obj) and not isinstance(obj, Promise):
         return await_and_execute(obj, on_resolve)
 
     if is_thenable(obj):
