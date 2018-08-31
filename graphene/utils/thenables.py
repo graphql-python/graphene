@@ -18,7 +18,7 @@ try:
     from .thenables_asyncio import await_and_execute
 except ImportError:
 
-    def isawaitable(obj):
+    def isawaitable(obj):  # type: ignore
         return False
 
 
