@@ -3,11 +3,11 @@ from collections import Iterable, OrderedDict
 from functools import partial
 
 from graphql_relay import connection_from_list
-from promise import Promise, is_thenable
 
 from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String, Union
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
+from ..utils.thenables import maybe_thenable
 from .node import is_node
 
 
@@ -139,10 +139,7 @@ class IterableConnectionField(Field):
             connection_type = connection_type.of_type
 
         on_resolve = partial(cls.resolve_connection, connection_type, args)
-        if is_thenable(resolved):
-            return Promise.resolve(resolved).then(on_resolve)
-
-        return on_resolve(resolved)
+        return maybe_thenable(resolved, on_resolve)
 
     def get_resolver(self, parent_resolver):
         resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)

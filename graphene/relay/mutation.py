@@ -1,10 +1,9 @@
 import re
 from collections import OrderedDict
 
-from promise import Promise, is_thenable
-
 from ..types import Field, InputObjectType, String
 from ..types.mutation import Mutation
+from ..utils.thenables import maybe_thenable
 
 
 class ClientIDMutation(Mutation):
@@ -69,7 +68,4 @@ class ClientIDMutation(Mutation):
             return payload
 
         result = cls.mutate_and_get_payload(root, info, **input)
-        if is_thenable(result):
-            return Promise.resolve(result).then(on_resolve)
-
-        return on_resolve(result)
+        return maybe_thenable(result, on_resolve)
