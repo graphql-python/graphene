@@ -255,6 +255,7 @@ class TypeMap(GraphQLTypeMap):
         return GrapheneUnionType(
             graphene_type=type,
             name=type._meta.name,
+            description=type._meta.description,
             types=types,
             resolve_type=_resolve_type,
         )
