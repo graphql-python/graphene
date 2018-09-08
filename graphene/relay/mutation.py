@@ -20,9 +20,9 @@ class ClientIDMutation(Mutation):
         assert not output, "Can't specify any output"
         assert not arguments, "Can't specify any arguments"
 
-        bases = (InputObjectType, )
+        bases = (InputObjectType,)
         if input_class:
-            bases = (input_class, ) + bases
+            bases = (input_class,) + bases
 
         if not input_fields:
             input_fields = {}
