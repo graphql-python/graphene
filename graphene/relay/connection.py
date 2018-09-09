@@ -12,6 +12,12 @@ from .node import is_node
 
 
 class PageInfo(ObjectType):
+    class Meta:
+        description = (
+            "The Relay compliant `PageInfo` type, containing data necessary to"
+            " paginate this connection."
+        )
+
     has_next_page = Boolean(
         required=True,
         name="hasNextPage",
@@ -64,13 +70,18 @@ class Connection(ObjectType):
             node = Field(_node, description="The item at the end of the edge")
             cursor = String(required=True, description="A cursor for use in pagination")
 
+        class EdgeMeta:
+            description = "A Relay edge containing a `{}` and its cursor.".format(
+                base_name
+            )
+
         edge_name = "{}Edge".format(base_name)
         if edge_class:
             edge_bases = (edge_class, EdgeBase, ObjectType)
         else:
             edge_bases = (EdgeBase, ObjectType)
 
-        edge = type(edge_name, edge_bases, {})
+        edge = type(edge_name, edge_bases, {"Meta": EdgeMeta})
         cls.Edge = edge
 
         options["name"] = name
