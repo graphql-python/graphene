@@ -40,7 +40,6 @@ from .scalars import ID, Boolean, Float, Int, Scalar, String
 from .structures import List, NonNull
 from .union import Union
 from .utils import get_field_as
-from ..utils.comparison_helper import raise_assertion_if_not
 
 
 def is_graphene_type(_type):
@@ -61,16 +60,13 @@ def resolve_type(resolve_type_func, map, type_name, root, info):
 
     if inspect.isclass(_type) and issubclass(_type, ObjectType):
         graphql_type = map.get(_type._meta.name)
-        raise_assertion_if_not(
-            condition=graphql_type,
-            message="Can't find type {} in schema".format(_type._meta.name),
-        )
-        raise_assertion_if_not(
-            condition=graphql_type.graphene_type is _type,
-            message="The type {} does not match with the associated graphene type {}.".format(
+        if not graphql_type:
+            raise AssertionError("Can't find type {} in schema".format(_type._meta.name))
+
+        if not graphql_type.graphene_type is _type:
+            raise AssertionError("The type {} does not match with the associated graphene type {}.".format(
                 _type, graphql_type.graphene_type
-            ),
-        )
+            ))
         return graphql_type
 
     return _type
@@ -101,12 +97,10 @@ class TypeMap(GraphQLTypeMap):
         if type._meta.name in map:
             _type = map[type._meta.name]
             if isinstance(_type, GrapheneGraphQLType):
-                raise_assertion_if_not(
-                    condition=_type.graphene_type is type,
-                    message="Found different types with the same name in the schema: {}, {}.".format(
+                if not _type.graphene_type is type:
+                    raise AssertionError("Found different types with the same name in the schema: {}, {}.".format(
                         _type.graphene_type, type
-                    ),
-                )
+                    ))
             return map
 
         if issubclass(type, ObjectType):
@@ -183,12 +177,10 @@ class TypeMap(GraphQLTypeMap):
         if type._meta.name in map:
             _type = map[type._meta.name]
             if isinstance(_type, GrapheneGraphQLType):
-                raise_assertion_if_not(
-                    condition=_type.graphene_type is type,
-                    message="Found different types with the same name in the schema: {}, {}.".format(
+                if not _type.graphene_type is type:
+                    raise AssertionError("Found different types with the same name in the schema: {}, {}.".format(
                         _type.graphene_type, type
-                    ),
-                )
+                    ))
             return _type
 
         def interfaces():
@@ -196,9 +188,8 @@ class TypeMap(GraphQLTypeMap):
             for interface in type._meta.interfaces:
                 self.graphene_reducer(map, interface)
                 internal_type = map[interface._meta.name]
-                raise_assertion_if_not(
-                    condition=internal_type.graphene_type is interface
-                )
+                if not internal_type.graphene_type is interface:
+                    raise AssertionError
                 interfaces.append(internal_type)
             return interfaces
 
@@ -222,12 +213,10 @@ class TypeMap(GraphQLTypeMap):
         if type._meta.name in map:
             _type = map[type._meta.name]
             if isinstance(_type, GrapheneInterfaceType):
-                raise_assertion_if_not(
-                    condition=_type.graphene_type is type,
-                    message="Found different types with the same name in the schema: {}, {}.".format(
+                if not _type.graphene_type is type:
+                    raise AssertionError("Found different types with the same name in the schema: {}, {}.".format(
                         _type.graphene_type, type
-                    ),
-                )
+                    ))
             return _type
 
         _resolve_type = None
@@ -266,9 +255,8 @@ class TypeMap(GraphQLTypeMap):
             for objecttype in type._meta.types:
                 self.graphene_reducer(map, objecttype)
                 internal_type = map[objecttype._meta.name]
-                raise_assertion_if_not(
-                    condition=internal_type.graphene_type is objecttype
-                )
+                if not internal_type.graphene_type is objecttype:
+                    raise AssertionError
                 union_types.append(internal_type)
             return union_types
 

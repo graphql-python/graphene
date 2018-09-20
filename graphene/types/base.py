@@ -1,6 +1,5 @@
 from ..utils.subclass_with_meta import SubclassWithMeta
 from ..utils.trim_docstring import trim_docstring
-from ..utils.comparison_helper import raise_assertion_if_not
 
 
 class BaseOptions(object):
@@ -32,9 +31,9 @@ class BaseType(SubclassWithMeta):
 
     @classmethod
     def __init_subclass_with_meta__(cls, name=None, description=None, _meta=None):
-        raise_assertion_if_not(
-            condition="_meta" not in cls.__dict__, message="Can't assign directly meta"
-        )
+        if "_meta" in cls.__dict__:
+            raise AssertionError("Can't assign directly meta")
+
         if not _meta:
             return
         _meta.name = name or cls.__name__

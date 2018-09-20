@@ -1,6 +1,5 @@
 from ..utils.orderedtype import OrderedType
 from .unmountedtype import UnmountedType
-from ..utils.comparison_helper import raise_assertion_if_not
 
 
 class MountedType(OrderedType):
@@ -9,10 +8,8 @@ class MountedType(OrderedType):
         """
         Mount the UnmountedType instance
         """
-        raise_assertion_if_not(
-            condition=isinstance(unmounted, UnmountedType),
-            message="{} can't mount {}".format(cls.__name__, repr(unmounted)),
-        )
+        if not isinstance(unmounted, UnmountedType):
+            raise AssertionError("{} can't mount {}".format(cls.__name__, repr(unmounted)))
 
         return cls(
             unmounted.get_type(),

@@ -4,7 +4,6 @@ from .base import BaseOptions, BaseType
 from .field import Field
 from .interface import Interface
 from .utils import yank_fields_from_attrs
-from ..utils.comparison_helper import raise_assertion_if_not
 
 # For static type checking with Mypy
 MYPY = False
@@ -40,24 +39,18 @@ class ObjectType(BaseType):
         fields = OrderedDict()
 
         for interface in interfaces:
-            raise_assertion_if_not(
-                condition=issubclass(interface, Interface),
-                message='All interfaces of {} must be a subclass of Interface. Received "{}".'.format(
+            if not issubclass(interface, Interface):
+                raise AssertionError('All interfaces of {} must be a subclass of Interface. Received "{}".'.format(
                     cls.__name__, interface
-                ),
-            )
+                ))
             fields.update(interface._meta.fields)
 
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=Field))
 
-        raise_assertion_if_not(
-            condition=not (possible_types and cls.is_type_of),
-            message=(
-                "{name}.Meta.possible_types will cause type collision with {name}.is_type_of. "
-                "Please use one or other.".format(name=cls.__name__)
-            ),
-        )
+        if possible_types and cls.is_type_of:
+            raise AssertionError("{name}.Meta.possible_types will cause type collision with {name}.is_type_of. "
+                "Please use one or other.".format(name=cls.__name__))
 
         if _meta.fields:
             _meta.fields.update(fields)

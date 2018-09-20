@@ -7,7 +7,6 @@ from .mountedtype import MountedType
 from .structures import NonNull
 from .unmountedtype import UnmountedType
 from .utils import get_type
-from ..utils.comparison_helper import raise_assertion_if_not
 
 base_type = type
 
@@ -35,24 +34,18 @@ class Field(MountedType):
         **extra_args
     ):
         super(Field, self).__init__(_creation_counter=_creation_counter)
-        raise_assertion_if_not(
-            condition=not args or isinstance(args, Mapping),
-            message='Arguments in a field have to be a mapping, received "{}".'.format(
+        if not (not args or isinstance(args, Mapping)):
+            raise AssertionError('Arguments in a field have to be a mapping, received "{}".'.format(
                 args
-            ),
-        )
+            ))
 
-        raise_assertion_if_not(
-            condition=not (source and resolver),
-            message="A Field cannot have a source and a resolver in at the same time.",
-        )
+        if source and resolver:
+            raise AssertionError("A Field cannot have a source and a resolver in at the same time.")
 
-        raise_assertion_if_not(
-            condition=not callable(default_value),
-            message='The default value can not be a function but received "{}".'.format(
+        if callable(default_value):
+            raise AssertionError('The default value can not be a function but received "{}".'.format(
                 base_type(default_value)
-            ),
-        )
+            ))
 
         if required:
             type = NonNull(type)

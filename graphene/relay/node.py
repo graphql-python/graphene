@@ -49,7 +49,8 @@ class GlobalID(Field):
 
 class NodeField(Field):
     def __init__(self, node, type=False, deprecation_reason=None, name=None, **kwargs):
-        assert issubclass(node, Node), "NodeField can only operate in Nodes"
+        if not issubclass(node, Node):
+            raise AssertionError("NodeField can only operate in Nodes")
         self.node_type = node
         self.field_type = type
 
