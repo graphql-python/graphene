@@ -12,7 +12,7 @@ class Dynamic(MountedType):
 
     def __init__(self, type, with_schema=False, _creation_counter=None):
         super(Dynamic, self).__init__(_creation_counter=_creation_counter)
-        if not inspect.isfunction(type) or isinstance(type, partial):
+        if not (inspect.isfunction(type) or isinstance(type, partial)):
             raise AssertionError
         self.type = type
         self.with_schema = with_schema
