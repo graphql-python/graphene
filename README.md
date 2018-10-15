@@ -112,15 +112,8 @@ Tox can only use whatever versions of python are installed on your system. When 
 
 The documentation is generated using the excellent [Sphinx](http://www.sphinx-doc.org/) and a custom theme.
 
-The documentation dependencies are installed by running:
+An HTML version of the documentation is produced by running:
 
 ```sh
-cd docs
-pip install -r requirements.txt
-```
-
-Then to produce a HTML version of the documentation:
-
-```sh
-make html
+make docs
 ```
