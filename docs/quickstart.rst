@@ -30,17 +30,18 @@ server with an associated set of resolve methods that know how to fetch
 data.
 
 We are going to create a very simple schema, with a ``Query`` with only
-one field: ``hello`` and an input name. And when we query it, it should return ``"Hello {name}"``.
+one field: ``hello`` and an input name. And when we query it, it should return ``"Hello 
+{argument}"``.
 
 .. code:: python
 
     import graphene
 
     class Query(graphene.ObjectType):
-        hello = graphene.String(name=graphene.String(default_value="stranger"))
+        hello = graphene.String(argument=graphene.String(default_value="stranger"))
 
-        def resolve_hello(self, info, name):
-            return 'Hello ' + name
+        def resolve_hello(self, info, argument):
+            return 'Hello ' + argument
 
     schema = graphene.Schema(query=Query)
 
@@ -53,5 +54,9 @@ Then we can start querying our schema:
 
     result = schema.execute('{ hello }')
     print(result.data['hello']) # "Hello stranger"
+
+    # or passing the argument in the query
+    result = schema.execute('{ hello (argument: "graph") }')
+    print(result.data['hello']) # "Hello graph"
 
 Congrats! You got your first graphene schema working!
