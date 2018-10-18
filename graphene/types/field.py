@@ -1,4 +1,5 @@
 import inspect
+from graphql.error import GraphQLError
 from collections import Mapping, OrderedDict
 from functools import partial
 
@@ -31,6 +32,7 @@ class Field(MountedType):
         required=False,
         _creation_counter=None,
         default_value=None,
+        permission_classes=[],
         **extra_args
     ):
         super(Field, self).__init__(_creation_counter=_creation_counter)
@@ -66,10 +68,39 @@ class Field(MountedType):
         self.deprecation_reason = deprecation_reason
         self.description = description
         self.default_value = default_value
+        self.permission_classes = permission_classes
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this field requires.
+        """
+        return [permission() for permission in self.permission_classes]
+
+    def check_permissions(self, info):
+        for permission in self.get_permissions():
+            if not permission.has_permission(info, self):
+                self.permission_denied(
+                    info, message=getattr(permission, 'message', None)
+                )
+
+    def permission_denied(self, info, message=None):
+        raise GraphQLError(message)
 
     @property
     def type(self):
         return get_type(self._type)
 
     def get_resolver(self, parent_resolver):
-        return self.resolver or parent_resolver
+        _resolver = self.resolver or parent_resolver
+
+        if not _resolver:
+            return None
+
+        def resolver(root, info, *args, **kwargs):
+
+            # TODO: pass root?
+            self.check_permissions(info)
+
+            return _resolver(root, info, *args, **kwargs)
+
+        return resolver
