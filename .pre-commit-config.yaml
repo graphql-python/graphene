@@ -21,4 +21,4 @@ repos:
     rev: 18.6b4
     hooks:
     - id: black
-      language_version: python3.6
+      language_version: python3
