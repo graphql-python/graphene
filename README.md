@@ -71,22 +71,6 @@ Graphene is an MIT-licensed open source project. It's an independent project wit
 </table>
 <!--silver end-->
 
-<h2 align="center">Bronze via Patreon</h2>
-
-<!--bronze start-->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="middle">
-        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
-          <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<!--bronze end-->
-
 ---
 
 ## Introduction

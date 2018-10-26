@@ -180,50 +180,6 @@ Silver via Patreon
 
    <!--silver end-->
 
-.. raw:: html
-
-   <h2 align="center">
-
-Bronze via Patreon
-
-.. raw:: html
-
-   </h2>
-
-.. raw:: html
-
-   <!--bronze start-->
-
-.. raw:: html
-
-   <table>
-
-.. raw:: html
-
-   <tbody>
-
-::
-
-    <tr>
-      <td align="center" valign="middle">
-        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
-          <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
-        </a>
-      </td>
-    </tr>
-
-.. raw:: html
-
-   </tbody>
-
-.. raw:: html
-
-   </table>
-
-.. raw:: html
-
-   <!--bronze end-->
-
 --------------
 
 Introduction
