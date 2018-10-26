@@ -11,8 +11,6 @@ Graphene is an MIT-licensed open source project. It's an independent project wit
 - [Become a backer or sponsor on Patreon](https://www.patreon.com/syrusakbary).
 - [One-time donation via PayPal.](https://graphene-python.org/support-graphene/)
 
-<br><br>
-
 <!--<h2 align="center">Special Sponsors</h2>
 
 
