@@ -7,6 +7,228 @@ to see how you can help ❤️
 |Graphene Logo| `Graphene <http://graphene-python.org>`__ |Build Status| |PyPI version| |Coverage Status|
 =========================================================================================================
 
+.. raw:: html
+
+   <h1 align="center">
+
+Supporting Graphene Python
+
+.. raw:: html
+
+   </h1>
+
+Graphene is an MIT-licensed open source project. It's an independent
+project with its ongoing development made possible entirely thanks to
+the support by these awesome
+`backers <https://github.com/graphql-python/graphene/blob/master/BACKERS.md>`__.
+If you'd like to join them, please consider:
+
+-  `Become a backer or sponsor on
+   Patreon <https://www.patreon.com/syrusakbary>`__.
+-  `One-time donation via
+   PayPal. <https://graphene-python.org/support-graphene/>`__
+
+<!--
+
+.. raw:: html
+
+   <h2 align="center">
+
+Special Sponsors
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <p align="center">
+
+.. raw:: html
+
+   </p>
+
+.. raw:: html
+
+   <!--special end-->
+
+.. raw:: html
+
+   <h2 align="center">
+
+Platinum via Patreon
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <!--platinum start-->
+
+.. raw:: html
+
+   <table>
+
+.. raw:: html
+
+   <tbody>
+
+::
+
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
+          <img width="222px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
+        </a>
+      </td>
+    </tr>
+
+.. raw:: html
+
+   </tbody>
+
+.. raw:: html
+
+   </table>
+
+.. raw:: html
+
+   <h2 align="center">
+
+Gold via Patreon
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <!--gold start-->
+
+.. raw:: html
+
+   <table>
+
+.. raw:: html
+
+   <tbody>
+
+::
+
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
+          <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
+        </a>
+      </td>
+    </tr>
+
+.. raw:: html
+
+   </tbody>
+
+.. raw:: html
+
+   </table>
+
+.. raw:: html
+
+   <!--gold end-->
+
+.. raw:: html
+
+   <h2 align="center">
+
+Silver via Patreon
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <!--silver start-->
+
+.. raw:: html
+
+   <table>
+
+.. raw:: html
+
+   <tbody>
+
+::
+
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
+          <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
+        </a>
+      </td>
+    </tr>
+
+.. raw:: html
+
+   </tbody>
+
+.. raw:: html
+
+   </table>
+
+.. raw:: html
+
+   <!--silver end-->
+
+.. raw:: html
+
+   <h2 align="center">
+
+Bronze via Patreon
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <!--bronze start-->
+
+.. raw:: html
+
+   <table>
+
+.. raw:: html
+
+   <tbody>
+
+::
+
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
+          <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
+        </a>
+      </td>
+    </tr>
+
+.. raw:: html
+
+   </tbody>
+
+.. raw:: html
+
+   </table>
+
+.. raw:: html
+
+   <!--bronze end-->
+
+--------------
+
+Introduction
+------------
+
 `Graphene <http://graphene-python.org>`__ is a Python library for
 building GraphQL schemas/types fast and easily.
 
@@ -152,18 +374,11 @@ Documentation
 The documentation is generated using the excellent
 `Sphinx <http://www.sphinx-doc.org/>`__ and a custom theme.
 
-The documentation dependencies are installed by running:
+An HTML version of the documentation is produced by running:
 
 .. code:: sh
 
-    cd docs
-    pip install -r requirements.txt
-
-Then to produce a HTML version of the documentation:
-
-.. code:: sh
-
-    make html
+    make docs
 
 .. |Graphene Logo| image:: http://graphene-python.org/favicon.png
 .. |Build Status| image:: https://travis-ci.org/graphql-python/graphene.svg?branch=master

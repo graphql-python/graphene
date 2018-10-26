@@ -25,7 +25,7 @@ Graphene is an MIT-licensed open source project. It's an independent project wit
   <tbody>
     <tr>
       <td align="center" valign="middle">
-        <a href="https://www.patreon.com/bePatron?c=2046477" target="_blank">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
           <img width="222px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
         </a>
       </td>
@@ -40,7 +40,7 @@ Graphene is an MIT-licensed open source project. It's an independent project wit
   <tbody>
     <tr>
       <td align="center" valign="middle">
-        <a href="https://www.patreon.com/bePatron?c=2046477" target="_blank">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
           <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
         </a>
       </td>
@@ -56,7 +56,7 @@ Graphene is an MIT-licensed open source project. It's an independent project wit
   <tbody>
     <tr>
       <td align="center" valign="middle">
-        <a href="https://www.patreon.com/bePatron?c=2046477" target="_blank">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
           <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
         </a>
       </td>
@@ -72,7 +72,7 @@ Graphene is an MIT-licensed open source project. It's an independent project wit
   <tbody>
     <tr>
       <td align="center" valign="middle">
-        <a href="https://www.patreon.com/bePatron?c=2046477" target="_blank">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
           <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
         </a>
       </td>
@@ -86,12 +86,12 @@ Graphene is an MIT-licensed open source project. It's an independent project wit
 <!--50 start-->
 
 - [Lee Benson](https://github.com/leebenson)
-- [Become a Patron](https://www.patreon.com/bePatron?c=2046477)
+- [Become a Patron](https://www.patreon.com/join/syrusakbary)
   <!--50 end-->
 
 <h2 align="center">Backers via Patreon</h2>
 
 <!--10 start-->
 
-- [Become a Patron](https://www.patreon.com/bePatron?c=2046477)
+- [Become a Patron](https://www.patreon.com/join/syrusakbary)
   <!--10 end-->
