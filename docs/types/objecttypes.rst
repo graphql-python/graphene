@@ -47,7 +47,7 @@ Resolvers
 ---------
 
 A resolver is a method that resolves certain fields within a
-``ObjectType``. If not specififed otherwise, the resolver of a
+``ObjectType``. If not specified otherwise, the resolver of a
 field is the ``resolve_{field_name}`` method on the ``ObjectType``.
 
 By default resolvers take the arguments ``info`` and ``*args``.
