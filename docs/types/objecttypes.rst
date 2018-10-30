@@ -46,13 +46,13 @@ The above ``Person`` ObjectType has the following schema representation:
 Resolvers
 ---------
 
-A resolver is a method that resolves certain fields within a
+A resolver is a method that resolves certain fields within an
 ``ObjectType``. If not specified otherwise, the resolver of a
 field is the ``resolve_{field_name}`` method on the ``ObjectType``.
 
 By default resolvers take the arguments ``info`` and ``*args``.
 
-NOTE: The resolvers on a ``ObjectType`` are always treated as ``staticmethod``\ s,
+NOTE: The resolvers on an ``ObjectType`` are always treated as ``staticmethod``\ s,
 so the first argument to the resolver method ``self`` (or ``root``) need
 not be an actual instance of the ``ObjectType``.
 
