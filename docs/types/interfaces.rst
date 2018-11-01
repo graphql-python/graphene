@@ -91,7 +91,7 @@ For example, you can define a field ``hero`` that resolves to any
     schema = graphene.Schema(query=Query, types=[Human, Droid])
 
 This allows you to directly query for fields that exist on the Character interface
-as well as selecting specific fields on any type that implments the interface
+as well as selecting specific fields on any type that implements the interface
 using `inline fragments <https://graphql.org/learn/queries/#inline-fragments>`_.
 
 For example, the following query:
