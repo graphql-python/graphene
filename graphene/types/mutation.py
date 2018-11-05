@@ -85,7 +85,7 @@ class Mutation(ObjectType):
             args=cls._meta.arguments,
             resolver=cls._meta.resolver,
             name=name,
-            description=description,
+            description=description or cls._meta.description,
             deprecation_reason=deprecation_reason,
             required=required,
         )
