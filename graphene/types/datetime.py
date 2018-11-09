@@ -32,6 +32,9 @@ class Date(Scalar):
     @staticmethod
     def parse_value(value):
         try:
+            if isinstance(value, datetime.date):
+                return value
+
             return parse_date(value)
         except ValueError:
             return None
@@ -59,6 +62,9 @@ class DateTime(Scalar):
     @staticmethod
     def parse_value(value):
         try:
+            if isinstance(value, datetime.datetime):
+                return value
+
             return parse_datetime(value)
         except ValueError:
             return None
@@ -86,6 +92,9 @@ class Time(Scalar):
     @classmethod
     def parse_value(cls, value):
         try:
+            if isinstance(value, datetime.time):
+                return value
+
             return parse_time(value)
         except ValueError:
             return None
