@@ -34,8 +34,8 @@ class Date(Scalar):
         try:
             if isinstance(value, datetime.date):
                 return value
-
-            return parse_date(value)
+            elif isinstance(value, str):
+                return parse_date(value)
         except ValueError:
             return None
 
@@ -64,8 +64,8 @@ class DateTime(Scalar):
         try:
             if isinstance(value, datetime.datetime):
                 return value
-
-            return parse_datetime(value)
+            elif isinstance(value, str):
+                return parse_datetime(value)
         except ValueError:
             return None
 
@@ -94,7 +94,7 @@ class Time(Scalar):
         try:
             if isinstance(value, datetime.time):
                 return value
-
-            return parse_time(value)
+            elif isinstance(value, str):
+                return parse_time(value)
         except ValueError:
             return None
