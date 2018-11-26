@@ -1,5 +1,7 @@
 from ..field import Field
 from ..interface import Interface
+from ..objecttype import ObjectType
+from ..typemap import TypeMap, resolve_type
 from ..unmountedtype import UnmountedType
 
 
@@ -88,3 +90,32 @@ def test_generate_interface_inherit_abstracttype_reversed():
 
     assert list(MyInterface._meta.fields.keys()) == ["field1", "field2"]
     assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
+
+
+def test_generate_interface_with_resolve_type():
+    class MyInterface(Interface):
+        field1 = MyScalar()
+
+        @classmethod
+        def resolve_type(cls, data, info):
+            return MyInterfaceObject
+
+    class MyInterfaceType(ObjectType):
+        field_other = MyScalar()
+        class Meta:
+            interfaces = (MyInterface,)
+
+    class MyObject(ObjectType):
+        field2 = Field(MyInterface)
+
+    assert list(MyInterface._meta.fields.keys()) == ["field1"]
+    assert [type(x) for x in MyInterface._meta.fields.values()] == [Field]
+
+    assert list(MyInterfaceType._meta.fields.keys()) == ["field1", "field_other"]
+    assert [type(x) for x in MyInterfaceType._meta.fields.values()] == [Field, Field]
+
+    assert list(MyObject._meta.fields.keys()) == ["field2"]
+    assert [type(x) for x in MyObject._meta.fields.values()] == [Field]
+
+    field = [x for x in MyObject._meta.fields.values()][0]
+    assert field.type == MyInterfaceType

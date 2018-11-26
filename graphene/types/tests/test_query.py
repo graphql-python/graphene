@@ -127,6 +127,50 @@ def test_query_interface():
     }
 
 
+def test_query_interface_resolve_type():
+    class one_object(object):
+        pass
+
+    class two_object(object):
+        pass
+
+    class MyInterface(Interface):
+        base = String()
+
+        @classmethod
+        def resolve_type(cls, data, info):
+            if isinstance(data, one_object):
+                return One
+            if isinstance(data, two_object):
+                return Two
+
+    class One(ObjectType):
+        class Meta:
+            interfaces = (MyInterface,)
+
+        one = String()
+
+    class Two(ObjectType):
+        class Meta:
+            interfaces = (MyInterface,)
+
+        two = String()
+
+    class Query(ObjectType):
+        interfaces = List(MyInterface)
+
+        def resolve_interfaces(self, info):
+            return [one_object(), two_object()]
+
+    hello_schema = Schema(Query, types=[One, Two])
+
+    executed = hello_schema.execute("{ interfaces { __typename } }")
+    assert not executed.errors
+    assert executed.data == {
+        "interfaces": [{"__typename": "One"}, {"__typename": "Two"}]
+    }
+
+
 def test_query_dynamic():
     class Query(ObjectType):
         hello = Dynamic(lambda: String(resolver=lambda *_: "World"))
