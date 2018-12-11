@@ -145,12 +145,14 @@ def test_time_query_variable():
     assert result.data == {"time": isoformat}
 
 
-@pytest.mark.xfail(reason="creating the error message fails when un-parsable object is not JSON serializable.")
+@pytest.mark.xfail(
+    reason="creating the error message fails when un-parsable object is not JSON serializable."
+)
 def test_bad_variables():
     def _test_bad_variables(type, input):
         result = schema.execute(
-            """query Test($input: %s){ %s(in: $input) }""" % (type, type.lower()),
-            variables={"input": input}
+            """query Test($input: {}){{ {}(in: $input) }}""".format(type, type.lower()),
+            variables={"input": input},
         )
         assert len(result.errors) == 1
         # when `input` is not JSON serializable formatting the error message in
@@ -166,9 +168,18 @@ def test_bad_variables():
     time = datetime.time(now.hour, now.minute, now.second, now.microsecond, now.tzinfo)
 
     bad_pairs = [
-        ('DateTime', not_a_date), ('DateTime', not_a_date_str), ('DateTime', today), ('DateTime', time),
-        ('Date', not_a_date), ('Date', not_a_date_str), ('Date', now), ('Date', time),
-        ('Time', not_a_date), ('Time', not_a_date_str), ('Time', now), ('Time', today)
+        ("DateTime", not_a_date),
+        ("DateTime", not_a_date_str),
+        ("DateTime", today),
+        ("DateTime", time),
+        ("Date", not_a_date),
+        ("Date", not_a_date_str),
+        ("Date", now),
+        ("Date", time),
+        ("Time", not_a_date),
+        ("Time", not_a_date_str),
+        ("Time", now),
+        ("Time", today),
     ]
 
     for type, input in bad_pairs:
