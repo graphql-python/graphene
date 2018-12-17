@@ -49,11 +49,11 @@ def test_enum():
     assert values == [
         GraphQLEnumValue(
             name="foo",
-            value=1,
+            value=MyEnum.foo,
             description="Description foo=1",
             deprecation_reason="Is deprecated",
         ),
-        GraphQLEnumValue(name="bar", value=2, description="Description bar=2"),
+        GraphQLEnumValue(name="bar", value=MyEnum.bar, description="Description bar=2"),
     ]
 
 

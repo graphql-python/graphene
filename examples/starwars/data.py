@@ -3,14 +3,14 @@ droid_data = {}
 
 
 def setup():
-    from .schema import Human, Droid
+    from .schema import Human, Droid, Episode
 
     global human_data, droid_data
     luke = Human(
         id="1000",
         name="Luke Skywalker",
         friends=["1002", "1003", "2000", "2001"],
-        appears_in=[4, 5, 6],
+        appears_in=[Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI],
         home_planet="Tatooine",
     )
 
@@ -18,7 +18,7 @@ def setup():
         id="1001",
         name="Darth Vader",
         friends=["1004"],
-        appears_in=[4, 5, 6],
+        appears_in=[Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI],
         home_planet="Tatooine",
     )
 
@@ -26,7 +26,7 @@ def setup():
         id="1002",
         name="Han Solo",
         friends=["1000", "1003", "2001"],
-        appears_in=[4, 5, 6],
+        appears_in=[Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI],
         home_planet=None,
     )
 
@@ -34,7 +34,7 @@ def setup():
         id="1003",
         name="Leia Organa",
         friends=["1000", "1002", "2000", "2001"],
-        appears_in=[4, 5, 6],
+        appears_in=[Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI],
         home_planet="Alderaan",
     )
 
@@ -42,7 +42,7 @@ def setup():
         id="1004",
         name="Wilhuff Tarkin",
         friends=["1001"],
-        appears_in=[4],
+        appears_in=[Episode.NEWHOPE],
         home_planet=None,
     )
 
@@ -58,7 +58,7 @@ def setup():
         id="2000",
         name="C-3PO",
         friends=["1000", "1002", "1003", "2001"],
-        appears_in=[4, 5, 6],
+        appears_in=[Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI],
         primary_function="Protocol",
     )
 
@@ -66,7 +66,7 @@ def setup():
         id="2001",
         name="R2-D2",
         friends=["1000", "1002", "1003"],
-        appears_in=[4, 5, 6],
+        appears_in=[Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI],
         primary_function="Astromech",
     )
 
@@ -82,7 +82,9 @@ def get_friends(character):
 
 
 def get_hero(episode):
-    if episode == 5:
+    from .schema import Episode
+
+    if episode == Episode.EMPIRE:
         return human_data["1000"]
     return droid_data["2001"]
 
