@@ -1,4 +1,5 @@
 import ast
+import codecs
 import re
 import sys
 
@@ -61,7 +62,9 @@ setup(
     name="graphene",
     version=version,
     description="GraphQL Framework for Python",
-    long_description=open("README.rst").read(),
+    long_description=codecs.open(
+        "README.rst", "r", encoding="ascii", errors="replace"
+    ).read(),
     url="https://github.com/graphql-python/graphene",
     author="Syrus Akbary",
     author_email="me@syrusakbary.com",
