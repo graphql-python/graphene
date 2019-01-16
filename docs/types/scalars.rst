@@ -39,9 +39,8 @@ Graphene defines the following base Scalar Types:
 ``graphene.Int``
 
     Represents non-fractional signed whole numeric
-    values. Int can represent values between `-(2^53 - 1)` and `2^53 - 1` since
-    represented in JSON as double-precision floating point numbers specified
-    by `IEEE 754 <http://en.wikipedia.org/wiki/IEEE_floating_point>`_.
+    values. Int is a signed 32‐bit integer per the
+    `GraphQL spec <https://facebook.github.io/graphql/June2018/#sec-Int>`_
 
 ``graphene.Float``
 
