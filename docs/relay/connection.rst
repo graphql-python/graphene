@@ -35,6 +35,10 @@ Connection Field
 You can create connection fields in any Connection, in case any ObjectType
 that implements ``Node`` will have a default Connection.
 
+The resolver of a connection field should return a list of objects of the
+announced type. Those objects will automatically be wrapped in the edge and node
+structure of the connection.
+
 .. code:: python
 
     class Faction(graphene.ObjectType):
@@ -42,4 +46,5 @@ that implements ``Node`` will have a default Connection.
         ships = relay.ConnectionField(ShipConnection)
 
         def resolve_ships(self, info):
-            return []
+            # shall return a list of ship objects
+            return get_ship_list()
