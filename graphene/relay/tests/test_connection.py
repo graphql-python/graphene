@@ -1,7 +1,7 @@
 import pytest
 
 from ...types import Argument, Field, Int, List, NonNull, ObjectType, Schema, String
-from ..connection import Connection, ConnectionField, PageInfo
+from ..connection import Connection, ConnectionField, PageInfo, ConnectionOptions
 from ..node import Node
 
 
@@ -49,6 +49,25 @@ def test_connection_inherit_abstracttype():
     assert MyObjectConnection._meta.name == "MyObjectConnection"
     fields = MyObjectConnection._meta.fields
     assert list(fields.keys()) == ["page_info", "edges", "extra"]
+
+
+def test_connection_meta_assignment():
+    meta = ConnectionOptions(Connection)
+
+    class BaseConnection(object):
+        extra = String()
+
+    class MyObjectConnection(BaseConnection, Connection):
+        class Meta:
+            node = MyObject
+
+        @classmethod
+        def __init_subclass_with_meta__(cls, node=None, name=None, **options):
+            return super(MyObjectConnection, cls).__init_subclass_with_meta__(
+                _meta=meta, node=node, name=name,  **options
+            )
+
+    assert id(MyObjectConnection._meta) == id(meta)
 
 
 def test_connection_name():
