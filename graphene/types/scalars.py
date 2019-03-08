@@ -4,6 +4,11 @@ from graphql.language.ast import BooleanValue, FloatValue, IntValue, StringValue
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 
+if six.PY3:
+    from typing import Any
+else:
+    Any = object
+
 
 class ScalarOptions(BaseOptions):
     pass
