@@ -276,7 +276,7 @@ If you are using Middelwares, you need to some adjustments:
 Before:
 
 ```python
-class MyGrapheneMiddleware(object):  
+class MyGrapheneMiddleware(object):
     def resolve(self, next_mw, root, args, context, info):
 
         ## Middleware code
@@ -287,7 +287,7 @@ class MyGrapheneMiddleware(object):
 With 2.0:
 
 ```python
-class MyGrapheneMiddleware(object):  
+class MyGrapheneMiddleware(object):
     def resolve(self, next_mw, root, info, **args):
         context = info.context
 

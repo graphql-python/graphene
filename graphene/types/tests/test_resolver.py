@@ -1,4 +1,3 @@
-
 from ..resolver import (
     attr_resolver,
     dict_resolver,
