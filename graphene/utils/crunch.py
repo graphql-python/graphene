@@ -21,9 +21,7 @@ def flatten(data, index, values):
     if isinstance(data, (list, tuple)):
         flattened = [flatten(child, index, values) for child in data]
     elif isinstance(data, Mapping):
-        flattened = {
-            key: flatten(child, index, values) for key, child in data.items()
-        }
+        flattened = {key: flatten(child, index, values) for key, child in data.items()}
     else:
         flattened = data
     return insert(flattened, index, values)

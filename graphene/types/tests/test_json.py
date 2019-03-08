@@ -18,21 +18,17 @@ def test_jsonstring_query():
     json_value = '{"key": "value"}'
 
     json_value_quoted = json_value.replace('"', '\\"')
-    result = schema.execute('''{ json(input: "%s") }''' % json_value_quoted)
+    result = schema.execute("""{ json(input: "%s") }""" % json_value_quoted)
     assert not result.errors
-    assert result.data == {
-        'json': json_value
-    }
+    assert result.data == {"json": json_value}
 
 
 def test_jsonstring_query_variable():
     json_value = '{"key": "value"}'
 
     result = schema.execute(
-        '''query Test($json: JSONString){ json(input: $json) }''',
-        variable_values={'json': json_value}
+        """query Test($json: JSONString){ json(input: $json) }""",
+        variables={"json": json_value},
     )
     assert not result.errors
-    assert result.data == {
-        'json': json_value
-    }
+    assert result.data == {"json": json_value}

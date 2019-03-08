@@ -1,16 +1,21 @@
-from graphql import (GraphQLEnumType, GraphQLInputObjectType,
-                     GraphQLInterfaceType, GraphQLObjectType,
-                     GraphQLScalarType, GraphQLUnionType)
+from graphql import (
+    GraphQLEnumType,
+    GraphQLInputObjectType,
+    GraphQLInterfaceType,
+    GraphQLObjectType,
+    GraphQLScalarType,
+    GraphQLUnionType,
+)
 
 
 class GrapheneGraphQLType(object):
-    '''
+    """
     A class for extending the base GraphQLType with the related
     graphene_type
-    '''
+    """
 
     def __init__(self, *args, **kwargs):
-        self.graphene_type = kwargs.pop('graphene_type')
+        self.graphene_type = kwargs.pop("graphene_type")
         super(GrapheneGraphQLType, self).__init__(*args, **kwargs)
 
 

@@ -10,13 +10,12 @@ class MyType(ObjectType):
 
 
 class MyScalar(UnmountedType):
-
     def get_type(self):
         return MyType
 
 
 def test_abstract_objecttype_warn_deprecation(mocker):
-    mocker.patch.object(abstracttype, 'warn_deprecation')
+    mocker.patch.object(abstracttype, "warn_deprecation")
 
     class MyAbstractType(AbstractType):
         field1 = MyScalar()
@@ -34,5 +33,5 @@ def test_generate_objecttype_inherit_abstracttype():
     assert MyObjectType._meta.description is None
     assert MyObjectType._meta.interfaces == ()
     assert MyObjectType._meta.name == "MyObjectType"
-    assert list(MyObjectType._meta.fields.keys()) == ['field1', 'field2']
+    assert list(MyObjectType._meta.fields.keys()) == ["field1", "field2"]
     assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]

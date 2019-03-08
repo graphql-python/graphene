@@ -6,9 +6,8 @@ from ..node import Node
 
 
 class CustomNode(Node):
-
     class Meta:
-        name = 'Node'
+        name = "Node"
 
     @staticmethod
     def to_global_id(type, id):
@@ -28,27 +27,20 @@ class BasePhoto(Interface):
 
 
 class User(ObjectType):
-
     class Meta:
         interfaces = [CustomNode]
+
     name = String()
 
 
 class Photo(ObjectType):
-
     class Meta:
         interfaces = [CustomNode, BasePhoto]
 
 
-user_data = {
-    '1': User(id='1', name='John Doe'),
-    '2': User(id='2', name='Jane Smith'),
-}
+user_data = {"1": User(id="1", name="John Doe"), "2": User(id="2", name="Jane Smith")}
 
-photo_data = {
-    '3': Photo(id='3', width=300),
-    '4': Photo(id='4', width=400),
-}
+photo_data = {"3": Photo(id="3", width=300), "4": Photo(id="4", width=400)}
 
 
 class RootQuery(ObjectType):
@@ -59,7 +51,9 @@ schema = Schema(query=RootQuery, types=[User, Photo])
 
 
 def test_str_schema_correct():
-    assert str(schema) == '''schema {
+    assert (
+        str(schema)
+        == """schema {
   query: RootQuery
 }
 
@@ -84,47 +78,40 @@ type User implements Node {
   id: ID!
   name: String
 }
-'''
+"""
+    )
 
 
 def test_gets_the_correct_id_for_users():
-    query = '''
+    query = """
       {
         node(id: "1") {
           id
         }
       }
-    '''
-    expected = {
-        'node': {
-            'id': '1',
-        }
-    }
+    """
+    expected = {"node": {"id": "1"}}
     result = graphql(schema, query)
     assert not result.errors
     assert result.data == expected
 
 
 def test_gets_the_correct_id_for_photos():
-    query = '''
+    query = """
       {
         node(id: "4") {
           id
         }
       }
-    '''
-    expected = {
-        'node': {
-            'id': '4',
-        }
-    }
+    """
+    expected = {"node": {"id": "4"}}
     result = graphql(schema, query)
     assert not result.errors
     assert result.data == expected
 
 
 def test_gets_the_correct_name_for_users():
-    query = '''
+    query = """
       {
         node(id: "1") {
           id
@@ -133,20 +120,15 @@ def test_gets_the_correct_name_for_users():
           }
         }
       }
-    '''
-    expected = {
-        'node': {
-            'id': '1',
-            'name': 'John Doe'
-        }
-    }
+    """
+    expected = {"node": {"id": "1", "name": "John Doe"}}
     result = graphql(schema, query)
     assert not result.errors
     assert result.data == expected
 
 
 def test_gets_the_correct_width_for_photos():
-    query = '''
+    query = """
       {
         node(id: "4") {
           id
@@ -155,60 +137,45 @@ def test_gets_the_correct_width_for_photos():
           }
         }
       }
-    '''
-    expected = {
-        'node': {
-            'id': '4',
-            'width': 400
-        }
-    }
+    """
+    expected = {"node": {"id": "4", "width": 400}}
     result = graphql(schema, query)
     assert not result.errors
     assert result.data == expected
 
 
 def test_gets_the_correct_typename_for_users():
-    query = '''
+    query = """
       {
         node(id: "1") {
           id
           __typename
         }
       }
-    '''
-    expected = {
-        'node': {
-            'id': '1',
-            '__typename': 'User'
-        }
-    }
+    """
+    expected = {"node": {"id": "1", "__typename": "User"}}
     result = graphql(schema, query)
     assert not result.errors
     assert result.data == expected
 
 
 def test_gets_the_correct_typename_for_photos():
-    query = '''
+    query = """
       {
         node(id: "4") {
           id
           __typename
         }
       }
-    '''
-    expected = {
-        'node': {
-            'id': '4',
-            '__typename': 'Photo'
-        }
-    }
+    """
+    expected = {"node": {"id": "4", "__typename": "Photo"}}
     result = graphql(schema, query)
     assert not result.errors
     assert result.data == expected
 
 
 def test_ignores_photo_fragments_on_user():
-    query = '''
+    query = """
       {
         node(id: "1") {
           id
@@ -217,35 +184,29 @@ def test_ignores_photo_fragments_on_user():
           }
         }
       }
-    '''
-    expected = {
-        'node': {
-            'id': '1',
-        }
-    }
+    """
+    expected = {"node": {"id": "1"}}
     result = graphql(schema, query)
     assert not result.errors
     assert result.data == expected
 
 
 def test_returns_null_for_bad_ids():
-    query = '''
+    query = """
       {
         node(id: "5") {
           id
         }
       }
-    '''
-    expected = {
-        'node': None
-    }
+    """
+    expected = {"node": None}
     result = graphql(schema, query)
     assert not result.errors
     assert result.data == expected
 
 
 def test_have_correct_node_interface():
-    query = '''
+    query = """
       {
         __type(name: "Node") {
           name
@@ -262,23 +223,20 @@ def test_have_correct_node_interface():
           }
         }
       }
-    '''
+    """
     expected = {
-        '__type': {
-            'name': 'Node',
-            'kind': 'INTERFACE',
-            'fields': [
+        "__type": {
+            "name": "Node",
+            "kind": "INTERFACE",
+            "fields": [
                 {
-                    'name': 'id',
-                    'type': {
-                        'kind': 'NON_NULL',
-                        'ofType': {
-                            'name': 'ID',
-                            'kind': 'SCALAR'
-                        }
-                    }
+                    "name": "id",
+                    "type": {
+                        "kind": "NON_NULL",
+                        "ofType": {"name": "ID", "kind": "SCALAR"},
+                    },
                 }
-            ]
+            ],
         }
     }
     result = graphql(schema, query)
@@ -287,7 +245,7 @@ def test_have_correct_node_interface():
 
 
 def test_has_correct_node_root_field():
-    query = '''
+    query = """
       {
         __schema {
           queryType {
@@ -311,29 +269,23 @@ def test_has_correct_node_root_field():
           }
         }
       }
-    '''
+    """
     expected = {
-        '__schema': {
-            'queryType': {
-                'fields': [
+        "__schema": {
+            "queryType": {
+                "fields": [
                     {
-                        'name': 'node',
-                        'type': {
-                            'name': 'Node',
-                            'kind': 'INTERFACE'
-                        },
-                        'args': [
+                        "name": "node",
+                        "type": {"name": "Node", "kind": "INTERFACE"},
+                        "args": [
                             {
-                                'name': 'id',
-                                'type': {
-                                    'kind': 'NON_NULL',
-                                    'ofType': {
-                                        'name': 'ID',
-                                        'kind': 'SCALAR'
-                                    }
-                                }
+                                "name": "id",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "ofType": {"name": "ID", "kind": "SCALAR"},
+                                },
                             }
-                        ]
+                        ],
                     }
                 ]
             }

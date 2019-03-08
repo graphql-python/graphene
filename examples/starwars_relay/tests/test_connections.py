@@ -9,7 +9,7 @@ client = Client(schema)
 
 
 def test_correct_fetch_first_ship_rebels(snapshot):
-    query = '''
+    query = """
     query RebelsShipsQuery {
       rebels {
         name,
@@ -29,5 +29,5 @@ def test_correct_fetch_first_ship_rebels(snapshot):
         }
       }
     }
-    '''
+    """
     snapshot.assert_match(client.execute(query))

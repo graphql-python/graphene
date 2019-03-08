@@ -6,6 +6,7 @@ from .interface import Interface
 from .mutation import Mutation
 from .scalars import Scalar, String, ID, Int, Float, Boolean
 from .datetime import Date, DateTime, Time
+from .decimal import Decimal
 from .json import JSONString
 from .uuid import UUID
 from .schema import Schema
@@ -24,33 +25,33 @@ from .abstracttype import AbstractType
 
 
 __all__ = [
-    'ObjectType',
-    'InputObjectType',
-    'Interface',
-    'Mutation',
-    'Enum',
-    'Field',
-    'InputField',
-    'Schema',
-    'Scalar',
-    'String',
-    'ID',
-    'Int',
-    'Float',
-    'Date',
-    'DateTime',
-    'Time',
-    'JSONString',
-    'UUID',
-    'Boolean',
-    'List',
-    'NonNull',
-    'Argument',
-    'Dynamic',
-    'Union',
-    'Context',
-    'ResolveInfo',
-
+    "ObjectType",
+    "InputObjectType",
+    "Interface",
+    "Mutation",
+    "Enum",
+    "Field",
+    "InputField",
+    "Schema",
+    "Scalar",
+    "String",
+    "ID",
+    "Int",
+    "Float",
+    "Date",
+    "DateTime",
+    "Time",
+    "Decimal",
+    "JSONString",
+    "UUID",
+    "Boolean",
+    "List",
+    "NonNull",
+    "Argument",
+    "Dynamic",
+    "Union",
+    "Context",
+    "ResolveInfo",
     # Deprecated
-    'AbstractType',
+    "AbstractType",
 ]

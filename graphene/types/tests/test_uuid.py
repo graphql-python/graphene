@@ -14,22 +14,18 @@ schema = Schema(query=Query)
 
 
 def test_uuidstring_query():
-    uuid_value = 'dfeb3bcf-70fd-11e7-a61a-6003088f8204'
-    result = schema.execute('''{ uuid(input: "%s") }''' % uuid_value)
+    uuid_value = "dfeb3bcf-70fd-11e7-a61a-6003088f8204"
+    result = schema.execute("""{ uuid(input: "%s") }""" % uuid_value)
     assert not result.errors
-    assert result.data == {
-        'uuid': uuid_value
-    }
+    assert result.data == {"uuid": uuid_value}
 
 
 def test_uuidstring_query_variable():
-    uuid_value = 'dfeb3bcf-70fd-11e7-a61a-6003088f8204'
+    uuid_value = "dfeb3bcf-70fd-11e7-a61a-6003088f8204"
 
     result = schema.execute(
-        '''query Test($uuid: UUID){ uuid(input: $uuid) }''',
-        variable_values={'uuid': uuid_value}
+        """query Test($uuid: UUID){ uuid(input: $uuid) }""",
+        variables={"uuid": uuid_value},
     )
     assert not result.errors
-    assert result.data == {
-        'uuid': uuid_value
-    }
+    assert result.data == {"uuid": uuid_value}

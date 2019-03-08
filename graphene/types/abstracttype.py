@@ -3,7 +3,6 @@ from ..utils.subclass_with_meta import SubclassWithMeta
 
 
 class AbstractType(SubclassWithMeta):
-
     def __init_subclass__(cls, *args, **kwargs):
         warn_deprecation(
             "Abstract type is deprecated, please use normal object inheritance instead.\n"

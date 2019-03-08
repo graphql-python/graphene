@@ -17,7 +17,7 @@ developer has to write to use them.
 
 **New Features!**
 * [`InputObjectType`](#inputobjecttype)
-* [`Meta as Class arguments`](#meta-ass-class-arguments) (_only available for Python 3_)
+* [`Meta as Class arguments`](#meta-as-class-arguments) (_only available for Python 3_)
 
 
 > The type metaclasses are now deleted as they are no longer necessary.  If your code was depending

@@ -1,7 +1,7 @@
 Enums
 =====
 
-A ``Enum`` is a special ``GraphQL`` type that represents a set of
+An ``Enum`` is a special ``GraphQL`` type that represents a set of
 symbolic names (members) bound to unique, constant values.
 
 Definition

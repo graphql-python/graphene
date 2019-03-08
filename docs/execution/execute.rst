@@ -16,7 +16,7 @@ For executing a query a schema, you can directly call the ``execute`` method on 
 Context
 _______
 
-You can pass context to a query via ``context_value``.
+You can pass context to a query via ``context``.
 
 
 .. code:: python
@@ -28,14 +28,14 @@ You can pass context to a query via ``context_value``.
             return info.context.get('name')
 
     schema = graphene.Schema(Query)
-    result = schema.execute('{ name }', context_value={'name': 'Syrus'})
+    result = schema.execute('{ name }', context={'name': 'Syrus'})
 
 
 
 Variables
 _______
 
-You can pass variables to a query via ``variable_values``.
+You can pass variables to a query via ``variables``.
 
 
 .. code:: python
@@ -55,5 +55,5 @@ You can pass variables to a query via ``variable_values``.
                 lastName
             }
         }''',
-        variable_values={'id': 12},
+        variables={'id': 12},
     )

@@ -9,7 +9,7 @@ client = Client(schema)
 
 
 def test_mutations(snapshot):
-    query = '''
+    query = """
     mutation MyMutation {
       introduceShip(input:{clientMutationId:"abc", shipName: "Peter", factionId: "1"}) {
         ship {
@@ -29,5 +29,5 @@ def test_mutations(snapshot):
         }
       }
     }
-    '''
+    """
     snapshot.assert_match(client.execute(query))

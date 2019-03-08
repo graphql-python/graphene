@@ -17,17 +17,22 @@ class ObjectTypeOptions(BaseOptions):
 
 
 class ObjectType(BaseType):
-    '''
+    """
     Object Type Definition
 
     Almost all of the GraphQL types you define will be object types. Object types
     have a name, but most importantly describe their fields.
-    '''
+    """
+
     @classmethod
     def __init_subclass_with_meta__(
-            cls, interfaces=(),
-            possible_types=(),
-            default_resolver=None, _meta=None, **options):
+        cls,
+        interfaces=(),
+        possible_types=(),
+        default_resolver=None,
+        _meta=None,
+        **options
+    ):
         if not _meta:
             _meta = ObjectTypeOptions(cls)
 
@@ -40,13 +45,11 @@ class ObjectType(BaseType):
             fields.update(interface._meta.fields)
 
         for base in reversed(cls.__mro__):
-            fields.update(
-                yank_fields_from_attrs(base.__dict__, _as=Field)
-            )
+            fields.update(yank_fields_from_attrs(base.__dict__, _as=Field))
 
         assert not (possible_types and cls.is_type_of), (
-            '{name}.Meta.possible_types will cause type collision with {name}.is_type_of. '
-            'Please use one or other.'
+            "{name}.Meta.possible_types will cause type collision with {name}.is_type_of. "
+            "Please use one or other."
         ).format(name=cls.__name__)
 
         if _meta.fields:
@@ -82,8 +85,7 @@ class ObjectType(BaseType):
         for name, field in fields_iter:
             try:
                 val = kwargs.pop(
-                    name,
-                    field.default_value if isinstance(field, Field) else None
+                    name, field.default_value if isinstance(field, Field) else None
                 )
                 setattr(self, name, val)
             except KeyError:
@@ -92,14 +94,15 @@ class ObjectType(BaseType):
         if kwargs:
             for prop in list(kwargs):
                 try:
-                    if isinstance(getattr(self.__class__, prop), property) or prop.startswith('_'):
+                    if isinstance(
+                        getattr(self.__class__, prop), property
+                    ) or prop.startswith("_"):
                         setattr(self, prop, kwargs.pop(prop))
                 except AttributeError:
                     pass
             if kwargs:
                 raise TypeError(
                     "'{}' is an invalid keyword argument for {}".format(
-                        list(kwargs)[0],
-                        self.__class__.__name__
+                        list(kwargs)[0], self.__class__.__name__
                     )
                 )

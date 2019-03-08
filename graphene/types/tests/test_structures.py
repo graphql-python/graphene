@@ -10,14 +10,17 @@ from .utils import MyLazyType
 def test_list():
     _list = List(String)
     assert _list.of_type == String
-    assert str(_list) == '[String]'
+    assert str(_list) == "[String]"
 
 
 def test_list_with_unmounted_type():
     with pytest.raises(Exception) as exc_info:
         List(String())
 
-    assert str(exc_info.value) == 'List could not have a mounted String() as inner type. Try with List(String).'
+    assert (
+        str(exc_info.value)
+        == "List could not have a mounted String() as inner type. Try with List(String)."
+    )
 
 
 def test_list_with_lazy_type():
@@ -52,7 +55,7 @@ def test_list_inherited_works_nonnull():
 def test_nonnull():
     nonnull = NonNull(String)
     assert nonnull.of_type == String
-    assert str(nonnull) == 'String!'
+    assert str(nonnull) == "String!"
 
 
 def test_nonnull_with_lazy_type():
@@ -82,14 +85,20 @@ def test_nonnull_inherited_dont_work_nonnull():
     with pytest.raises(Exception) as exc_info:
         NonNull(NonNull(String))
 
-    assert str(exc_info.value) == 'Can only create NonNull of a Nullable GraphQLType but got: String!.'
+    assert (
+        str(exc_info.value)
+        == "Can only create NonNull of a Nullable GraphQLType but got: String!."
+    )
 
 
 def test_nonnull_with_unmounted_type():
     with pytest.raises(Exception) as exc_info:
         NonNull(String())
 
-    assert str(exc_info.value) == 'NonNull could not have a mounted String() as inner type. Try with NonNull(String).'
+    assert (
+        str(exc_info.value)
+        == "NonNull could not have a mounted String() as inner type. Try with NonNull(String)."
+    )
 
 
 def test_list_comparasion():

@@ -6,20 +6,18 @@ from ..node import GlobalID, Node
 
 
 class CustomNode(Node):
-
     class Meta:
-        name = 'Node'
+        name = "Node"
 
 
 class User(ObjectType):
-
     class Meta:
         interfaces = [CustomNode]
+
     name = String()
 
 
 class Info(object):
-
     def __init__(self, parent_type):
         self.parent_type = GrapheneObjectType(
             graphene_type=parent_type,
@@ -27,7 +25,7 @@ class Info(object):
             description=parent_type._meta.description,
             fields=None,
             is_type_of=parent_type.is_type_of,
-            interfaces=None
+            interfaces=None,
         )
 
 
@@ -45,7 +43,7 @@ def test_global_id_allows_overriding_of_node_and_required():
 
 
 def test_global_id_defaults_to_info_parent_type():
-    my_id = '1'
+    my_id = "1"
     gid = GlobalID()
     id_resolver = gid.get_resolver(lambda *_: my_id)
     my_global_id = id_resolver(None, Info(User))
@@ -53,7 +51,7 @@ def test_global_id_defaults_to_info_parent_type():
 
 
 def test_global_id_allows_setting_customer_parent_type():
-    my_id = '1'
+    my_id = "1"
     gid = GlobalID(parent_type=User)
     id_resolver = gid.get_resolver(lambda *_: my_id)
     my_global_id = id_resolver(None, None)
