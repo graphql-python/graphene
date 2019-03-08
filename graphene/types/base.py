@@ -1,5 +1,9 @@
 from ..utils.subclass_with_meta import SubclassWithMeta
 from ..utils.trim_docstring import trim_docstring
+import six
+
+if six.PY3:
+    from typing import Type
 
 
 class BaseOptions(object):

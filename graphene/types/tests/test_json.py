@@ -1,4 +1,3 @@
-
 from ..json import JSONString
 from ..objecttype import ObjectType
 from ..schema import Schema

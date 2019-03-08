@@ -707,7 +707,10 @@ class Signature(object):
                         break
                     elif param.name in kwargs:
                         if param.kind == _POSITIONAL_ONLY:
-                            msg = "{arg!r} parameter is positional only, " "but was passed as a keyword"
+                            msg = (
+                                "{arg!r} parameter is positional only, "
+                                "but was passed as a keyword"
+                            )
                             msg = msg.format(arg=param.name)
                             raise TypeError(msg)
                         parameters_ex = (param,)

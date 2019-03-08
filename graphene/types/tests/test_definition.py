@@ -1,5 +1,3 @@
-
-
 from ..argument import Argument
 from ..enum import Enum
 from ..field import Field
