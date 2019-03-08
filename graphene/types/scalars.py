@@ -6,8 +6,6 @@ from .unmountedtype import UnmountedType
 
 if six.PY3:
     from typing import Any
-else:
-    Any = object
 
 
 class ScalarOptions(BaseOptions):

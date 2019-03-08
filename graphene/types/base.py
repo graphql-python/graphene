@@ -5,8 +5,6 @@ from ..utils.trim_docstring import trim_docstring
 
 if six.PY3:
     from typing import Type
-else:
-    Type = type
 
 
 class BaseOptions(object):
