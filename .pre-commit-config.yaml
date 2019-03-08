@@ -1,24 +1,28 @@
 repos:
 -   repo: git://github.com/pre-commit/pre-commit-hooks
-    rev: v1.3.0
+    rev: v2.1.0
     hooks:
+    -   id: check-merge-conflict
     -   id: check-json
     -   id: check-yaml
     -   id: debug-statements
     -   id: end-of-file-fixer
         exclude: ^docs/.*$
-    -   id: trailing-whitespace
-        exclude: README.md
     -   id: pretty-format-json
         args:
         - --autofix
-    -   id: flake8
+    -   id: trailing-whitespace
+        exclude: README.md
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v1.4.0
+    rev: v1.12.0
     hooks:
     -   id: pyupgrade
 -   repo: https://github.com/ambv/black
-    rev: 18.6b4
+    rev: 18.9b0
     hooks:
     - id: black
       language_version: python3
+-   repo: https://github.com/PyCQA/flake8
+    rev: 3.7.7
+    hooks:
+    -   id: flake8
