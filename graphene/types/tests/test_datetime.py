@@ -90,7 +90,7 @@ def test_datetime_query_variable():
 
     result = schema.execute(
         """query Test($date: DateTime){ datetime(in: $date) }""",
-        variable_values={"date": isoformat},
+        variables={"date": isoformat},
     )
     assert not result.errors
     assert result.data == {"datetime": isoformat}
@@ -101,8 +101,7 @@ def test_date_query_variable():
     isoformat = now.isoformat()
 
     result = schema.execute(
-        """query Test($date: Date){ date(in: $date) }""",
-        variable_values={"date": isoformat},
+        """query Test($date: Date){ date(in: $date) }""", variables={"date": isoformat}
     )
     assert not result.errors
     assert result.data == {"date": isoformat}
@@ -114,8 +113,7 @@ def test_time_query_variable():
     isoformat = time.isoformat()
 
     result = schema.execute(
-        """query Test($time: Time){ time(at: $time) }""",
-        variable_values={"time": isoformat},
+        """query Test($time: Time){ time(at: $time) }""", variables={"time": isoformat}
     )
     assert not result.errors
     assert result.data == {"time": isoformat}

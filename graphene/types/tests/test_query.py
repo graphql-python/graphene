@@ -464,7 +464,7 @@ def test_query_annotated_resolvers():
     assert not result.errors
     assert result.data == {"annotated": "base-self"}
 
-    result = test_schema.execute("{ context }", "base", context_value=context)
+    result = test_schema.execute("{ context }", "base", context=context)
     assert not result.errors
     assert result.data == {"context": "base-context"}
 

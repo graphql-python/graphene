@@ -139,15 +139,39 @@ def test_mutation_allow_to_have_custom_args():
 
     class MyMutation(ObjectType):
         create_user = CreateUser.Field(
+            name="createUser",
             description="Create a user",
             deprecation_reason="Is deprecated",
             required=True,
         )
 
     field = MyMutation._meta.fields["create_user"]
+    assert field.name == "createUser"
     assert field.description == "Create a user"
     assert field.deprecation_reason == "Is deprecated"
     assert field.type == NonNull(CreateUser)
+
+
+def test_mutation_default_args_output():
+    class CreateUser(Mutation):
+        """Description."""
+
+        class Arguments:
+            name = String()
+
+        name = String()
+
+        def mutate(self, info, name):
+            return CreateUser(name=name)
+
+    class MyMutation(ObjectType):
+        create_user = CreateUser.Field()
+
+    field = MyMutation._meta.fields["create_user"]
+    assert field.name is None
+    assert field.description == "Description."
+    assert field.deprecation_reason is None
+    assert field.type == CreateUser
 
 
 def test_mutation_as_subclass():

@@ -1,10 +1,189 @@
-Please read `UPGRADE-v2.0.md </UPGRADE-v2.0.md>`__ to learn how to
-upgrade to Graphene ``2.0``.
+**We are looking for contributors**! Please check the
+`ROADMAP <https://github.com/graphql-python/graphene/blob/master/ROADMAP.md>`__
+to see how you can help ❤️
 
 --------------
 
 |Graphene Logo| `Graphene <http://graphene-python.org>`__ |Build Status| |PyPI version| |Coverage Status|
 =========================================================================================================
+
+.. raw:: html
+
+   <h1 align="center">
+
+Supporting Graphene Python
+
+.. raw:: html
+
+   </h1>
+
+Graphene is an MIT-licensed open source project. It's an independent
+project with its ongoing development made possible entirely thanks to
+the support by these awesome
+`backers <https://github.com/graphql-python/graphene/blob/master/BACKERS.md>`__.
+If you'd like to join them, please consider:
+
+-  `Become a backer or sponsor on
+   Patreon <https://www.patreon.com/syrusakbary>`__.
+-  `One-time donation via
+   PayPal. <https://graphene-python.org/support-graphene/>`__
+
+<!--
+
+.. raw:: html
+
+   <h2 align="center">
+
+Special Sponsors
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <p align="center">
+
+.. raw:: html
+
+   </p>
+
+.. raw:: html
+
+   <!--special end-->
+
+.. raw:: html
+
+   <h2 align="center">
+
+Platinum via Patreon
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <!--platinum start-->
+
+.. raw:: html
+
+   <table>
+
+.. raw:: html
+
+   <tbody>
+
+::
+
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
+          <img width="222px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
+        </a>
+      </td>
+    </tr>
+
+.. raw:: html
+
+   </tbody>
+
+.. raw:: html
+
+   </table>
+
+.. raw:: html
+
+   <h2 align="center">
+
+Gold via Patreon
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <!--gold start-->
+
+.. raw:: html
+
+   <table>
+
+.. raw:: html
+
+   <tbody>
+
+::
+
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
+          <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
+        </a>
+      </td>
+    </tr>
+
+.. raw:: html
+
+   </tbody>
+
+.. raw:: html
+
+   </table>
+
+.. raw:: html
+
+   <!--gold end-->
+
+.. raw:: html
+
+   <h2 align="center">
+
+Silver via Patreon
+
+.. raw:: html
+
+   </h2>
+
+.. raw:: html
+
+   <!--silver start-->
+
+.. raw:: html
+
+   <table>
+
+.. raw:: html
+
+   <tbody>
+
+::
+
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://www.patreon.com/join/syrusakbary" target="_blank">
+          <img width="148px" src="https://raw.githubusercontent.com/graphql-python/graphene-python.org/master/src/pages/sponsors/generic-logo.png">
+        </a>
+      </td>
+    </tr>
+
+.. raw:: html
+
+   </tbody>
+
+.. raw:: html
+
+   </table>
+
+.. raw:: html
+
+   <!--silver end-->
+
+--------------
+
+Introduction
+------------
 
 `Graphene <http://graphene-python.org>`__ is a Python library for
 building GraphQL schemas/types fast and easily.
@@ -88,20 +267,38 @@ If you want to learn even more, you can also check the following
 -  **Relay Schema**: `Starwars Relay
    example <examples/starwars_relay>`__
 
+Documentation
+-------------
+
+Documentation and links to additional resources are available at
+https://docs.graphene-python.org/en/latest/
+
 Contributing
 ------------
 
-After cloning this repo, ensure dependencies are installed by running:
+After cloning this repo, create a
+`virtualenv <https://virtualenv.pypa.io/en/stable/>`__ and ensure
+dependencies are installed by running:
 
 .. code:: sh
 
+    virtualenv venv
+    source venv/bin/activate
     pip install -e ".[test]"
 
-After developing, the full test suite can be evaluated by running:
+Well-written tests and maintaining good test coverage is important to
+this project. While developing, run new and existing tests with:
 
 .. code:: sh
 
-    py.test graphene --cov=graphene --benchmark-skip # Use -v -s for verbose mode
+    py.test graphene/relay/tests/test_node.py # Single file
+    py.test graphene/relay # All tests in directory
+
+Add the ``-s`` flag if you have introduced breakpoints into the code for
+debugging. Add the ``-v`` ("verbose") flag to get more detailed test
+output. For even more detailed output, use ``-vv``. Check out the
+`pytest documentation <https://docs.pytest.org/en/latest/>`__ for more
+options and test running controls.
 
 You can also run the benchmarks with:
 
@@ -109,24 +306,41 @@ You can also run the benchmarks with:
 
     py.test graphene --benchmark-only
 
-Documentation
+Graphene supports several versions of Python. To make sure that changes
+do not break compatibility with any of those versions, we use ``tox`` to
+create virtualenvs for each python version and run tests with that
+version. To run against all python versions defined in the ``tox.ini``
+config file, just run:
+
+.. code:: sh
+
+    tox
+
+If you wish to run against a specific version defined in the ``tox.ini``
+file:
+
+.. code:: sh
+
+    tox -e py36
+
+Tox can only use whatever versions of python are installed on your
+system. When you create a pull request, Travis will also be running the
+same tests and report the results, so there is no need for potential
+contributors to try to install every single version of python on their
+own system ahead of time. We appreciate opening issues and pull requests
+to make graphene even more stable & useful!
+
+Building Documentation
 ~~~~~~~~~~~~~
 
 The documentation is generated using the excellent
 `Sphinx <http://www.sphinx-doc.org/>`__ and a custom theme.
 
-The documentation dependencies are installed by running:
+An HTML version of the documentation is produced by running:
 
 .. code:: sh
 
-    cd docs
-    pip install -r requirements.txt
-
-Then to produce a HTML version of the documentation:
-
-.. code:: sh
-
-    make html
+    make docs
 
 .. |Graphene Logo| image:: http://graphene-python.org/favicon.png
 .. |Build Status| image:: https://travis-ci.org/graphql-python/graphene.svg?branch=master

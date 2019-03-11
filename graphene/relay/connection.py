@@ -3,15 +3,21 @@ from collections import Iterable, OrderedDict
 from functools import partial
 
 from graphql_relay import connection_from_list
-from promise import Promise, is_thenable
 
 from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String, Union
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
+from ..utils.thenables import maybe_thenable
 from .node import is_node
 
 
 class PageInfo(ObjectType):
+    class Meta:
+        description = (
+            "The Relay compliant `PageInfo` type, containing data necessary to"
+            " paginate this connection."
+        )
+
     has_next_page = Boolean(
         required=True,
         name="hasNextPage",
@@ -64,21 +70,40 @@ class Connection(ObjectType):
             node = Field(_node, description="The item at the end of the edge")
             cursor = String(required=True, description="A cursor for use in pagination")
 
+        class EdgeMeta:
+            description = "A Relay edge containing a `{}` and its cursor.".format(
+                base_name
+            )
+
         edge_name = "{}Edge".format(base_name)
         if edge_class:
             edge_bases = (edge_class, EdgeBase, ObjectType)
         else:
             edge_bases = (EdgeBase, ObjectType)
 
-        edge = type(edge_name, edge_bases, {})
+        edge = type(edge_name, edge_bases, {"Meta": EdgeMeta})
         cls.Edge = edge
 
         options["name"] = name
         _meta.node = node
         _meta.fields = OrderedDict(
             [
-                ("page_info", Field(PageInfo, name="pageInfo", required=True)),
-                ("edges", Field(NonNull(List(edge)))),
+                (
+                    "page_info",
+                    Field(
+                        PageInfo,
+                        name="pageInfo",
+                        required=True,
+                        description="Pagination data for this connection.",
+                    ),
+                ),
+                (
+                    "edges",
+                    Field(
+                        NonNull(List(edge)),
+                        description="Contains the nodes in this connection.",
+                    ),
+                ),
             ]
         )
         return super(Connection, cls).__init_subclass_with_meta__(
@@ -103,7 +128,7 @@ class IterableConnectionField(Field):
 
         if is_node(connection_type):
             raise Exception(
-                "ConnectionField's now need a explicit ConnectionType for Nodes.\n"
+                "ConnectionFields now need a explicit ConnectionType for Nodes.\n"
                 "Read more: https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#node-connections"
             )
 
@@ -139,10 +164,7 @@ class IterableConnectionField(Field):
             connection_type = connection_type.of_type
 
         on_resolve = partial(cls.resolve_connection, connection_type, args)
-        if is_thenable(resolved):
-            return Promise.resolve(resolved).then(on_resolve)
-
-        return on_resolve(resolved)
+        return maybe_thenable(resolved, on_resolve)
 
     def get_resolver(self, parent_resolver):
         resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)

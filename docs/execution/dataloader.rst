@@ -25,14 +25,13 @@ Create loaders by providing a batch loading function.
             return Promise.resolve([get_user(id=key) for key in keys])
 
 
-A batch loading function accepts an list of keys, and returns a ``Promise``
-which resolves to an list of ``values``.
+A batch loading function accepts a list of keys, and returns a ``Promise``
+which resolves to a list of ``values``.
 
 Then load individual values from the loader. ``DataLoader`` will coalesce all
 individual loads which occur within a single frame of execution (executed once
 the wrapping promise is resolved) and then call your batch function with all
 requested keys.
-
 
 
 .. code:: python
@@ -46,6 +45,19 @@ requested keys.
 
 A naive application may have issued *four* round-trips to a backend for the
 required information, but with ``DataLoader`` this application will make at most *two*.
+
+Note that loaded values are one-to-one with the keys and must have the same
+order. This means that if you load all values from a single query, you must
+make sure that you then order the query result for the results to match the keys:
+
+
+.. code:: python
+
+   class UserLoader(DataLoader):
+       def batch_load_fn(self, keys):
+           users = {user.id: user for user in User.objects.filter(id__in=keys)}
+           return Promise.resolve([users.get(user_id) for user_id in keys])
+
 
 ``DataLoader`` allows you to decouple unrelated parts of your application without
 sacrificing the performance of batch data-loading. While the loader presents

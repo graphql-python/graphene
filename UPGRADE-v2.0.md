@@ -17,7 +17,7 @@ developer has to write to use them.
 
 **New Features!**
 * [`InputObjectType`](#inputobjecttype)
-* [`Meta as Class arguments`](#meta-ass-class-arguments) (_only available for Python 3_)
+* [`Meta as Class arguments`](#meta-as-class-arguments) (_only available for Python 3_)
 
 
 > The type metaclasses are now deleted as they are no longer necessary.  If your code was depending
@@ -276,7 +276,7 @@ If you are using Middelwares, you need to some adjustments:
 Before:
 
 ```python
-class MyGrapheneMiddleware(object):  
+class MyGrapheneMiddleware(object):
     def resolve(self, next_mw, root, args, context, info):
 
         ## Middleware code
@@ -287,7 +287,7 @@ class MyGrapheneMiddleware(object):
 With 2.0:
 
 ```python
-class MyGrapheneMiddleware(object):  
+class MyGrapheneMiddleware(object):
     def resolve(self, next_mw, root, info, **args):
         context = info.context
 

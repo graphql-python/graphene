@@ -27,7 +27,7 @@ This example defines a Mutation:
 **person** and **ok** are the output fields of the Mutation when it is
 resolved.
 
-**Input** attributes are the arguments that the Mutation
+**Arguments** attributes are the arguments that the Mutation
 ``CreatePerson`` needs for resolving, in this case **name** will be the
 only argument for the mutation.
 

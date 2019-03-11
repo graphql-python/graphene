@@ -1,4 +1,5 @@
 import ast
+import codecs
 import re
 import sys
 
@@ -50,6 +51,7 @@ tests_require = [
     "pytest-mock",
     "snapshottest",
     "coveralls",
+    "promise",
     "six",
     "mock",
     "pytz",
@@ -60,7 +62,9 @@ setup(
     name="graphene",
     version=version,
     description="GraphQL Framework for Python",
-    long_description=open("README.rst").read(),
+    long_description=codecs.open(
+        "README.rst", "r", encoding="ascii", errors="replace"
+    ).read(),
     url="https://github.com/graphql-python/graphene",
     author="Syrus Akbary",
     author_email="me@syrusakbary.com",
@@ -84,7 +88,6 @@ setup(
         "six>=1.10.0,<2",
         "graphql-core>=2.1,<3",
         "graphql-relay>=0.4.5,<1",
-        "promise>=2.1,<3",
         "aniso8601>=3,<4",
     ],
     tests_require=tests_require,
