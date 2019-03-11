@@ -1,6 +1,7 @@
 from ..resolver import (
     attr_resolver,
     dict_resolver,
+    dict_or_attr_resolver,
     get_default_resolver,
     set_default_resolver,
 )
@@ -36,8 +37,16 @@ def test_dict_resolver_default_value():
     assert resolved == "default"
 
 
+def test_dict_or_attr_resolver():
+    resolved = dict_or_attr_resolver("attr", None, demo_dict, info, **args)
+    assert resolved == "value"
+
+    resolved = dict_or_attr_resolver("attr", None, demo_obj, info, **args)
+    assert resolved == "value"
+
+
 def test_get_default_resolver_is_attr_resolver():
-    assert get_default_resolver() == attr_resolver
+    assert get_default_resolver() == dict_or_attr_resolver
 
 
 def test_set_default_resolver_workd():
