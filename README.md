@@ -136,6 +136,11 @@ If you want to learn even more, you can also check the following [examples](exam
 - **Basic Schema**: [Starwars example](examples/starwars)
 - **Relay Schema**: [Starwars Relay example](examples/starwars_relay)
 
+## Documentation
+
+Documentation and links to additional resources are available at
+https://docs.graphene-python.org/en/latest/
+
 ## Contributing
 
 After cloning this repo, create a [virtualenv](https://virtualenv.pypa.io/en/stable/) and ensure dependencies are installed by running:
@@ -177,7 +182,7 @@ tox -e py36
 
 Tox can only use whatever versions of python are installed on your system. When you create a pull request, Travis will also be running the same tests and report the results, so there is no need for potential contributors to try to install every single version of python on their own system ahead of time. We appreciate opening issues and pull requests to make graphene even more stable & useful!
 
-### Documentation
+### Building Documentation
 
 The documentation is generated using the excellent [Sphinx](http://www.sphinx-doc.org/) and a custom theme.
 
