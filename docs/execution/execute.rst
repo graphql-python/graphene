@@ -33,7 +33,7 @@ You can pass context to a query via ``context``.
 
 
 Variables
-_______
+_________
 
 You can pass variables to a query via ``variables``.
 
@@ -41,10 +41,10 @@ You can pass variables to a query via ``variables``.
 .. code:: python
 
     class Query(graphene.ObjectType):
-        user = graphene.Field(User)
+        user = graphene.Field(User, id=graphene.ID(required=True))
 
-        def resolve_user(self, info):
-            return info.context.get('user')
+        def resolve_user(_, info, id):
+            return get_user_by_id(id)
 
     schema = graphene.Schema(Query)
     result = schema.execute(
