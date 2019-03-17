@@ -194,4 +194,17 @@ previous example you could do:
     peter.first_name # prints "Peter"
     peter.last_name # prints "Griffin"
 
+Changing the name
+-----------------
+
+By default the type name in the GraphQL schema will the same as the class name
+that defines the ``ObjectType``. This can be changed by setting the ``name``
+property on the ``Meta`` class:
+
+.. code:: python
+
+    class MyGraphQlSong(graphene.ObjectType):
+        class Meta:
+            name = 'Song'
+
 .. _Interface: /docs/interfaces/
