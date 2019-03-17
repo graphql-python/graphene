@@ -57,8 +57,8 @@ so the first argument to the resolver method ``self`` (or ``root``) need
 not be an actual instance of the ``ObjectType``.
 
 If an explicit resolver is not defined on the ``ObjectType`` then Graphene will
-attempt to use a property with the same name on the object that is passed to the
-``ObjectType``.
+attempt to use a property with the same name on the object or dict that is
+passed to the ``ObjectType``.
 
 .. code:: python
 
@@ -70,53 +70,17 @@ attempt to use a property with the same name on the object that is passed to the
 
     class Query(graphene.ObjectType):
         me = graphene.Field(Person)
+        best_friend = graphene.Field(Person)
 
         def resolve_me(_, info):
             # returns an object that represents a Person
             return get_human(name='Luke Skywalker')
 
-If you are passing a dict instead of an object to your ``ObjectType`` you can
-change the default resolver in the ``Meta`` class like this:
-
-.. code:: python
-
-    import graphene
-    from graphene.types.resolver import dict_resolver
-
-    class Person(graphene.ObjectType):
-        class Meta:
-            default_resolver = dict_resolver
-
-        first_name = graphene.String()
-        last_name = graphene.String()
-
-    class Query(graphene.ObjectType):
-        me = graphene.Field(Person)
-
-        def resolve_me(_, info):
+        def resolve_best_friend(_, info):
             return {
-                "first_name": "Luke",
-                "last_name": "Skywalker",
+                "first_name": "R2",
+                "last_name": "D2",
             }
-
-Or you can change the default resolver globally by calling ``set_default_resolver``
-before executing a query.
-
-.. code:: python
-
-    import graphene
-    from graphene.types.resolver import dict_resolver, set_default_resolver
-
-    set_default_resolver(dict_resolver)
-
-    schema = graphene.Schema(query=Query)
-    result = schema.execute('''
-        query {
-            me {
-                firstName
-            }
-        }
-     ''')
 
 
 Resolvers with arguments
