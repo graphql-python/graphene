@@ -24,7 +24,7 @@ You can pass context to a query via ``context``.
     class Query(graphene.ObjectType):
         name = graphene.String()
 
-        def resolve_name(self, info):
+        def resolve_name(root, info):
             return info.context.get('name')
 
     schema = graphene.Schema(Query)
@@ -43,7 +43,7 @@ You can pass variables to a query via ``variables``.
     class Query(graphene.ObjectType):
         user = graphene.Field(User, id=graphene.ID(required=True))
 
-        def resolve_user(_, info, id):
+        def resolve_user(root, info, id):
             return get_user_by_id(id)
 
     schema = graphene.Schema(Query)
