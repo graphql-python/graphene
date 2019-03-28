@@ -95,7 +95,7 @@ class ObjectType(BaseType):
             for prop in list(kwargs):
                 try:
                     if isinstance(
-                        getattr(self.__class__, prop), property
+                        getattr(self.__class__, prop, None), property
                     ) or prop.startswith("_"):
                         setattr(self, prop, kwargs.pop(prop))
                 except AttributeError:

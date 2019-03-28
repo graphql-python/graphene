@@ -91,8 +91,8 @@ def test_generate_objecttype_with_private_attributes():
     m = MyObjectType(_private_state="custom")
     assert m._private_state == "custom"
 
-    with pytest.raises(TypeError):
-        MyObjectType(_other_private_state="Wrong")
+    m = MyObjectType(_other_private_state="custom")
+    assert getattr(m, "_other_private_state", None) is "custom"
 
 
 def test_ordered_fields_in_objecttype():
