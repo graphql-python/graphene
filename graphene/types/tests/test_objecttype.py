@@ -92,7 +92,7 @@ def test_generate_objecttype_with_private_attributes():
     assert m._private_state == "custom"
 
     m = MyObjectType(_other_private_state="custom")
-    assert hasattr(MyObjectType, "_private_state")
+    assert hasattr(m, "_other_private_state")
 
 
 def test_ordered_fields_in_objecttype():
