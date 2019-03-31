@@ -4,6 +4,7 @@ import datetime
 
 from aniso8601 import parse_date, parse_datetime, parse_time
 from graphql.language import ast
+from six import string_types
 
 from .scalars import Scalar
 
@@ -32,7 +33,10 @@ class Date(Scalar):
     @staticmethod
     def parse_value(value):
         try:
-            return parse_date(value)
+            if isinstance(value, datetime.date):
+                return value
+            elif isinstance(value, string_types):
+                return parse_date(value)
         except ValueError:
             return None
 
@@ -59,7 +63,10 @@ class DateTime(Scalar):
     @staticmethod
     def parse_value(value):
         try:
-            return parse_datetime(value)
+            if isinstance(value, datetime.datetime):
+                return value
+            elif isinstance(value, string_types):
+                return parse_datetime(value)
         except ValueError:
             return None
 
@@ -86,6 +93,9 @@ class Time(Scalar):
     @classmethod
     def parse_value(cls, value):
         try:
-            return parse_time(value)
+            if isinstance(value, datetime.time):
+                return value
+            elif isinstance(value, string_types):
+                return parse_time(value)
         except ValueError:
             return None
