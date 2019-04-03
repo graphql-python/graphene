@@ -53,7 +53,7 @@ class Connection(ObjectType):
     def __init_subclass_with_meta__(cls, node=None, name=None, **options):
         _meta = ConnectionOptions(cls)
         assert node, "You have to provide a node in {}.Meta".format(cls.__name__)
-        assert issubclass(
+        assert isinstance(node, NonNull) or issubclass(
             node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
         ), ('Received incompatible node "{}" for Connection {}.').format(
             node, cls.__name__
