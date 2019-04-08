@@ -48,12 +48,14 @@ You can pass variables to a query via ``variables``.
 
     schema = graphene.Schema(Query)
     result = schema.execute(
-        '''query getUser($id: ID) {
-            user(id: $id) {
+        '''
+            query getUser($id: ID) {
+              user(id: $id) {
                 id
                 firstName
                 lastName
+              }
             }
-        }''',
+        ''',
         variables={'id': 12},
     )
