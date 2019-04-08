@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-
+import six
 from uuid import UUID as _UUID
 
 from graphql.language import ast
@@ -12,11 +12,10 @@ class UUID(Scalar):
 
     @staticmethod
     def serialize(uuid):
-        if isinstance(uuid, str):
+        if isinstance(uuid, six.string_types)::
             uuid = _UUID(uuid)
-        assert isinstance(uuid, _UUID), "Expected UUID instance, received {}".format(
-            uuid
-        )
+
+        assert isinstance(uuid, _UUID), "Expected UUID instance, received {}".format(uuid)
         return str(uuid)
 
     @staticmethod
