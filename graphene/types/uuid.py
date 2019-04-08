@@ -12,7 +12,7 @@ class UUID(Scalar):
 
     @staticmethod
     def serialize(uuid):
-        if isinstance(uuid, six.string_types)::
+        if isinstance(uuid, six.string_types):
             uuid = _UUID(uuid)
 
         assert isinstance(uuid, _UUID), "Expected UUID instance, received {}".format(uuid)
