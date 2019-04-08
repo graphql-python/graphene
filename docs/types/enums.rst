@@ -59,7 +59,9 @@ you can add description etc. to your enum without changing the original:
 
 .. code:: python
 
-    graphene.Enum.from_enum(AlreadyExistingPyEnum, description=lambda value: return 'foo' if value == AlreadyExistingPyEnum.Foo else 'bar')
+    graphene.Enum.from_enum(
+        AlreadyExistingPyEnum,
+        description=lambda v: return 'foo' if v == AlreadyExistingPyEnum.Foo else 'bar')
 
 
 Notes
