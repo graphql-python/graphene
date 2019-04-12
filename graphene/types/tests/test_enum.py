@@ -182,6 +182,29 @@ def test_enum_value_as_unmounted_argument():
     assert isinstance(unmounted_field, Argument)
     assert unmounted_field.type == RGB
 
+def test_legacy_enum_can_be_compared():
+    class RGB(Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    assert RGB.RED == 1
+    assert RGB.GREEN == 2
+    assert RGB.BLUE == 3
+
+def test_new_enum_only_compare_to_enum_instances():
+    class RGBBase(PyEnum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+    RGB = Enum.from_enum(RGBBase, legacy_enum_resolver=False)
+
+    assert RGB.RED == RGBBase.RED
+    assert RGB.GREEN == RGBBase.GREEN
+    assert RGB.BLUE == RGBBase.BLUE
+    assert RGB.RED != 1
+    assert RGB.GREEN != 2
+    assert RGB.BLUE != 3
 
 def test_enum_can_be_initialzied():
     class RGB(Enum):

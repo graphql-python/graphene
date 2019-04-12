@@ -69,7 +69,7 @@ def _call_and_get_arg(mocker, resolver_name, query):
 
 def test_resolve_simple_enum(mocker):
     arg = _call_and_get_arg(mocker, "resolve_simple", "{simple(v:S2)}")
-    assert arg == SimpleEnum.S2
+    assert arg == SimpleEnum.S2.value
 
 
 def test_resolve_enum_python(mocker):

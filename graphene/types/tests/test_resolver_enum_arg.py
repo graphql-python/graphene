@@ -46,8 +46,10 @@ def _call_and_get_arg(mocker, resolver_name, query):
 
 def test_resolve_enum_python(mocker):
     arg = _call_and_get_arg(mocker, "resolve_python", "{python(v:P2)}")
-    assert arg == PythonBaseEnum.P2
-    assert arg == PythonEnum.P2
+    assert arg is PythonBaseEnum.P2
+    assert arg is not PythonBaseEnum.P2.value
+    assert arg is PythonEnum.P2
+    assert arg is not PythonEnum.P2.value
 
 
 def test_resolve_enum_default_value_python(mocker):

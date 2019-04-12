@@ -37,8 +37,9 @@ class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
 
 class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
     def serialize(self, value):
-        if value in self.graphene_type._meta.enum:
-            return value.name
+        if not self.graphene_type._meta.legacy_enum_resolver:
+            if value in self.graphene_type._meta.enum:
+                return value.name
         return super(GrapheneEnumType, self).serialize(value)
 
 

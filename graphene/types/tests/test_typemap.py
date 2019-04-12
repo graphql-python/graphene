@@ -13,6 +13,7 @@ from graphql.type import (
 
 from ..dynamic import Dynamic
 from ..enum import Enum
+from enum import Enum as PyEnum
 from ..field import Field
 from ..inputfield import InputField
 from ..inputobjecttype import InputObjectType
@@ -23,7 +24,7 @@ from ..structures import List, NonNull
 from ..typemap import TypeMap, resolve_type
 
 
-def test_enum():
+def test_enum_legacy():
     class MyEnum(Enum):
         """Description"""
 
@@ -49,11 +50,46 @@ def test_enum():
     assert values == [
         GraphQLEnumValue(
             name="foo",
-            value=MyEnum.foo,
+            value=1,
             description="Description foo=1",
             deprecation_reason="Is deprecated",
         ),
-        GraphQLEnumValue(name="bar", value=MyEnum.bar, description="Description bar=2"),
+        GraphQLEnumValue(name="bar", value=2, description="Description bar=2"),
+    ]
+
+def test_enum_new():
+    class MyEnumBase(PyEnum):
+        """Description"""
+
+        foo = 1
+        bar = 2
+
+        @property
+        def description(self):
+            return "Description {}={}".format(self.name, self.value)
+
+        @property
+        def deprecation_reason(self):
+            if self == MyEnum.foo:
+                return "Is deprecated"
+
+    MyEnum = Enum.from_enum(MyEnumBase, legacy_enum_resolver=False)
+
+    typemap = TypeMap([MyEnum])
+    assert "MyEnumBase" in typemap
+    graphql_enum = typemap["MyEnumBase"]
+    assert isinstance(graphql_enum, GraphQLEnumType)
+    assert graphql_enum.name == "MyEnumBase"
+    assert graphql_enum.description == "Description"
+    values = graphql_enum.values
+    assert values == [
+        GraphQLEnumValue(
+            name="foo",
+            value=MyEnumBase.foo,
+            description="Description foo=1",
+            deprecation_reason="Is deprecated",
+        ),
+        GraphQLEnumValue(name="bar", value=MyEnumBase.bar, description="Description bar=2"),
     ]
 
 

@@ -149,9 +149,14 @@ class TypeMap(GraphQLTypeMap):
             if not deprecation_reason and callable(type._meta.deprecation_reason):
                 deprecation_reason = type._meta.deprecation_reason(value)
 
+            if type._meta.legacy_enum_resolver:
+                gql_value = value.value
+            else:
+                gql_value = value
+
             values[name] = GraphQLEnumValue(
                 name=name,
-                value=value,
+                value=gql_value,
                 description=description,
                 deprecation_reason=deprecation_reason,
             )
