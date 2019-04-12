@@ -23,13 +23,21 @@ class EnumOptions(BaseOptions):
     deprecation_reason = None
 
 
+def _filter_magic_members(classdict):
+    def is_special(name):
+        # We also remove the Meta attribute from the class to not collide
+        # with the enum values.
+        if name == "Meta":
+            return True
+        return name[:2] == name[-2:] == "__"
+
+    return OrderedDict((k, v) for k, v in classdict.items() if not is_special(k))
+
+
 class EnumMeta(SubclassWithMeta_Meta):
     def __new__(cls, name, bases, classdict, **options):
-        enum_members = OrderedDict(classdict, __eq__=eq_enum)
-        # We remove the Meta attribute from the class to not collide
-        # with the enum values.
-        enum_members.pop("Meta", None)
-        enum = PyEnum(cls.__name__, enum_members)
+        enum_members = _filter_magic_members(classdict)
+        enum = PyEnum(name, enum_members)
         return SubclassWithMeta_Meta.__new__(
             cls, name, bases, OrderedDict(classdict, __enum__=enum), **options
         )
@@ -48,7 +56,6 @@ class EnumMeta(SubclassWithMeta_Meta):
             description = kwargs.pop("description", None)
             return cls.from_enum(PyEnum(*args, **kwargs), description=description)
         return super(EnumMeta, cls).__call__(*args, **kwargs)
-        # return cls._meta.enum(*args, **kwargs)
 
     def from_enum(cls, enum, description=None, deprecation_reason=None):  # noqa: N805
         description = description or enum.__doc__

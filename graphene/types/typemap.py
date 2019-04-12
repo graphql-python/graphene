@@ -151,7 +151,7 @@ class TypeMap(GraphQLTypeMap):
 
             values[name] = GraphQLEnumValue(
                 name=name,
-                value=value.value,
+                value=value,
                 description=description,
                 deprecation_reason=deprecation_reason,
             )

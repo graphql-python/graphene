@@ -36,7 +36,10 @@ class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
 
 
 class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
-    pass
+    def serialize(self, value):
+        if value in self.graphene_type._meta.enum:
+            return value.name
+        return super(GrapheneEnumType, self).serialize(value)
 
 
 class GrapheneInputObjectType(GrapheneGraphQLType, GraphQLInputObjectType):
