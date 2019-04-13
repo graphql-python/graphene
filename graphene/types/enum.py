@@ -65,7 +65,9 @@ class EnumMeta(SubclassWithMeta_Meta):
             return cls.from_enum(PyEnum(*args, **kwargs), description=description)
         return super(EnumMeta, cls).__call__(*args, **kwargs)
 
-    def from_enum(cls, enum, description=None, deprecation_reason=None, legacy_enum_resolver=True):  # noqa: N805
+    def from_enum(
+        cls, enum, description=None, deprecation_reason=None, legacy_enum_resolver=True
+    ):  # noqa: N805
         description = description or enum.__doc__
         meta_dict = {
             "enum": enum,

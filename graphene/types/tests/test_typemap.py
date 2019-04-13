@@ -57,6 +57,7 @@ def test_enum_legacy():
         GraphQLEnumValue(name="bar", value=2, description="Description bar=2"),
     ]
 
+
 def test_enum_new():
     class MyEnumBase(PyEnum):
         """Description"""
@@ -89,7 +90,9 @@ def test_enum_new():
             description="Description foo=1",
             deprecation_reason="Is deprecated",
         ),
-        GraphQLEnumValue(name="bar", value=MyEnumBase.bar, description="Description bar=2"),
+        GraphQLEnumValue(
+            name="bar", value=MyEnumBase.bar, description="Description bar=2"
+        ),
     ]
 
 

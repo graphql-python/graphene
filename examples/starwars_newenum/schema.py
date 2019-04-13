@@ -10,7 +10,9 @@ class Episode(Enum):
     EMPIRE = 5
     JEDI = 6
 
+
 GrapheneEpisode = graphene.Enum.from_enum(Episode, legacy_enum_resolver=False)
+
 
 class Character(graphene.Interface):
     id = graphene.ID()
