@@ -57,15 +57,19 @@ def test_connection_meta_assignment():
     class BaseConnection(object):
         extra = String()
 
-    class MyObjectConnection(BaseConnection, Connection):
+    class InheritedConnection(Connection):
         class Meta:
-            node = MyObject
+            abstract = True
 
         @classmethod
         def __init_subclass_with_meta__(cls, node=None, name=None, **options):
-            return super(MyObjectConnection, cls).__init_subclass_with_meta__(
+            return super(InheritedConnection, cls).__init_subclass_with_meta__(
                 _meta=meta, node=node, name=name, **options
             )
+
+    class MyObjectConnection(BaseConnection, InheritedConnection):
+        class Meta:
+            node = MyObject
 
     assert id(MyObjectConnection._meta) == id(meta)
 
