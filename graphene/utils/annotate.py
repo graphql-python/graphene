@@ -22,9 +22,12 @@ def annotate(_func=None, _trigger_warning=True, **annotations):
 
     # We make sure the annotations are valid
     for key, value in annotations.items():
-        assert key in func_signature.parameters, (
-            'The key {key} is not a function parameter in the function "{func_name}".'
-        ).format(key=key, func_name=func_name(_func))
+        if key not in func_signature.parameters:
+            raise AssertionError(
+                (
+                    'The key {key} is not a function parameter in the function "{func_name}".'
+                ).format(key=key, func_name=func_name(_func))
+            )
 
     func_annotations = getattr(_func, "__annotations__", None)
     if func_annotations is None:

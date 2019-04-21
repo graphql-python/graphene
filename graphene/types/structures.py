@@ -67,9 +67,12 @@ class NonNull(Structure):
 
     def __init__(self, *args, **kwargs):
         super(NonNull, self).__init__(*args, **kwargs)
-        assert not isinstance(self._of_type, NonNull), (
-            "Can only create NonNull of a Nullable GraphQLType but got: {}."
-        ).format(self._of_type)
+        if isinstance(self._of_type, NonNull):
+            raise AssertionError(
+                (
+                    "Can only create NonNull of a Nullable GraphQLType but got: {}."
+                ).format(self._of_type)
+            )
 
     def __str__(self):
         return "{}!".format(self.of_type)

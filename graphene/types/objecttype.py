@@ -39,18 +39,25 @@ class ObjectType(BaseType):
         fields = OrderedDict()
 
         for interface in interfaces:
-            assert issubclass(interface, Interface), (
-                'All interfaces of {} must be a subclass of Interface. Received "{}".'
-            ).format(cls.__name__, interface)
+            if not issubclass(interface, Interface):
+                raise AssertionError(
+                    (
+                        "All interfaces of {} must be a subclass of Interface. "
+                        'Received "{}".'
+                    ).format(cls.__name__, interface)
+                )
             fields.update(interface._meta.fields)
 
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=Field))
 
-        assert not (possible_types and cls.is_type_of), (
-            "{name}.Meta.possible_types will cause type collision with {name}.is_type_of. "
-            "Please use one or other."
-        ).format(name=cls.__name__)
+        if possible_types and cls.is_type_of:
+            raise AssertionError(
+                (
+                    "{name}.Meta.possible_types will cause type collision with "
+                    "{name}.is_type_of. Please use one or other."
+                ).format(name=cls.__name__)
+            )
 
         if _meta.fields:
             _meta.fields.update(fields)

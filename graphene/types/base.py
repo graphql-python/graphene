@@ -35,7 +35,8 @@ class BaseType(SubclassWithMeta):
 
     @classmethod
     def __init_subclass_with_meta__(cls, name=None, description=None, _meta=None):
-        assert "_meta" not in cls.__dict__, "Can't assign directly meta"
+        if "_meta" in cls.__dict__:
+            raise AssertionError("Can't assign directly meta")
         if not _meta:
             return
         _meta.name = name or cls.__name__

@@ -8,9 +8,10 @@ class MountedType(OrderedType):
         """
         Mount the UnmountedType instance
         """
-        assert isinstance(unmounted, UnmountedType), ("{} can't mount {}").format(
-            cls.__name__, repr(unmounted)
-        )
+        if not isinstance(unmounted, UnmountedType):
+            raise AssertionError(
+                ("{} can't mount {}").format(cls.__name__, repr(unmounted))
+            )
 
         return cls(
             unmounted.get_type(),

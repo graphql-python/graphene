@@ -16,9 +16,10 @@ class Decimal(Scalar):
     def serialize(dec):
         if isinstance(dec, str):
             dec = _Decimal(dec)
-        assert isinstance(dec, _Decimal), 'Received not compatible Decimal "{}"'.format(
-            repr(dec)
-        )
+        if not isinstance(dec, _Decimal):
+            raise AssertionError(
+                'Received not compatible Decimal "{}"'.format(repr(dec))
+            )
         return str(dec)
 
     @classmethod
