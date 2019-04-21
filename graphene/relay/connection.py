@@ -86,25 +86,19 @@ class Connection(ObjectType):
 
         options["name"] = name
         _meta.node = node
-        _meta.fields = OrderedDict(
-            [
-                (
-                    "page_info",
-                    Field(
-                        PageInfo,
-                        name="pageInfo",
-                        required=True,
-                        description="Pagination data for this connection.",
-                    ),
-                ),
-                (
-                    "edges",
-                    Field(
-                        NonNull(List(edge)),
-                        description="Contains the nodes in this connection.",
-                    ),
-                ),
-            ]
+        if not _meta.fileds:
+            _meta.fields = OrderedDict()
+        _meta.fields.update(
+            page_info=Field(
+                PageInfo,
+                name="pageInfo",
+                required=True,
+                description="Pagination data for this connection.",
+            ),
+            edges=Field(
+                NonNull(List(edge)),
+                description="Contains the nodes in this connection.",
+            ),
         )
         return super(Connection, cls).__init_subclass_with_meta__(
             _meta=_meta, **options
