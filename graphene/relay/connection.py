@@ -86,7 +86,7 @@ class Connection(ObjectType):
 
         options["name"] = name
         _meta.node = node
-        if not _meta.fileds:
+        if not _meta.fields:
             _meta.fields = OrderedDict()
         _meta.fields.update(
             page_info=Field(
