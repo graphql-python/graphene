@@ -79,9 +79,7 @@ def test_connection_meta_assignment():
 
 def test_connection_meta_can_have_fields():
     meta = ConnectionOptions(Connection)
-    meta.fields = OrderedDict([
-        ("test", graphene.String())
-    ])
+    meta.fields = OrderedDict([("test", graphene.String())])
 
     class BaseConnection(object):
         extra = String()
