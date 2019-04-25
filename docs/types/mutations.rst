@@ -19,7 +19,8 @@ This example defines a Mutation:
         ok = graphene.Boolean()
         person = graphene.Field(lambda: Person)
 
-        def mutate(self, info, name):
+        @staticmethod
+        def mutate(root, info, name):
             person = Person(name=name)
             ok = True
             return CreatePerson(person=person, ok=ok)
@@ -32,7 +33,8 @@ resolved.
 only argument for the mutation.
 
 **mutate** is the function that will be applied once the mutation is
-called.
+called. This function acts as a resolver function and as such is always
+called as a static method.
 
 So, we can finish our schema like this:
 
@@ -157,7 +159,8 @@ To return an existing ObjectType instead of a mutation-specific type, set the **
 
         Output = Person
 
-        def mutate(self, info, name):
+        @staticmethod
+        def mutate(root, info, name):
             return Person(name=name)
 
 Then, if we query (``schema.execute(query_str)``) the following:

@@ -82,6 +82,7 @@ For example, you can define a field ``hero`` that resolves to any
             episode=graphene.Int(required=True)
         )
 
+        @staticmethod
         def resolve_hero(_, info, episode):
             # Luke is the hero of Episode V
             if episode == 5:

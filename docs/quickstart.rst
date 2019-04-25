@@ -40,7 +40,8 @@ one field: ``hello`` and an input name. And when we query it, it should return `
     class Query(graphene.ObjectType):
         hello = graphene.String(argument=graphene.String(default_value="stranger"))
 
-        def resolve_hello(self, info, argument):
+        @staticmethod
+        def resolve_hello(root, info, argument):
             return 'Hello ' + argument
 
     schema = graphene.Schema(query=Query)

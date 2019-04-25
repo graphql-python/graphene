@@ -25,6 +25,7 @@ This example model defines a Person, with a first and a last name:
         last_name = graphene.String()
         full_name = graphene.String()
 
+        @staticmethod
         def resolve_full_name(root, info):
             return '{} {}'.format(root.first_name, root.last_name)
 
@@ -72,10 +73,12 @@ passed to the ``ObjectType``.
         me = graphene.Field(Person)
         best_friend = graphene.Field(Person)
 
+        @staticmethod
         def resolve_me(_, info):
             # returns an object that represents a Person
             return get_human(name='Luke Skywalker')
 
+        @staticmethod
         def resolve_best_friend(_, info):
             return {
                 "first_name": "R2",
@@ -96,6 +99,7 @@ kwargs. For example:
     class Query(graphene.ObjectType):
         human_by_name = graphene.Field(Human, name=graphene.String(required=True))
 
+        @staticmethod
         def resolve_human_by_name(_, info, name):
             return get_human(name=name)
 
@@ -124,6 +128,7 @@ For example, given this schema:
     class Query(graphene.ObjectType):
         hello = graphene.String(required=True, name=graphene.String())
 
+        @staticmethod
         def resolve_hello(_, info, name):
             return name if name else 'World'
 
@@ -149,6 +154,7 @@ into a dict:
     class Query(graphene.ObjectType):
         hello = graphene.String(required=True, name=graphene.String())
 
+        @staticmethod
         def resolve_hello(_, info, **args):
             return args.get('name', 'World')
 
@@ -159,6 +165,7 @@ Or by setting a default value for the keyword argument:
     class Query(graphene.ObjectType):
         hello = graphene.String(required=True, name=graphene.String())
 
+        @staticmethod
         def resolve_hello(_, info, name='World'):
             return name
 
@@ -172,6 +179,7 @@ A field can use a custom resolver from outside the class:
 
     import graphene
 
+    @staticmethod
     def resolve_full_name(person, info):
         return '{} {}'.format(person.first_name, person.last_name)
 
