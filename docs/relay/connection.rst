@@ -42,5 +42,5 @@ that implements ``Node`` will have a default Connection.
         ships = relay.ConnectionField(ShipConnection)
 
         @staticmethod
-        def resolve_ships(root, info):
+        def resolve_ships(faction, info):
             return []
