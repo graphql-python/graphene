@@ -2,11 +2,11 @@ from collections import OrderedDict
 from functools import partial
 from inspect import isclass
 
-from graphql_relay import from_global_id, to_global_id
-
 from ..types import ID, Field, Interface, ObjectType
 from ..types.interface import InterfaceOptions
 from ..types.utils import get_type
+
+from .utils import base64, unbase64
 
 
 def is_node(objecttype):

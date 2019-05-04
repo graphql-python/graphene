@@ -1,7 +1,7 @@
 import json
 from functools import partial
 
-from graphql import GraphQLError, ResolveInfo, Source, execute, parse
+from graphql import GraphQLError, GraphQLResolveInfo, Source, execute, parse
 
 from ..context import Context
 from ..dynamic import Dynamic
@@ -455,7 +455,7 @@ def test_query_annotated_resolvers():
             return "{}-{}".format(self, info.context.key)
 
         def resolve_info(self, info):
-            assert isinstance(info, ResolveInfo)
+            assert isinstance(info, GraphQLResolveInfo)
             return "{}-{}".format(self, info.field_name)
 
     test_schema = Schema(Query)

@@ -9,7 +9,6 @@ class Query(ObjectType):
     def resolve_uuid(self, info, input):
         return input
 
-
 schema = Schema(query=Query)
 
 

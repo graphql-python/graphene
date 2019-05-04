@@ -1,5 +1,5 @@
 # flake8: noqa
-from graphql import ResolveInfo
+from graphql import GraphQLResolveInfo
 
 from .objecttype import ObjectType
 from .interface import Interface
@@ -51,7 +51,7 @@ __all__ = [
     "Dynamic",
     "Union",
     "Context",
-    "ResolveInfo",
+    "GraphQLResolveInfo",
     # Deprecated
     "AbstractType",
 ]

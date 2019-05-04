@@ -73,8 +73,6 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
@@ -86,8 +84,7 @@ setup(
     packages=find_packages(exclude=["tests", "tests.*", "examples"]),
     install_requires=[
         "six>=1.10.0,<2",
-        "graphql-core>=2.1,<3",
-        "graphql-relay>=0.4.5,<1",
+        "graphql-core-next==1.0.3",
         "aniso8601>=3,<4",
     ],
     tests_require=tests_require,

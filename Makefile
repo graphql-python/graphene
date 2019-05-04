@@ -9,3 +9,10 @@ docs:
 	pip install -r requirements.txt &&\
 	make html &&\
 	cd -
+
+
+dev-setup:
+	pip install -e ".[test]"
+
+tests:
+	py.test graphene

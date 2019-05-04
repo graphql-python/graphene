@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from graphql_relay.utils import base64
+from ..utils import base64
 from promise import Promise
 
 from ...types import ObjectType, Schema, String

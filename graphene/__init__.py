@@ -28,7 +28,7 @@ from .types import (
     Dynamic,
     Union,
     Context,
-    ResolveInfo,
+    GraphQLResolveInfo,
 )
 from .relay import (
     Node,
@@ -84,7 +84,7 @@ __all__ = [
     "PageInfo",
     "lazy_import",
     "Context",
-    "ResolveInfo",
+    "GraphQLResolveInfo",
     # Deprecated
     "AbstractType",
 ]

@@ -1,7 +1,7 @@
 import six
 
 from ..argument import Argument
-from ..enum import Enum, PyEnum
+from ..enum import Enum
 from ..field import Field
 from ..inputfield import InputField
 from ..schema import ObjectType, Schema
@@ -52,88 +52,57 @@ def test_enum_instance_construction():
     assert sorted([v.name for v in values]) == ["BLUE", "GREEN", "RED"]
 
 
-def test_enum_from_builtin_enum():
-    PyRGB = PyEnum("RGB", "RED,GREEN,BLUE")
 
-    RGB = Enum.from_enum(PyRGB)
-    assert RGB._meta.enum == PyRGB
-    assert RGB.RED
-    assert RGB.GREEN
-    assert RGB.BLUE
+# def test_enum_from_builtin_enum_accepts_lambda_description():
+#     def custom_description(value):
+#         if not value:
+#             return "StarWars Episodes"
 
+#         return "New Hope Episode" if value == Episode.NEWHOPE else "Other"
 
-def test_enum_from_builtin_enum_accepts_lambda_description():
-    def custom_description(value):
-        if not value:
-            return "StarWars Episodes"
+#     def custom_deprecation_reason(value):
+#         return "meh" if value == Episode.NEWHOPE else None
 
-        return "New Hope Episode" if value == Episode.NEWHOPE else "Other"
+#     PyEpisode = PyEnum("PyEpisode", "NEWHOPE,EMPIRE,JEDI")
+#     Episode = Enum.from_enum(
+#         PyEpisode,
+#         description=custom_description,
+#         deprecation_reason=custom_deprecation_reason,
+#     )
 
-    def custom_deprecation_reason(value):
-        return "meh" if value == Episode.NEWHOPE else None
+#     class Query(ObjectType):
+#         foo = Episode()
 
-    PyEpisode = PyEnum("PyEpisode", "NEWHOPE,EMPIRE,JEDI")
-    Episode = Enum.from_enum(
-        PyEpisode,
-        description=custom_description,
-        deprecation_reason=custom_deprecation_reason,
-    )
+#     schema = Schema(query=Query)
 
-    class Query(ObjectType):
-        foo = Episode()
+#     GraphQLPyEpisode = schema._type_map["PyEpisode"].values
 
-    schema = Schema(query=Query)
+#     assert schema._type_map["PyEpisode"].description == "StarWars Episodes"
+#     assert (
+#         GraphQLPyEpisode[0].name == "NEWHOPE"
+#         and GraphQLPyEpisode[0].description == "New Hope Episode"
+#     )
+#     assert (
+#         GraphQLPyEpisode[1].name == "EMPIRE"
+#         and GraphQLPyEpisode[1].description == "Other"
+#     )
+#     assert (
+#         GraphQLPyEpisode[2].name == "JEDI"
+#         and GraphQLPyEpisode[2].description == "Other"
+#     )
 
-    GraphQLPyEpisode = schema._type_map["PyEpisode"].values
-
-    assert schema._type_map["PyEpisode"].description == "StarWars Episodes"
-    assert (
-        GraphQLPyEpisode[0].name == "NEWHOPE"
-        and GraphQLPyEpisode[0].description == "New Hope Episode"
-    )
-    assert (
-        GraphQLPyEpisode[1].name == "EMPIRE"
-        and GraphQLPyEpisode[1].description == "Other"
-    )
-    assert (
-        GraphQLPyEpisode[2].name == "JEDI"
-        and GraphQLPyEpisode[2].description == "Other"
-    )
-
-    assert (
-        GraphQLPyEpisode[0].name == "NEWHOPE"
-        and GraphQLPyEpisode[0].deprecation_reason == "meh"
-    )
-    assert (
-        GraphQLPyEpisode[1].name == "EMPIRE"
-        and GraphQLPyEpisode[1].deprecation_reason is None
-    )
-    assert (
-        GraphQLPyEpisode[2].name == "JEDI"
-        and GraphQLPyEpisode[2].deprecation_reason is None
-    )
-
-
-def test_enum_from_python3_enum_uses_enum_doc():
-    if not six.PY3:
-        return
-
-    from enum import Enum as PyEnum
-
-    class Color(PyEnum):
-        """This is the description"""
-
-        RED = 1
-        GREEN = 2
-        BLUE = 3
-
-    RGB = Enum.from_enum(Color)
-    assert RGB._meta.enum == Color
-    assert RGB._meta.description == "This is the description"
-    assert RGB
-    assert RGB.RED
-    assert RGB.GREEN
-    assert RGB.BLUE
+#     assert (
+#         GraphQLPyEpisode[0].name == "NEWHOPE"
+#         and GraphQLPyEpisode[0].deprecation_reason == "meh"
+#     )
+#     assert (
+#         GraphQLPyEpisode[1].name == "EMPIRE"
+#         and GraphQLPyEpisode[1].deprecation_reason is None
+#     )
+#     assert (
+#         GraphQLPyEpisode[2].name == "JEDI"
+#         and GraphQLPyEpisode[2].deprecation_reason is None
+#     )
 
 
 def test_enum_value_from_class():
