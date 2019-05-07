@@ -11,7 +11,7 @@ make dev-setup
 git checkout -B YOUR_BRANCH_NAME
 ```
 
-You are not ready to start developing
+You are now ready to start developing!
 
 ## Testing
 
