@@ -308,8 +308,8 @@ You can also run the benchmarks with:
 
 Graphene supports several versions of Python. To make sure that changes
 do not break compatibility with any of those versions, we use ``tox`` to
-create virtualenvs for each python version and run tests with that
-version. To run against all python versions defined in the ``tox.ini``
+create virtualenvs for each Python version and run tests with that
+version. To run against all Python versions defined in the ``tox.ini``
 config file, just run:
 
 .. code:: sh
@@ -323,10 +323,10 @@ file:
 
     tox -e py36
 
-Tox can only use whatever versions of python are installed on your
+Tox can only use whatever versions of Python are installed on your
 system. When you create a pull request, Travis will also be running the
 same tests and report the results, so there is no need for potential
-contributors to try to install every single version of python on their
+contributors to try to install every single version of Python on their
 own system ahead of time. We appreciate opening issues and pull requests
 to make graphene even more stable & useful!
 
