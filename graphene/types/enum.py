@@ -46,7 +46,12 @@ class EnumMeta(SubclassWithMeta_Meta):
     def __call__(cls, *args, **kwargs):  # noqa: N805
         if cls is Enum:
             description = kwargs.pop("description", None)
-            return cls.from_enum(PyEnum(*args, **kwargs), description=description)
+            deprecation_reason = kwargs.pop("deprecation_reason", None)
+            return cls.from_enum(
+                PyEnum(*args, **kwargs),
+                description=description,
+                deprecation_reason=deprecation_reason,
+            )
         return super(EnumMeta, cls).__call__(*args, **kwargs)
         # return cls._meta.enum(*args, **kwargs)
 
