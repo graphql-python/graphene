@@ -19,7 +19,11 @@ help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@grep -E '^\.PHONY: [a-zA-Z_-]+ .*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = "(: |##)"}; {printf "\033[36m%-30s\033[0m %s\n", $$2, $$3}'
 
-.PHONY: clean
+.PHONY: install ## to install all documentation related requirements
+install:
+	pip install -r requirements.txt
+
+.PHONY: clean ## to remove all built documentation
 clean:
 	rm -rf $(BUILDDIR)/*
 
@@ -199,6 +203,6 @@ dummy:
 	@echo
 	@echo "Build finished. Dummy builder generates no files."
 
-.PHONY: livehtml
+.PHONY: livehtml ## to build and serve live-reloading documentation
 livehtml:
 	sphinx-autobuild -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

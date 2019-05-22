@@ -5,7 +5,8 @@ help:
 
 .PHONY: docs ## Generate docs
 docs:
-	@cd docs &&\
-	pip install -r requirements.txt &&\
-	make html &&\
-	cd -
+	cd docs && make install && make html
+
+.PHONY: docs-live ## Generate docs with live reloading
+docs-live:
+	cd docs && make install && make livehtml
