@@ -36,7 +36,29 @@ class InputObjectType(UnmountedType, BaseType):
     An input object defines a structured collection of fields which may be
     supplied to a field argument.
 
-    Using `NonNull` will ensure that a value must be provided by the query
+    Using ``graphene.NonNull`` will ensure that a input value must be provided by the query.
+
+    All class attributes of ``graphene.InputObjectType`` are implicitly mounted as InputField
+    using the below Meta class options.
+
+    .. code:: python
+
+        class Person(graphene.InputObjectType):
+            first_name = graphene.String(required=True)                     # implicitly mounted as Input Field
+            last_name = graphene.InputField(String, description='Surname')  # explicitly mounted as Input Field
+
+    The fields on an input object type can themselves refer to input object types, but you can't
+    mix input and output types in your schema.
+
+    Meta class options (optional):
+        name (str): the name of the GraphQL type (must be unique in schema). Defaults to class
+            name.
+        description (str): the description of the GraphQL type in the schema. Defaults to class
+            docstring.
+        container (class): A class reference for a value object that allows for
+            attribute initialization and access. Default InputObjectTypeContainer.
+        fields (Dict[str, graphene.InputField]): Dictionary of field name to InputField. Not
+            recommended to use (prefer class attributes).
     """
 
     @classmethod

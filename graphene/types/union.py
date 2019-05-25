@@ -19,6 +19,32 @@ class Union(UnmountedType, BaseType):
     When a field can return one of a heterogeneous set of types, a Union type
     is used to describe what types are possible as well as providing a function
     to determine which type is actually used when the field is resolved.
+
+    The schema in this example can take a search text and return any of the GraphQL object types
+    indicated: Human, Droid or Startship.
+
+    Ambigous return types can be resolved on each ObjectType through ``Meta.possible_types``
+    attribute or ``is_type_of`` method. Or by implementing ``resolve_type`` class method on the
+    Union.
+
+    .. code:: python
+
+        class SearchResult(graphene.Union):
+            class Meta:
+                types = (Human, Droid, Starship)
+
+        class Query(graphene.ObjectType):
+            search = graphene.List(SearchResult.Field(
+                search_text=String(description='Value to search for'))
+            )
+
+    Meta:
+        types (Iterable[graphene.ObjectType)]: Required. Collection of types that may be returned
+            by this Union for the graphQL schema.
+        name (optional, str): the name of the GraphQL type (must be unique in schema). Defaults to class
+            name.
+        description (optional, str): the description of the GraphQL type in the schema. Defaults to class
+            docstring.
     """
 
     @classmethod

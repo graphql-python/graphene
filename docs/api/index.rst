@@ -10,80 +10,85 @@ Schema
 .. Uncomment sections / types as API documentation is fleshed out
 .. in each class
 
-.. Object types
-.. ------------
+Object types
+------------
 
-.. .. autoclass:: graphene.ObjectType
+.. autoclass:: graphene.ObjectType
 
-.. .. autoclass:: graphene.InputObjectType
+.. autoclass:: graphene.InputObjectType
 
-.. Fields (Mounted Types)
-.. ----------------------
+.. autoclass:: graphene.Mutation
+    :members:
 
-.. .. autoclass:: graphene.Field
+Fields (Mounted Types)
+----------------------
 
-.. .. autoclass:: graphene.Argument
+.. autoclass:: graphene.Field
 
-.. .. autoclass:: graphene.InputField
+.. autoclass:: graphene.Argument
 
-.. GraphQL Scalars
-.. ---------------
+.. autoclass:: graphene.InputField
 
-.. .. autoclass:: graphene.Int
+Fields (Unmounted Types)
+------------------------
 
-.. .. autoclass:: graphene.Float
+.. autoclass:: graphene.types.unmountedtype.UnmountedType
 
-.. .. autoclass:: graphene.String
+GraphQL Scalars
+---------------
 
-.. .. autoclass:: graphene.Boolean
+.. autoclass:: graphene.Int()
 
-.. .. autoclass:: graphene.ID
+.. autoclass:: graphene.Float()
 
-.. Graphene Scalars
-.. ----------------
+.. autoclass:: graphene.String()
 
-.. .. autoclass:: graphene.Date
+.. autoclass:: graphene.Boolean()
 
-.. .. autoclass:: graphene.DateTime
+.. autoclass:: graphene.ID()
 
-.. .. autoclass:: graphene.Time
+Graphene Scalars
+----------------
 
-.. .. autoclass:: graphene.Decimal
+.. autoclass:: graphene.Date()
 
-.. .. autoclass:: graphene.UUID
+.. autoclass:: graphene.DateTime()
 
-.. .. autoclass:: graphene.JSONString
+.. autoclass:: graphene.Time()
 
-.. Structures
-.. ----------
+.. autoclass:: graphene.Decimal()
 
-.. .. autoclass:: graphene.List
+.. autoclass:: graphene.UUID()
 
-.. .. autoclass:: graphene.NonNull
+.. autoclass:: graphene.JSONString()
 
-.. Enum
-.. ----
+Enum
+----
 
-.. .. autoclass:: graphene.Enum
+.. autoclass:: graphene.Enum()
 
-.. Type Extension
-.. --------------
+Structures
+----------
 
-.. .. autoclass:: graphene.Interface
+.. autoclass:: graphene.List
 
-.. .. autoclass:: graphene.Union
+.. autoclass:: graphene.NonNull
 
-.. Execution Metadata
-.. ------------------
+Type Extension
+--------------
 
-.. .. autoclass:: graphene.ResolveInfo
+.. autoclass:: graphene.Interface()
 
-.. .. autoclass:: graphene.Context
+.. autoclass:: graphene.Union()
 
-.. Mutation
-.. --------
+Execution Metadata
+------------------
 
-.. .. autoclass:: graphene.Mutation
+.. autoclass:: graphene.ResolveInfo
+
+.. autoclass:: graphene.Context
+
+.. autoclass:: graphql.execution.base.ExecutionResult
 
 .. Relay
 .. -----

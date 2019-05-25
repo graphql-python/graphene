@@ -39,6 +39,12 @@ class List(Structure):
     A list is a kind of type marker, a wrapping type which points to another
     type. Lists are often created within the context of defining the fields of
     an object type.
+
+    List indicates that many values will be returned (or input) for this field.
+
+    .. code:: python
+
+        field_name = graphene.List(graphene.String, description='There will be many values')
     """
 
     def __str__(self):
@@ -63,6 +69,14 @@ class NonNull(Structure):
     usually the id field of a database row will never be null.
 
     Note: the enforcement of non-nullability occurs within the executor.
+
+    NonNull can also be indicated on all Mounted types with the argument ``required``.
+
+    .. code:: python
+
+        field_name = graphene.NonNull(graphene.String, description='This field will not be null')
+        another_field = graphene.String(required=True, description='This is equivalent to the above')
+
     """
 
     def __init__(self, *args, **kwargs):

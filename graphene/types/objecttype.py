@@ -22,6 +22,62 @@ class ObjectType(BaseType):
 
     Almost all of the GraphQL types you define will be object types. Object types
     have a name, but most importantly describe their fields.
+
+    The name of the type defined by an _ObjectType_ defaults to the class name. The type
+    description defaults to the class docstring. This can be overriden by adding attributes
+    to a Meta inner class.
+
+    The class attributes of an _ObjectType_ are mounted as instances of ``graphene.Field``.
+
+    Methods starting with ``resolve_<field_name>`` are bound as resolvers of the matching Field
+    name. If no resolver is provided, the default resolver is used.
+
+    Ambiguous types with Interface and Union can be determined through``is_type_of`` method and
+    ``Meta.possible_types`` attribute.
+
+    .. code:: python
+
+        class Person(ObjectType):
+            class Meta:
+                description = 'A human'
+
+            first_name = graphene.String()  # implicitly mounted as Field
+            last_name = graphene.Field(String)  # explicitly mounted as Field
+
+            def resolve_last_name(parent, info):
+                return last_name
+
+    ObjectType must be mounted using ``graphene.Field``.
+
+    .. code:: python
+
+        graphene.Feild(Person, description='My favorite person')``.
+
+    Meta class options (optional):
+        name (str): the name of the GraphQL type (must be unique in schema). Defaults to class
+            name.
+        description (str): the description of the GraphQL type in the schema. Defaults to class
+            docstring.
+        interfaces (Iterable[graphene.Interface]): GraphQL interfaces to extend with this object.
+            all fields from interface will be included in this object's schema.
+        possible_types (Iterable[class]): used to test parent value object via isintance to see if
+            this type can be used to resolve an ambigous type (interface, union).
+        default_resolver (any Callable resolver): Override the default resolver for this
+            type. Defaults to graphene default resolver which returns an attribute or dictionary
+            key with the same name as the field.
+        fields (Dict[str, graphene.Field]): dictionary of field name to Field. Not recommended to
+            use (prefer class attributes).
+
+    An _ObjectType_ can be used as a simple value object by creating an instance of the class.
+
+    .. code:: python
+
+        p = Person(first_name='Bob', last_name='Roberts')
+        assert p.first_name == 'Bob'
+
+    Args:
+        *args (List[Any]): positional values to use for Field values of value object
+        **kwargs (Dict[str: Any]): keyword arguments to use for Field values of value object
     """
 
     @classmethod
