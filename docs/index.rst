@@ -11,9 +11,10 @@ Contents:
    execution/index
    relay/index
    testing/index
+   api/index
 
 Integrations
------
+------------
 
 * `Graphene-Django <http://docs.graphene-python.org/projects/django/en/latest/>`_ (`source <https://github.com/graphql-python/graphene-django/>`_)
 * `Graphene-SQLAlchemy <http://docs.graphene-python.org/projects/sqlalchemy/en/latest/>`_ (`source <https://github.com/graphql-python/graphene-sqlalchemy/>`_)

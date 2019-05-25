@@ -205,4 +205,4 @@ dummy:
 
 .PHONY: livehtml ## to build and serve live-reloading documentation
 livehtml:
-	sphinx-autobuild -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	sphinx-autobuild -b html --watch ../graphene $(ALLSPHINXOPTS) $(BUILDDIR)/html
