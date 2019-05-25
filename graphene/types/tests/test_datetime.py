@@ -27,8 +27,19 @@ class Query(ObjectType):
 schema = Schema(query=Query)
 
 
-def test_datetime_query():
-    now = datetime.datetime.now().replace(tzinfo=pytz.utc)
+@pytest.fixture
+def now():
+    utc_datetime = datetime.datetime(2019, 5, 25, 5, 30, 15, 10, pytz.utc)
+    return utc_datetime
+
+
+@pytest.fixture
+def time(now):
+    time = datetime.time(now.hour, now.minute, now.second, now.microsecond, now.tzinfo)
+    return time
+
+
+def test_datetime_query(now):
     isoformat = now.isoformat()
 
     result = schema.execute("""{ datetime(in: "%s") }""" % isoformat)
@@ -36,8 +47,8 @@ def test_datetime_query():
     assert result.data == {"datetime": isoformat}
 
 
-def test_date_query():
-    now = datetime.datetime.now().replace(tzinfo=pytz.utc).date()
+def test_date_query(now):
+    now = now.date()
     isoformat = now.isoformat()
 
     result = schema.execute("""{ date(in: "%s") }""" % isoformat)
@@ -45,9 +56,7 @@ def test_date_query():
     assert result.data == {"date": isoformat}
 
 
-def test_time_query():
-    now = datetime.datetime.now().replace(tzinfo=pytz.utc)
-    time = datetime.time(now.hour, now.minute, now.second, now.microsecond, now.tzinfo)
+def test_time_query(time):
     isoformat = time.isoformat()
 
     result = schema.execute("""{ time(at: "%s") }""" % isoformat)
@@ -85,8 +94,7 @@ def test_bad_time_query():
     assert result.data is None
 
 
-def test_datetime_query_variable():
-    now = datetime.datetime.now().replace(tzinfo=pytz.utc)
+def test_datetime_query_variable(now):
     isoformat = now.isoformat()
 
     # test datetime variable provided as Python datetime
@@ -106,8 +114,8 @@ def test_datetime_query_variable():
     assert result.data == {"datetime": isoformat}
 
 
-def test_date_query_variable():
-    now = datetime.datetime.now().replace(tzinfo=pytz.utc).date()
+def test_date_query_variable(now):
+    now = now.date()
     isoformat = now.isoformat()
 
     # test date variable provided as Python date
@@ -125,9 +133,7 @@ def test_date_query_variable():
     assert result.data == {"date": isoformat}
 
 
-def test_time_query_variable():
-    now = datetime.datetime.now().replace(tzinfo=pytz.utc)
-    time = datetime.time(now.hour, now.minute, now.second, now.microsecond, now.tzinfo)
+def test_time_query_variable(time):
     isoformat = time.isoformat()
 
     # test time variable provided as Python time
