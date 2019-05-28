@@ -197,7 +197,7 @@ previous example you could do:
 Changing the name
 -----------------
 
-By default the type name in the GraphQL schema will the same as the class name
+By default the type name in the GraphQL schema will be the same as the class name
 that defines the ``ObjectType``. This can be changed by setting the ``name``
 property on the ``Meta`` class:
 
