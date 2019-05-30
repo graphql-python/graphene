@@ -13,7 +13,7 @@ All Scalar types accept the following arguments. All are optional:
 
 ``required``: *boolean*
 
-    If ``True``, the server will enforce a value for this field. See `NonNull <./list-and-nonnull.html#nonnull>`_. Default is ``False``.
+    If ``True``, the server will enforce a value for this field. See `NonNull <../list-and-nonnull.html#nonnull>`_. Default is ``False``.
 
 ``deprecation_reason``: *string*
 
