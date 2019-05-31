@@ -1,5 +1,3 @@
-import pytest
-
 from graphene import Schema, ObjectType, String
 
 
