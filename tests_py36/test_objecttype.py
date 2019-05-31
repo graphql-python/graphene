@@ -15,5 +15,3 @@ def test_objecttype_meta_with_annotations():
 
     schema = Schema(query=Query)
     assert schema is not None
-
-
