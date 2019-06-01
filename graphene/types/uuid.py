@@ -14,9 +14,7 @@ class UUID(Scalar):
         if isinstance(uuid, str):
             uuid = _UUID(uuid)
 
-        assert isinstance(uuid, _UUID), "Expected UUID instance, received {}".format(
-            uuid
-        )
+        assert isinstance(uuid, _UUID), f"Expected UUID instance, received {uuid}"
         return str(uuid)
 
     @staticmethod

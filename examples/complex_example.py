@@ -7,7 +7,7 @@ class GeoInput(graphene.InputObjectType):
 
     @property
     def latlng(self):
-        return "({},{})".format(self.lat, self.lng)
+        return f"({self.lat},{self.lng})"
 
 
 class Address(graphene.ObjectType):

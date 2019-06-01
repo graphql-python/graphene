@@ -32,7 +32,7 @@ def test_enum():
 
         @property
         def description(self):
-            return "Description {}={}".format(self.name, self.value)
+            return f"Description {self.name}={self.value}"
 
         @property
         def deprecation_reason(self):

@@ -26,7 +26,7 @@ This example model defines a Person, with a first and a last name:
         full_name = graphene.String()
 
         def resolve_full_name(root, info):
-            return '{} {}'.format(root.first_name, root.last_name)
+            return f'{root.first_name} {root.last_name}'
 
 **first\_name** and **last\_name** are fields of the ObjectType. Each
 field is specified as a class attribute, and each attribute maps to a
@@ -173,7 +173,7 @@ A field can use a custom resolver from outside the class:
     import graphene
 
     def resolve_full_name(person, info):
-        return '{} {}'.format(person.first_name, person.last_name)
+        return f'{person.first_name} {person.last_name}'
 
     class Person(graphene.ObjectType):
         first_name = graphene.String()

@@ -20,9 +20,9 @@ def assert_valid_root_type(_type):
         return
     is_graphene_objecttype = inspect.isclass(_type) and issubclass(_type, ObjectType)
     is_graphql_objecttype = isinstance(_type, GraphQLObjectType)
-    assert is_graphene_objecttype or is_graphql_objecttype, (
-        "Type {} is not a valid ObjectType."
-    ).format(_type)
+    assert (
+        is_graphene_objecttype or is_graphql_objecttype
+    ), f"Type {_type} is not a valid ObjectType."
 
 
 class Schema(GraphQLSchema):
@@ -55,9 +55,7 @@ class Schema(GraphQLSchema):
 
         assert all(
             isinstance(d, GraphQLDirective) for d in directives
-        ), "Schema directives must be List[GraphQLDirective] if provided but got: {}.".format(
-            directives
-        )
+        ), f"Schema directives must be List[GraphQLDirective] if provided but got: {directives}."
         self._directives = directives
         self.build_typemap()
 
@@ -79,7 +77,7 @@ class Schema(GraphQLSchema):
         """
         _type = super(Schema, self).get_type(type_name)
         if _type is None:
-            raise AttributeError('Type "{}" not found in the Schema'.format(type_name))
+            raise AttributeError(f'Type "{type_name}" not found in the Schema')
         if isinstance(_type, GrapheneGraphQLType):
             return _type.graphene_type
         return _type
@@ -91,12 +89,10 @@ class Schema(GraphQLSchema):
             return _type
         if is_graphene_type(_type):
             graphql_type = self.get_type(_type._meta.name)
-            assert graphql_type, "Type {} not found in this schema.".format(
-                _type._meta.name
-            )
+            assert graphql_type, f"Type {_type._meta.name} not found in this schema."
             assert graphql_type.graphene_type == _type
             return graphql_type
-        raise Exception("{} is not a valid GraphQL type.".format(_type))
+        raise Exception(f"{_type} is not a valid GraphQL type.")
 
     def execute(self, *args, **kwargs):
         return graphql(self, *args, **kwargs)

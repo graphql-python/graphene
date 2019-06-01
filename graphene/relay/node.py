@@ -98,9 +98,9 @@ class Node(AbstractNode):
             return None
 
         if only_type:
-            assert graphene_type == only_type, ("Must receive a {} id.").format(
-                only_type._meta.name
-            )
+            assert (
+                graphene_type == only_type
+            ), f"Must receive a {only_type._meta.name} id."
 
         # We make sure the ObjectType implements the "Node" interface
         if cls not in graphene_type._meta.interfaces:

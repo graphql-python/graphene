@@ -19,7 +19,7 @@ def test_list_with_unmounted_type():
 
     assert (
         str(exc_info.value)
-        == "List could not have a mounted String() as inner type. Try with List(String)."
+        == "List can not have a mounted String() as inner type. Try List(String)."
     )
 
 
@@ -97,7 +97,7 @@ def test_nonnull_with_unmounted_type():
 
     assert (
         str(exc_info.value)
-        == "NonNull could not have a mounted String() as inner type. Try with NonNull(String)."
+        == "NonNull can not have a mounted String() as inner type. Try NonNull(String)."
     )
 
 

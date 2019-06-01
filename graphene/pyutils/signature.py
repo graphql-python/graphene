@@ -54,7 +54,7 @@ def signature(obj):
     """Get a signature object for the passed callable."""
 
     if not callable(obj):
-        raise TypeError("{!r} is not a callable object".format(obj))
+        raise TypeError(f"{repr(obj)} is not a callable object")
 
     if isinstance(obj, types.MethodType):
         sig = signature(obj.__func__)
@@ -101,7 +101,7 @@ def signature(obj):
         try:
             ba = sig.bind_partial(*partial_args, **partial_keywords)
         except TypeError as ex:
-            msg = "partial object {!r} has incorrect arguments".format(obj)
+            msg = f"partial object {repr(obj)} has incorrect arguments"
             raise ValueError(msg)
 
         for arg_name, arg_value in ba.arguments.items():
@@ -171,10 +171,10 @@ def signature(obj):
 
     if isinstance(obj, types.BuiltinFunctionType):
         # Raise a nicer error message for builtins
-        msg = "no signature found for builtin function {!r}".format(obj)
+        msg = f"no signature found for builtin function {repr(obj)}"
         raise ValueError(msg)
 
-    raise ValueError("callable {!r} is not supported by signature".format(obj))
+    raise ValueError(f"callable {repr(obj)} is not supported by signature")
 
 
 class _void(object):
@@ -195,7 +195,7 @@ class _ParameterKind(int):
         return self._name
 
     def __repr__(self):
-        return "<_ParameterKind: {!r}>".format(self._name)
+        return f"<_ParameterKind: {repr(self._name)}>"
 
 
 _POSITIONAL_ONLY = _ParameterKind(0, name="POSITIONAL_ONLY")
@@ -249,7 +249,7 @@ class Parameter(object):
 
         if default is not _empty:
             if kind in (_VAR_POSITIONAL, _VAR_KEYWORD):
-                msg = "{} parameters cannot have default values".format(kind)
+                msg = f"{kind} parameters cannot have default values"
                 raise ValueError(msg)
         self._default = default
         self._annotation = annotation
@@ -263,7 +263,7 @@ class Parameter(object):
         else:
             name = str(name)
             if kind != _POSITIONAL_ONLY and not re.match(r"[a-z_]\w*$", name, re.I):
-                msg = "{!r} is not a valid parameter name".format(name)
+                msg = f"{repr(name)} is not a valid parameter name"
                 raise ValueError(msg)
             self._name = name
 
@@ -325,14 +325,14 @@ class Parameter(object):
         if kind == _POSITIONAL_ONLY:
             if formatted is None:
                 formatted = ""
-            formatted = "<{}>".format(formatted)
+            formatted = f"<{formatted}>"
 
         # Add annotation and default value
         if self._annotation is not _empty:
-            formatted = "{}:{}".format(formatted, formatannotation(self._annotation))
+            formatted = f"{formatted}:{formatannotation(self._annotation)}"
 
         if self._default is not _empty:
-            formatted = "{}={}".format(formatted, repr(self._default))
+            formatted = f"{formatted}={repr(self._default)}"
 
         if kind == _VAR_POSITIONAL:
             formatted = "*" + formatted
@@ -342,10 +342,10 @@ class Parameter(object):
         return formatted
 
     def __repr__(self):
-        return "<{} at {:#x} {!r}>".format(self.__class__.__name__, id(self), self.name)
+        return f"<{self.__class__.__name__} at {id(self):#x} {repr(self.name)}>"
 
     def __hash__(self):
-        msg = "unhashable type: '{}'".format(self.__class__.__name__)
+        msg = f"unhashable type: '{self.__class__.__name__}'"
         raise TypeError(msg)
 
     def __eq__(self, other):
@@ -442,7 +442,7 @@ class BoundArguments(object):
         return kwargs
 
     def __hash__(self):
-        msg = "unhashable type: '{}'".format(self.__class__.__name__)
+        msg = f"unhashable type: '{self.__class__.__name__}'"
         raise TypeError(msg)
 
     def __eq__(self, other):
@@ -501,8 +501,7 @@ class Signature(object):
                 for idx, param in enumerate(parameters):
                     kind = param.kind
                     if kind < top_kind:
-                        msg = "wrong parameter order: {0} before {1}"
-                        msg = msg.format(top_kind, param.kind)
+                        msg = f"wrong parameter order: {top_kind} before {param.kind}"
                         raise ValueError(msg)
                     else:
                         top_kind = kind
@@ -513,7 +512,7 @@ class Signature(object):
                         param = param.replace(name=name)
 
                     if name in params:
-                        msg = "duplicate parameter name: {!r}".format(name)
+                        msg = f"duplicate parameter name: {repr(name)}"
                         raise ValueError(msg)
                     params[name] = param
             else:
@@ -527,7 +526,7 @@ class Signature(object):
         """Constructs Signature for the given python function"""
 
         if not isinstance(func, types.FunctionType):
-            raise TypeError("{!r} is not a Python function".format(func))
+            raise TypeError(f"{repr(func)} is not a Python function")
 
         Parameter = cls._parameter_cls
 
@@ -631,7 +630,7 @@ class Signature(object):
         return type(self)(parameters, return_annotation=return_annotation)
 
     def __hash__(self):
-        msg = "unhashable type: '{}'".format(self.__class__.__name__)
+        msg = f"unhashable type: '{self.__class__.__name__}'"
         raise TypeError(msg)
 
     def __eq__(self, other):
@@ -708,10 +707,9 @@ class Signature(object):
                     elif param.name in kwargs:
                         if param.kind == _POSITIONAL_ONLY:
                             msg = (
-                                "{arg!r} parameter is positional only, "
+                                f"{repr(param.name)} parameter is positional only, "
                                 "but was passed as a keyword"
                             )
-                            msg = msg.format(arg=param.name)
                             raise TypeError(msg)
                         parameters_ex = (param,)
                         break
@@ -726,8 +724,7 @@ class Signature(object):
                             parameters_ex = (param,)
                             break
                         else:
-                            msg = "{arg!r} parameter lacking default value"
-                            msg = msg.format(arg=param.name)
+                            msg = f"{repr(param.name)} parameter lacking default value"
                             raise TypeError(msg)
             else:
                 # We have a positional argument to process
@@ -752,8 +749,7 @@ class Signature(object):
 
                     if param.name in kwargs:
                         raise TypeError(
-                            "multiple values for argument "
-                            "{arg!r}".format(arg=param.name)
+                            f"multiple values for argument {repr(param.name)}"
                         )
 
                     arguments[param.name] = arg_val
@@ -767,8 +763,8 @@ class Signature(object):
                 # Signature object (but let's have this check here
                 # to ensure correct behaviour just in case)
                 raise TypeError(
-                    "{arg!r} parameter is positional only, "
-                    "but was passed as a keyword".format(arg=param.name)
+                    f"{repr(param.name)} parameter is positional only, "
+                    "but was passed as a keyword"
                 )
 
             if param.kind == _VAR_KEYWORD:
@@ -790,7 +786,7 @@ class Signature(object):
                     and param.default is _empty
                 ):
                     raise TypeError(
-                        "{arg!r} parameter lacking default value".format(arg=param_name)
+                        f"{repr(param_name)} parameter lacking default value"
                     )
 
             else:
@@ -841,10 +837,10 @@ class Signature(object):
 
             result.append(formatted)
 
-        rendered = "({})".format(", ".join(result))
+        rendered = f"({', '.join(result)})"
 
         if self.return_annotation is not _empty:
             anno = formatannotation(self.return_annotation)
-            rendered += " -> {}".format(anno)
+            rendered += f" -> {anno}"
 
         return rendered

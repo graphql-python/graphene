@@ -48,11 +48,11 @@ class Mutation(ObjectType):
                 if input_class:
                     warn_deprecation(
                         (
-                            "Please use {name}.Arguments instead of {name}.Input."
+                            f"Please use {cls.__name__}.Arguments instead of {cls.__name__}.Input."
                             "Input is now only used in ClientMutationID.\n"
                             "Read more:"
                             " https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#mutation-input"
-                        ).format(name=cls.__name__)
+                        )
                     )
 
             if input_class:

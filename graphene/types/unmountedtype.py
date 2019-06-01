@@ -25,7 +25,7 @@ class UnmountedType(OrderedType):
         This function is called when the UnmountedType instance
         is mounted (as a Field, InputField or Argument)
         """
-        raise NotImplementedError("get_type not implemented in {}".format(self))
+        raise NotImplementedError(f"get_type not implemented in {self}")
 
     def mount_as(self, _as):
         return _as.mounted(self)

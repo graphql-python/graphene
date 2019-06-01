@@ -20,10 +20,10 @@ class BaseOptions(object):
         if not self._frozen:
             super(BaseOptions, self).__setattr__(name, value)
         else:
-            raise Exception("Can't modify frozen Options {}".format(self))
+            raise Exception(f"Can't modify frozen Options {self}")
 
     def __repr__(self):
-        return "<{} name={}>".format(self.__class__.__name__, repr(self.name))
+        return f"<{self.__class__.__name__} name={repr(self.name)}>"
 
 
 class BaseType(SubclassWithMeta):
