@@ -1,3 +1,4 @@
+import six
 from typing import Any
 
 from graphql.language.ast import BooleanValue, FloatValue, IntValue, StringValue
