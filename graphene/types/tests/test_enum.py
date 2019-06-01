@@ -1,5 +1,3 @@
-import six
-
 from ..argument import Argument
 from ..enum import Enum, PyEnum
 from ..field import Field
