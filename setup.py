@@ -79,16 +79,12 @@ setup(
     ],
     keywords="api graphql protocol rest relay graphene",
     packages=find_packages(exclude=["tests", "tests.*", "examples"]),
-    install_requires=[
-        "graphql-core>=2.1,<3",
-        "graphql-relay>=0.4.5,<1",
-        "aniso8601>=3,<=6.0.*",
-    ],
+    install_requires=["graphql-core-next~=1.0.5", "aniso8601~=6.0.0"],
     tests_require=tests_require,
     extras_require={
         "test": tests_require,
-        "django": ["graphene-django"],
-        "sqlalchemy": ["graphene-sqlalchemy"],
+        # "django": ["graphene-django"],
+        # "sqlalchemy": ["graphene-sqlalchemy"],
     },
     cmdclass={"test": PyTest},
 )
