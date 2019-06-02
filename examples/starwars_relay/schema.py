@@ -1,34 +1,27 @@
-import graphene
+from graphene import ObjectType, Schema, Field, String
 from graphene import relay
 
 from .data import create_ship, get_empire, get_faction, get_rebels, get_ship
 
 
-class Ship(graphene.ObjectType):
-    """A ship in the Star Wars saga"""
+class Ship(ObjectType, interfaces=(relay.Node,)):
+    """A ship in the Star Wars saga."""
 
-    class Meta:
-        interfaces = (relay.Node,)
-
-    name = graphene.String(description="The name of the ship.")
+    name = String(description="The name of the ship.")
 
     @classmethod
     def get_node(cls, info, id):
         return get_ship(id)
 
 
-class ShipConnection(relay.Connection):
-    class Meta:
-        node = Ship
+class ShipConnection(relay.Connection, node=Ship):
+    pass
 
 
-class Faction(graphene.ObjectType):
-    """A faction in the Star Wars saga"""
+class Faction(ObjectType, interfaces=(relay.Node,)):
+    """A faction in the Star Wars saga."""
 
-    class Meta:
-        interfaces = (relay.Node,)
-
-    name = graphene.String(description="The name of the faction.")
+    name = String(description="The name of the faction.")
     ships = relay.ConnectionField(
         ShipConnection, description="The ships used by the faction."
     )
@@ -44,11 +37,11 @@ class Faction(graphene.ObjectType):
 
 class IntroduceShip(relay.ClientIDMutation):
     class Input:
-        ship_name = graphene.String(required=True)
-        faction_id = graphene.String(required=True)
+        ship_name = String(required=True)
+        faction_id = String(required=True)
 
-    ship = graphene.Field(Ship)
-    faction = graphene.Field(Faction)
+    ship = Field(Ship)
+    faction = Field(Faction)
 
     @classmethod
     def mutate_and_get_payload(
@@ -59,9 +52,9 @@ class IntroduceShip(relay.ClientIDMutation):
         return IntroduceShip(ship=ship, faction=faction)
 
 
-class Query(graphene.ObjectType):
-    rebels = graphene.Field(Faction)
-    empire = graphene.Field(Faction)
+class Query(ObjectType):
+    rebels = Field(Faction)
+    empire = Field(Faction)
     node = relay.Node.Field()
 
     def resolve_rebels(self, info):
@@ -71,8 +64,8 @@ class Query(graphene.ObjectType):
         return get_empire()
 
 
-class Mutation(graphene.ObjectType):
+class Mutation(ObjectType):
     introduce_ship = IntroduceShip.Field()
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+schema = Schema(query=Query, mutation=Mutation)

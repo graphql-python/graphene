@@ -1,21 +1,24 @@
+from graphene import InputObjectType, Float, ObjectType, String, Field, Schema
+
+# Naming confusion/conflict with class Mutation and explicit import of graphene.mutation.
 import graphene
 
 
-class GeoInput(graphene.InputObjectType):
-    lat = graphene.Float(required=True)
-    lng = graphene.Float(required=True)
+class GeoInput(InputObjectType):
+    lat = Float(required=True)
+    lng = Float(required=True)
 
     @property
     def latlng(self):
         return "({},{})".format(self.lat, self.lng)
 
 
-class Address(graphene.ObjectType):
-    latlng = graphene.String()
+class Address(ObjectType):
+    latlng = String()
 
 
-class Query(graphene.ObjectType):
-    address = graphene.Field(Address, geo=GeoInput(required=True))
+class Query(ObjectType):
+    address = Field(Address, geo=GeoInput(required=True))
 
     def resolve_address(self, info, geo):
         return Address(latlng=geo.latlng)
@@ -31,11 +34,11 @@ class CreateAddress(graphene.Mutation):
         return Address(latlng=geo.latlng)
 
 
-class Mutation(graphene.ObjectType):
+class Mutation(ObjectType):
     create_address = CreateAddress.Field()
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+schema = Schema(query=Query, mutation=Mutation)
 query = """
     query something{
       address(geo: {lat:32.2, lng:12}) {

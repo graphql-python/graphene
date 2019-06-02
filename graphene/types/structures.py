@@ -14,7 +14,7 @@ class Structure(UnmountedType):
             cls_name = type(self).__name__
             of_type_name = type(of_type).__name__
             raise Exception(
-                "{} could not have a mounted {}() as inner type. Try with {}({}).".format(
+                "{} cannot have a mounted {}() as inner type. Try {}({}).".format(
                     cls_name, of_type_name, cls_name, of_type_name
                 )
             )

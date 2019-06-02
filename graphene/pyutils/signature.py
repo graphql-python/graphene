@@ -808,14 +808,14 @@ class Signature(object):
     def bind(self, *args, **kwargs):
         """Get a BoundArguments object, that maps the passed `args`
         and `kwargs` to the function's signature.  Raises `TypeError`
-        if the passed arguments can not be bound.
+        if the passed arguments cannot be bound.
         """
         return self._bind(args, kwargs)
 
     def bind_partial(self, *args, **kwargs):
         """Get a BoundArguments object, that partially maps the
         passed `args` and `kwargs` to the function's signature.
-        Raises `TypeError` if the passed arguments can not be bound.
+        Raises `TypeError` if the passed arguments cannot be bound.
         """
         return self._bind(args, kwargs, partial=True)
 

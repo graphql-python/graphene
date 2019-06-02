@@ -12,7 +12,7 @@ Let’s build a basic GraphQL schema from scratch.
 Requirements
 ------------
 
--  Python (2.7, 3.4, 3.5, 3.6, pypy)
+-  Python (3.6+, pypy)
 -  Graphene (2.0)
 
 Project setup
@@ -35,15 +35,17 @@ one field: ``hello`` and an input name. And when we query it, it should return `
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, Schema, String
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(argument=graphene.String(default_value="stranger"))
+
+    class Query(ObjectType):
+        hello = String(argument=String(default_value="stranger"))
 
         def resolve_hello(self, info, argument):
-            return 'Hello ' + argument
+            return f"Hello {argument}"
 
-    schema = graphene.Schema(query=Query)
+
+    schema = Schema(query=Query)
 
 Querying
 --------
@@ -52,11 +54,11 @@ Then we can start querying our schema:
 
 .. code:: python
 
-    result = schema.execute('{ hello }')
-    print(result.data['hello']) # "Hello stranger"
+    result = schema.execute("{ hello }")
+    print(result.data["hello"])  # "Hello stranger"
 
     # or passing the argument in the query
     result = schema.execute('{ hello (argument: "graph") }')
-    print(result.data['hello']) # "Hello graph"
+    print(result.data["hello"])  # "Hello graph"
 
 Congrats! You got your first graphene schema working!

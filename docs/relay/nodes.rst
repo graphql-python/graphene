@@ -14,12 +14,10 @@ Example usage (taken from the `Starwars Relay example`_):
 
 .. code:: python
 
-    class Ship(graphene.ObjectType):
-        '''A ship in the Star Wars saga'''
-        class Meta:
-            interfaces = (relay.Node, )
+    class Ship(ObjectType, interfaces=(relay.Node,)):
+        """A ship in the Star Wars saga"""
 
-        name = graphene.String(description='The name of the ship.')
+        name = String(description="The name of the ship.")
 
         @classmethod
         def get_node(cls, info, id):
@@ -45,26 +43,22 @@ Example of a custom node:
 
 .. code:: python
 
-    class CustomNode(Node):
-
-        class Meta:
-            name = 'Node'
-
+    class CustomNode(Node, name="Node"):
         @staticmethod
         def to_global_id(type, id):
-            return '{}:{}'.format(type, id)
+            return "{}:{}".format(type, id)
 
         @staticmethod
         def get_node_from_global_id(info, global_id, only_type=None):
-            type, id = global_id.split(':')
+            type, id = global_id.split(":")
             if only_type:
                 # We assure that the node type that we want to retrieve
                 # is the same that was indicated in the field type
-                assert type == only_type._meta.name, 'Received not compatible node.'
+                assert type == only_type._meta.name, "Received not compatible node."
 
-            if type == 'User':
+            if type == "User":
                 return get_user(id)
-            elif type == 'Photo':
+            elif type == "Photo":
                 return get_photo(id)
 
 
@@ -94,7 +88,7 @@ Example usage:
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
+    class Query(ObjectType):
         # Should be CustomNode.Field() if we want to use our custom Node
         node = relay.Node.Field()
 

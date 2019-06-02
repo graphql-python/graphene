@@ -20,17 +20,19 @@ plus the ones defined in ``UserFields``.
 
 .. code:: python
 
-    import graphene
+    from graphene import AbstractType, ObjectType, InputObjectType, String
 
-    class UserFields(graphene.AbstractType):
-        name = graphene.String()
 
-    class User(graphene.ObjectType, UserFields):
+    class UserFields(AbstractType):
+        name = String()
+
+
+    class User(ObjectType, UserFields):
         pass
 
-    class UserInput(graphene.InputObjectType, UserFields):
-        pass
 
+    class UserInput(InputObjectType, UserFields):
+        pass
 
 .. code::
 

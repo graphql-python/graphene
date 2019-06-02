@@ -41,7 +41,7 @@ class Field(MountedType):
             source and resolver
         ), "A Field cannot have a source and a resolver in at the same time."
         assert not callable(default_value), (
-            'The default value can not be a function but received "{}".'
+            'The default value cannot be a function but received "{}".'
         ).format(base_type(default_value))
 
         if required:

@@ -18,15 +18,16 @@ This example model defines a Person, with a first and a last name:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String
 
-    class Person(graphene.ObjectType):
-        first_name = graphene.String()
-        last_name = graphene.String()
-        full_name = graphene.String()
+
+    class Person(ObjectType):
+        first_name = String()
+        last_name = String()
+        full_name = String()
 
         def resolve_full_name(root, info):
-            return '{} {}'.format(root.first_name, root.last_name)
+            return "{} {}".format(root.first_name, root.last_name)
 
 **first\_name** and **last\_name** are fields of the ObjectType. Each
 field is specified as a class attribute, and each attribute maps to a
@@ -62,25 +63,24 @@ passed to the ``ObjectType``.
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, Field, String
 
-    class Person(graphene.ObjectType):
-        first_name = graphene.String()
-        last_name = graphene.String()
 
-    class Query(graphene.ObjectType):
-        me = graphene.Field(Person)
-        best_friend = graphene.Field(Person)
+    class Person(ObjectType):
+        first_name = String()
+        last_name = String()
+
+
+    class Query(ObjectType):
+        me = Field(Person)
+        best_friend = Field(Person)
 
         def resolve_me(_, info):
             # returns an object that represents a Person
-            return get_human(name='Luke Skywalker')
+            return get_human(name="Luke Skywalker")
 
-        def resolve_best_friend(_, info):
-            return {
-                "first_name": "R2",
-                "last_name": "D2",
-            }
+        def resolve_best_friend(root, info):
+            return {"first_name": "R2", "last_name": "D2"}
 
 
 Resolvers with arguments
@@ -91,10 +91,11 @@ kwargs. For example:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, Field, String
 
-    class Query(graphene.ObjectType):
-        human_by_name = graphene.Field(Human, name=graphene.String(required=True))
+
+    class Query(ObjectType):
+        human_by_name = Field(Human, name=String(required=True))
 
         def resolve_human_by_name(_, info, name):
             return get_human(name=name)
@@ -119,10 +120,11 @@ For example, given this schema:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(required=True, name=graphene.String())
+
+    class Query(ObjectType):
+        hello = String(required=True, name=String())
 
         def resolve_hello(_, info, name):
             return name if name else 'World'
@@ -146,8 +148,8 @@ into a dict:
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(required=True, name=graphene.String())
+    class Query(ObjectType):
+        hello = String(required=True, name=String())
 
         def resolve_hello(_, info, **args):
             return args.get('name', 'World')
@@ -156,8 +158,8 @@ Or by setting a default value for the keyword argument:
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(required=True, name=graphene.String())
+    class Query(ObjectType):
+        hello = String(required=True, name=String())
 
         def resolve_hello(_, info, name='World'):
             return name
@@ -170,15 +172,15 @@ A field can use a custom resolver from outside the class:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String
 
     def resolve_full_name(person, info):
         return '{} {}'.format(person.first_name, person.last_name)
 
-    class Person(graphene.ObjectType):
-        first_name = graphene.String()
-        last_name = graphene.String()
-        full_name = graphene.String(resolver=resolve_full_name)
+    class Person(ObjectType):
+        first_name = String()
+        last_name = String()
+        full_name = String(resolver=resolve_full_name)
 
 
 Instances as data containers
@@ -203,8 +205,7 @@ property on the ``Meta`` class:
 
 .. code:: python
 
-    class MyGraphQlSong(graphene.ObjectType):
-        class Meta:
-            name = 'Song'
+    class MyGraphQlSong(ObjectType, name="Song"):
+        pass
 
 .. _Interface: /docs/interfaces/

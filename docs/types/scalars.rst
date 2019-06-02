@@ -91,8 +91,9 @@ The following is an example for creating a DateTime scalar:
     from graphene.types import Scalar
     from graphql.language import ast
 
+
     class DateTime(Scalar):
-        '''DateTime Scalar Description'''
+        """DateTime Scalar Description"""
 
         @staticmethod
         def serialize(dt):
@@ -101,8 +102,7 @@ The following is an example for creating a DateTime scalar:
         @staticmethod
         def parse_literal(node):
             if isinstance(node, ast.StringValue):
-                return datetime.datetime.strptime(
-                    node.value, "%Y-%m-%dT%H:%M:%S.%f")
+                return datetime.datetime.strptime(node.value, "%Y-%m-%dT%H:%M:%S.%f")
 
         @staticmethod
         def parse_value(value):
@@ -116,13 +116,15 @@ Scalars mounted in a ``ObjectType``, ``Interface`` or ``Mutation`` act as
 
 .. code:: python
 
-    class Person(graphene.ObjectType):
-        name = graphene.String()
+    from graphene import ObjectType, Field, String
+
+
+    class Person(ObjectType):
+        name = String()
 
     # Is equivalent to:
-    class Person(graphene.ObjectType):
-        name = graphene.Field(graphene.String)
-
+    class Person(ObjectType):
+        name = Field(String)
 
 **Note:** when using the ``Field`` constructor directly, pass the type and
 not an instance.
@@ -132,7 +134,7 @@ Types mounted in a ``Field`` act as ``Argument``\ s.
 
 .. code:: python
 
-    graphene.Field(graphene.String, to=graphene.String())
+    Field(String, to=String())
 
     # Is equivalent to:
-    graphene.Field(graphene.String, to=graphene.Argument(graphene.String))
+    Field(String, to=Argument(String))

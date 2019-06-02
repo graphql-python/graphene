@@ -106,10 +106,10 @@ leaner code and at most 4 database requests, and possibly fewer if there are cac
 
 .. code:: python
 
-    class User(graphene.ObjectType):
-        name = graphene.String()
-        best_friend = graphene.Field(lambda: User)
-        friends = graphene.List(lambda: User)
+    class User(ObjectType):
+        name = String()
+        best_friend = Field(lambda: User)
+        friends = List(lambda: User)
 
         def resolve_best_friend(self, info):
             return user_loader.load(self.best_friend_id)

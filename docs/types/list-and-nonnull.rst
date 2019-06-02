@@ -11,11 +11,11 @@ NonNull
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, NonNull, String
 
-    class Character(graphene.ObjectType):
-        name = graphene.NonNull(graphene.String)
 
+    class Character(ObjectType):
+        name = NonNull(String)
 
 Here, we're using a ``String`` type and marking it as Non-Null by wrapping
 it using the ``NonNull`` class. This means that our server always expects
@@ -28,21 +28,22 @@ The previous ``NonNull`` code snippet is also equivalent to:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String
 
-    class Character(graphene.ObjectType):
-        name = graphene.String(required=True)
 
+    class Character(ObjectType):
+        name = String(required=True)
 
 List
 ----
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, List, String
 
-    class Character(graphene.ObjectType):
-        appears_in = graphene.List(graphene.String)
+
+    class Character(ObjectType):
+        appears_in = List(String)
 
 Lists work in a similar way: We can use a type modifier to mark a type as a
 ``List``, which indicates that this field will return a list of that type.
@@ -57,10 +58,11 @@ any nullable items the type needs to be marked as ``NonNull``. For example:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, List, NonNull, String
 
-    class Character(graphene.ObjectType):
-        appears_in = graphene.List(graphene.NonNull(graphene.String))
+
+    class Character(ObjectType):
+        appears_in = List(NonNull(String))
 
 The above results in the type definition:
 

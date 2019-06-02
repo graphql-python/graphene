@@ -16,11 +16,8 @@ and ``other`` an extra field in the Connection Edge.
 
 .. code:: python
 
-    class ShipConnection(Connection):
+    class ShipConnection(Connection, node=Ship):
         extra = String()
-
-        class Meta:
-            node = Ship
 
         class Edge:
             other = String()
@@ -37,8 +34,8 @@ that implements ``Node`` will have a default Connection.
 
 .. code:: python
 
-    class Faction(graphene.ObjectType):
-        name = graphene.String()
+    class Faction(ObjectType):
+        name = String()
         ships = relay.ConnectionField(ShipConnection)
 
         def resolve_ships(self, info):

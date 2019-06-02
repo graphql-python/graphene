@@ -10,14 +10,15 @@ This example defines a Mutation:
 
 .. code:: python
 
-    import graphene
+    from graphene import Mutation, String, Boolean, Field
 
-    class CreatePerson(graphene.Mutation):
+
+    class CreatePerson(Mutation):
         class Arguments:
-            name = graphene.String()
+            name = String()
 
-        ok = graphene.Boolean()
-        person = graphene.Field(lambda: Person)
+        ok = Boolean()
+        person = Field(lambda: Person)
 
         def mutate(self, info, name):
             person = Person(name=name)
@@ -38,20 +39,37 @@ So, we can finish our schema like this:
 
 .. code:: python
 
-    # ... the Mutation Class
+    from graphene import ObjectType, Mutation, String, Boolean, Field, Int, Schema
 
-    class Person(graphene.ObjectType):
-        name = graphene.String()
-        age = graphene.Int()
 
-    class MyMutations(graphene.ObjectType):
+    class Person(ObjectType):
+        name = String()
+        age = Int()
+
+
+    class CreatePerson(Mutation):
+        class Arguments:
+            name = String()
+
+        ok = Boolean()
+        person = Field(lambda: Person)
+
+        def mutate(self, info, name):
+            person = Person(name=name)
+            ok = True
+            return CreatePerson(person=person, ok=ok)
+
+
+    class MyMutations(ObjectType):
         create_person = CreatePerson.Field()
 
-    # We must define a query for our schema
-    class Query(graphene.ObjectType):
-        person = graphene.Field(Person)
 
-    schema = graphene.Schema(query=Query, mutation=MyMutations)
+    # We must define a query for our schema
+    class Query(ObjectType):
+        person = Field(Person)
+
+
+    schema = Schema(query=Query, mutation=MyMutations)
 
 Executing the Mutation
 ----------------------
@@ -91,26 +109,24 @@ To use an InputField you define an InputObjectType that specifies the structure 
 
 .. code:: python
 
-    import graphene
+    from graphene import InputObjectType, Mutation, String, Field, Int
 
-    class PersonInput(graphene.InputObjectType):
-        name = graphene.String(required=True)
-        age = graphene.Int(required=True)
 
-    class CreatePerson(graphene.Mutation):
+    class PersonInput(InputObjectType):
+        name = String(required=True)
+        age = Int(required=True)
+
+
+    class CreatePerson(Mutation):
         class Arguments:
             person_data = PersonInput(required=True)
 
-        person = graphene.Field(Person)
+        person = Field(Person)
 
         @staticmethod
         def mutate(root, info, person_data=None):
-            person = Person(
-                name=person_data.name,
-                age=person_data.age
-            )
+            person = Person(name=person_data.name, age=person_data.age)
             return CreatePerson(person=person)
-
 
 Note that  **name** and **age** are part of **person_data** now
 
@@ -132,16 +148,18 @@ as complex of input data as you need
 
 .. code:: python
 
-    import graphene
+    from graphene import InputObjectType, InputField, Float, String
 
-    class LatLngInput(graphene.InputObjectType):
-        lat = graphene.Float()
-        lng = graphene.Float()
 
-    #A location has a latlng associated to it
-    class LocationInput(graphene.InputObjectType):
-        name = graphene.String()
-        latlng = graphene.InputField(LatLngInput)
+    class LatLngInput(InputObjectType):
+        lat = Float()
+        lng = Float()
+
+
+    # A location has a latlng associated to it
+    class LocationInput(InputObjectType):
+        name = String()
+        latlng = InputField(LatLngInput)
 
 Output type example
 -------------------
@@ -149,11 +167,12 @@ To return an existing ObjectType instead of a mutation-specific type, set the **
 
 .. code:: python
 
-    import graphene
+    from graphene import Mutation, String
 
-    class CreatePerson(graphene.Mutation):
+
+    class CreatePerson(Mutation):
         class Arguments:
-            name = graphene.String()
+            name = String()
 
         Output = Person
 

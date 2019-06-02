@@ -11,9 +11,10 @@ You can create an ``Enum`` using classes:
 
 .. code:: python
 
-    import graphene
+    from graphene import Enum
 
-    class Episode(graphene.Enum):
+
+    class Episode(Enum):
         NEWHOPE = 4
         EMPIRE = 5
         JEDI = 6
@@ -22,7 +23,7 @@ But also using instances of Enum:
 
 .. code:: python
 
-    Episode = graphene.Enum('Episode', [('NEWHOPE', 4), ('EMPIRE', 5), ('JEDI', 6)])
+    Episode = Enum("Episode", [("NEWHOPE", 4), ("EMPIRE", 5), ("JEDI", 6)])
 
 Value descriptions
 ------------------
@@ -32,7 +33,7 @@ needs to have the ``description`` property on it.
 
 .. code:: python
 
-    class Episode(graphene.Enum):
+    class Episode(Enum):
         NEWHOPE = 4
         EMPIRE = 5
         JEDI = 6
@@ -40,9 +41,8 @@ needs to have the ``description`` property on it.
         @property
         def description(self):
             if self == Episode.NEWHOPE:
-                return 'New Hope Episode'
-            return 'Other episode'
-
+                return "New Hope Episode"
+            return "Other episode"
 
 Usage with Python Enums
 -----------------------
@@ -52,16 +52,16 @@ the ``Enum.from_enum`` function.
 
 .. code:: python
 
-    graphene.Enum.from_enum(AlreadyExistingPyEnum)
+    Enum.from_enum(AlreadyExistingPyEnum)
 
 ``Enum.from_enum`` supports a ``description`` and ``deprecation_reason`` lambdas as input so
 you can add description etc. to your enum without changing the original:
 
 .. code:: python
 
-    graphene.Enum.from_enum(
+    Enum.from_enum(
         AlreadyExistingPyEnum,
-        description=lambda v: return 'foo' if v == AlreadyExistingPyEnum.Foo else 'bar')
+        description=lambda v: return "foo" if v == AlreadyExistingPyEnum.Foo else "bar")
 
 
 Notes
@@ -76,19 +76,23 @@ In the Python ``Enum`` implementation you can access a member by initing the Enu
 .. code:: python
 
     from enum import Enum
+
+
     class Color(Enum):
         RED = 1
         GREEN = 2
         BLUE = 3
 
-    assert Color(1) == Color.RED
 
+    assert Color(1) == Color.RED
 
 However, in Graphene ``Enum`` you need to call get to have the same effect:
 
 .. code:: python
 
     from graphene import Enum
+
+
     class Color(Enum):
         RED = 1
         GREEN = 2

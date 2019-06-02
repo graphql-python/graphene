@@ -40,14 +40,11 @@ To use the test client, instantiate ``graphene.test.Client`` and retrieve GraphQ
 
     from graphene.test import Client
 
+
     def test_hey():
         client = Client(my_schema)
-        executed = client.execute('''{ hey }''')
-        assert executed == {
-            'data': {
-                'hey': 'hello!'
-            }
-        }
+        executed = client.execute("""{ hey }""")
+        assert executed == {"data": {"hey": "hello!"}}
 
 
 Execute parameters
@@ -61,14 +58,11 @@ You can also add extra keyword arguments to the ``execute`` method, such as
 
     from graphene.test import Client
 
+
     def test_hey():
         client = Client(my_schema)
-        executed = client.execute('''{ hey }''', context={'user': 'Peter'})
-        assert executed == {
-            'data': {
-                'hey': 'hello Peter!'
-            }
-        }
+        executed = client.execute("""{ hey }""", context={"user": "Peter"})
+        assert executed == {"data": {"hey": "hello Peter!"}}
 
 
 Snapshot testing
@@ -95,7 +89,7 @@ Here is a simple example on how our tests will look if we use ``pytest``:
         # This will create a snapshot dir and a snapshot file
         # the first time the test is executed, with the response
         # of the execution.
-        snapshot.assert_match(client.execute('''{ hey }'''))
+        snapshot.assert_match(client.execute("""{ hey }"""))
 
 
 If we are using ``unittest``:
@@ -104,8 +98,9 @@ If we are using ``unittest``:
 
     from snapshottest import TestCase
 
+
     class APITestCase(TestCase):
         def test_api_me(self):
             """Testing the API for /me"""
             client = Client(my_schema)
-            self.assertMatchSnapshot(client.execute('''{ hey }'''))
+            self.assertMatchSnapshot(client.execute("""{ hey }"""))

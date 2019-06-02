@@ -9,12 +9,13 @@ character in the Star Wars trilogy:
 
 .. code:: python
 
-    import graphene
+    from graphene import ID, Interface, String, List
 
-    class Character(graphene.Interface):
-        id = graphene.ID(required=True)
-        name = graphene.String(required=True)
-        friends = graphene.List(lambda: Character)
+
+    class Character(Interface):
+        id = ID(required=True)
+        name = String(required=True)
+        friends = List(lambda: Character)
 
 
 Any ObjectType that implements ``Character`` will have these exact fields, with
@@ -24,19 +25,13 @@ For example, here are some types that might implement ``Character``:
 
 .. code:: python
 
-    class Human(graphene.ObjectType):
-        class Meta:
-            interfaces = (Character, )
+    class Human(ObjectType, interfaces=(Character,)):
+        starships = List(Starship)
+        home_planet = String()
 
-        starships = graphene.List(Starship)
-        home_planet = graphene.String()
 
-    class Droid(graphene.ObjectType):
-        class Meta:
-            interfaces = (Character, )
-
-        primary_function = graphene.String()
-
+    class Droid(ObjectType, interfaces=(Character,)):
+        primary_function = String()
 
 Both of these types have all of the fields from the ``Character`` interface,
 but also bring in extra fields, ``home_planet``, ``starships`` and
@@ -75,20 +70,17 @@ For example, you can define a field ``hero`` that resolves to any
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        hero = graphene.Field(
-            Character,
-            required=True,
-            episode=graphene.Int(required=True)
-        )
+    class Query(ObjectType):
+        hero = Field(Character, required=True, episode=Int(required=True))
 
-        def resolve_hero(_, info, episode):
+        def resolve_hero(root, info, episode):
             # Luke is the hero of Episode V
             if episode == 5:
-                return get_human(name='Luke Skywalker')
-            return get_droid(name='R2-D2')
+                return get_human(name="Luke Skywalker")
+            return get_droid(name="R2-D2")
 
-    schema = graphene.Schema(query=Query, types=[Human, Droid])
+
+    schema = Schema(query=Query, types=[Human, Droid])
 
 This allows you to directly query for fields that exist on the Character interface
 as well as selecting specific fields on any type that implements the interface
@@ -159,12 +151,12 @@ maps a data object to a Graphene type:
 
 .. code:: python
 
-    class Character(graphene.Interface):
-        id = graphene.ID(required=True)
-        name = graphene.String(required=True)
+    class Character(Interface):
+        id = ID(required=True)
+        name = String(required=True)
 
         @classmethod
         def resolve_type(cls, instance, info):
-            if instance.type == 'DROID':
+            if instance.type == "DROID":
                 return Droid
             return Human

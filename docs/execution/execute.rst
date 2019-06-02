@@ -7,8 +7,8 @@ For executing a query a schema, you can directly call the ``execute`` method on 
 
 .. code:: python
 
-    schema = graphene.Schema(...)
-    result = schema.execute('{ name }')
+    schema = Schema(...)
+    result = schema.execute("{ name }")
 
 ``result`` represents the result of execution. ``result.data`` is the result of executing the query, ``result.errors`` is ``None`` if no errors occurred, and is a non-empty list if an error occurred.
 
@@ -21,14 +21,15 @@ You can pass context to a query via ``context``.
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        name = graphene.String()
+    class Query(ObjectType):
+        name = String()
 
         def resolve_name(root, info):
-            return info.context.get('name')
+            return info.context.get("name")
 
-    schema = graphene.Schema(Query)
-    result = schema.execute('{ name }', context={'name': 'Syrus'})
+
+    schema = Schema(Query)
+    result = schema.execute("{ name }", context={"name": "Syrus"})
 
 
 
@@ -40,22 +41,23 @@ You can pass variables to a query via ``variables``.
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        user = graphene.Field(User, id=graphene.ID(required=True))
+    class Query(ObjectType):
+        user = Field(User, id=ID(required=True))
 
         def resolve_user(root, info, id):
             return get_user_by_id(id)
 
-    schema = graphene.Schema(Query)
+
+    schema = Schema(Query)
     result = schema.execute(
-        '''
-          query getUser($id: ID) {
+        """
+            query getUser($id: ID) {
             user(id: $id) {
-              id
-              firstName
-              lastName
+                id
+                firstName
+                lastName
             }
-          }
-        ''',
-        variables={'id': 12},
+            }
+        """,
+        variables={"id": 12},
     )

@@ -1,19 +1,19 @@
-import graphene
+from graphene import ObjectType, ID, String, Field, Schema
 
 
-class User(graphene.ObjectType):
-    id = graphene.ID()
-    name = graphene.String()
+class User(ObjectType):
+    id = ID()
+    name = String()
 
 
-class Query(graphene.ObjectType):
-    me = graphene.Field(User)
+class Query(ObjectType):
+    me = Field(User)
 
     def resolve_me(self, info):
         return info.context["user"]
 
 
-schema = graphene.Schema(query=Query)
+schema = Schema(query=Query)
 query = """
     query something{
       me {

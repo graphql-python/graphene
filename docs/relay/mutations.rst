@@ -12,13 +12,12 @@ subclass of ``relay.ClientIDMutation``.
 .. code:: python
 
     class IntroduceShip(relay.ClientIDMutation):
-
         class Input:
-            ship_name = graphene.String(required=True)
-            faction_id = graphene.String(required=True)
+            ship_name = String(required=True)
+            faction_id = String(required=True)
 
-        ship = graphene.Field(Ship)
-        faction = graphene.Field(Faction)
+        ship = Field(Ship)
+        faction = Field(Faction)
 
         @classmethod
         def mutate_and_get_payload(cls, root, info, **input):
@@ -28,8 +27,6 @@ subclass of ``relay.ClientIDMutation``.
             faction = get_faction(faction_id)
             return IntroduceShip(ship=ship, faction=faction)
 
-
-
 Accepting Files
 ---------------
 
@@ -37,13 +34,13 @@ Mutations can also accept files, that's how it will work with different integrat
 
 .. code:: python
 
-    class UploadFile(graphene.ClientIDMutation):
-         class Input:
-             pass
-             # nothing needed for uploading file
+    class UploadFile(ClientIDMutation):
+        class Input:
+            pass
+            # nothing needed for uploading file
 
-         # your return fields
-         success = graphene.String()
+        # your return fields
+        success = String()
 
         @classmethod
         def mutate_and_get_payload(cls, root, info, **input):
