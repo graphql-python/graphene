@@ -1,4 +1,3 @@
-import six
 from typing import Any
 
 from graphql.language.ast import BooleanValue, FloatValue, IntValue, StringValue
@@ -113,7 +112,7 @@ class String(Scalar):
     def coerce_string(value):
         if isinstance(value, bool):
             return u"true" if value else u"false"
-        return six.text_type(value)
+        return str(value)
 
     serialize = coerce_string
     parse_value = coerce_string
