@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from decimal import Decimal as _Decimal
 
-from graphql.language import ast
+from graphql.language.ast import StringValueNode
 
 from .scalars import Scalar
 
@@ -23,7 +23,7 @@ class Decimal(Scalar):
 
     @classmethod
     def parse_literal(cls, node):
-        if isinstance(node, ast.StringValue):
+        if isinstance(node, StringValueNode):
             return cls.parse_value(node.value)
 
     @staticmethod

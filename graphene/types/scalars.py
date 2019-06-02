@@ -1,6 +1,11 @@
 from typing import Any
 
-from graphql.language.ast import BooleanValue, FloatValue, IntValue, StringValue
+from graphql.language.ast import (
+    BooleanValueNode,
+    FloatValueNode,
+    IntValueNode,
+    StringValueNode,
+)
 
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
@@ -71,7 +76,7 @@ class Int(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, IntValue):
+        if isinstance(ast, IntValueNode):
             num = int(ast.value)
             if MIN_INT <= num <= MAX_INT:
                 return num
@@ -97,7 +102,7 @@ class Float(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, (FloatValue, IntValue)):
+        if isinstance(ast, (FloatValueNode, IntValueNode)):
             return float(ast.value)
 
 
@@ -119,7 +124,7 @@ class String(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, StringValue):
+        if isinstance(ast, StringValueNode):
             return ast.value
 
 
@@ -133,7 +138,7 @@ class Boolean(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, BooleanValue):
+        if isinstance(ast, BooleanValueNode):
             return ast.value
 
 
@@ -151,5 +156,5 @@ class ID(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, (StringValue, IntValue)):
+        if isinstance(ast, (StringValueNode, IntValueNode)):
             return ast.value
