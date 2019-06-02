@@ -49,6 +49,7 @@ tests_require = [
     "pytest-benchmark",
     "pytest-cov",
     "pytest-mock",
+    "pytest-asyncio",
     "snapshottest",
     "coveralls",
     "promise",
