@@ -1,11 +1,10 @@
 import six
+from typing import Any
+
 from graphql.language.ast import BooleanValue, FloatValue, IntValue, StringValue
 
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
-
-if six.PY3:
-    from typing import Any
 
 
 class ScalarOptions(BaseOptions):
