@@ -331,7 +331,7 @@ own system ahead of time. We appreciate opening issues and pull requests
 to make graphene even more stable & useful!
 
 Building Documentation
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 The documentation is generated using the excellent
 `Sphinx <http://www.sphinx-doc.org/>`__ and a custom theme.
