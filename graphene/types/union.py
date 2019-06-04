@@ -39,7 +39,7 @@ class Union(UnmountedType, BaseType):
             )
 
     Meta:
-        types (Iterable[graphene.ObjectType)]: Required. Collection of types that may be returned
+        types (Iterable[graphene.ObjectType]): Required. Collection of types that may be returned
             by this Union for the graphQL schema.
         name (optional, str): the name of the GraphQL type (must be unique in schema). Defaults to class
             name.
