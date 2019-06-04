@@ -29,7 +29,7 @@ class Argument(MountedType):
         type (class for a graphene.UnmountedType): must be a class (not an instance) of an
             unmounted graphene type (ex. scalar or object) which is used for the type of this
             argument in the GraphQL schema.
-        required (bool). Indicates this argument as not null in the graphql scehma. Same behavior
+        required (bool): indicates this argument as not null in the graphql scehma. Same behavior
             as graphene.NonNull. Default False.
         name (str): the name of the GraphQL argument. Defaults to parameter name.
         description (str): the description of the GraphQL argument in the schema.
