@@ -56,7 +56,8 @@ class Mutation(ObjectType):
             name.
         description (str): the description of the GraphQL type in the schema. Defaults to class
             docstring.
-        interfaces (Iterable[graphene.Interface]): GraphQL interfaces to extend with the payload
+        interfaces (Iterable[graphene.Interface]): NOT IMPLEMENTED (use ``output`` to define a
+            payload implementing interfaces). GraphQL interfaces to extend with the payload
             object. All fields from interface will be included in this object's schema.
         fields (Dict[str, graphene.Field]): dictionary of field name to Field. Not recommended to
             use (prefer class attributes or ``Meta.output``).
