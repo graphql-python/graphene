@@ -68,7 +68,7 @@ class EnumMeta(SubclassWithMeta_Meta):
 
 class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
     """
-    Enum type defintion
+    Enum type definition
 
     Defines a static set of values that can be provided as a Field, Argument or InputField.
 
@@ -83,9 +83,9 @@ class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
     Meta:
         enum (optional, Enum): Python enum to use as a base for GraphQL Enum.
 
-        name (optional, str): the name of the GraphQL type (must be unique in schema). Defaults to class
+        name (optional, str): Name of the GraphQL type (must be unique in schema). Defaults to class
             name.
-        description (optional, str): the description of the GraphQL type in the schema. Defaults to class
+        description (optional, str): Description of the GraphQL type in the schema. Defaults to class
             docstring.
         deprecation_reason (optional, str): Setting this value indicates that the enum is
             depreciated and may provide instruction or reason on how for clients to proceed.

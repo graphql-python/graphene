@@ -29,12 +29,14 @@ class Union(UnmountedType, BaseType):
 
     .. code:: python
 
-        class SearchResult(graphene.Union):
+        from graphene import Union, ObjectType, List
+
+        class SearchResult(Union):
             class Meta:
                 types = (Human, Droid, Starship)
 
-        class Query(graphene.ObjectType):
-            search = graphene.List(SearchResult.Field(
+        class Query(ObjectType):
+            search = List(SearchResult.Field(
                 search_text=String(description='Value to search for'))
             )
 
