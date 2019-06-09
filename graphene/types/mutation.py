@@ -22,7 +22,47 @@ class MutationOptions(ObjectTypeOptions):
 
 class Mutation(ObjectType):
     """
-    Mutation Type Definition
+    Object Type Definition (mutation field)
+
+    Mutation is a convenience type that helps us build a Field which takes Arguments and returns a
+    mutation Output ObjectType.
+
+    .. code:: python
+
+        from graphene import Mutation, ObjectType, String, Boolean, Field
+
+        class CreatePerson(Mutation):
+            class Arguments:
+                name = String()
+
+            ok = Boolean()
+            person = Field(Person)
+
+            def mutate(parent, info, name):
+                person = Person(name=name)
+                ok = True
+                return CreatePerson(person=person, ok=ok)
+
+        class Mutation(ObjectType):
+            create_person = CreatePerson.Field()
+
+    Meta class options (optional):
+        output (graphene.ObjectType): Or ``Output`` inner class with attributes on Mutation class.
+            Or attributes from Mutation class. Fields which can be returned from this mutation
+            field.
+        resolver (Callable resolver method): Or ``mutate`` method on Mutation class. Perform data
+            change and return output.
+        arguments (Dict[str, graphene.Argument]): Or ``Arguments`` inner class with attributes on
+            Mutation class. Arguments to use for the mutation Field.
+        name (str): Name of the GraphQL type (must be unique in schema). Defaults to class
+            name.
+        description (str): Description of the GraphQL type in the schema. Defaults to class
+            docstring.
+        interfaces (Iterable[graphene.Interface]): NOT IMPLEMENTED (use ``output`` to define a
+            payload implementing interfaces). GraphQL interfaces to extend with the payload
+            object. All fields from interface will be included in this object's schema.
+        fields (Dict[str, graphene.Field]): Dictionary of field name to Field. Not recommended to
+            use (prefer class attributes or ``Meta.output``).
     """
 
     @classmethod
@@ -80,6 +120,7 @@ class Mutation(ObjectType):
     def Field(
         cls, name=None, description=None, deprecation_reason=None, required=False
     ):
+        """ Mount instance of mutation Field. """
         return Field(
             cls._meta.output,
             args=cls._meta.arguments,
