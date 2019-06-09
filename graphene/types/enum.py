@@ -74,9 +74,11 @@ class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
 
     .. code:: python
 
-        class NameFormat(graphene.Enum):
-            FIRST_LAST = 'first_last'
-            LAST_FIRST = 'last_first'
+        from graphene import Enum
+
+        class NameFormat(Enum):
+            FIRST_LAST = "first_last"
+            LAST_FIRST = "last_first"
 
     Meta:
         enum (optional, Enum): Python enum to use as a base for GraphQL Enum.

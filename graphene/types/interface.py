@@ -25,9 +25,11 @@ class Interface(BaseType):
 
     .. code:: python
 
-        class HasAddress(graphene.Interface):
+        from graphene import Interface, String
+
+        class HasAddress(Interface):
             class Meta:
-                description = 'Address fields'
+                description = "Address fields"
 
             address1 = String()
             address2 = String()

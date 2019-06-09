@@ -43,9 +43,13 @@ class InputObjectType(UnmountedType, BaseType):
 
     .. code:: python
 
-        class Person(graphene.InputObjectType):
-            first_name = graphene.String(required=True)                     # implicitly mounted as Input Field
-            last_name = graphene.InputField(String, description='Surname')  # explicitly mounted as Input Field
+        from graphene import InputObjectType, String, InputField
+
+        class Person(InputObjectType):
+            # implicitly mounted as Input Field
+            first_name = String(required=True)
+            # explicitly mounted as Input Field
+            last_name = InputField(String, description="Surname")
 
     The fields on an input object type can themselves refer to input object types, but you can't
     mix input and output types in your schema.
