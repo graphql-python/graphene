@@ -5,6 +5,8 @@ class Context(object):
 
     .. code:: python
 
+        from graphene import Context
+
         context = Context(loaders=build_dataloaders(), request=my_web_request)
         schema.execute('{ hello(name: "world") }', context=context)
 

@@ -29,7 +29,7 @@ class Mutation(ObjectType):
 
     .. code:: python
 
-        from graphene import Mutation, String, Boolean, Field
+        from graphene import Mutation, ObjectType, String, Boolean, Field
 
         class CreatePerson(Mutation):
             class Arguments:
@@ -43,7 +43,7 @@ class Mutation(ObjectType):
                 ok = True
                 return CreatePerson(person=person, ok=ok)
 
-        class Mutation(graphene.ObjectType):
+        class Mutation(ObjectType):
             create_person = CreatePerson.Field()
 
     Meta class options (optional):
@@ -54,14 +54,14 @@ class Mutation(ObjectType):
             change and return output.
         arguments (Dict[str, graphene.Argument]): Or ``Arguments`` inner class with attributes on
             Mutation class. Arguments to use for the mutation Field.
-        name (str): the name of the GraphQL type (must be unique in schema). Defaults to class
+        name (str): Name of the GraphQL type (must be unique in schema). Defaults to class
             name.
-        description (str): the description of the GraphQL type in the schema. Defaults to class
+        description (str): Description of the GraphQL type in the schema. Defaults to class
             docstring.
         interfaces (Iterable[graphene.Interface]): NOT IMPLEMENTED (use ``output`` to define a
             payload implementing interfaces). GraphQL interfaces to extend with the payload
             object. All fields from interface will be included in this object's schema.
-        fields (Dict[str, graphene.Field]): dictionary of field name to Field. Not recommended to
+        fields (Dict[str, graphene.Field]): Dictionary of field name to Field. Not recommended to
             use (prefer class attributes or ``Meta.output``).
     """
 

@@ -19,22 +19,26 @@ class InputField(MountedType):
 
     .. code:: python
 
-        class Person(graphene.InputObjectType):
-            first_name = graphene.String(required=True)                     # implicitly mounted as Input Field
-            last_name = graphene.InputField(String, description='Surname')  # explicitly mounted as Input Field
+        from graphene import InputObjectType, String, InputField
+
+        class Person(InputObjectType):
+            # implicitly mounted as Input Field
+            first_name = String(required=True)
+            # explicitly mounted as Input Field
+            last_name = InputField(String, description="Surname")
 
     args:
-        type (class for a graphene.UnmountedType): must be a class (not an instance) of an
+        type (class for a graphene.UnmountedType): Must be a class (not an instance) of an
             unmounted graphene type (ex. scalar or object) which is used for the type of this
             field in the GraphQL schema.
-        name (optional, str): the name of the GraphQL input field (must be unique in a type).
+        name (optional, str): Name of the GraphQL input field (must be unique in a type).
             Defaults to attribute name.
         default_value (optional, Any): Default value to use as input if none set in user operation (
             query, mutation, etc.).
         deprecation_reason (optional, str): Setting this value indicates that the field is
             depreciated and may provide instruction or reason on how for clients to proceed.
-        description (optional, str): the description of the GraphQL field in the schema.
-        required (optional, bool): indicates this input field as not null in the graphql scehma.
+        description (optional, str): Description of the GraphQL field in the schema.
+        required (optional, bool): Indicates this input field as not null in the graphql scehma.
             Raises a validation error if argument not provided. Same behavior as graphene.NonNull.
             Default False.
         **extra_args (optional, Dict): Not used.

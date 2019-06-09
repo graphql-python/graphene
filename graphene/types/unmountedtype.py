@@ -10,12 +10,16 @@ class UnmountedType(OrderedType):
 
     .. code:: python
 
+        from graphene import ObjectType, Field, String
+
         class MyObjectType(ObjectType):
             my_field = Field(String, description='Description here')
 
     It lets you write:
 
     .. code:: python
+
+        from graphene import ObjectType, String
 
         class MyObjectType(ObjectType):
             my_field = String(description='Description here')

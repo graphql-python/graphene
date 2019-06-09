@@ -38,11 +38,11 @@ class Interface(BaseType):
     ``resolve_type`` on Interface and an ObjectType with ``Meta.possible_types`` or ``is_type_of``.
 
     Meta:
-        name (str): the name of the GraphQL type (must be unique in schema). Defaults to class
+        name (str): Name of the GraphQL type (must be unique in schema). Defaults to class
             name.
-        description (str): the description of the GraphQL type in the schema. Defaults to class
+        description (str): Description of the GraphQL type in the schema. Defaults to class
             docstring.
-        fields (Dict[str, graphene.Field]): dictionary of field name to Field. Not recommended to
+        fields (Dict[str, graphene.Field]): Dictionary of field name to Field. Not recommended to
             use (prefer class attributes).
     """
 

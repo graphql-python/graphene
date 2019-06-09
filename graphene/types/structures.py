@@ -44,7 +44,9 @@ class List(Structure):
 
     .. code:: python
 
-        field_name = graphene.List(graphene.String, description='There will be many values')
+        from graphene import List, String
+
+        field_name = List(String, description="There will be many values")
     """
 
     def __str__(self):
@@ -70,12 +72,14 @@ class NonNull(Structure):
 
     Note: the enforcement of non-nullability occurs within the executor.
 
-    NonNull can also be indicated on all Mounted types with the argument ``required``.
+    NonNull can also be indicated on all Mounted types with the keyword argument ``required``.
 
     .. code:: python
 
-        field_name = graphene.NonNull(graphene.String, description='This field will not be null')
-        another_field = graphene.String(required=True, description='This is equivalent to the above')
+        from graphene import NonNull, String
+
+        field_name = NonNull(String, description='This field will not be null')
+        another_field = String(required=True, description='This is equivalent to the above')
 
     """
 
