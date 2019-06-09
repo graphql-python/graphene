@@ -18,11 +18,13 @@ class Argument(MountedType):
 
     .. code:: python
 
-        age = graphene.String(
+        from graphene import String, Boolean, Argument
+
+        age = String(
             # Boolean implicitly mounted as Argument
-            dog_years=graphene.Boolean(description='convert to dog years'),
+            dog_years=Boolean(description="convert to dog years"),
             # Boolean explicitly mounted as Argument
-            decades=graphene.Argument(graphene.Boolean, default_value=False)
+            decades=Argument(Boolean, default_value=False),
         )
 
     args:
