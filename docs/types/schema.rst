@@ -1,15 +1,41 @@
 Schema
 ======
 
-A Schema is created by supplying the root types of each type of operation, query and mutation (optional).
-A schema definition is then supplied to the validator and executor.
+A GraphQL **Schema** defines the types and relationship between **Fields** in your API.
+
+A Schema is created by supplying the root :ref:`ObjectType` of each operation, query (mandatory), mutation and subscription.
+
+Schema will collect all type definitions related to the root operations and then supplied to the validator and executor.
 
 .. code:: python
 
     my_schema = Schema(
         query=MyRootQuery,
         mutation=MyRootMutation,
+        subscription=MyRootSubscription
     )
+
+A Root Query is just a special :ref:`ObjectType` that :ref:`defines the fields <Scalars>` that are the entrypoint for your API. Root Mutation and Root Subscription are similar to Root Query, but for different operation types:
+
+* Query fetches data
+* Mutation to changes data and retrieve the changes
+* Subscription to sends changes to clients in real time
+
+Review the `GraphQL documentation on Schema`_ for a brief overview of fields, schema and operations.
+
+.. _GraphQL documentation on Schema: https://graphql.org/learn/schema/
+
+
+Querying
+--------
+
+To query a schema, call the ``execute`` method on it. See :ref:`SchemaExecute` for more details.
+
+
+.. code:: python
+
+    query_string = 'query whoIsMyBestFriend { myBestFriend { lastName } }'
+    my_schema.execute(query_string)
 
 Types
 -----
@@ -28,17 +54,7 @@ In this case, we need to use the ``types`` argument when creating the Schema.
         types=[SomeExtraObjectType, ]
     )
 
-
-Querying
---------
-
-To query a schema, call the ``execute`` method on it.
-
-
-.. code:: python
-
-    my_schema.execute('{ lastName }')
-
+.. _SchemaAutoCamelCase:
 
 Auto CamelCase field names
 --------------------------

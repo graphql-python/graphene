@@ -19,7 +19,7 @@ This example defines a Mutation:
         ok = graphene.Boolean()
         person = graphene.Field(lambda: Person)
 
-        def mutate(self, info, name):
+        def mutate(root, info, name):
             person = Person(name=name)
             ok = True
             return CreatePerson(person=person, ok=ok)
@@ -32,7 +32,8 @@ resolved.
 only argument for the mutation.
 
 **mutate** is the function that will be applied once the mutation is
-called.
+called. This method is just a special resolver that we can change
+data within. It takes the same arguments as the standard query :ref:`ResolverArguments`.
 
 So, we can finish our schema like this:
 
@@ -157,7 +158,7 @@ To return an existing ObjectType instead of a mutation-specific type, set the **
 
         Output = Person
 
-        def mutate(self, info, name):
+        def mutate(root, info, name):
             return Person(name=name)
 
 Then, if we query (``schema.execute(query_str)``) the following:
