@@ -73,7 +73,7 @@ You can pass variables to a query via ``variables``.
 Root Value
 __________
 
-Value used for :ref:`ResolverRootArgument` in root queries and mutations can be overridden using ``root`` parameter.
+Value used for :ref:`ResolverParamParent` in root queries and mutations can be overridden using ``root`` parameter.
 
 .. code:: python
 

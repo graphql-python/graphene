@@ -52,16 +52,16 @@ Resolvers are lazily executed, so if a field is not included in a query, its res
 Each field on an *ObjectType* in Graphene should have a corresponding resolver method to fetch data. This resolver method should match the field name. For example, in the ``Person`` type above, the ``full_name`` field is resolved by the method ``resolve_full_name``.
 
 Each resolver method takes the parameters:
-* :ref:`ResolverRootArgument` for the value object use to resolve most fields
-* :ref:`ResolverInfoArgument` for query and schema meta information and per-request context
-* :ref:`ResolverGraphQLArguments` as defined on the **Field**.
+* :ref:`ResolverParamParent` for the value object use to resolve most fields
+* :ref:`ResolverParamInfo` for query and schema meta information and per-request context
+* :ref:`ResolverParamGraphQLArguments` as defined on the **Field**.
 
 .. _ResolverArguments:
 
 Resolver Parameters
 ~~~~~~~~~~~~~~~~~~~
 
-.. _ResolverRootArgument:
+.. _ResolverParamParent:
 
 Parent Value Object (*parent*)
 ******************************
@@ -110,14 +110,14 @@ Then we go through the following steps to resolve this query:
 * This value object is then used as ``parent`` while calling ``Person.resolve_full_name`` to resolve the scalar String value "Luke Skywalker".
 * The scalar value is serialized and sent back in the query response.
 
-Each resolver returns the next :ref:`ResolverRootArgument` to be used in executing the following resolver in the chain. If the Field is a Scalar type, that value will be serialized and sent in the **Response**. Otherwise, while resolving Compound types like *ObjectType*, the value be passed forward as the next :ref:`ResolverRootArgument`.
+Each resolver returns the next :ref:`ResolverParamParent` to be used in executing the following resolver in the chain. If the Field is a Scalar type, that value will be serialized and sent in the **Response**. Otherwise, while resolving Compound types like *ObjectType*, the value be passed forward as the next :ref:`ResolverParamParent`.
 
 Naming convention
 ^^^^^^^^^^^^^^^^^
 
-This :ref:`ResolverRootArgument` is sometimes named ``obj``, ``parent``, or ``source`` in other GraphQL documentation. It can also be named after the value object being resolved (ex. ``root`` for a root Query or Mutation, and ``person`` for a Person value object). Sometimes this argument will be named ``self`` in Graphene code, but this can be misleading due to :ref:`ResolverImplicitStaticMethod` while executing queries in Graphene.
+This :ref:`ResolverParamParent` is sometimes named ``obj``, ``parent``, or ``source`` in other GraphQL documentation. It can also be named after the value object being resolved (ex. ``root`` for a root Query or Mutation, and ``person`` for a Person value object). Sometimes this argument will be named ``self`` in Graphene code, but this can be misleading due to :ref:`ResolverImplicitStaticMethod` while executing queries in Graphene.
 
-.. _ResolverInfoArgument:
+.. _ResolverParamInfo:
 
 GraphQL Execution Info (*info*)
 *******************************
@@ -129,7 +129,7 @@ The second parameter provides two things:
 
 Only context will be required for most applications. See :ref:`SchemaExecuteContext` for more information about setting context.
 
-.. _ResolverGraphQLArguments:
+.. _ResolverParamGraphQLArguments:
 
 GraphQL Arguments (*\*\*kwargs*)
 ********************************
@@ -166,7 +166,7 @@ Convenience Features of Graphene Resolvers
 Implicit staticmethod
 *********************
 
-One surprising feature of Graphene is that all resolver methods are treated implicitly as staticmethods. This means that, unlike other methods in Python, the first argument of a resolver is *never* ``self`` while it is being executed by Graphene. Instead, the first argument is always :ref:`ResolverRootArgument`.  In practice, this is very convenient as, in GraphQL, we are almost always more concerned with the using the parent value object to resolve queries than attributes on the Python object itself.
+One surprising feature of Graphene is that all resolver methods are treated implicitly as staticmethods. This means that, unlike other methods in Python, the first argument of a resolver is *never* ``self`` while it is being executed by Graphene. Instead, the first argument is always :ref:`ResolverParamParent`.  In practice, this is very convenient as, in GraphQL, we are almost always more concerned with the using the parent value object to resolve queries than attributes on the Python object itself.
 
 The two resolvers in this example are effectively the same.
 
@@ -204,7 +204,7 @@ Default Resolver
 
 If a resolver method is not defined for a **Field** attribute on our *ObjectType*, Graphene supplies a default resolver.
 
-If the :ref:`ResolverRootArgument` is a dictionary, the resolver will look for a dictionary key matching the field name. Otherwise, the resolver will get the attribute from the parent value object matching the field name.
+If the :ref:`ResolverParamParent` is a dictionary, the resolver will look for a dictionary key matching the field name. Otherwise, the resolver will get the attribute from the parent value object matching the field name.
 
 .. code:: python
 
