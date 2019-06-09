@@ -28,7 +28,7 @@ This example model defines a Person, with a first and a last name:
         def resolve_full_name(parent, info):
             return f"{parent.first_name} {parent.last_name}"
 
-This *ObjectType* defines the feild **first\_name**, **last\_name**, and **full\_name**. Each field is specified as a class attribute, and each attribute maps to a Field. Data is fetched by our ``resolve_full_name`` :ref:`resolver method<Resolvers>` for ``full_name`` field and the :ref:`DefaultResolver` for other fields.
+This *ObjectType* defines the field **first\_name**, **last\_name**, and **full\_name**. Each field is specified as a class attribute, and each attribute maps to a Field. Data is fetched by our ``resolve_full_name`` :ref:`resolver method<Resolvers>` for ``full_name`` field and the :ref:`DefaultResolver` for other fields.
 
 The above ``Person`` ObjectType has the following schema representation:
 
@@ -402,13 +402,13 @@ See :ref:`Interfaces` for more information.
 
 .. code:: python
 
-    from graphene import ObjectType
+    from graphene import ObjectType, Node
 
     Song = namedtuple('Song', ('title', 'artist'))
 
     class MyGraphQlSong(ObjectType):
         class Meta:
-            interfaces = (graphene.Node, )
+            interfaces = (Node, )
             possible_types = (Song, )
 
 .. _Interface: /docs/interfaces/

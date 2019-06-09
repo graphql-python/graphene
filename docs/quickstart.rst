@@ -30,7 +30,7 @@ Compare Graphene's *code-first* approach to building a GraphQL API with *schema-
 
 .. _Ariadne: https://ariadne.readthedocs.io
 
-Graphene is fully featured with integrations for the most popular web frameworks and ORM and easy Relay Compliance.
+Graphene is fully featured with integrations for the most popular web frameworks and ORMs. Graphene produces schemas tha are fully compliant with the GraphQL spec and provides tools and patterns for building a Relay-Compliant API as well.
 
 An example in Graphene
 ----------------------
