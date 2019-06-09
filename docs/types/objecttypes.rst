@@ -18,13 +18,15 @@ This example model defines a Person, with a first and a last name:
 
 .. code:: python
 
-    class Person(graphene.ObjectType):
-        first_name = graphene.String()
-        last_name = graphene.String()
-        full_name = graphene.String()
+    from graphene import ObjectType, String
+
+    class Person(ObjectType):
+        first_name = String()
+        last_name = String()
+        full_name = String()
 
         def resolve_full_name(parent, info):
-            return f'{parent.first_name} {parent.last_name}'
+            return f"{parent.first_name} {parent.last_name}"
 
 This *ObjectType* defines the feild **first\_name**, **last\_name**, and **full\_name**. Each field is specified as a class attribute, and each attribute maps to a Field. Data is fetched by our ``resolve_full_name`` :ref:`resolver method<Resolvers>` for ``full_name`` field and the :ref:`DefaultResolver` for other fields.
 
@@ -56,8 +58,8 @@ Each resolver method takes the parameters:
 
 .. _ResolverArguments:
 
-Resolver Arguments
-~~~~~~~~~~~~~~~~~~
+Resolver Parameters
+~~~~~~~~~~~~~~~~~~~
 
 .. _ResolverRootArgument:
 
@@ -75,20 +77,20 @@ If we have a schema with Person type and one field on the root query.
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String, Field
 
-    class Person(graphene.ObjectType):
-        full_name = graphene.String()
+    class Person(ObjectType):
+        full_name = String()
 
         def resolve_full_name(parent, info):
-            return f'{parent.first_name} {parent.last_name}'
+            return f"{parent.first_name} {parent.last_name}"
 
-    class Query(graphene.ObjectType):
-        me = graphene.Field(Person)
+    class Query(ObjectType):
+        me = Field(Person)
 
         def resolve_me(parent, info):
             # returns an object that represents a Person
-            return get_human(name='Luke Skywalker')
+            return get_human(name="Luke Skywalker")
 
 When we execute a query against that schema.
 
@@ -137,10 +139,10 @@ keyword arguments. For example:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, Field, String
 
-    class Query(graphene.ObjectType):
-        human_by_name = graphene.Field(Human, name=graphene.String(required=True))
+    class Query(ObjectType):
+        human_by_name = Field(Human, name=String(required=True))
 
         def resolve_human_by_name(parent, info, name):
             return get_human(name=name)
@@ -170,9 +172,11 @@ The two resolvers in this example are effectively the same.
 
 .. code:: python
 
-    class Person(graphene.ObjectType):
-        first_name = graphene.String()
-        last_name = graphene.String()
+    from graphene import ObjectType, String
+
+    class Person(ObjectType):
+        first_name = String()
+        last_name = String()
 
         @staticmethod
         def resolve_first_name(parent, info):
@@ -206,15 +210,17 @@ If the :ref:`ResolverRootArgument` is a dictionary, the resolver will look for a
 
     from collections import namedtuple
 
+    from graphene import ObjectType, String, Field, Schema
+
     PersonValueObject = namedtuple('Person', 'first_name', 'last_name')
 
-    class Person(graphene.ObjectType):
-        first_name = graphene.String()
-        last_name = graphene.String()
+    class Person(ObjectType):
+        first_name = String()
+        last_name = String()
 
-    class Query(graphene.Object):
-        me = graphene.Field(Person)
-        my_best_friend = graphene.Field(Person)
+    class Query(ObjectType):
+        me = Field(Person)
+        my_best_friend = Field(Person)
 
         def resolve_me(parent, info):
             # always pass an object for `me` field
@@ -224,7 +230,7 @@ If the :ref:`ResolverRootArgument` is a dictionary, the resolver will look for a
             # always pass a dictionary for `my_best_fiend_field`
             return {"first_name": "R2", "last_name": "D2"}
 
-    schema = graphene.Schema(query=Query)
+    schema = Schema(query=Query)
     result = schema.execute('''
         {
             me { firstName lastName }
@@ -252,10 +258,10 @@ For example, given this schema:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(required=True, name=graphene.String())
+    class Query(ObjectType):
+        hello = String(required=True, name=String())
 
         def resolve_hello(parent, info, name):
             return name if name else 'World'
@@ -279,8 +285,10 @@ into a dict:
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(required=True, name=graphene.String())
+    from graphene import ObjectType, String
+
+    class Query(ObjectType):
+        hello = String(required=True, name=String())
 
         def resolve_hello(parent, info, **kwargs):
             name = kwargs.get('name', 'World')
@@ -290,8 +298,10 @@ Or by setting a default value for the keyword argument:
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(required=True, name=graphene.String())
+    from graphene import ObjectType, String
+
+    class Query(ObjectType):
+        hello = String(required=True, name=String())
 
         def resolve_hello(parent, info, name='World'):
             return f'Hello, {name}!'
@@ -300,10 +310,12 @@ One can also set a default value for an Argument in the GraphQL schema itself us
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(
+    from graphene import ObjectType, String
+
+    class Query(ObjectType):
+        hello = String(
             required=True,
-            name=graphene.Argument(graphene.String, default_value='World')
+            name=String(default_value='World')
         )
 
         def resolve_hello(parent, info, name):
@@ -316,15 +328,15 @@ A field can use a custom resolver from outside the class:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String
 
     def resolve_full_name(person, info):
         return '{} {}'.format(person.first_name, person.last_name)
 
-    class Person(graphene.ObjectType):
-        first_name = graphene.String()
-        last_name = graphene.String()
-        full_name = graphene.String(resolver=resolve_full_name)
+    class Person(ObjectType):
+        first_name = String()
+        last_name = String()
+        full_name = String(resolver=resolve_full_name)
 
 
 Instances as value objects
@@ -337,8 +349,8 @@ previous example you could use ``Person`` to capture data for each of the *Objec
 
     peter = Person(first_name='Peter', last_name='Griffin')
 
-    peter.first_name # prints "Peter"
-    peter.last_name # prints "Griffin"
+    peter.first_name  # prints "Peter"
+    peter.last_name  # prints "Griffin"
 
 Field camelcasing
 *****************
@@ -359,7 +371,9 @@ property on the ``Meta`` class:
 
 .. code:: python
 
-    class MyGraphQlSong(graphene.ObjectType):
+    from graphene import ObjectType
+
+    class MyGraphQlSong(ObjectType):
         class Meta:
             name = 'Song'
 
@@ -370,7 +384,9 @@ The schema description of an *ObjectType* can be set as a docstring on the Pytho
 
 .. code:: python
 
-    class MyGraphQlSong(graphene.ObjectType):
+    from graphene import ObjectType
+
+    class MyGraphQlSong(ObjectType):
         ''' We can set the schema description for an Object Type here on a docstring '''
         class Meta:
             description = 'But if we set the description in Meta, this value is used instead'
@@ -386,9 +402,11 @@ See :ref:`Interfaces` for more information.
 
 .. code:: python
 
+    from graphene import ObjectType
+
     Song = namedtuple('Song', ('title', 'artist'))
 
-    class MyGraphQlSong(graphene.ObjectType):
+    class MyGraphQlSong(ObjectType):
         class Meta:
             interfaces = (graphene.Node, )
             possible_types = (Song, )

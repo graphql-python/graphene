@@ -9,7 +9,9 @@ For executing a query a schema, you can directly call the ``execute`` method on 
 
 .. code:: python
 
-    schema = graphene.Schema(...)
+    from graphene import Schema
+
+    schema = Schema(...)
     result = schema.execute('{ name }')
 
 ``result`` represents the result of execution. ``result.data`` is the result of executing the query, ``result.errors`` is ``None`` if no errors occurred, and is a non-empty list if an error occurred.
@@ -25,15 +27,17 @@ You can pass context to a query via ``context``.
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        name = graphene.String()
+    from graphene import ObjectType, String, Schema
+
+    class Query(ObjectType):
+        name = String()
 
         def resolve_name(root, info):
             return info.context.get('name')
 
-    schema = graphene.Schema(Query)
+    schema = Schema(Query)
     result = schema.execute('{ name }', context={'name': 'Syrus'})
-
+    assert result.data['name'] == 'Syrus'
 
 
 Variables
@@ -44,13 +48,15 @@ You can pass variables to a query via ``variables``.
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        user = graphene.Field(User, id=graphene.ID(required=True))
+    from graphene import ObjectType, Field, ID, Schema
+
+    class Query(ObjectType):
+        user = Field(User, id=ID(required=True))
 
         def resolve_user(root, info, id):
             return get_user_by_id(id)
 
-    schema = graphene.Schema(Query)
+    schema = Schema(Query)
     result = schema.execute(
         '''
           query getUser($id: ID) {
@@ -71,13 +77,15 @@ Value used for :ref:`ResolverRootArgument` in root queries and mutations can be 
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        me = graphene.Field(User)
+    from graphene import ObjectType, Field, Schema
+
+    class Query(ObjectType):
+        me = Field(User)
 
         def resolve_user(root, info):
-            return get_user_by_id(root.id)
+            return {'id': root.id, 'firstName': root.name}
 
-    schema = graphene.Schema(Query)
+    schema = Schema(Query)
     user_root = User(id=12, name='bob'}
     result = schema.execute(
         '''
@@ -91,6 +99,7 @@ Value used for :ref:`ResolverRootArgument` in root queries and mutations can be 
         ''',
         root=user_root
     )
+    assert result.data['user']['id'] == user_root.id
 
 Operation Name
 ______________
@@ -99,13 +108,15 @@ If there are multiple operations defined in a query string, ``operation_name`` s
 
 .. code:: python
 
-    class Query(graphene.ObjectType):
-        me = graphene.Field(User)
+    from graphene import ObjectType, Field, Schema
+
+    class Query(ObjectType):
+        me = Field(User)
 
         def resolve_user(root, info):
             return get_user_by_id(12)
 
-    schema = graphene.Schema(Query)
+    schema = Schema(Query)
     query_string = '''
         query getUserWithFirstName {
             user {
@@ -117,8 +128,7 @@ If there are multiple operations defined in a query string, ``operation_name`` s
         query getUserWithFullName {
             user {
                 id
-                firstName
-                lastName
+                fullName
             }
         }
     '''
@@ -126,3 +136,4 @@ If there are multiple operations defined in a query string, ``operation_name`` s
         query_string,
         operation_name='getUserWithFullName'
     )
+    assert result.data['user']['fullName']

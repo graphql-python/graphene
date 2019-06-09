@@ -76,12 +76,12 @@ In Graphene, we can define a simple schema using the following code:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String, Schema
 
-    class Query(graphene.ObjectType):
+    class Query(ObjectType):
         # this defines a Field `hello` in our Schema with a single Argument `name`
-        hello = graphene.String(name=graphene.String(default_value="stranger"))
-        goodbye = graphene.String()
+        hello = String(name=String(default_value="stranger"))
+        goodbye = String()
 
         # our Resolver method takes the GraphQL context (root, info) as well as
         # Argument (name) for the Field and returns data for the query Response
@@ -91,7 +91,7 @@ In Graphene, we can define a simple schema using the following code:
         def resolve_goodbye(root, info):
             return 'See ya!'
 
-    schema = graphene.Schema(query=Query)
+    schema = Schema(query=Query)
 
 
 A GraphQL **Schema** describes each **Field** in the data model provided by the server using scalar types like *String*, *Int* and *Enum* and compound types like *List* and *Object*. For more details refer to the Graphene :ref:`TypesReference`.
