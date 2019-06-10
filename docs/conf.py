@@ -443,6 +443,7 @@ epub_exclude_files = ["search.html"]
 #
 # epub_use_index = True
 
+autodoc_mock_imports = ["graphql", "aniso8601", "graphql_relay"]
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
