@@ -1,6 +1,6 @@
 import os
 
-import sphinx_graphene_theme
+# import sphinx_graphene_theme
 
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 
@@ -137,9 +137,9 @@ todo_include_todos = True
 # if on_rtd:
 #     html_theme = 'sphinx_rtd_theme'
 
-html_theme = "sphinx_graphene_theme"
+# html_theme = "sphinx_graphene_theme"
 
-html_theme_path = [sphinx_graphene_theme.get_html_theme_path()]
+# html_theme_path = [sphinx_graphene_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
