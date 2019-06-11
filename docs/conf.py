@@ -1,6 +1,6 @@
 import os
 
-import sphinx_graphene_theme
+# import sphinx_graphene_theme
 
 on_rtd = os.environ.get("READTHEDOCS", None) == "True"
 
@@ -139,9 +139,9 @@ todo_include_todos = True
 # if on_rtd:
 #     html_theme = 'sphinx_rtd_theme'
 
-html_theme = "sphinx_graphene_theme"
+# html_theme = "sphinx_graphene_theme"
 
-html_theme_path = [sphinx_graphene_theme.get_html_theme_path()]
+# html_theme_path = [sphinx_graphene_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -443,7 +443,23 @@ epub_exclude_files = ["search.html"]
 #
 # epub_use_index = True
 
-autodoc_mock_imports = ["graphql", "aniso8601", "graphql_relay"]
+autodoc_mock_imports = [
+    "graphql",
+    "graphql.language",
+    "graphql.language.ast",
+    "graphql.execution",
+    "graphql.execution.base",
+    "graphql.type",
+    "graphql.type.directives",
+    "graphql.type.introspection",
+    "graphql.type.typemap",
+    "graphql.utils",
+    "graphql.utils.introspection_query",
+    "graphql.utils.schema_printer",
+    "graphql.execution.executor",
+    "aniso8601",
+    "graphql_relay",
+]
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
@@ -458,4 +474,5 @@ intersphinx_mapping = {
         None,
     ),
     "graphene_gae": ("http://docs.graphene-python.org/projects/gae/en/latest/", None),
+    "graphql": ("https://graphql.readthedocs.io/en/latest/", None),
 }
