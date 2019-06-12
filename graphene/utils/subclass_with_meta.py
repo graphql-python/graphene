@@ -37,7 +37,6 @@ class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
                         _Meta
                     )
                 )
-            delattr(cls, "Meta")
         options = dict(meta_options, **_meta_props)
 
         abstract = options.pop("abstract", False)
@@ -46,10 +45,10 @@ class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
                 "Abstract types can only contain the abstract attribute. "
                 "Received: abstract, {option_keys}"
             ).format(option_keys=", ".join(options.keys()))
-        else:
-            super_class = super(cls, cls)
-            if hasattr(super_class, "__init_subclass_with_meta__"):
-                super_class.__init_subclass_with_meta__(**options)
+
+        super_class = super(cls, cls)
+        if hasattr(super_class, "__init_subclass_with_meta__"):
+            super_class.__init_subclass_with_meta__(**options)
 
     @classmethod
     def __init_subclass_with_meta__(cls, **meta_options):
