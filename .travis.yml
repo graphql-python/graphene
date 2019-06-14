@@ -1,4 +1,6 @@
 language: python
+dist: xenial
+
 matrix:
   include:
     - env: TOXENV=py27
