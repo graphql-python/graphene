@@ -19,14 +19,21 @@ matrix:
       python: 3.6
     - env: TOXENV=mypy
       python: 3.6
+
 install:
-  - pip install coveralls tox
+  - pip install tox
+
 script: tox
-after_success: coveralls
+
+after_success:
+  - pip install coveralls
+  - coveralls
+
 cache:
   directories:
     - $HOME/.cache/pip
     - $HOME/.cache/pre-commit
+
 deploy:
   provider: pypi
   user: syrusakbary
