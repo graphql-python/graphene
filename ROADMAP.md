@@ -2,22 +2,7 @@
 
 In order to move Graphene and the GraphQL Python ecosystem forward I realized is essential to be clear with the community on next steps, so we can move uniformly.
 
-There are few key points that need to happen in the short/mid term, divided into two main sections:
-
-- [Community](#community)
-- [Graphene 3](#graphene-3)
-
 _👋 If you have more ideas on how to move the Graphene ecosystem forward, don't hesistate to [open a PR](https://github.com/graphql-python/graphene/edit/master/ROADMAP.md)_
-
-## Community
-
-The goal is to improve adoption and sustainability of the project.
-
-- 💎 Add Commercial Support for Graphene - [See issue](https://github.com/graphql-python/graphene/issues/813)
-  - Create [Patreon page](https://www.patreon.com/syrusakbary)
-  - Add [/support-graphene page](https://graphene-python.org/support-graphene/) in Graphene website
-- 📘 Vastly improve documentation - [See issue](https://github.com/graphql-python/graphene/issues/823)
-- ~~💰 Apply for [Mozilla MOSS](https://www.mozilla.org/en-US/moss/) sponsorship~~ (not for now)
 
 ## Graphene 3
 
