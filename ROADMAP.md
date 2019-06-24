@@ -18,7 +18,6 @@ Targeted as v3 of [graphql-core](https://pypi.org/project/graphql-core/), Python
 ### Graphene
 - [ ] Integrate with the core-next API and resolve all breaking changes
 - [ ] GraphQL types from type annotations - [See issue](https://github.com/graphql-python/graphene/issues/729)
-- [ ] Schema creation from SDL (API TBD)
 - [ ] Improve connections structure
 - [ ] Add support for coroutines in Connection, Mutation (abstracting out Promise requirement) - [See PR](https://github.com/graphql-python/graphene/pull/824)
 
