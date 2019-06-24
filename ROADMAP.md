@@ -18,8 +18,6 @@ Targeted as v3 of [graphql-core](https://pypi.org/project/graphql-core/), Python
 ### Graphene
 - [ ] Integrate with the core-next API and resolve all breaking changes
 - [ ] GraphQL types from type annotations - [See issue](https://github.com/graphql-python/graphene/issues/729)
-- [ ] Schema creation from SDL (API TBD)
-- [ ] Improve connections structure
 - [ ] Add support for coroutines in Connection, Mutation (abstracting out Promise requirement) - [See PR](https://github.com/graphql-python/graphene/pull/824)
 
 ### Graphene-*
@@ -37,8 +35,8 @@ Targeted as v3 of [graphql-core](https://pypi.org/project/graphql-core/), Python
 | Repo                                                                         | Release Manager | CODEOWNERS | Pinned     | next/master created | Labels Standardized |
 | ---------------------------------------------------------------------------- | --------------- | ---------- | ---------- | ------------------- | ------------------- |
 | [graphene](https://github.com/graphql-python/graphene)                       | ekampf          | ✅          |            | ✅                   |                     |
-| [graphql-Core](https://github.com/graphql-python/graphql-core)               | Cito            | ✅          |            |                     |                     |
-| [graphql-core-next](https://github.com/graphql-python/graphql-core-next)     | Cito            | ✅          |            |                     |                     |
+| [graphql-core](https://github.com/graphql-python/graphql-core)               | Cito            | ✅          | N/A        | N/A                 |                     |
+| [graphql-core-next](https://github.com/graphql-python/graphql-core-next)     | Cito            | ✅          | N/A        | N/A                 |                     |
 | [graphql-server-core](https://github.com/graphql-python/graphql-server-core) | Cito            |            | ✅          | ✅                   |                     |
 | [gql](https://github.com/graphql-python/gql)                                 | ekampf          |            |            |                     |                     |
 | [gql-next](https://github.com/graphql-python/gql-next)                       | ekampf          |            | N/A        | N/A                 |                     |
