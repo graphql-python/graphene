@@ -37,7 +37,7 @@ Targeted as v3 of [graphql-core](https://pypi.org/project/graphql-core/), Python
 | Repo                                                                         | Release Manager | CODEOWNERS | Pinned     | next/master created | Labels Standardized |
 | ---------------------------------------------------------------------------- | --------------- | ---------- | ---------- | ------------------- | ------------------- |
 | [graphene](https://github.com/graphql-python/graphene)                       | ekampf          | ✅          |            | ✅                   |                     |
-| [graphql-Core](https://github.com/graphql-python/graphql-core)               | Cito            | ✅          |            |                     |                     |
+| [graphql-core](https://github.com/graphql-python/graphql-core)               | Cito            | ✅          | N/A        | N/A                 |                     |
 | [graphql-core-next](https://github.com/graphql-python/graphql-core-next)     | Cito            | ✅          | N/A        | N/A                 |                     |
 | [graphql-server-core](https://github.com/graphql-python/graphql-server-core) | Cito            |            | ✅          | ✅                   |                     |
 | [gql](https://github.com/graphql-python/gql)                                 | ekampf          |            |            |                     |                     |
