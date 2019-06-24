@@ -6,6 +6,7 @@ if six.PY3:
     from typing import Type
 
 
+# Test
 class BaseOptions(object):
     name = None  # type: str
     description = None  # type: str
