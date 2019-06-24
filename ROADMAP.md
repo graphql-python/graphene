@@ -25,7 +25,7 @@ Targeted as v3 of [graphql-core](https://pypi.org/project/graphql-core/), Python
 ### Graphene-*
 - [ ] Integrate with the graphene core-next API and resolve all breaking changes
 
-### *-graphql 
+### *-graphql
 - [ ] Integrate with the graphql core-next API and resolve all breaking changes
 
 ## Ongoing Initiatives
