@@ -6,18 +6,20 @@ from ..utils.props import props
 from .field import Field
 from .objecttype import ObjectType, ObjectTypeOptions
 from .utils import yank_fields_from_attrs
+from .interface import Interface
 
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
     from .argument import Argument  # NOQA
-    from typing import Dict, Type, Callable  # NOQA
+    from typing import Dict, Type, Callable, Iterable  # NOQA
 
 
 class MutationOptions(ObjectTypeOptions):
     arguments = None  # type: Dict[str, Argument]
     output = None  # type: Type[ObjectType]
     resolver = None  # type: Callable
+    interfaces = ()  # type: Iterable[Type[Interface]]
 
 
 class Mutation(ObjectType):
@@ -58,8 +60,7 @@ class Mutation(ObjectType):
             name.
         description (str): Description of the GraphQL type in the schema. Defaults to class
             docstring.
-        interfaces (Iterable[graphene.Interface]): NOT IMPLEMENTED (use ``output`` to define a
-            payload implementing interfaces). GraphQL interfaces to extend with the payload
+        interfaces (Iterable[graphene.Interface]): GraphQL interfaces to extend with the payload
             object. All fields from interface will be included in this object's schema.
         fields (Dict[str, graphene.Field]): Dictionary of field name to Field. Not recommended to
             use (prefer class attributes or ``Meta.output``).
@@ -67,13 +68,26 @@ class Mutation(ObjectType):
 
     @classmethod
     def __init_subclass_with_meta__(
-        cls, resolver=None, output=None, arguments=None, _meta=None, **options
+        cls,
+        interfaces=(),
+        resolver=None,
+        output=None,
+        arguments=None,
+        _meta=None,
+        **options
     ):
         if not _meta:
             _meta = MutationOptions(cls)
 
         output = output or getattr(cls, "Output", None)
         fields = {}
+
+        for interface in interfaces:
+            assert issubclass(interface, Interface), (
+                'All interfaces of {} must be a subclass of Interface. Received "{}".'
+            ).format(cls.__name__, interface)
+            fields.update(interface._meta.fields)
+
         if not output:
             # If output is defined, we don't need to get the fields
             fields = OrderedDict()
@@ -110,6 +124,7 @@ class Mutation(ObjectType):
         else:
             _meta.fields = fields
 
+        _meta.interfaces = interfaces
         _meta.output = output
         _meta.resolver = resolver
         _meta.arguments = arguments
