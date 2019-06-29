@@ -82,3 +82,4 @@ target/
 *.sqlite3
 .vscode
 .mypy_cache
+/.venv
