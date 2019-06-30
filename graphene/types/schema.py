@@ -296,8 +296,7 @@ class GrapheneGraphQLSchema(GraphQLSchema):
             graphene_type=type_,
             name=type_._meta.name,
             description=type_._meta.description,
-            # TODO: container_type not supported by core-next (is this needed?)
-            # container_type=type_._meta.container,
+            out_type=type_._meta.container,
             fields=partial(
                 self.construct_fields_for_type, map_, type_, is_input_type=True
             ),
@@ -345,8 +344,7 @@ class GrapheneGraphQLSchema(GraphQLSchema):
                 _field = GraphQLInputField(
                     field_type,
                     default_value=field.default_value,
-                    # TODO: out_name not (yet) supported by core-next
-                    # out_name=name,
+                    out_name=name,
                     description=field.description,
                 )
             else:
@@ -357,8 +355,7 @@ class GrapheneGraphQLSchema(GraphQLSchema):
                     processed_arg_name = arg.name or self.get_name(arg_name)
                     args[processed_arg_name] = GraphQLArgument(
                         arg_type,
-                        # TODO: out_name not (yet) supported by core-next
-                        # out_name=arg_name,
+                        out_name=arg_name,
                         description=arg.description,
                         default_value=INVALID
                         if isinstance(arg.type, NonNull)

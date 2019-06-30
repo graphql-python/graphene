@@ -90,8 +90,7 @@ def test_objecttype():
             GraphQLString,
             description="Argument description",
             default_value="x",
-            # TODO: out_name not (yet) supported by core-next
-            # out_name="bar",
+            out_name="bar",
         )
     }
 
@@ -148,8 +147,7 @@ def test_interface():
             GraphQLString,
             description="Argument description",
             default_value="x",
-            # TODO: out_name not (yet) supported by core-next
-            # out_name="bar",
+            out_name="bar",
         )
     }
 
@@ -182,15 +180,14 @@ def test_inputobject():
 
     other_graphql_type = type_map["OtherObjectType"]
     inner_graphql_type = type_map["MyInnerObjectType"]
-    # TODO: create_container not supported by core-next
-    container = graphql_type.create_container(
+    container = graphql_type.out_type(
         {
             "bar": "oh!",
-            "baz": inner_graphql_type.create_container(
+            "baz": inner_graphql_type.out_type(
                 {
                     "some_other_field": [
-                        other_graphql_type.create_container({"thingy": 1}),
-                        other_graphql_type.create_container({"thingy": 2}),
+                        other_graphql_type.out_type({"thingy": 1}),
+                        other_graphql_type.out_type({"thingy": 2}),
                     ]
                 }
             ),
@@ -235,8 +232,7 @@ def test_objecttype_camelcase():
         "barFoo": GraphQLArgument(
             GraphQLString,
             default_value=None,
-            # TODO: out_name not (yet) supported by core-next
-            # out_name="bar_foo"
+            out_name="bar_foo"
         )
     }
 
@@ -262,8 +258,7 @@ def test_objecttype_camelcase_disabled():
         "bar_foo": GraphQLArgument(
             GraphQLString,
             default_value=None,
-            # TODO: out_name not (yet) supported by core-next
-            # out_name="bar_foo"
+            out_name="bar_foo"
         )
     }
 
