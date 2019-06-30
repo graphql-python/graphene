@@ -52,8 +52,4 @@ def test_schema_str():
 
 def test_schema_introspect():
     schema = Schema(Query)
-    print()
-    print(schema)
-    print()
-    print(schema.introspect())
     assert "__schema" in schema.introspect()
