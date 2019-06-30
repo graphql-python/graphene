@@ -1,5 +1,4 @@
-import pytest
-from promise import Promise
+from pytest import mark, raises
 
 from ...types import (
     ID,
@@ -55,15 +54,15 @@ class SaySomethingFixed(ClientIDMutation):
         return FixedSaySomething(phrase=str(what))
 
 
-class SaySomethingPromise(ClientIDMutation):
+class SaySomethingAsync(ClientIDMutation):
     class Input:
         what = String()
 
     phrase = String()
 
     @staticmethod
-    def mutate_and_get_payload(self, info, what, client_mutation_id=None):
-        return Promise.resolve(SaySomething(phrase=str(what)))
+    async def mutate_and_get_payload(self, info, what, client_mutation_id=None):
+        return SaySomething(phrase=str(what))
 
 
 # MyEdge = MyNode.Connection.Edge
@@ -97,7 +96,7 @@ class RootQuery(ObjectType):
 class Mutation(ObjectType):
     say = SaySomething.Field()
     say_fixed = SaySomethingFixed.Field()
-    say_promise = SaySomethingPromise.Field()
+    say_async = SaySomethingAsync.Field()
     other = OtherMutation.Field()
 
 
@@ -105,7 +104,7 @@ schema = Schema(query=RootQuery, mutation=Mutation)
 
 
 def test_no_mutate_and_get_payload():
-    with pytest.raises(AssertionError) as excinfo:
+    with raises(AssertionError) as excinfo:
 
         class MyMutation(ClientIDMutation):
             pass
@@ -185,12 +184,13 @@ def test_node_query_fixed():
     )
 
 
-def test_node_query_promise():
-    executed = schema.execute(
-        'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
+@mark.asyncio
+async def test_node_query_async():
+    executed = await schema.execute_async(
+        'mutation a { sayAsync(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
     )
     assert not executed.errors
-    assert executed.data == {"sayPromise": {"phrase": "hello"}}
+    assert executed.data == {"sayAsync": {"phrase": "hello"}}
 
 
 def test_edge_query():

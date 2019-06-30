@@ -454,13 +454,13 @@ class Schema:
     def lazy(self, _type):
         return lambda: self.get_type(_type)
 
-    async def async_execute(self, *args, **kwargs):
-        return graphql(self.graphql_schema, *args, **normalize_execute_kwargs(kwargs))
+    async def execute_async(self, *args, **kwargs):
+        kwargs = normalize_execute_kwargs(kwargs)
+        return await graphql(self.graphql_schema, *args, **kwargs)
 
     def execute(self, *args, **kwargs):
-        return graphql_sync(
-            self.graphql_schema, *args, **normalize_execute_kwargs(kwargs)
-        )
+        kwargs = normalize_execute_kwargs(kwargs)
+        return graphql_sync(self.graphql_schema, *args, **kwargs)
 
     def introspect(self):
         introspection = self.execute(introspection_query)
