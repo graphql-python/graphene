@@ -17,7 +17,7 @@ class User(ObjectType):
     name = String()
 
 
-class Info(object):
+class Info:
     def __init__(self, parent_type):
         self.parent_type = GrapheneObjectType(
             graphene_type=parent_type,

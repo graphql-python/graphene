@@ -9,7 +9,7 @@ from ..structures import NonNull
 from .utils import MyLazyType
 
 
-class MyInstance(object):
+class MyInstance:
     value = "value"
     value_func = staticmethod(lambda: "value_func")
 

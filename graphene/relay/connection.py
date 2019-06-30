@@ -66,7 +66,7 @@ class Connection(ObjectType):
         edge_class = getattr(cls, "Edge", None)
         _node = node
 
-        class EdgeBase(object):
+        class EdgeBase:
             node = Field(_node, description="The item at the end of the edge")
             cursor = String(required=True, description="A cursor for use in pagination")
 

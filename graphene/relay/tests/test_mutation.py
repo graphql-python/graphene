@@ -14,7 +14,7 @@ from ...types.scalars import String
 from ..mutation import ClientIDMutation
 
 
-class SharedFields(object):
+class SharedFields:
     shared = String()
 
 
@@ -36,7 +36,7 @@ class SaySomething(ClientIDMutation):
         return SaySomething(phrase=str(what))
 
 
-class FixedSaySomething(object):
+class FixedSaySomething:
     __slots__ = ("phrase",)
 
     def __init__(self, phrase):

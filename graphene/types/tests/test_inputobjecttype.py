@@ -8,7 +8,7 @@ from ..schema import Schema
 from ..unmountedtype import UnmountedType
 
 
-class MyType(object):
+class MyType:
     pass
 
 
@@ -78,7 +78,7 @@ def test_generate_inputobjecttype_as_argument():
 
 
 def test_generate_inputobjecttype_inherit_abstracttype():
-    class MyAbstractType(object):
+    class MyAbstractType:
         field1 = MyScalar(MyType)
 
     class MyInputObjectType(InputObjectType, MyAbstractType):
@@ -92,7 +92,7 @@ def test_generate_inputobjecttype_inherit_abstracttype():
 
 
 def test_generate_inputobjecttype_inherit_abstracttype_reversed():
-    class MyAbstractType(object):
+    class MyAbstractType:
         field1 = MyScalar(MyType)
 
     class MyInputObjectType(MyAbstractType, InputObjectType):
