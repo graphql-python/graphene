@@ -20,7 +20,7 @@ class InputObjectTypeContainer(dict, BaseType):
 
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
-        for key in self._meta.fields.keys():
+        for key in self._meta.fields:
             setattr(self, key, self.get(key, None))
 
     def __init_subclass__(cls, *args, **kwargs):

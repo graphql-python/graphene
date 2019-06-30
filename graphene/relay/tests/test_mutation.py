@@ -117,12 +117,12 @@ def test_no_mutate_and_get_payload():
 
 def test_mutation():
     fields = SaySomething._meta.fields
-    assert list(fields.keys()) == ["phrase", "client_mutation_id"]
+    assert list(fields) == ["phrase", "client_mutation_id"]
     assert SaySomething._meta.name == "SaySomethingPayload"
     assert isinstance(fields["phrase"], Field)
     field = SaySomething.Field()
     assert field.type == SaySomething
-    assert list(field.args.keys()) == ["input"]
+    assert list(field.args) == ["input"]
     assert isinstance(field.args["input"], Argument)
     assert isinstance(field.args["input"].type, NonNull)
     assert field.args["input"].type.of_type == SaySomething.Input
@@ -135,7 +135,7 @@ def test_mutation_input():
     Input = SaySomething.Input
     assert issubclass(Input, InputObjectType)
     fields = Input._meta.fields
-    assert list(fields.keys()) == ["what", "client_mutation_id"]
+    assert list(fields) == ["what", "client_mutation_id"]
     assert isinstance(fields["what"], InputField)
     assert fields["what"].type == String
     assert isinstance(fields["client_mutation_id"], InputField)
@@ -144,11 +144,11 @@ def test_mutation_input():
 
 def test_subclassed_mutation():
     fields = OtherMutation._meta.fields
-    assert list(fields.keys()) == ["name", "my_node_edge", "client_mutation_id"]
+    assert list(fields) == ["name", "my_node_edge", "client_mutation_id"]
     assert isinstance(fields["name"], Field)
     field = OtherMutation.Field()
     assert field.type == OtherMutation
-    assert list(field.args.keys()) == ["input"]
+    assert list(field.args) == ["input"]
     assert isinstance(field.args["input"], Argument)
     assert isinstance(field.args["input"].type, NonNull)
     assert field.args["input"].type.of_type == OtherMutation.Input
@@ -158,7 +158,7 @@ def test_subclassed_mutation_input():
     Input = OtherMutation.Input
     assert issubclass(Input, InputObjectType)
     fields = Input._meta.fields
-    assert list(fields.keys()) == ["shared", "additional_field", "client_mutation_id"]
+    assert list(fields) == ["shared", "additional_field", "client_mutation_id"]
     assert isinstance(fields["shared"], InputField)
     assert fields["shared"].type == String
     assert isinstance(fields["additional_field"], InputField)

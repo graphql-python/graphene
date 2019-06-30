@@ -80,7 +80,7 @@ def test_objecttype():
     assert graphql_type.description == "Description"
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ["foo", "gizmo"]
+    assert list(fields) == ["foo", "gizmo"]
     foo_field = fields["foo"]
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == "Field description"
@@ -104,11 +104,11 @@ def test_dynamic_objecttype():
 
     type_map = create_type_map([MyObjectType])
     assert "MyObjectType" in type_map
-    assert list(MyObjectType._meta.fields.keys()) == ["bar", "own"]
+    assert list(MyObjectType._meta.fields) == ["bar", "own"]
     graphql_type = type_map["MyObjectType"]
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ["bar", "own"]
+    assert list(fields) == ["bar", "own"]
     assert fields["bar"].type == GraphQLString
     assert fields["own"].type == graphql_type
 
@@ -135,9 +135,9 @@ def test_interface():
     assert graphql_type.description == "Description"
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ["foo", "gizmo", "own"]
+    assert list(fields) == ["foo", "gizmo", "own"]
     assert fields["own"].type == graphql_type
-    assert list(fields["gizmo"].args.keys()) == ["firstArg", "oth_arg"]
+    assert list(fields["gizmo"].args) == ["firstArg", "oth_arg"]
     foo_field = fields["foo"]
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.description == "Field description"
@@ -203,7 +203,7 @@ def test_inputobject():
     assert container.baz.some_other_field[1].thingy == 2
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ["fooBar", "gizmo", "baz", "own"]
+    assert list(fields) == ["fooBar", "gizmo", "baz", "own"]
     own_field = fields["own"]
     assert own_field.type == graphql_type
     foo_field = fields["fooBar"]
@@ -225,7 +225,7 @@ def test_objecttype_camelcase():
     assert graphql_type.description == "Description"
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ["fooBar"]
+    assert list(fields) == ["fooBar"]
     foo_field = fields["fooBar"]
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.args == {
@@ -251,7 +251,7 @@ def test_objecttype_camelcase_disabled():
     assert graphql_type.description == "Description"
 
     fields = graphql_type.fields
-    assert list(fields.keys()) == ["foo_bar"]
+    assert list(fields) == ["foo_bar"]
     foo_field = fields["foo_bar"]
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.args == {

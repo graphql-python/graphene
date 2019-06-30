@@ -45,7 +45,7 @@ def test_ordered_fields_in_interface():
         field = MyScalar()
         asa = Field(MyType)
 
-    assert list(MyInterface._meta.fields.keys()) == ["b", "a", "field", "asa"]
+    assert list(MyInterface._meta.fields) == ["b", "a", "field", "asa"]
 
 
 def test_generate_interface_unmountedtype():
@@ -63,7 +63,7 @@ def test_generate_interface_inherit_abstracttype():
     class MyInterface(Interface, MyAbstractType):
         field2 = MyScalar()
 
-    assert list(MyInterface._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyInterface._meta.fields) == ["field1", "field2"]
     assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
 
 
@@ -75,7 +75,7 @@ def test_generate_interface_inherit_interface():
         field2 = MyScalar()
 
     assert MyInterface._meta.name == "MyInterface"
-    assert list(MyInterface._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyInterface._meta.fields) == ["field1", "field2"]
     assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
 
 
@@ -86,5 +86,5 @@ def test_generate_interface_inherit_abstracttype_reversed():
     class MyInterface(MyAbstractType, Interface):
         field2 = MyScalar()
 
-    assert list(MyInterface._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyInterface._meta.fields) == ["field1", "field2"]
     assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]

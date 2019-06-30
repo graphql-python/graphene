@@ -50,7 +50,7 @@ def test_ordered_fields_in_inputobjecttype():
         field = MyScalar()
         asa = InputField(MyType)
 
-    assert list(MyInputObjectType._meta.fields.keys()) == ["b", "a", "field", "asa"]
+    assert list(MyInputObjectType._meta.fields) == ["b", "a", "field", "asa"]
 
 
 def test_generate_inputobjecttype_unmountedtype():
@@ -84,7 +84,7 @@ def test_generate_inputobjecttype_inherit_abstracttype():
     class MyInputObjectType(InputObjectType, MyAbstractType):
         field2 = MyScalar(MyType)
 
-    assert list(MyInputObjectType._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyInputObjectType._meta.fields) == ["field1", "field2"]
     assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [
         InputField,
         InputField,
@@ -98,7 +98,7 @@ def test_generate_inputobjecttype_inherit_abstracttype_reversed():
     class MyInputObjectType(MyAbstractType, InputObjectType):
         field2 = MyScalar(MyType)
 
-    assert list(MyInputObjectType._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyInputObjectType._meta.fields) == ["field1", "field2"]
     assert [type(x) for x in MyInputObjectType._meta.fields.values()] == [
         InputField,
         InputField,

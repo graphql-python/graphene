@@ -102,7 +102,7 @@ def test_ordered_fields_in_objecttype():
         field = MyScalar()
         asa = Field(MyType)
 
-    assert list(MyObjectType._meta.fields.keys()) == ["b", "a", "field", "asa"]
+    assert list(MyObjectType._meta.fields) == ["b", "a", "field", "asa"]
 
 
 def test_generate_objecttype_inherit_abstracttype():
@@ -115,7 +115,7 @@ def test_generate_objecttype_inherit_abstracttype():
     assert MyObjectType._meta.description is None
     assert MyObjectType._meta.interfaces == ()
     assert MyObjectType._meta.name == "MyObjectType"
-    assert list(MyObjectType._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyObjectType._meta.fields) == ["field1", "field2"]
     assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
 
 
@@ -129,7 +129,7 @@ def test_generate_objecttype_inherit_abstracttype_reversed():
     assert MyObjectType._meta.description is None
     assert MyObjectType._meta.interfaces == ()
     assert MyObjectType._meta.name == "MyObjectType"
-    assert list(MyObjectType._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyObjectType._meta.fields) == ["field1", "field2"]
     assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
 
 
@@ -142,11 +142,11 @@ def test_generate_objecttype_unmountedtype():
 
 
 def test_parent_container_get_fields():
-    assert list(Container._meta.fields.keys()) == ["field1", "field2"]
+    assert list(Container._meta.fields) == ["field1", "field2"]
 
 
 def test_parent_container_interface_get_fields():
-    assert list(ContainerWithInterface._meta.fields.keys()) == [
+    assert list(ContainerWithInterface._meta.fields) == [
         "ifield",
         "field1",
         "field2",
