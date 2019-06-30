@@ -3,7 +3,8 @@ from __future__ import absolute_import
 import datetime
 
 from aniso8601 import parse_date, parse_datetime, parse_time
-from graphql.language.ast import StringValueNode
+from graphql.error import INVALID
+from graphql.language import StringValueNode
 
 from .scalars import Scalar
 
@@ -37,7 +38,7 @@ class Date(Scalar):
             elif isinstance(value, str):
                 return parse_date(value)
         except ValueError:
-            return None
+            return INVALID
 
 
 class DateTime(Scalar):
@@ -67,7 +68,7 @@ class DateTime(Scalar):
             elif isinstance(value, str):
                 return parse_datetime(value)
         except ValueError:
-            return None
+            return INVALID
 
 
 class Time(Scalar):
@@ -97,4 +98,4 @@ class Time(Scalar):
             elif isinstance(value, str):
                 return parse_time(value)
         except ValueError:
-            return None
+            return INVALID
