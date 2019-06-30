@@ -1,6 +1,6 @@
 from functools import partial
 
-import pytest
+from  pytest import raises
 
 from ..argument import Argument, to_arguments
 from ..field import Field
@@ -43,7 +43,7 @@ def test_to_arguments():
 def test_to_arguments_raises_if_field():
     args = {"arg_string": Field(String)}
 
-    with pytest.raises(ValueError) as exc_info:
+    with raises(ValueError) as exc_info:
         to_arguments(args)
 
     assert str(exc_info.value) == (
@@ -55,7 +55,7 @@ def test_to_arguments_raises_if_field():
 def test_to_arguments_raises_if_inputfield():
     args = {"arg_string": InputField(String)}
 
-    with pytest.raises(ValueError) as exc_info:
+    with raises(ValueError) as exc_info:
         to_arguments(args)
 
     assert str(exc_info.value) == (

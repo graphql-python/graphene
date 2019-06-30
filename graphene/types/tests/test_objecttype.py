@@ -1,4 +1,4 @@
-import pytest
+from pytest import raises
 
 from ..field import Field
 from ..interface import Interface
@@ -91,7 +91,7 @@ def test_generate_objecttype_with_private_attributes():
     m = MyObjectType(_private_state="custom")
     assert m._private_state == "custom"
 
-    with pytest.raises(TypeError):
+    with raises(TypeError):
         MyObjectType(_other_private_state="Wrong")
 
 
@@ -177,14 +177,14 @@ def test_objecttype_as_container_all_kwargs():
 
 
 def test_objecttype_as_container_extra_args():
-    with pytest.raises(IndexError) as excinfo:
+    with raises(IndexError) as excinfo:
         Container("1", "2", "3")
 
     assert "Number of args exceeds number of fields" == str(excinfo.value)
 
 
 def test_objecttype_as_container_invalid_kwargs():
-    with pytest.raises(TypeError) as excinfo:
+    with raises(TypeError) as excinfo:
         Container(unexisting_field="3")
 
     assert "'unexisting_field' is an invalid keyword argument for Container" == str(
@@ -218,7 +218,7 @@ def test_objecttype_with_possible_types():
 
 
 def test_objecttype_with_possible_types_and_is_type_of_should_raise():
-    with pytest.raises(AssertionError) as excinfo:
+    with raises(AssertionError) as excinfo:
 
         class MyObjectType(ObjectType):
             class Meta:

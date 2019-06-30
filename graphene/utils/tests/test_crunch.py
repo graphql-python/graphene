@@ -1,9 +1,9 @@
-import pytest
+from pytest import mark
 
 from ..crunch import crunch
 
 
-@pytest.mark.parametrize(
+@mark.parametrize(
     "description,uncrunched,crunched",
     [
         ["number primitive", 0, [0]],

@@ -1,6 +1,6 @@
 from functools import partial
 
-import pytest
+from pytest import raises
 
 from ..argument import Argument
 from ..field import Field
@@ -85,7 +85,7 @@ def test_field_with_string_type():
 
 def test_field_not_source_and_resolver():
     MyType = object()
-    with pytest.raises(Exception) as exc_info:
+    with raises(Exception) as exc_info:
         Field(MyType, source="value", resolver=lambda: None)
     assert (
         str(exc_info.value)

@@ -2,7 +2,8 @@ import datetime
 
 import pytz
 from graphql import GraphQLError
-import pytest
+
+from pytest import fixture, mark
 
 from ..datetime import Date, DateTime, Time
 from ..objecttype import ObjectType
@@ -27,13 +28,13 @@ class Query(ObjectType):
 schema = Schema(query=Query)
 
 
-@pytest.fixture
+@fixture
 def sample_datetime():
     utc_datetime = datetime.datetime(2019, 5, 25, 5, 30, 15, 10, pytz.utc)
     return utc_datetime
 
 
-@pytest.fixture
+@fixture
 def sample_time(sample_datetime):
     time = datetime.time(
         sample_datetime.hour,
@@ -45,7 +46,7 @@ def sample_time(sample_datetime):
     return time
 
 
-@pytest.fixture
+@fixture
 def sample_date(sample_datetime):
     date = sample_datetime.date()
     return date
@@ -170,7 +171,7 @@ def test_time_query_variable(sample_time):
     assert result.data == {"time": isoformat}
 
 
-@pytest.mark.xfail(
+@mark.xfail(
     reason="creating the error message fails when un-parsable object is not JSON serializable."
 )
 def test_bad_variables(sample_date, sample_datetime, sample_time):

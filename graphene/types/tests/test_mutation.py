@@ -1,4 +1,4 @@
-import pytest
+from pytest import raises
 
 from ..argument import Argument
 from ..dynamic import Dynamic
@@ -39,7 +39,7 @@ def test_generate_mutation_with_meta():
 
 
 def test_mutation_raises_exception_if_no_mutate():
-    with pytest.raises(AssertionError) as excinfo:
+    with raises(AssertionError) as excinfo:
 
         class MyMutation(Mutation):
             pass

@@ -1,4 +1,4 @@
-import pytest
+from pytest import raises
 
 from graphql.pyutils import dedent
 
@@ -29,7 +29,7 @@ def test_schema_get_type():
 
 def test_schema_get_type_error():
     schema = Schema(Query)
-    with pytest.raises(AttributeError) as exc_info:
+    with raises(AttributeError) as exc_info:
         schema.X
 
     assert str(exc_info.value) == 'Type "X" not found in the Schema'

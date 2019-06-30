@@ -1,4 +1,5 @@
-import pytest
+from pytest import raises
+
 from graphql.type import (
     GraphQLArgument,
     GraphQLEnumType,
@@ -290,7 +291,7 @@ def test_resolve_type_with_missing_type():
         return MyOtherObjectType
 
     type_map = create_type_map([MyObjectType])
-    with pytest.raises(AssertionError) as excinfo:
+    with raises(AssertionError) as excinfo:
         resolve_type(resolve_type_func, type_map, "MyOtherObjectType", {}, {}, None)
 
     assert "MyOtherObjectTyp" in str(excinfo.value)
