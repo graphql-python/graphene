@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from .base import BaseOptions, BaseType
 from .field import Field
 from .utils import yank_fields_from_attrs
@@ -29,7 +27,7 @@ class Interface(BaseType):
         if not _meta:
             _meta = InterfaceOptions(cls)
 
-        fields = OrderedDict()
+        fields = {}
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=Field))
 

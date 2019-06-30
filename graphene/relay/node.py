@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from functools import partial
 from inspect import isclass
 
@@ -72,9 +71,9 @@ class AbstractNode(Interface):
     @classmethod
     def __init_subclass_with_meta__(cls, **options):
         _meta = InterfaceOptions(cls)
-        _meta.fields = OrderedDict(
-            id=GlobalID(cls, description="The ID of the object")
-        )
+        _meta.fields = {
+            'id': GlobalID(cls, description="The ID of the object")
+        }
         super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
 

@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from .base import BaseOptions, BaseType
 from .inputfield import InputField
 from .unmountedtype import UnmountedType
@@ -44,7 +42,7 @@ class InputObjectType(UnmountedType, BaseType):
         if not _meta:
             _meta = InputObjectTypeOptions(cls)
 
-        fields = OrderedDict()
+        fields = {}
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=InputField))
 

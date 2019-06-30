@@ -1,5 +1,4 @@
 import inspect
-from collections import OrderedDict
 from functools import partial
 
 from ..utils.module_loading import import_string
@@ -33,7 +32,7 @@ def yank_fields_from_attrs(attrs, _as=None, sort=True):
 
     if sort:
         fields_with_names = sorted(fields_with_names, key=lambda f: f[1])
-    return OrderedDict(fields_with_names)
+    return dict(fields_with_names)
 
 
 def get_type(_type):
