@@ -185,7 +185,6 @@ def test_bad_variables(sample_date, sample_datetime, sample_time):
         # when `input` is not JSON serializable formatting the error message in
         # `graphql.utils.is_valid_value` line 79 fails with a TypeError
         assert isinstance(result.errors[0], GraphQLError)
-        print(result.errors[0])
         assert result.data is None
 
     not_a_date = dict()

@@ -1,4 +1,5 @@
-from graphql import graphql
+from graphql import graphql_sync
+from graphql.pyutils import dedent
 
 from ...types import Interface, ObjectType, Schema
 from ...types.scalars import Int, String
@@ -15,7 +16,7 @@ class CustomNode(Node):
 
     @staticmethod
     def get_node_from_global_id(info, id, only_type=None):
-        assert info.schema == schema
+        assert info.schema is graphql_schema
         if id in user_data:
             return user_data.get(id)
         else:
@@ -23,14 +24,14 @@ class CustomNode(Node):
 
 
 class BasePhoto(Interface):
-    width = Int()
+    width = Int(description="The width of the photo in pixels")
 
 
 class User(ObjectType):
     class Meta:
         interfaces = [CustomNode]
 
-    name = String()
+    name = String(description="The full name of the user")
 
 
 class Photo(ObjectType):
@@ -48,37 +49,47 @@ class RootQuery(ObjectType):
 
 
 schema = Schema(query=RootQuery, types=[User, Photo])
+graphql_schema = schema.graphql_schema
 
 
 def test_str_schema_correct():
-    assert (
-        str(schema)
-        == """schema {
-  query: RootQuery
-}
-
-interface BasePhoto {
-  width: Int
-}
-
-interface Node {
-  id: ID!
-}
-
-type Photo implements Node, BasePhoto {
-  id: ID!
-  width: Int
-}
-
-type RootQuery {
-  node(id: ID!): Node
-}
-
-type User implements Node {
-  id: ID!
-  name: String
-}
-"""
+    assert (str(schema) == dedent(
+        '''
+        schema {
+          query: RootQuery
+        }
+        
+        interface BasePhoto {
+          """The width of the photo in pixels"""
+          width: Int
+        }
+        
+        interface Node {
+          """The ID of the object"""
+          id: ID!
+        }
+        
+        type Photo implements Node & BasePhoto {
+          """The ID of the object"""
+          id: ID!
+          
+          """The width of the photo in pixels"""
+          width: Int
+        }
+        
+        type RootQuery {
+          """The ID of the object"""
+          node(id: ID!): Node
+        }
+        
+        type User implements Node {
+          """The ID of the object"""
+          id: ID!
+          
+          """The full name of the user"""
+          name: String
+        }
+        ''')
     )
 
 
@@ -91,7 +102,7 @@ def test_gets_the_correct_id_for_users():
       }
     """
     expected = {"node": {"id": "1"}}
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -105,7 +116,7 @@ def test_gets_the_correct_id_for_photos():
       }
     """
     expected = {"node": {"id": "4"}}
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -122,7 +133,7 @@ def test_gets_the_correct_name_for_users():
       }
     """
     expected = {"node": {"id": "1", "name": "John Doe"}}
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -139,7 +150,7 @@ def test_gets_the_correct_width_for_photos():
       }
     """
     expected = {"node": {"id": "4", "width": 400}}
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -154,7 +165,7 @@ def test_gets_the_correct_typename_for_users():
       }
     """
     expected = {"node": {"id": "1", "__typename": "User"}}
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -169,7 +180,7 @@ def test_gets_the_correct_typename_for_photos():
       }
     """
     expected = {"node": {"id": "4", "__typename": "Photo"}}
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -186,7 +197,7 @@ def test_ignores_photo_fragments_on_user():
       }
     """
     expected = {"node": {"id": "1"}}
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -200,7 +211,7 @@ def test_returns_null_for_bad_ids():
       }
     """
     expected = {"node": None}
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -239,7 +250,7 @@ def test_have_correct_node_interface():
             ],
         }
     }
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected
 
@@ -291,6 +302,6 @@ def test_has_correct_node_root_field():
             }
         }
     }
-    result = graphql(schema, query)
+    result = graphql_sync(graphql_schema, query)
     assert not result.errors
     assert result.data == expected

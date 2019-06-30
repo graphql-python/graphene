@@ -1,7 +1,4 @@
-import pytest
-
-from collections import OrderedDict
-from graphql.execution.executors.asyncio import AsyncioExecutor
+from pytest import mark
 
 from graphql_relay.utils import base64
 
@@ -27,14 +24,14 @@ class LetterConnection(Connection):
 class Query(ObjectType):
     letters = ConnectionField(LetterConnection)
     connection_letters = ConnectionField(LetterConnection)
-    promise_letters = ConnectionField(LetterConnection)
+    async_letters = ConnectionField(LetterConnection)
 
     node = Node.Field()
 
     def resolve_letters(self, info, **args):
         return list(letters.values())
 
-    async def resolve_promise_letters(self, info, **args):
+    async def resolve_async_letters(self, info, **args):
         return list(letters.values())
 
     def resolve_connection_letters(self, info, **args):
@@ -48,9 +45,7 @@ class Query(ObjectType):
 
 schema = Schema(Query)
 
-letters = OrderedDict()
-for i, letter in enumerate(letter_chars):
-    letters[letter] = Letter(id=i, letter=letter)
+letters = {letter: Letter(id=i, letter=letter) for i, letter in enumerate(letter_chars)}
 
 
 def edges(selected_letters):
@@ -96,12 +91,12 @@ def execute(args=""):
     )
 
 
-@pytest.mark.asyncio
-async def test_connection_promise():
-    result = await schema.execute(
+@mark.asyncio
+async def test_connection_async():
+    result = await schema.execute_async(
         """
     {
-        promiseLetters(first:1) {
+        asyncLetters(first:1) {
             edges {
                 node {
                     id
@@ -115,13 +110,11 @@ async def test_connection_promise():
         }
     }
     """,
-        executor=AsyncioExecutor(),
-        return_promise=True,
     )
 
     assert not result.errors
     assert result.data == {
-        "promiseLetters": {
+        "asyncLetters": {
             "edges": [{"node": {"id": "TGV0dGVyOjA=", "letter": "A"}}],
             "pageInfo": {"hasPreviousPage": False, "hasNextPage": True},
         }

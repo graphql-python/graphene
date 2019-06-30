@@ -27,6 +27,7 @@ def test_issue():
         graphene.Schema(query=Query)
 
     assert str(exc_info.value) == (
-        "IterableConnectionField type have to be a subclass of Connection. "
-        'Received "MyUnion".'
+        "Query fields cannot be resolved:"
+        " IterableConnectionField type has to be a subclass of Connection."
+        ' Received "MyUnion".'
     )

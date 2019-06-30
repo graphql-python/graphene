@@ -229,11 +229,11 @@ def test_query_arguments():
 
     result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {"test": "[null,{}]"}
+    assert result.data == {"test": '[null,{"a_str":null,"a_int":null}]'}
 
     result = test_schema.execute('{ test(aStr: "String!") }', "Source!")
     assert not result.errors
-    assert result.data == {"test": '["Source!",{"a_str":"String!"}]'}
+    assert result.data == {"test": '["Source!",{"a_str":"String!","a_int":null}]'}
 
     result = test_schema.execute('{ test(aInt: -123, aStr: "String!") }', "Source!")
     assert not result.errors
@@ -258,18 +258,20 @@ def test_query_input_field():
 
     result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {"test": "[null,{}]"}
+    assert result.data == {"test": '[null,{"a_input":null}]'}
 
     result = test_schema.execute('{ test(aInput: {aField: "String!"} ) }', "Source!")
     assert not result.errors
-    assert result.data == {"test": '["Source!",{"a_input":{"a_field":"String!"}}]'}
+    assert result.data == {
+        "test": '["Source!",{"a_input":{"a_field":"String!","recursive_field":null}}]'}
 
     result = test_schema.execute(
         '{ test(aInput: {recursiveField: {aField: "String!"}}) }', "Source!"
     )
     assert not result.errors
     assert result.data == {
-        "test": '["Source!",{"a_input":{"recursive_field":{"a_field":"String!"}}}]'
+        "test": '["Source!",{"a_input":{"a_field":null,"recursive_field":'
+                '{"a_field":"String!","recursive_field":null}}}]'
     }
 
 
@@ -285,8 +287,7 @@ def test_query_middlewares():
             return "other"
 
     def reversed_middleware(next, *args, **kwargs):
-        p = next(*args, **kwargs)
-        return p.then(lambda x: x[::-1])
+        return next(*args, **kwargs)[::-1]
 
     hello_schema = Schema(Query)
 
@@ -348,10 +349,11 @@ def test_big_list_query_compiled_query_benchmark(benchmark):
             return big_list
 
     hello_schema = Schema(Query)
+    graphql_schema = hello_schema.graphql_schema
     source = Source("{ allInts }")
     query_ast = parse(source)
 
-    big_list_query = partial(execute, hello_schema, query_ast)
+    big_list_query = partial(execute, graphql_schema, query_ast)
     result = benchmark(big_list_query)
     assert not result.errors
     assert result.data == {"allInts": list(big_list)}

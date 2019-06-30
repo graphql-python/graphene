@@ -30,21 +30,22 @@ snapshots["test_correctly_refetches_xwing 1"] = {
 
 snapshots[
     "test_str_schema 1"
-] = """schema {
-  query: Query
-  mutation: Mutation
-}
-
+] = '''"""A faction in the Star Wars saga"""
 type Faction implements Node {
+  """The ID of the object"""
   id: ID!
+
+  """The name of the faction."""
   name: String
-  ships(before: String, after: String, first: Int, last: Int): ShipConnection
+
+  """The ships used by the faction."""
+  ships(before: String = null, after: String = null, first: Int = null, last: Int = null): ShipConnection
 }
 
 input IntroduceShipInput {
   shipName: String!
   factionId: String!
-  clientMutationId: String
+  clientMutationId: String = null
 }
 
 type IntroduceShipPayload {
@@ -57,35 +58,60 @@ type Mutation {
   introduceShip(input: IntroduceShipInput!): IntroduceShipPayload
 }
 
+"""An object with an ID"""
 interface Node {
+  """The ID of the object"""
   id: ID!
 }
 
+"""
+The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
+"""
 type PageInfo {
+  """When paginating forwards, are there more items?"""
   hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
   hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
   startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
   endCursor: String
 }
 
 type Query {
   rebels: Faction
   empire: Faction
+
+  """The ID of the object"""
   node(id: ID!): Node
 }
 
+"""A ship in the Star Wars saga"""
 type Ship implements Node {
+  """The ID of the object"""
   id: ID!
+
+  """The name of the ship."""
   name: String
 }
 
 type ShipConnection {
+  """Pagination data for this connection."""
   pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
   edges: [ShipEdge]!
 }
 
+"""A Relay edge containing a `Ship` and its cursor."""
 type ShipEdge {
+  """The item at the end of the edge"""
   node: Ship
+
+  """A cursor for use in pagination"""
   cursor: String!
 }
-"""
+'''

@@ -73,7 +73,7 @@ class AbstractNode(Interface):
     def __init_subclass_with_meta__(cls, **options):
         _meta = InterfaceOptions(cls)
         _meta.fields = OrderedDict(
-            id=GlobalID(cls, description="The ID of the object.")
+            id=GlobalID(cls, description="The ID of the object")
         )
         super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
