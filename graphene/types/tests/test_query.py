@@ -1,7 +1,13 @@
 import json
 from functools import partial
 
-from graphql import GraphQLError, ResolveInfo, Source, execute, parse
+from graphql import (
+    GraphQLError,
+    GraphQLResolveInfo as ResolveInfo,
+    Source,
+    execute,
+    parse,
+)
 
 from ..context import Context
 from ..dynamic import Dynamic
@@ -175,7 +181,7 @@ def test_query_wrong_default_value():
     assert len(executed.errors) == 1
     assert (
         executed.errors[0].message
-        == GraphQLError('Expected value of type "MyType" but got: str.').message
+        == GraphQLError("Expected value of type 'MyType' but got: 'hello'.").message
     )
     assert executed.data == {"hello": None}
 

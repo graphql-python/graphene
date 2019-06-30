@@ -105,6 +105,7 @@ def test_generate_inputobjecttype_inherit_abstracttype_reversed():
     ]
 
 
+# TOOD: I think this fails because container_type is not supported in core-next
 def test_inputobjecttype_of_input():
     class Child(InputObjectType):
         first_name = String()

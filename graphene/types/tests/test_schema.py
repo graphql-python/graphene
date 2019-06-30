@@ -1,5 +1,7 @@
 import pytest
 
+from graphql.pyutils import dedent
+
 from ..field import Field
 from ..objecttype import ObjectType
 from ..scalars import String
@@ -15,8 +17,8 @@ class Query(ObjectType):
 
 
 def test_schema():
-    schema = Schema(Query)
-    assert schema.get_query_type() == schema.get_graphql_type(Query)
+    schema = Schema(Query).graphql_schema
+    assert schema.query_type == schema.get_graphql_type(Query)
 
 
 def test_schema_get_type():
@@ -35,23 +37,23 @@ def test_schema_get_type_error():
 
 def test_schema_str():
     schema = Schema(Query)
-    assert (
-        str(schema)
-        == """schema {
-  query: Query
-}
-
-type MyOtherType {
-  field: String
-}
-
-type Query {
-  inner: MyOtherType
-}
-"""
+    assert str(schema) == dedent(
+        """
+        type MyOtherType {
+          field: String
+        }
+        
+        type Query {
+          inner: MyOtherType
+        }
+        """
     )
 
 
 def test_schema_introspect():
     schema = Schema(Query)
+    print()
+    print(schema)
+    print()
+    print(schema.introspect())
     assert "__schema" in schema.introspect()

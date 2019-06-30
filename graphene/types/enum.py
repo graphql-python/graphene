@@ -1,7 +1,8 @@
 from collections import OrderedDict
+from enum import Enum as PyEnum
+
 from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 
-from ..pyutils.compat import Enum as PyEnum
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 
