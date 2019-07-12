@@ -2,7 +2,7 @@ import re
 from collections import Iterable
 from functools import partial
 
-from graphql_relay import connection_from_list
+from graphql_relay import connection_from_array
 
 from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String, Union
 from ..types.field import Field
@@ -39,6 +39,14 @@ class PageInfo(ObjectType):
         name="endCursor",
         description="When paginating forwards, the cursor to continue.",
     )
+
+
+# noinspection PyPep8Naming
+def page_info_adapter(startCursor, endCursor, hasPreviousPage, hasNextPage):
+    """Adapter for creating PageInfo instances"""
+    return PageInfo(
+        start_cursor=startCursor, end_cursor=endCursor,
+        has_previous_page=hasPreviousPage, has_next_page=hasNextPage)
 
 
 class ConnectionOptions(ObjectTypeOptions):
@@ -103,6 +111,12 @@ class Connection(ObjectType):
         )
 
 
+# noinspection PyPep8Naming
+def connection_adapter(cls, edges, pageInfo):
+    """Adapter for creating Connection instances"""
+    return cls(edges=edges, page_info=pageInfo)
+
+
 class IterableConnectionField(Field):
     def __init__(self, type, *args, **kwargs):
         kwargs.setdefault("before", String())
@@ -138,12 +152,12 @@ class IterableConnectionField(Field):
             "Resolved value from the connection field has to be iterable or instance of {}. "
             'Received "{}"'
         ).format(connection_type, resolved)
-        connection = connection_from_list(
+        connection = connection_from_array(
             resolved,
             args,
-            connection_type=connection_type,
+            connection_type=partial(connection_adapter, connection_type),
             edge_type=connection_type.Edge,
-            pageinfo_type=PageInfo,
+            page_info_type=page_info_adapter,
         )
         connection.iterable = resolved
         return connection
