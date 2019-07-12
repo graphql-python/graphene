@@ -1,4 +1,4 @@
-from collections import Mapping
+from collections.abc import Mapping
 
 
 def deflate(node, index=None, path=None):

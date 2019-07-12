@@ -1,5 +1,5 @@
 import re
-from collections import Iterable
+from collections.abc import Iterable
 from functools import partial
 
 from graphql_relay import connection_from_array
