@@ -6,7 +6,6 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
-  - "pypy3"
 
 install:
   - pip install tox tox-travis
