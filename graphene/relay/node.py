@@ -57,6 +57,8 @@ class NodeField(Field):
             # If we don's specify a type, the field type will be the node
             # interface
             type or node,
+            name=name,
+            deprecation_reason=deprecation_reason,
             description="The ID of the object",
             id=ID(required=True),
         )
