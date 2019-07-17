@@ -110,6 +110,12 @@ def test_node_field_custom():
     assert node_field.node_type == Node
 
 
+def test_node_field_custom_name():
+    name = "my_named_node"
+    named_node_field = Node.Field(name=name)
+    assert named_node_field.name == name
+
+
 def test_node_field_only_type():
     executed = schema.execute(
         '{ onlyNode(id:"%s") { __typename, name } } ' % Node.to_global_id("MyNode", 1)
