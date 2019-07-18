@@ -110,10 +110,15 @@ def test_node_field_custom():
     assert node_field.node_type == Node
 
 
-def test_node_field_custom_name():
-    name = "my_named_node"
-    named_node_field = Node.Field(name=name)
-    assert named_node_field.name == name
+def test_node_field_args():
+    field_args = {
+        "name": "my_custom_name",
+        "description": "my_custom_description",
+        "deprecation_reason": "my_custom_deprecation_reason"
+    }
+    node_field = Node.Field(**field_args)
+    for field_arg, value in field_args.items():
+        assert getattr(node_field, field_arg) == value
 
 
 def test_node_field_only_type():
