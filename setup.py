@@ -87,7 +87,7 @@ setup(
         "six>=1.10.0,<2",
         "graphql-core>=2.1,<3",
         "graphql-relay>=2,<3",
-        "aniso8601>=3,<=6",
+        "aniso8601>=3,<=7",
     ],
     tests_require=tests_require,
     extras_require={
