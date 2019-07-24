@@ -121,7 +121,8 @@ class ObjectType(BaseType):
         else:
             _meta.fields = fields
 
-        _meta.interfaces = interfaces
+        if not _meta.interfaces:
+            _meta.interfaces = interfaces
         _meta.possible_types = possible_types
         _meta.default_resolver = default_resolver
 
