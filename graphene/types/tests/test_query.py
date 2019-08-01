@@ -263,7 +263,8 @@ def test_query_input_field():
     result = test_schema.execute('{ test(aInput: {aField: "String!"} ) }', "Source!")
     assert not result.errors
     assert result.data == {
-        "test": '["Source!",{"a_input":{"a_field":"String!","recursive_field":null}}]'}
+        "test": '["Source!",{"a_input":{"a_field":"String!","recursive_field":null}}]'
+    }
 
     result = test_schema.execute(
         '{ test(aInput: {recursiveField: {aField: "String!"}}) }', "Source!"
@@ -271,7 +272,7 @@ def test_query_input_field():
     assert not result.errors
     assert result.data == {
         "test": '["Source!",{"a_input":{"a_field":null,"recursive_field":'
-                '{"a_field":"String!","recursive_field":null}}}]'
+        '{"a_field":"String!","recursive_field":null}}}]'
     }
 
 

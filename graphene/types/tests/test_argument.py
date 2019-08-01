@@ -1,6 +1,6 @@
 from functools import partial
 
-from  pytest import raises
+from pytest import raises
 
 from ..argument import Argument, to_arguments
 from ..field import Field

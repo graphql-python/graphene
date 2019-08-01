@@ -53,43 +53,43 @@ graphql_schema = schema.graphql_schema
 
 
 def test_str_schema_correct():
-    assert (str(schema) == dedent(
+    assert str(schema) == dedent(
         '''
         schema {
           query: RootQuery
         }
-        
+
         interface BasePhoto {
           """The width of the photo in pixels"""
           width: Int
         }
-        
+
         interface Node {
           """The ID of the object"""
           id: ID!
         }
-        
+
         type Photo implements Node & BasePhoto {
           """The ID of the object"""
           id: ID!
-          
+
           """The width of the photo in pixels"""
           width: Int
         }
-        
+
         type RootQuery {
           """The ID of the object"""
           node(id: ID!): Node
         }
-        
+
         type User implements Node {
           """The ID of the object"""
           id: ID!
-          
+
           """The full name of the user"""
           name: String
         }
-        ''')
+        '''
     )
 
 

@@ -66,7 +66,7 @@ schema = Schema(query=RootQuery, mutation=Mutation)
 @mark.asyncio
 async def test_node_query_promise():
     executed = await schema.execute_async(
-        'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }',
+        'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
     )
     assert not executed.errors
     assert executed.data == {"sayPromise": {"phrase": "hello"}}
@@ -75,7 +75,7 @@ async def test_node_query_promise():
 @mark.asyncio
 async def test_edge_query():
     executed = await schema.execute_async(
-        'mutation a { other(input: {clientMutationId:"1"}) { clientMutationId, myNodeEdge { cursor node { name }} } }',
+        'mutation a { other(input: {clientMutationId:"1"}) { clientMutationId, myNodeEdge { cursor node { name }} } }'
     )
     assert not executed.errors
     assert dict(executed.data) == {

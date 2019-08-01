@@ -109,7 +109,7 @@ async def test_connection_async():
             }
         }
     }
-    """,
+    """
     )
 
     assert not result.errors

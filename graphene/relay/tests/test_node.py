@@ -72,9 +72,9 @@ def test_subclassed_node_query():
     assert not executed.errors
     assert executed.data == {
         "node": {
-                "shared": "1",
-                "extraField": "extra field info.",
-                "somethingElse": "----"
+            "shared": "1",
+            "extraField": "extra field info.",
+            "somethingElse": "----",
         }
     }
 
@@ -144,18 +144,18 @@ def test_node_field_only_lazy_type_wrong():
 
 
 def test_str_schema():
-    assert (str(schema) == dedent(
+    assert str(schema) == dedent(
         '''
         schema {
           query: RootQuery
         }
-        
+
         type MyNode implements Node {
           """The ID of the object"""
           id: ID!
           name: String
         }
-        
+
         type MyOtherNode implements Node {
           """The ID of the object"""
           id: ID!
@@ -163,24 +163,24 @@ def test_str_schema():
           somethingElse: String
           extraField: String
         }
-        
+
         """An object with an ID"""
         interface Node {
           """The ID of the object"""
           id: ID!
         }
-        
+
         type RootQuery {
           first: String
-          
+
           """The ID of the object"""
           node(id: ID!): Node
-          
+
           """The ID of the object"""
           onlyNode(id: ID!): MyNode
-          
+
           """The ID of the object"""
           onlyNodeLazy(id: ID!): MyNode
         }
-        ''')
+        '''
     )

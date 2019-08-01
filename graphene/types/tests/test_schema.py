@@ -42,7 +42,7 @@ def test_schema_str():
         type MyOtherType {
           field: String
         }
-        
+
         type Query {
           inner: MyOtherType
         }

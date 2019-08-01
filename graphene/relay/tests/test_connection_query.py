@@ -134,7 +134,9 @@ async def test_respects_an_overly_large_last():
 
 @mark.asyncio
 async def test_respects_first_and_after():
-    await check('first: 2, after: "{}"'.format(cursor_for("B")), "CD", has_next_page=True)
+    await check(
+        'first: 2, after: "{}"'.format(cursor_for("B")), "CD", has_next_page=True
+    )
 
 
 @mark.asyncio
@@ -144,7 +146,9 @@ async def test_respects_first_and_after_with_long_first():
 
 @mark.asyncio
 async def test_respects_last_and_before():
-    await check('last: 2, before: "{}"'.format(cursor_for("D")), "BC", has_previous_page=True)
+    await check(
+        'last: 2, before: "{}"'.format(cursor_for("D")), "BC", has_previous_page=True
+    )
 
 
 @mark.asyncio

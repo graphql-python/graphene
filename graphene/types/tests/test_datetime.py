@@ -85,7 +85,8 @@ def test_bad_datetime_query():
     error = result.errors[0]
     assert isinstance(error, GraphQLError)
     assert error.message == (
-        "Expected type DateTime, found \"Some string that's not a datetime\".")
+        'Expected type DateTime, found "Some string that\'s not a datetime".'
+    )
     assert result.data is None
 
 
@@ -97,7 +98,8 @@ def test_bad_date_query():
     error = result.errors[0]
     assert isinstance(error, GraphQLError)
     assert error.message == (
-        "Expected type Date, found \"Some string that's not a date\".")
+        'Expected type Date, found "Some string that\'s not a date".'
+    )
     assert result.data is None
 
 
@@ -109,7 +111,8 @@ def test_bad_time_query():
     error = result.errors[0]
     assert isinstance(error, GraphQLError)
     assert error.message == (
-        "Expected type Time, found \"Some string that's not a time\".")
+        'Expected type Time, found "Some string that\'s not a time".'
+    )
     assert result.data is None
 
 

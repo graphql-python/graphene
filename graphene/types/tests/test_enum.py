@@ -85,10 +85,14 @@ def test_enum_from_builtin_enum_accepts_lambda_description():
     episode = schema.get_type("PyEpisode")
 
     assert episode.description == "StarWars Episodes"
-    assert [(name, value.description, value.deprecation_reason)
-            for name, value in episode.values.items()] == [
-            ('NEWHOPE', 'New Hope Episode', 'meh'),
-            ('EMPIRE', 'Other', None), ('JEDI', 'Other', None)]
+    assert [
+        (name, value.description, value.deprecation_reason)
+        for name, value in episode.values.items()
+    ] == [
+        ("NEWHOPE", "New Hope Episode", "meh"),
+        ("EMPIRE", "Other", None),
+        ("JEDI", "Other", None),
+    ]
 
 
 def test_enum_from_python3_enum_uses_enum_doc():

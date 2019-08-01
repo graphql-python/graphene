@@ -146,11 +146,7 @@ def test_parent_container_get_fields():
 
 
 def test_parent_container_interface_get_fields():
-    assert list(ContainerWithInterface._meta.fields) == [
-        "ifield",
-        "field1",
-        "field2",
-    ]
+    assert list(ContainerWithInterface._meta.fields) == ["ifield", "field1", "field2"]
 
 
 def test_objecttype_as_container_only_args():

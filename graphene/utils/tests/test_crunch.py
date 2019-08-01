@@ -42,11 +42,7 @@ from ..crunch import crunch
         ],
         [
             "complex object",
-            {
-                "a": True,
-                "b": [1, 2, 3],
-                "c": {"a": True, "b": [1, 2, 3]},
-            },
+            {"a": True, "b": [1, 2, 3], "c": {"a": True, "b": [1, 2, 3]}},
             [True, 1, 2, 3, [1, 2, 3], {"a": 0, "b": 4}, {"a": 0, "b": 4, "c": 5}],
         ],
     ],

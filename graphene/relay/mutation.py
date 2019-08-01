@@ -29,9 +29,7 @@ class ClientIDMutation(Mutation):
         cls.Input = type(
             "{}Input".format(base_name),
             bases,
-            dict(
-                input_fields, client_mutation_id=String(name="clientMutationId")
-            ),
+            dict(input_fields, client_mutation_id=String(name="clientMutationId")),
         )
 
         arguments = dict(
