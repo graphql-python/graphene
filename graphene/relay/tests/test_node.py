@@ -114,7 +114,7 @@ def test_node_field_args():
     field_args = {
         "name": "my_custom_name",
         "description": "my_custom_description",
-        "deprecation_reason": "my_custom_deprecation_reason"
+        "deprecation_reason": "my_custom_deprecation_reason",
     }
     node_field = Node.Field(**field_args)
     for field_arg, value in field_args.items():

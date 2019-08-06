@@ -48,15 +48,7 @@ class GlobalID(Field):
 
 
 class NodeField(Field):
-    def __init__(
-        self,
-        node,
-        type=False,
-        deprecation_reason=None,
-        name=None,
-        description=None,
-        **kwargs
-    ):
+    def __init__(self, node, type=False, **kwargs):
         assert issubclass(node, Node), "NodeField can only operate in Nodes"
         self.node_type = node
         self.field_type = type
@@ -65,10 +57,8 @@ class NodeField(Field):
             # If we don's specify a type, the field type will be the node
             # interface
             type or node,
-            name=name,
-            description=description,
-            deprecation_reason=deprecation_reason,
             id=ID(required=True, description="The ID of the object"),
+            **kwargs
         )
 
     def get_resolver(self, parent_resolver):
