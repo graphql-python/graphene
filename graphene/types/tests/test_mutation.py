@@ -7,6 +7,11 @@ from ..objecttype import ObjectType
 from ..scalars import String
 from ..schema import Schema
 from ..structures import NonNull
+from ..interface import Interface
+
+
+class MyType(Interface):
+    pass
 
 
 def test_generate_mutation_no_args():
@@ -28,12 +33,14 @@ def test_generate_mutation_with_meta():
         class Meta:
             name = "MyOtherMutation"
             description = "Documentation"
+            interfaces = (MyType,)
 
         def mutate(self, info, **args):
             return args
 
     assert MyMutation._meta.name == "MyOtherMutation"
     assert MyMutation._meta.description == "Documentation"
+    assert MyMutation._meta.interfaces == (MyType,)
     resolved = MyMutation.Field().resolver(None, None, name="Peter")
     assert resolved == {"name": "Peter"}
 

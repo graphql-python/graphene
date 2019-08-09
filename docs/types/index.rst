@@ -1,3 +1,5 @@
+.. _TypesReference:
+
 ===============
 Types Reference
 ===============
@@ -5,12 +7,12 @@ Types Reference
 .. toctree::
    :maxdepth: 1
 
-   enums
+   schema
    scalars
    list-and-nonnull
    objecttypes
+   enums
    interfaces
    unions
-   schema
    mutations
    abstracttypes

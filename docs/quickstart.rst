@@ -1,62 +1,143 @@
 Getting started
 ===============
 
+Introduction
+------------
+
 What is GraphQL?
-----------------
+~~~~~~~~~~~~~~~~
 
-For an introduction to GraphQL and an overview of its concepts, please refer
-to `the official introduction <http://graphql.org/learn/>`_.
+GraphQL is a query language for your API.
 
-Let’s build a basic GraphQL schema from scratch.
+It provides a standard way to:
+
+* *describe data provided by a server* in a statically typed **Schema**
+* *request data* in a **Query** which exactly describes your data requirements and
+* *receive data* in a **Response** containing only the data you requested.
+
+For an introduction to GraphQL and an overview of its concepts, please refer to `the official GraphQL documentation`_.
+
+.. _the official GraphQL documentation: http://graphql.org/learn/
+
+What is Graphene?
+~~~~~~~~~~~~~~~~~
+
+Graphene is a library that provides tools to implement a GraphQL API in Python using a *code-first* approach.
+
+Compare Graphene's *code-first* approach to building a GraphQL API with *schema-first* approaches like `Apollo Server`_ (JavaScript) or Ariadne_ (Python). Instead of writing GraphQL **Schema Definition Langauge (SDL)**, we write Python code to describe the data provided by your server.
+
+.. _Apollo Server: https://www.apollographql.com/docs/apollo-server/
+
+.. _Ariadne: https://ariadne.readthedocs.io
+
+Graphene is fully featured with integrations for the most popular web frameworks and ORMs. Graphene produces schemas tha are fully compliant with the GraphQL spec and provides tools and patterns for building a Relay-Compliant API as well.
+
+An example in Graphene
+----------------------
+
+Let’s build a basic GraphQL schema to say "hello" and "goodbye" in Graphene.
+
+When we send a **Query** requesting only one **Field**, ``hello``, and specify a value for the ``name`` **Argument**...
+
+.. code::
+
+    {
+      hello(name: "friend")
+    }
+
+...we would expect the following Response containing only the data requested (the ``goodbye`` field is not resolved).
+
+.. code::
+
+   {
+     "data": {
+       "hello": "Hello friend!"
+     }
+   }
+
 
 Requirements
-------------
+~~~~~~~~~~~~
 
 -  Python (2.7, 3.4, 3.5, 3.6, pypy)
 -  Graphene (2.0)
 
 Project setup
--------------
+~~~~~~~~~~~~~
 
 .. code:: bash
 
     pip install "graphene>=2.0"
 
 Creating a basic Schema
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
-A GraphQL schema describes your data model, and provides a GraphQL
-server with an associated set of resolve methods that know how to fetch
-data.
-
-We are going to create a very simple schema, with a ``Query`` with only
-one field: ``hello`` and an input name. And when we query it, it should return ``"Hello
-{argument}"``.
+In Graphene, we can define a simple schema using the following code:
 
 .. code:: python
 
-    import graphene
+    from graphene import ObjectType, String, Schema
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(argument=graphene.String(default_value="stranger"))
+    class Query(ObjectType):
+        # this defines a Field `hello` in our Schema with a single Argument `name`
+        hello = String(name=String(default_value="stranger"))
+        goodbye = String()
 
-        def resolve_hello(self, info, argument):
-            return 'Hello ' + argument
+        # our Resolver method takes the GraphQL context (root, info) as well as
+        # Argument (name) for the Field and returns data for the query Response
+        def resolve_hello(root, info, name):
+            return f'Hello {name}!'
 
-    schema = graphene.Schema(query=Query)
+        def resolve_goodbye(root, info):
+            return 'See ya!'
+
+    schema = Schema(query=Query)
+
+
+A GraphQL **Schema** describes each **Field** in the data model provided by the server using scalar types like *String*, *Int* and *Enum* and compound types like *List* and *Object*. For more details refer to the Graphene :ref:`TypesReference`.
+
+Our schema can also define any number of **Arguments** for our **Fields**. This is a powerful way for a **Query** to describe the exact data requirements for each **Field**.
+
+For each **Field** in our **Schema**, we write a **Resolver** method to fetch data requested by a client's **Query** using the current context and **Arguments**. For more details, refer to this section on :ref:`Resolvers`.
+
+Schema Definition Language (SDL)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the `GraphQL Schema Definition Language`_, we could describe the fields defined by our example code as show below.
+
+.. _GraphQL Schema Definition Language: https://graphql.org/learn/schema/
+
+.. code::
+
+    type Query {
+      hello(name: String = "stranger"): String
+      goodbye: String
+    }
+
+Further examples in this documentation will use SDL to describe schema created by ObjectTypes and other fields.
 
 Querying
---------
+~~~~~~~~
 
-Then we can start querying our schema:
+Then we can start querying our **Schema** by passing a GraphQL query string to ``execute``:
 
 .. code:: python
 
-    result = schema.execute('{ hello }')
-    print(result.data['hello']) # "Hello stranger"
+    # we can query for our field (with the default argument)
+    query_string = '{ hello }'
+    result = schema.execute(query_string)
+    print(result.data['hello'])
+    # "Hello stranger"
 
     # or passing the argument in the query
-    result = schema.execute('{ hello (argument: "graph") }')
-    print(result.data['hello']) # "Hello graph"
+    query_with_argument = '{ hello(name: "GraphQL") }'
+    result = schema.execute(query_with_argument)
+    print(result.data['hello'])
+    # "Hello GraphQL!"
 
-Congrats! You got your first graphene schema working!
+Next steps
+~~~~~~~~~~
+
+Congrats! You got your first Graphene schema working!
+
+Normally, we don't need to directly execute a query string against our schema as Graphene provides many useful Integrations with popular web frameworks like Flask and Django. Check out :ref:`Integrations` for more information on how to get started serving your GraphQL API.

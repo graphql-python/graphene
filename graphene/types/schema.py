@@ -27,10 +27,26 @@ def assert_valid_root_type(_type):
 
 class Schema(GraphQLSchema):
     """
-    Schema Definition
+    Graphene Schema can execute operations (query, mutation, subscription) against the defined
+    types.
 
-    A Schema is created by supplying the root types of each type of operation,
-    query and mutation (optional).
+    For advanced purposes, the schema can be used to lookup type definitions and answer questions
+    about the types through introspection.
+
+    Args:
+        query (ObjectType): Root query *ObjectType*. Describes entry point for fields to *read*
+            data in your Schema.
+        mutation (ObjectType, optional): Root mutation *ObjectType*. Describes entry point for
+            fields to *create, update or delete* data in your API.
+        subscription (ObjectType, optional): Root subscription *ObjectType*. Describes entry point
+            for fields to receive continuous updates.
+        directives (List[GraphQLDirective], optional): List of custom directives to include in
+            GraphQL schema. Defaults to only include directives definved by GraphQL spec (@include
+            and @skip) [GraphQLIncludeDirective, GraphQLSkipDirective].
+        types (List[GraphQLType], optional): List of any types to include in schema that
+            may not be introspected through root types.
+        auto_camelcase (bool): Fieldnames will be transformed in Schema's TypeMap from snake_case
+            to camelCase (preferred by GraphQL standard). Default True.
     """
 
     def __init__(
@@ -99,6 +115,32 @@ class Schema(GraphQLSchema):
         raise Exception("{} is not a valid GraphQL type.".format(_type))
 
     def execute(self, *args, **kwargs):
+        """
+        Use the `graphql` function from `graphql-core` to provide the result for a query string.
+        Most of the time this method will be called by one of the Graphene :ref:`Integrations`
+        via a web request.
+
+        Args:
+            request_string (str or Document): GraphQL request (query, mutation or subscription) in
+                string or parsed AST form from `graphql-core`.
+            root (Any, optional): Value to use as the parent value object when resolving root
+                types.
+            context (Any, optional): Value to be made avaiable to all resolvers via
+                `info.context`. Can be used to share authorization, dataloaders or other
+                information needed to resolve an operation.
+            variables (dict, optional): If variables are used in the request string, they can be
+                provided in dictionary form mapping the variable name to the variable value.
+            operation_name (str, optional): If mutiple operations are provided in the
+                request_string, an operation name must be provided for the result to be provided.
+            middleware (List[SupportsGraphQLMiddleware]): Supply request level middleware as
+                defined in `graphql-core`.
+            backend (GraphQLCoreBackend, optional): Override the default GraphQLCoreBackend.
+            **execute_options (Any): Depends on backend selected. Default backend has several
+                options such as: validate, allow_subscriptions, return_promise, executor.
+
+        Returns:
+            :obj:`ExecutionResult` containing any data and errors for the operation.
+        """
         return graphql(self, *args, **kwargs)
 
     def introspect(self):

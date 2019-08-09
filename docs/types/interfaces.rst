@@ -1,3 +1,5 @@
+.. _Interfaces:
+
 Interfaces
 ==========
 
@@ -82,7 +84,7 @@ For example, you can define a field ``hero`` that resolves to any
             episode=graphene.Int(required=True)
         )
 
-        def resolve_hero(_, info, episode):
+        def resolve_hero(root, info, episode):
             # Luke is the hero of Episode V
             if episode == 5:
                 return get_human(name='Luke Skywalker')

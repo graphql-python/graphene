@@ -1,4 +1,5 @@
 # Required library
 Sphinx==1.5.3
+sphinx-autobuild==0.7.1
 # Docs template
 http://graphene-python.org/sphinx_graphene_theme.zip
