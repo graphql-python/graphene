@@ -20,9 +20,6 @@ from .dynamic import Dynamic
 from .union import Union
 from .context import Context
 
-# Deprecated
-from .abstracttype import AbstractType
-
 
 __all__ = [
     "ObjectType",
@@ -52,6 +49,4 @@ __all__ = [
     "Union",
     "Context",
     "ResolveInfo",
-    # Deprecated
-    "AbstractType",
 ]

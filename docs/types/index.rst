@@ -15,4 +15,3 @@ Types Reference
    interfaces
    unions
    mutations
-   abstracttypes
