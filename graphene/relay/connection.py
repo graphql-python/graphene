@@ -152,7 +152,7 @@ class IterableConnectionField(Field):
             return resolved
 
         assert isinstance(resolved, Iterable), (
-            "Resolved value from the connection field has to be iterable or instance of {}. "
+            "Resolved value from the connection field has to be an iterable or instance of {}. "
             'Received "{}"'
         ).format(connection_type, resolved)
         connection = connection_from_array(
