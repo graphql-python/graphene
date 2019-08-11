@@ -407,7 +407,7 @@ class GrapheneGraphQLSchema(GraphQLSchema):
 
 class Schema:
     """Schema Definition.
-    
+
     A Graphene Schema can execute operations (query, mutation, subscription) against the defined
     types. For advanced purposes, the schema can be used to lookup type definitions and answer
     questions about the types through introspection.
@@ -471,7 +471,7 @@ class Schema:
 
     def execute(self, *args, **kwargs):
         """Execute a GraphQL query on the schema.
-        
+
         Use the `graphql_sync` function from `graphql-core` to provide the result
         for a query string. Most of the time this method will be called by one of the Graphene
         :ref:`Integrations` via a web request.
@@ -499,7 +499,7 @@ class Schema:
 
     async def execute_async(self, *args, **kwargs):
         """Execute a GraphQL query on the schema asynchronously.
-      
+
         Same as `execute`, but uses `graphql` instead of `graphql_sync`.
         """
         kwargs = normalize_execute_kwargs(kwargs)
