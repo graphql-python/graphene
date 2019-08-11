@@ -82,11 +82,9 @@ setup(
     install_requires=[
         "graphql-core>=3.0.0a0,<4",
         "graphql-relay>=3.0.0a0,<4",
-        "aniso8601>=6,<8"
+        "aniso8601>=6,<8",
     ],
     tests_require=tests_require,
-    extras_require={
-        "test": tests_require,
-    },
+    extras_require={"test": tests_require},
     cmdclass={"test": PyTest},
 )
