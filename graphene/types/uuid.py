@@ -7,7 +7,10 @@ from .scalars import Scalar
 
 
 class UUID(Scalar):
-    """UUID"""
+    """
+    Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
+    in fields, resolvers and input.
+    """
 
     @staticmethod
     def serialize(uuid):

@@ -406,11 +406,26 @@ class GrapheneGraphQLSchema(GraphQLSchema):
 
 
 class Schema:
-    """
-    Schema Definition
+    """Schema Definition.
+    
+    A Graphene Schema can execute operations (query, mutation, subscription) against the defined
+    types. For advanced purposes, the schema can be used to lookup type definitions and answer
+    questions about the types through introspection.
 
-    A Schema is created by supplying the root types of each type of operation,
-    query and mutation (optional).
+    Args:
+        query (ObjectType): Root query *ObjectType*. Describes entry point for fields to *read*
+            data in your Schema.
+        mutation (ObjectType, optional): Root mutation *ObjectType*. Describes entry point for
+            fields to *create, update or delete* data in your API.
+        subscription (ObjectType, optional): Root subscription *ObjectType*. Describes entry point
+            for fields to receive continuous updates.
+        directives (List[GraphQLDirective], optional): List of custom directives to include in the
+            GraphQL schema. Defaults to only include directives defined by GraphQL spec (@include
+            and @skip) [GraphQLIncludeDirective, GraphQLSkipDirective].
+        types (List[GraphQLType], optional): List of any types to include in schema that
+            may not be introspected through root types.
+        auto_camelcase (bool): Fieldnames will be transformed in Schema's TypeMap from snake_case
+            to camelCase (preferred by GraphQL standard). Default True.
     """
 
     def __init__(
@@ -454,13 +469,41 @@ class Schema:
     def lazy(self, _type):
         return lambda: self.get_type(_type)
 
-    async def execute_async(self, *args, **kwargs):
-        kwargs = normalize_execute_kwargs(kwargs)
-        return await graphql(self.graphql_schema, *args, **kwargs)
-
     def execute(self, *args, **kwargs):
+        """Execute a GraphQL query on the schema.
+        
+        Use the `graphql_sync` function from `graphql-core` to provide the result
+        for a query string. Most of the time this method will be called by one of the Graphene
+        :ref:`Integrations` via a web request.
+
+        Args:
+            request_string (str or Document): GraphQL request (query, mutation or subscription)
+                as string or parsed AST form from `graphql-core`.
+            root_value (Any, optional): Value to use as the parent value object when resolving
+                root types.
+            context_value (Any, optional): Value to be made avaiable to all resolvers via
+                `info.context`. Can be used to share authorization, dataloaders or other
+                information needed to resolve an operation.
+            variable_values (dict, optional): If variables are used in the request string, they can
+                be provided in dictionary form mapping the variable name to the variable value.
+            operation_name (str, optional): If multiple operations are provided in the
+                request_string, an operation name must be provided for the result to be provided.
+            middleware (List[SupportsGraphQLMiddleware]): Supply request level middleware as
+                defined in `graphql-core`.
+
+        Returns:
+            :obj:`ExecutionResult` containing any data and errors for the operation.
+        """
         kwargs = normalize_execute_kwargs(kwargs)
         return graphql_sync(self.graphql_schema, *args, **kwargs)
+
+    async def execute_async(self, *args, **kwargs):
+        """Execute a GraphQL query on the schema asynchronously.
+      
+        Same as `execute`, but uses `graphql` instead of `graphql_sync`.
+        """
+        kwargs = normalize_execute_kwargs(kwargs)
+        return await graphql(self.graphql_schema, *args, **kwargs)
 
     def introspect(self):
         introspection = self.execute(introspection_query)

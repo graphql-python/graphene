@@ -7,20 +7,22 @@ It also improves the field resolvers, [simplifying the code](#simpler-resolvers)
 developer has to write to use them.
 
 **Deprecations:**
-* [`AbstractType`](#abstracttype-deprecated)
-* [`resolve_only_args`](#resolve_only_args)
-* [`Mutation.Input`](#mutationinput)
+
+- [`AbstractType`](#abstracttype-deprecated)
+- [`resolve_only_args`](#resolve_only_args)
+- [`Mutation.Input`](#mutationinput)
 
 **Breaking changes:**
-* [`Simpler Resolvers`](#simpler-resolvers)
-* [`Node Connections`](#node-connections)
+
+- [`Simpler Resolvers`](#simpler-resolvers)
+- [`Node Connections`](#node-connections)
 
 **New Features!**
-* [`InputObjectType`](#inputobjecttype)
-* [`Meta as Class arguments`](#meta-as-class-arguments) (_only available for Python 3_)
 
+- [`InputObjectType`](#inputobjecttype)
+- [`Meta as Class arguments`](#meta-as-class-arguments) (_only available for Python 3_)
 
-> The type metaclasses are now deleted as they are no longer necessary.  If your code was depending
+> The type metaclasses are now deleted as they are no longer necessary. If your code was depending
 > on this strategy for creating custom attrs, see an [example on how to do it in 2.0](https://github.com/graphql-python/graphene/blob/v2.0.0/graphene/tests/issues/test_425.py).
 
 ## Deprecations
@@ -49,7 +51,7 @@ class Pet(CommonFields, Interface):
     pass
 ```
 
-### resolve\_only\_args
+### resolve_only_args
 
 `resolve_only_args` is now deprecated as the resolver API has been simplified.
 
@@ -60,8 +62,8 @@ class User(ObjectType):
     name = String()
 
     @resolve_only_args
-    def resolve_name(self):
-        return self.name
+    def resolve_name(root):
+        return root.name
 ```
 
 With 2.0:
@@ -70,8 +72,8 @@ With 2.0:
 class User(ObjectType):
     name = String()
 
-    def resolve_name(self, info):
-        return self.name
+    def resolve_name(root, info):
+        return root.name
 ```
 
 ### Mutation.Input
@@ -94,7 +96,6 @@ class User(Mutation):
         name = String()
 ```
 
-
 ## Breaking Changes
 
 ### Simpler resolvers
@@ -108,7 +109,7 @@ Before:
 ```python
 my_field = graphene.String(my_arg=graphene.String())
 
-def resolve_my_field(self, args, context, info):
+def resolve_my_field(root, args, context, info):
     my_arg = args.get('my_arg')
     return ...
 ```
@@ -118,7 +119,7 @@ With 2.0:
 ```python
 my_field = graphene.String(my_arg=graphene.String())
 
-def resolve_my_field(self, info, my_arg):
+def resolve_my_field(root, info, my_arg):
     return ...
 ```
 
@@ -126,7 +127,7 @@ def resolve_my_field(self, info, my_arg):
 You may need something like this:
 
 ```python
-def resolve_my_field(self, info, known_field1, known_field2, **args): ## get other args with: args.get('arg_key')
+def resolve_my_field(root, info, known_field1, known_field2, **args): ## get other args with: args.get('arg_key')
 ```
 
 And, if you need the context in the resolver, you can use `info.context`:
@@ -134,7 +135,7 @@ And, if you need the context in the resolver, you can use `info.context`:
 ```python
 my_field = graphene.String(my_arg=graphene.String())
 
-def resolve_my_field(self, info, my_arg):
+def resolve_my_field(root, info, my_arg):
     context = info.context
     return ...
 ```
@@ -188,6 +189,7 @@ class MyObject(ObjectType):
 ```
 
 To:
+
 ```python
 class MyObject(ObjectType):
     class Meta:
@@ -203,30 +205,32 @@ class MyObject(ObjectType):
 The parameters' order of `get_node_from_global_id` method has changed. You may need to adjust your [Node Root Field](http://docs.graphene-python.org/en/latest/relay/nodes/#node-root-field) and maybe other places that uses this method to obtain an object.
 
 Before:
+
 ```python
 class RootQuery(object):
     ...
     node = Field(relay.Node, id=ID(required=True))
 
-    def resolve_node(self, args, context, info):
+    def resolve_node(root, args, context, info):
         node = relay.Node.get_node_from_global_id(args['id'], context, info)
         return node
 ```
 
 Now:
+
 ```python
 class RootQuery(object):
     ...
     node = Field(relay.Node, id=ID(required=True))
 
-    def resolve_node(self, info, id):
+    def resolve_node(root, info, id):
         node = relay.Node.get_node_from_global_id(info, id)
         return node
 ```
 
 ## Mutation.mutate
 
-Now only receives (`self`, `info`, `**args`) and is not a @classmethod
+Now only receives (`root`, `info`, `**kwargs`) and is not a @classmethod
 
 Before:
 
@@ -245,7 +249,7 @@ With 2.0:
 class SomeMutation(Mutation):
     ...
 
-    def mutate(self, info, **args):
+    def mutate(root, info, **args):
         ...
 ```
 
@@ -258,16 +262,13 @@ class SomeMutation(Mutation):
         last_name = String(required=True)
     ...
 
-    def mutate(self, info, first_name, last_name):
+    def mutate(root, info, first_name, last_name):
         ...
 ```
-
-
 
 ## ClientIDMutation.mutate_and_get_payload
 
 Now only receives (`root`, `info`, `**input`)
-
 
 ### Middlewares
 
@@ -294,9 +295,8 @@ class MyGrapheneMiddleware(object):
         ## Middleware code
 
         info.context = context
-        return next_mw(root, info, **args)```
+        return next_mw(root, info, **args)
 ```
-
 
 ## New Features
 
@@ -321,7 +321,7 @@ class Query(ObjectType):
     user = graphene.Field(User, input=UserInput())
 
     @resolve_only_args
-    def resolve_user(self, input):
+    def resolve_user(root, input):
         user_id = input.get('id')
         if is_valid_input(user_id):
             return get_user(user_id)
@@ -334,17 +334,16 @@ class UserInput(InputObjectType):
     id = ID(required=True)
 
     @property
-    def is_valid(self):
-        return self.id.startswith('userid_')
+    def is_valid(root):
+        return root.id.startswith('userid_')
 
 class Query(ObjectType):
     user = graphene.Field(User, input=UserInput())
 
-    def resolve_user(self, info, input):
+    def resolve_user(root, info, input):
         if input.is_valid:
             return get_user(input.id)
 ```
-
 
 ### Meta as Class arguments
 
@@ -366,7 +365,6 @@ class Dog(ObjectType, interfaces=[Pet]):
     name = String()
 ```
 
-
 ### Abstract types
 
 Now you can create abstact types super easily, without the need of subclassing the meta.
@@ -378,10 +376,10 @@ class Base(ObjectType):
 
     id = ID()
 
-    def resolve_id(self, info):
+    def resolve_id(root, info):
         return "{type}_{id}".format(
-            type=self.__class__.__name__,
-            id=self.id
+            type=root.__class__.__name__,
+            id=root.id
         )
 ```
 
