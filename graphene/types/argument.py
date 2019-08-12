@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from itertools import chain
 
 from .dynamic import Dynamic
@@ -81,7 +80,7 @@ def to_arguments(args, extra_args=None):
     else:
         extra_args = []
     iter_arguments = chain(args.items(), extra_args)
-    arguments = OrderedDict()
+    arguments = {}
     for default_name, arg in iter_arguments:
         if isinstance(arg, Dynamic):
             arg = arg.get_type()

@@ -1,5 +1,4 @@
 import re
-from collections import OrderedDict
 
 from ..types import Field, InputObjectType, String
 from ..types.mutation import Mutation
@@ -30,12 +29,10 @@ class ClientIDMutation(Mutation):
         cls.Input = type(
             "{}Input".format(base_name),
             bases,
-            OrderedDict(
-                input_fields, client_mutation_id=String(name="clientMutationId")
-            ),
+            dict(input_fields, client_mutation_id=String(name="clientMutationId")),
         )
 
-        arguments = OrderedDict(
+        arguments = dict(
             input=cls.Input(required=True)
             # 'client_mutation_id': String(name='clientMutationId')
         )

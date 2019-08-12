@@ -1,7 +1,13 @@
 import json
 from functools import partial
 
-from graphql import GraphQLError, ResolveInfo, Source, execute, parse
+from graphql import (
+    GraphQLError,
+    GraphQLResolveInfo as ResolveInfo,
+    Source,
+    execute,
+    parse,
+)
 
 from ..context import Context
 from ..dynamic import Dynamic
@@ -28,7 +34,7 @@ def test_query():
 
 
 def test_query_source():
-    class Root(object):
+    class Root:
         _hello = "World"
 
         def hello(self):
@@ -45,10 +51,10 @@ def test_query_source():
 
 
 def test_query_union():
-    class one_object(object):
+    class one_object:
         pass
 
-    class two_object(object):
+    class two_object:
         pass
 
     class One(ObjectType):
@@ -83,10 +89,10 @@ def test_query_union():
 
 
 def test_query_interface():
-    class one_object(object):
+    class one_object:
         pass
 
-    class two_object(object):
+    class two_object:
         pass
 
     class MyInterface(Interface):
@@ -175,7 +181,7 @@ def test_query_wrong_default_value():
     assert len(executed.errors) == 1
     assert (
         executed.errors[0].message
-        == GraphQLError('Expected value of type "MyType" but got: str.').message
+        == GraphQLError("Expected value of type 'MyType' but got: 'hello'.").message
     )
     assert executed.data == {"hello": None}
 
@@ -223,11 +229,11 @@ def test_query_arguments():
 
     result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {"test": "[null,{}]"}
+    assert result.data == {"test": '[null,{"a_str":null,"a_int":null}]'}
 
     result = test_schema.execute('{ test(aStr: "String!") }', "Source!")
     assert not result.errors
-    assert result.data == {"test": '["Source!",{"a_str":"String!"}]'}
+    assert result.data == {"test": '["Source!",{"a_str":"String!","a_int":null}]'}
 
     result = test_schema.execute('{ test(aInt: -123, aStr: "String!") }', "Source!")
     assert not result.errors
@@ -252,18 +258,21 @@ def test_query_input_field():
 
     result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {"test": "[null,{}]"}
+    assert result.data == {"test": '[null,{"a_input":null}]'}
 
     result = test_schema.execute('{ test(aInput: {aField: "String!"} ) }', "Source!")
     assert not result.errors
-    assert result.data == {"test": '["Source!",{"a_input":{"a_field":"String!"}}]'}
+    assert result.data == {
+        "test": '["Source!",{"a_input":{"a_field":"String!","recursive_field":null}}]'
+    }
 
     result = test_schema.execute(
         '{ test(aInput: {recursiveField: {aField: "String!"}}) }', "Source!"
     )
     assert not result.errors
     assert result.data == {
-        "test": '["Source!",{"a_input":{"recursive_field":{"a_field":"String!"}}}]'
+        "test": '["Source!",{"a_input":{"a_field":null,"recursive_field":'
+        '{"a_field":"String!","recursive_field":null}}}]'
     }
 
 
@@ -279,8 +288,7 @@ def test_query_middlewares():
             return "other"
 
     def reversed_middleware(next, *args, **kwargs):
-        p = next(*args, **kwargs)
-        return p.then(lambda x: x[::-1])
+        return next(*args, **kwargs)[::-1]
 
     hello_schema = Schema(Query)
 
@@ -342,10 +350,11 @@ def test_big_list_query_compiled_query_benchmark(benchmark):
             return big_list
 
     hello_schema = Schema(Query)
+    graphql_schema = hello_schema.graphql_schema
     source = Source("{ allInts }")
     query_ast = parse(source)
 
-    big_list_query = partial(execute, hello_schema, query_ast)
+    big_list_query = partial(execute, graphql_schema, query_ast)
     result = benchmark(big_list_query)
     assert not result.errors
     assert result.data == {"allInts": list(big_list)}

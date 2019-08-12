@@ -1,28 +1,15 @@
 """
 This file is used mainly as a bridge for thenable abstractions.
-This includes:
-- Promises
-- Asyncio Coroutines
 """
 
-try:
-    from promise import Promise, is_thenable  # type: ignore
-except ImportError:
-
-    class Promise(object):  # type: ignore
-        pass
-
-    def is_thenable(obj):  # type: ignore
-        return False
+from inspect import isawaitable
 
 
-try:
-    from inspect import isawaitable
-    from .thenables_asyncio import await_and_execute
-except ImportError:
+def await_and_execute(obj, on_resolve):
+    async def build_resolve_async():
+        return on_resolve(await obj)
 
-    def isawaitable(obj):  # type: ignore
-        return False
+    return build_resolve_async()
 
 
 def maybe_thenable(obj, on_resolve):
@@ -31,12 +18,8 @@ def maybe_thenable(obj, on_resolve):
     returning the same type of object inputed.
     If the object is not thenable, it should return on_resolve(obj)
     """
-    if isawaitable(obj) and not isinstance(obj, Promise):
+    if isawaitable(obj):
         return await_and_execute(obj, on_resolve)
 
-    if is_thenable(obj):
-        return Promise.resolve(obj).then(on_resolve)
-
-    # If it's not awaitable not a Promise, return
-    # the function executed over the object
+    # If it's not awaitable, return the function executed over the object
     return on_resolve(obj)

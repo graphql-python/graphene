@@ -2,7 +2,8 @@ import datetime
 
 import pytz
 from graphql import GraphQLError
-import pytest
+
+from pytest import fixture, mark
 
 from ..datetime import Date, DateTime, Time
 from ..objecttype import ObjectType
@@ -27,13 +28,13 @@ class Query(ObjectType):
 schema = Schema(query=Query)
 
 
-@pytest.fixture
+@fixture
 def sample_datetime():
     utc_datetime = datetime.datetime(2019, 5, 25, 5, 30, 15, 10, pytz.utc)
     return utc_datetime
 
 
-@pytest.fixture
+@fixture
 def sample_time(sample_datetime):
     time = datetime.time(
         sample_datetime.hour,
@@ -45,7 +46,7 @@ def sample_time(sample_datetime):
     return time
 
 
-@pytest.fixture
+@fixture
 def sample_date(sample_datetime):
     date = sample_datetime.date()
     return date
@@ -76,12 +77,16 @@ def test_time_query(sample_time):
 
 
 def test_bad_datetime_query():
-    not_a_date = "Some string that's not a date"
+    not_a_date = "Some string that's not a datetime"
 
     result = schema.execute("""{ datetime(in: "%s") }""" % not_a_date)
 
-    assert len(result.errors) == 1
-    assert isinstance(result.errors[0], GraphQLError)
+    assert result.errors and len(result.errors) == 1
+    error = result.errors[0]
+    assert isinstance(error, GraphQLError)
+    assert error.message == (
+        'Expected type DateTime, found "Some string that\'s not a datetime".'
+    )
     assert result.data is None
 
 
@@ -90,18 +95,24 @@ def test_bad_date_query():
 
     result = schema.execute("""{ date(in: "%s") }""" % not_a_date)
 
-    assert len(result.errors) == 1
-    assert isinstance(result.errors[0], GraphQLError)
+    error = result.errors[0]
+    assert isinstance(error, GraphQLError)
+    assert error.message == (
+        'Expected type Date, found "Some string that\'s not a date".'
+    )
     assert result.data is None
 
 
 def test_bad_time_query():
-    not_a_date = "Some string that's not a date"
+    not_a_date = "Some string that's not a time"
 
     result = schema.execute("""{ time(at: "%s") }""" % not_a_date)
 
-    assert len(result.errors) == 1
-    assert isinstance(result.errors[0], GraphQLError)
+    error = result.errors[0]
+    assert isinstance(error, GraphQLError)
+    assert error.message == (
+        'Expected type Time, found "Some string that\'s not a time".'
+    )
     assert result.data is None
 
 
@@ -163,7 +174,7 @@ def test_time_query_variable(sample_time):
     assert result.data == {"time": isoformat}
 
 
-@pytest.mark.xfail(
+@mark.xfail(
     reason="creating the error message fails when un-parsable object is not JSON serializable."
 )
 def test_bad_variables(sample_date, sample_datetime, sample_time):
@@ -174,11 +185,11 @@ def test_bad_variables(sample_date, sample_datetime, sample_time):
             ),
             variables={"input": input_},
         )
-        assert len(result.errors) == 1
         # when `input` is not JSON serializable formatting the error message in
         # `graphql.utils.is_valid_value` line 79 fails with a TypeError
+        assert isinstance(result.errors, list)
+        assert len(result.errors) == 1
         assert isinstance(result.errors[0], GraphQLError)
-        print(result.errors[0])
         assert result.data is None
 
     not_a_date = dict()

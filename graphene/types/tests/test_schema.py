@@ -1,4 +1,6 @@
-import pytest
+from pytest import raises
+
+from graphql.pyutils import dedent
 
 from ..field import Field
 from ..objecttype import ObjectType
@@ -15,8 +17,8 @@ class Query(ObjectType):
 
 
 def test_schema():
-    schema = Schema(Query)
-    assert schema.get_query_type() == schema.get_graphql_type(Query)
+    schema = Schema(Query).graphql_schema
+    assert schema.query_type == schema.get_graphql_type(Query)
 
 
 def test_schema_get_type():
@@ -27,7 +29,7 @@ def test_schema_get_type():
 
 def test_schema_get_type_error():
     schema = Schema(Query)
-    with pytest.raises(AttributeError) as exc_info:
+    with raises(AttributeError) as exc_info:
         schema.X
 
     assert str(exc_info.value) == 'Type "X" not found in the Schema'
@@ -35,20 +37,16 @@ def test_schema_get_type_error():
 
 def test_schema_str():
     schema = Schema(Query)
-    assert (
-        str(schema)
-        == """schema {
-  query: Query
-}
+    assert str(schema) == dedent(
+        """
+        type MyOtherType {
+          field: String
+        }
 
-type MyOtherType {
-  field: String
-}
-
-type Query {
-  inner: MyOtherType
-}
-"""
+        type Query {
+          inner: MyOtherType
+        }
+        """
     )
 
 

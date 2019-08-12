@@ -1,4 +1,5 @@
-from .. import abstracttype
+from pytest import deprecated_call
+
 from ..abstracttype import AbstractType
 from ..field import Field
 from ..objecttype import ObjectType
@@ -14,24 +15,25 @@ class MyScalar(UnmountedType):
         return MyType
 
 
-def test_abstract_objecttype_warn_deprecation(mocker):
-    mocker.patch.object(abstracttype, "warn_deprecation")
+def test_abstract_objecttype_warn_deprecation():
+    with deprecated_call():
 
-    class MyAbstractType(AbstractType):
-        field1 = MyScalar()
-
-    assert abstracttype.warn_deprecation.called
+        # noinspection PyUnusedLocal
+        class MyAbstractType(AbstractType):
+            field1 = MyScalar()
 
 
 def test_generate_objecttype_inherit_abstracttype():
-    class MyAbstractType(AbstractType):
-        field1 = MyScalar()
+    with deprecated_call():
 
-    class MyObjectType(ObjectType, MyAbstractType):
-        field2 = MyScalar()
+        class MyAbstractType(AbstractType):
+            field1 = MyScalar()
+
+        class MyObjectType(ObjectType, MyAbstractType):
+            field2 = MyScalar()
 
     assert MyObjectType._meta.description is None
     assert MyObjectType._meta.interfaces == ()
     assert MyObjectType._meta.name == "MyObjectType"
-    assert list(MyObjectType._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyObjectType._meta.fields) == ["field1", "field2"]
     assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]

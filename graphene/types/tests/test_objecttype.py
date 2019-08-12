@@ -1,4 +1,4 @@
-import pytest
+from pytest import raises
 
 from ..field import Field
 from ..interface import Interface
@@ -91,7 +91,7 @@ def test_generate_objecttype_with_private_attributes():
     m = MyObjectType(_private_state="custom")
     assert m._private_state == "custom"
 
-    with pytest.raises(TypeError):
+    with raises(TypeError):
         MyObjectType(_other_private_state="Wrong")
 
 
@@ -102,11 +102,11 @@ def test_ordered_fields_in_objecttype():
         field = MyScalar()
         asa = Field(MyType)
 
-    assert list(MyObjectType._meta.fields.keys()) == ["b", "a", "field", "asa"]
+    assert list(MyObjectType._meta.fields) == ["b", "a", "field", "asa"]
 
 
 def test_generate_objecttype_inherit_abstracttype():
-    class MyAbstractType(object):
+    class MyAbstractType:
         field1 = MyScalar()
 
     class MyObjectType(ObjectType, MyAbstractType):
@@ -115,12 +115,12 @@ def test_generate_objecttype_inherit_abstracttype():
     assert MyObjectType._meta.description is None
     assert MyObjectType._meta.interfaces == ()
     assert MyObjectType._meta.name == "MyObjectType"
-    assert list(MyObjectType._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyObjectType._meta.fields) == ["field1", "field2"]
     assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
 
 
 def test_generate_objecttype_inherit_abstracttype_reversed():
-    class MyAbstractType(object):
+    class MyAbstractType:
         field1 = MyScalar()
 
     class MyObjectType(MyAbstractType, ObjectType):
@@ -129,7 +129,7 @@ def test_generate_objecttype_inherit_abstracttype_reversed():
     assert MyObjectType._meta.description is None
     assert MyObjectType._meta.interfaces == ()
     assert MyObjectType._meta.name == "MyObjectType"
-    assert list(MyObjectType._meta.fields.keys()) == ["field1", "field2"]
+    assert list(MyObjectType._meta.fields) == ["field1", "field2"]
     assert list(map(type, MyObjectType._meta.fields.values())) == [Field, Field]
 
 
@@ -142,15 +142,11 @@ def test_generate_objecttype_unmountedtype():
 
 
 def test_parent_container_get_fields():
-    assert list(Container._meta.fields.keys()) == ["field1", "field2"]
+    assert list(Container._meta.fields) == ["field1", "field2"]
 
 
 def test_parent_container_interface_get_fields():
-    assert list(ContainerWithInterface._meta.fields.keys()) == [
-        "ifield",
-        "field1",
-        "field2",
-    ]
+    assert list(ContainerWithInterface._meta.fields) == ["ifield", "field1", "field2"]
 
 
 def test_objecttype_as_container_only_args():
@@ -177,14 +173,14 @@ def test_objecttype_as_container_all_kwargs():
 
 
 def test_objecttype_as_container_extra_args():
-    with pytest.raises(IndexError) as excinfo:
+    with raises(IndexError) as excinfo:
         Container("1", "2", "3")
 
     assert "Number of args exceeds number of fields" == str(excinfo.value)
 
 
 def test_objecttype_as_container_invalid_kwargs():
-    with pytest.raises(TypeError) as excinfo:
+    with raises(TypeError) as excinfo:
         Container(unexisting_field="3")
 
     assert "'unexisting_field' is an invalid keyword argument for Container" == str(
@@ -218,7 +214,7 @@ def test_objecttype_with_possible_types():
 
 
 def test_objecttype_with_possible_types_and_is_type_of_should_raise():
-    with pytest.raises(AssertionError) as excinfo:
+    with raises(AssertionError) as excinfo:
 
         class MyObjectType(ObjectType):
             class Meta:

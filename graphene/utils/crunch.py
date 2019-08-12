@@ -1,5 +1,5 @@
 import json
-from collections import Mapping
+from collections.abc import Mapping
 
 
 def to_key(value):

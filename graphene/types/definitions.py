@@ -8,7 +8,7 @@ from graphql import (
 )
 
 
-class GrapheneGraphQLType(object):
+class GrapheneGraphQLType:
     """
     A class for extending the base GraphQLType with the related
     graphene_type

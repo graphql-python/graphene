@@ -150,8 +150,8 @@ def test_example_end_to_end():
     result = schema.execute(query)
     assert not result.errors
 
-    result.data = deflate(result.data)
-    assert result.data == {
+    data = deflate(result.data)
+    assert data == {
         "events": [
             {
                 "__typename": "Event",

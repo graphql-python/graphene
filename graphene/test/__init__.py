@@ -8,24 +8,19 @@ from graphene.types.schema import Schema
 def default_format_error(error):
     if isinstance(error, GraphQLError):
         return format_graphql_error(error)
-
     return {"message": str(error)}
 
 
 def format_execution_result(execution_result, format_error):
     if execution_result:
         response = {}
-
         if execution_result.errors:
             response["errors"] = [format_error(e) for e in execution_result.errors]
-
-        if not execution_result.invalid:
-            response["data"] = execution_result.data
-
+        response["data"] = execution_result.data
         return response
 
 
-class Client(object):
+class Client:
     def __init__(self, schema, format_error=None, **execute_options):
         assert isinstance(schema, Schema)
         self.schema = schema

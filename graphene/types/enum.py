@@ -1,7 +1,7 @@
-from collections import OrderedDict
+from enum import Enum as PyEnum
+
 from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 
-from ..pyutils.compat import Enum as PyEnum
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 
@@ -22,13 +22,13 @@ class EnumOptions(BaseOptions):
 
 class EnumMeta(SubclassWithMeta_Meta):
     def __new__(cls, name, bases, classdict, **options):
-        enum_members = OrderedDict(classdict, __eq__=eq_enum)
+        enum_members = dict(classdict, __eq__=eq_enum)
         # We remove the Meta attribute from the class to not collide
         # with the enum values.
         enum_members.pop("Meta", None)
         enum = PyEnum(cls.__name__, enum_members)
         return SubclassWithMeta_Meta.__new__(
-            cls, name, bases, OrderedDict(classdict, __enum__=enum), **options
+            cls, name, bases, dict(classdict, __enum__=enum), **options
         )
 
     def get(cls, value):
@@ -38,7 +38,7 @@ class EnumMeta(SubclassWithMeta_Meta):
         return cls._meta.enum[value]
 
     def __prepare__(name, bases, **kwargs):  # noqa: N805
-        return OrderedDict()
+        return {}
 
     def __call__(cls, *args, **kwargs):  # noqa: N805
         if cls is Enum:
