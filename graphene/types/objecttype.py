@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from .base import BaseOptions, BaseType
 from .field import Field
 from .interface import Interface
@@ -100,7 +98,7 @@ class ObjectType(BaseType):
         if not _meta:
             _meta = ObjectTypeOptions(cls)
 
-        fields = OrderedDict()
+        fields = {}
 
         for interface in interfaces:
             assert issubclass(interface, Interface), (

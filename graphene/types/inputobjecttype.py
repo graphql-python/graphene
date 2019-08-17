@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from .base import BaseOptions, BaseType
 from .inputfield import InputField
 from .unmountedtype import UnmountedType
@@ -22,7 +20,7 @@ class InputObjectTypeContainer(dict, BaseType):
 
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
-        for key in self._meta.fields.keys():
+        for key in self._meta.fields:
             setattr(self, key, self.get(key, None))
 
     def __init_subclass__(cls, *args, **kwargs):
@@ -70,7 +68,7 @@ class InputObjectType(UnmountedType, BaseType):
         if not _meta:
             _meta = InputObjectTypeOptions(cls)
 
-        fields = OrderedDict()
+        fields = {}
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=InputField))
 

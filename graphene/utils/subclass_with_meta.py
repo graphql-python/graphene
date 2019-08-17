@@ -1,7 +1,5 @@
 from inspect import isclass
 
-import six
-
 from ..pyutils.init_subclass import InitSubclassMeta
 from .props import props
 
@@ -18,7 +16,7 @@ class SubclassWithMeta_Meta(InitSubclassMeta):
         return "<{} meta={}>".format(cls.__name__, repr(cls._meta))
 
 
-class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
+class SubclassWithMeta(metaclass=SubclassWithMeta_Meta):
     """This class improves __init_subclass__ to receive automatically the options from meta"""
 
     # We will only have the metaclass in Python 2
@@ -45,7 +43,7 @@ class SubclassWithMeta(six.with_metaclass(SubclassWithMeta_Meta)):
             assert not options, (
                 "Abstract types can only contain the abstract attribute. "
                 "Received: abstract, {option_keys}"
-            ).format(option_keys=", ".join(options.keys()))
+            ).format(option_keys=", ".join(options))
         else:
             super_class = super(cls, cls)
             if hasattr(super_class, "__init_subclass_with_meta__"):

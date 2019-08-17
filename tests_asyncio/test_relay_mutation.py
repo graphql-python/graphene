@@ -1,5 +1,4 @@
-import pytest
-from graphql.execution.executors.asyncio import AsyncioExecutor
+from pytest import mark
 
 from graphene.types import ID, Field, ObjectType, Schema
 from graphene.types.scalars import String
@@ -43,11 +42,11 @@ class OtherMutation(ClientIDMutation):
 
     @staticmethod
     def mutate_and_get_payload(
-        self, info, shared="", additional_field="", client_mutation_id=None
+        self, info, shared, additional_field, client_mutation_id=None
     ):
         edge_type = MyEdge
         return OtherMutation(
-            name=shared + additional_field,
+            name=(shared or "") + (additional_field or ""),
             my_node_edge=edge_type(cursor="1", node=MyNode(name="name")),
         )
 
@@ -64,23 +63,19 @@ class Mutation(ObjectType):
 schema = Schema(query=RootQuery, mutation=Mutation)
 
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_node_query_promise():
-    executed = await schema.execute(
-        'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }',
-        executor=AsyncioExecutor(),
-        return_promise=True,
+    executed = await schema.execute_async(
+        'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
     )
     assert not executed.errors
     assert executed.data == {"sayPromise": {"phrase": "hello"}}
 
 
-@pytest.mark.asyncio
+@mark.asyncio
 async def test_edge_query():
-    executed = await schema.execute(
-        'mutation a { other(input: {clientMutationId:"1"}) { clientMutationId, myNodeEdge { cursor node { name }} } }',
-        executor=AsyncioExecutor(),
-        return_promise=True,
+    executed = await schema.execute_async(
+        'mutation a { other(input: {clientMutationId:"1"}) { clientMutationId, myNodeEdge { cursor node { name }} } }'
     )
     assert not executed.errors
     assert dict(executed.data) == {

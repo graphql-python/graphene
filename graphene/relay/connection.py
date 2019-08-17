@@ -1,8 +1,8 @@
 import re
-from collections import Iterable, OrderedDict
+from collections.abc import Iterable
 from functools import partial
 
-from graphql_relay import connection_from_list
+from graphql_relay import connection_from_array
 
 from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String, Union
 from ..types.field import Field
@@ -41,6 +41,17 @@ class PageInfo(ObjectType):
     )
 
 
+# noinspection PyPep8Naming
+def page_info_adapter(startCursor, endCursor, hasPreviousPage, hasNextPage):
+    """Adapter for creating PageInfo instances"""
+    return PageInfo(
+        start_cursor=startCursor,
+        end_cursor=endCursor,
+        has_previous_page=hasPreviousPage,
+        has_next_page=hasNextPage,
+    )
+
+
 class ConnectionOptions(ObjectTypeOptions):
     node = None
 
@@ -66,7 +77,7 @@ class Connection(ObjectType):
         edge_class = getattr(cls, "Edge", None)
         _node = node
 
-        class EdgeBase(object):
+        class EdgeBase:
             node = Field(_node, description="The item at the end of the edge")
             cursor = String(required=True, description="A cursor for use in pagination")
 
@@ -86,29 +97,27 @@ class Connection(ObjectType):
 
         options["name"] = name
         _meta.node = node
-        _meta.fields = OrderedDict(
-            [
-                (
-                    "page_info",
-                    Field(
-                        PageInfo,
-                        name="pageInfo",
-                        required=True,
-                        description="Pagination data for this connection.",
-                    ),
-                ),
-                (
-                    "edges",
-                    Field(
-                        NonNull(List(edge)),
-                        description="Contains the nodes in this connection.",
-                    ),
-                ),
-            ]
-        )
+        _meta.fields = {
+            "page_info": Field(
+                PageInfo,
+                name="pageInfo",
+                required=True,
+                description="Pagination data for this connection.",
+            ),
+            "edges": Field(
+                NonNull(List(edge)),
+                description="Contains the nodes in this connection.",
+            ),
+        }
         return super(Connection, cls).__init_subclass_with_meta__(
             _meta=_meta, **options
         )
+
+
+# noinspection PyPep8Naming
+def connection_adapter(cls, edges, pageInfo):
+    """Adapter for creating Connection instances"""
+    return cls(edges=edges, page_info=pageInfo)
 
 
 class IterableConnectionField(Field):
@@ -133,7 +142,7 @@ class IterableConnectionField(Field):
             )
 
         assert issubclass(connection_type, Connection), (
-            '{} type have to be a subclass of Connection. Received "{}".'
+            '{} type has to be a subclass of Connection. Received "{}".'
         ).format(self.__class__.__name__, connection_type)
         return type
 
@@ -143,15 +152,15 @@ class IterableConnectionField(Field):
             return resolved
 
         assert isinstance(resolved, Iterable), (
-            "Resolved value from the connection field have to be iterable or instance of {}. "
+            "Resolved value from the connection field has to be an iterable or instance of {}. "
             'Received "{}"'
         ).format(connection_type, resolved)
-        connection = connection_from_list(
+        connection = connection_from_array(
             resolved,
             args,
-            connection_type=connection_type,
+            connection_type=partial(connection_adapter, connection_type),
             edge_type=connection_type.Edge,
-            pageinfo_type=PageInfo,
+            page_info_type=page_info_adapter,
         )
         connection.iterable = resolved
         return connection

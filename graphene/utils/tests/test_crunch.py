@@ -1,10 +1,9 @@
-import pytest
-from collections import OrderedDict
+from pytest import mark
 
 from ..crunch import crunch
 
 
-@pytest.mark.parametrize(
+@mark.parametrize(
     "description,uncrunched,crunched",
     [
         ["number primitive", 0, [0]],
@@ -28,28 +27,22 @@ from ..crunch import crunch
         ["single-item object", {"a": None}, [None, {"a": 0}]],
         [
             "multi-item all distinct object",
-            OrderedDict([("a", None), ("b", 0), ("c", True), ("d", "string")]),
+            {"a": None, "b": 0, "c": True, "d": "string"},
             [None, 0, True, "string", {"a": 0, "b": 1, "c": 2, "d": 3}],
         ],
         [
             "multi-item repeated object",
-            OrderedDict([("a", True), ("b", True), ("c", True), ("d", True)]),
+            {"a": True, "b": True, "c": True, "d": True},
             [True, {"a": 0, "b": 0, "c": 0, "d": 0}],
         ],
         [
             "complex array",
-            [OrderedDict([("a", True), ("b", [1, 2, 3])]), [1, 2, 3]],
+            [{"a": True, "b": [1, 2, 3]}, [1, 2, 3]],
             [True, 1, 2, 3, [1, 2, 3], {"a": 0, "b": 4}, [5, 4]],
         ],
         [
             "complex object",
-            OrderedDict(
-                [
-                    ("a", True),
-                    ("b", [1, 2, 3]),
-                    ("c", OrderedDict([("a", True), ("b", [1, 2, 3])])),
-                ]
-            ),
+            {"a": True, "b": [1, 2, 3], "c": {"a": True, "b": [1, 2, 3]}},
             [True, 1, 2, 3, [1, 2, 3], {"a": 0, "b": 4}, {"a": 0, "b": 4, "c": 5}],
         ],
     ],

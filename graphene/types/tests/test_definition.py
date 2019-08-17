@@ -69,7 +69,8 @@ class MyInputObjectType(InputObjectType):
 def test_defines_a_query_only_schema():
     blog_schema = Schema(Query)
 
-    assert blog_schema.get_query_type().graphene_type == Query
+    assert blog_schema.query == Query
+    assert blog_schema.graphql_schema.query_type.graphene_type == Query
 
     article_field = Query._meta.fields["article"]
     assert article_field.type == Article
@@ -95,7 +96,8 @@ def test_defines_a_query_only_schema():
 def test_defines_a_mutation_schema():
     blog_schema = Schema(Query, mutation=Mutation)
 
-    assert blog_schema.get_mutation_type().graphene_type == Mutation
+    assert blog_schema.mutation == Mutation
+    assert blog_schema.graphql_schema.mutation_type.graphene_type == Mutation
 
     write_mutation = Mutation._meta.fields["write_article"]
     assert write_mutation.type == Article
@@ -105,7 +107,8 @@ def test_defines_a_mutation_schema():
 def test_defines_a_subscription_schema():
     blog_schema = Schema(Query, subscription=Subscription)
 
-    assert blog_schema.get_subscription_type().graphene_type == Subscription
+    assert blog_schema.subscription == Subscription
+    assert blog_schema.graphql_schema.subscription_type.graphene_type == Subscription
 
     subscription = Subscription._meta.fields["article_subscribe"]
     assert subscription.type == Article
@@ -126,8 +129,9 @@ def test_includes_nested_input_objects_in_the_map():
         subscribe_to_something = Field(Article, input=Argument(SomeInputObject))
 
     schema = Schema(query=Query, mutation=SomeMutation, subscription=SomeSubscription)
+    type_map = schema.graphql_schema.type_map
 
-    assert schema.get_type_map()["NestedInputObject"].graphene_type is NestedInputObject
+    assert type_map["NestedInputObject"].graphene_type is NestedInputObject
 
 
 def test_includes_interfaces_thunk_subtypes_in_the_type_map():
@@ -142,8 +146,9 @@ def test_includes_interfaces_thunk_subtypes_in_the_type_map():
         iface = Field(lambda: SomeInterface)
 
     schema = Schema(query=Query, types=[SomeSubtype])
+    type_map = schema.graphql_schema.type_map
 
-    assert schema.get_type_map()["SomeSubtype"].graphene_type is SomeSubtype
+    assert type_map["SomeSubtype"].graphene_type is SomeSubtype
 
 
 def test_includes_types_in_union():
@@ -161,9 +166,10 @@ def test_includes_types_in_union():
         union = Field(MyUnion)
 
     schema = Schema(query=Query)
+    type_map = schema.graphql_schema.type_map
 
-    assert schema.get_type_map()["OtherType"].graphene_type is OtherType
-    assert schema.get_type_map()["SomeType"].graphene_type is SomeType
+    assert type_map["OtherType"].graphene_type is OtherType
+    assert type_map["SomeType"].graphene_type is SomeType
 
 
 def test_maps_enum():
@@ -181,9 +187,10 @@ def test_maps_enum():
         union = Field(MyUnion)
 
     schema = Schema(query=Query)
+    type_map = schema.graphql_schema.type_map
 
-    assert schema.get_type_map()["OtherType"].graphene_type is OtherType
-    assert schema.get_type_map()["SomeType"].graphene_type is SomeType
+    assert type_map["OtherType"].graphene_type is OtherType
+    assert type_map["SomeType"].graphene_type is SomeType
 
 
 def test_includes_interfaces_subtypes_in_the_type_map():
@@ -198,8 +205,9 @@ def test_includes_interfaces_subtypes_in_the_type_map():
         iface = Field(SomeInterface)
 
     schema = Schema(query=Query, types=[SomeSubtype])
+    type_map = schema.graphql_schema.type_map
 
-    assert schema.get_type_map()["SomeSubtype"].graphene_type is SomeSubtype
+    assert type_map["SomeSubtype"].graphene_type is SomeSubtype
 
 
 def test_stringifies_simple_types():
@@ -281,7 +289,7 @@ def test_stringifies_simple_types():
 
 
 def test_does_not_mutate_passed_field_definitions():
-    class CommonFields(object):
+    class CommonFields:
         field1 = String()
         field2 = String(id=String())
 
@@ -293,7 +301,7 @@ def test_does_not_mutate_passed_field_definitions():
 
     assert TestObject1._meta.fields == TestObject2._meta.fields
 
-    class CommonFields(object):
+    class CommonFields:
         field1 = String()
         field2 = String()
 

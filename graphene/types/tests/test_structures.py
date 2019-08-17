@@ -1,6 +1,6 @@
 from functools import partial
 
-import pytest
+from pytest import raises
 
 from ..scalars import String
 from ..structures import List, NonNull
@@ -14,7 +14,7 @@ def test_list():
 
 
 def test_list_with_unmounted_type():
-    with pytest.raises(Exception) as exc_info:
+    with raises(Exception) as exc_info:
         List(String())
 
     assert (
@@ -82,7 +82,7 @@ def test_nonnull_inherited_works_list():
 
 
 def test_nonnull_inherited_dont_work_nonnull():
-    with pytest.raises(Exception) as exc_info:
+    with raises(Exception) as exc_info:
         NonNull(NonNull(String))
 
     assert (
@@ -92,7 +92,7 @@ def test_nonnull_inherited_dont_work_nonnull():
 
 
 def test_nonnull_with_unmounted_type():
-    with pytest.raises(Exception) as exc_info:
+    with raises(Exception) as exc_info:
         NonNull(String())
 
     assert (

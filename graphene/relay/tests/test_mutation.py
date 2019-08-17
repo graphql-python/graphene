@@ -1,5 +1,4 @@
-import pytest
-from promise import Promise
+from pytest import mark, raises
 
 from ...types import (
     ID,
@@ -15,7 +14,7 @@ from ...types.scalars import String
 from ..mutation import ClientIDMutation
 
 
-class SharedFields(object):
+class SharedFields:
     shared = String()
 
 
@@ -37,7 +36,7 @@ class SaySomething(ClientIDMutation):
         return SaySomething(phrase=str(what))
 
 
-class FixedSaySomething(object):
+class FixedSaySomething:
     __slots__ = ("phrase",)
 
     def __init__(self, phrase):
@@ -55,15 +54,15 @@ class SaySomethingFixed(ClientIDMutation):
         return FixedSaySomething(phrase=str(what))
 
 
-class SaySomethingPromise(ClientIDMutation):
+class SaySomethingAsync(ClientIDMutation):
     class Input:
         what = String()
 
     phrase = String()
 
     @staticmethod
-    def mutate_and_get_payload(self, info, what, client_mutation_id=None):
-        return Promise.resolve(SaySomething(phrase=str(what)))
+    async def mutate_and_get_payload(self, info, what, client_mutation_id=None):
+        return SaySomething(phrase=str(what))
 
 
 # MyEdge = MyNode.Connection.Edge
@@ -81,11 +80,11 @@ class OtherMutation(ClientIDMutation):
 
     @staticmethod
     def mutate_and_get_payload(
-        self, info, shared="", additional_field="", client_mutation_id=None
+        self, info, shared, additional_field, client_mutation_id=None
     ):
         edge_type = MyEdge
         return OtherMutation(
-            name=shared + additional_field,
+            name=(shared or "") + (additional_field or ""),
             my_node_edge=edge_type(cursor="1", node=MyNode(name="name")),
         )
 
@@ -97,7 +96,7 @@ class RootQuery(ObjectType):
 class Mutation(ObjectType):
     say = SaySomething.Field()
     say_fixed = SaySomethingFixed.Field()
-    say_promise = SaySomethingPromise.Field()
+    say_async = SaySomethingAsync.Field()
     other = OtherMutation.Field()
 
 
@@ -105,7 +104,7 @@ schema = Schema(query=RootQuery, mutation=Mutation)
 
 
 def test_no_mutate_and_get_payload():
-    with pytest.raises(AssertionError) as excinfo:
+    with raises(AssertionError) as excinfo:
 
         class MyMutation(ClientIDMutation):
             pass
@@ -118,12 +117,12 @@ def test_no_mutate_and_get_payload():
 
 def test_mutation():
     fields = SaySomething._meta.fields
-    assert list(fields.keys()) == ["phrase", "client_mutation_id"]
+    assert list(fields) == ["phrase", "client_mutation_id"]
     assert SaySomething._meta.name == "SaySomethingPayload"
     assert isinstance(fields["phrase"], Field)
     field = SaySomething.Field()
     assert field.type == SaySomething
-    assert list(field.args.keys()) == ["input"]
+    assert list(field.args) == ["input"]
     assert isinstance(field.args["input"], Argument)
     assert isinstance(field.args["input"].type, NonNull)
     assert field.args["input"].type.of_type == SaySomething.Input
@@ -136,7 +135,7 @@ def test_mutation_input():
     Input = SaySomething.Input
     assert issubclass(Input, InputObjectType)
     fields = Input._meta.fields
-    assert list(fields.keys()) == ["what", "client_mutation_id"]
+    assert list(fields) == ["what", "client_mutation_id"]
     assert isinstance(fields["what"], InputField)
     assert fields["what"].type == String
     assert isinstance(fields["client_mutation_id"], InputField)
@@ -145,11 +144,11 @@ def test_mutation_input():
 
 def test_subclassed_mutation():
     fields = OtherMutation._meta.fields
-    assert list(fields.keys()) == ["name", "my_node_edge", "client_mutation_id"]
+    assert list(fields) == ["name", "my_node_edge", "client_mutation_id"]
     assert isinstance(fields["name"], Field)
     field = OtherMutation.Field()
     assert field.type == OtherMutation
-    assert list(field.args.keys()) == ["input"]
+    assert list(field.args) == ["input"]
     assert isinstance(field.args["input"], Argument)
     assert isinstance(field.args["input"].type, NonNull)
     assert field.args["input"].type.of_type == OtherMutation.Input
@@ -159,7 +158,7 @@ def test_subclassed_mutation_input():
     Input = OtherMutation.Input
     assert issubclass(Input, InputObjectType)
     fields = Input._meta.fields
-    assert list(fields.keys()) == ["shared", "additional_field", "client_mutation_id"]
+    assert list(fields) == ["shared", "additional_field", "client_mutation_id"]
     assert isinstance(fields["shared"], InputField)
     assert fields["shared"].type == String
     assert isinstance(fields["additional_field"], InputField)
@@ -185,12 +184,13 @@ def test_node_query_fixed():
     )
 
 
-def test_node_query_promise():
-    executed = schema.execute(
-        'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
+@mark.asyncio
+async def test_node_query_async():
+    executed = await schema.execute_async(
+        'mutation a { sayAsync(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
     )
     assert not executed.errors
-    assert executed.data == {"sayPromise": {"phrase": "hello"}}
+    assert executed.data == {"sayAsync": {"phrase": "hello"}}
 
 
 def test_edge_query():

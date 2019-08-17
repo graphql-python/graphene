@@ -10,9 +10,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
-venv/
-.venv/
 build/
 develop-eggs/
 dist/
@@ -47,7 +44,8 @@ htmlcov/
 .pytest_cache
 nosetests.xml
 coverage.xml
-*,cover
+*.cover
+.pytest_cache/
 
 # Translations
 *.mo
@@ -62,6 +60,14 @@ docs/_build/
 # PyBuilder
 target/
 
+# VirtualEnv
+.env
+.venv
+env/
+venv/
+
+# Typing
+.mypy_cache/
 
 /tests/django.sqlite
 

@@ -1,11 +1,14 @@
-import six
-from graphql.language.ast import BooleanValue, FloatValue, IntValue, StringValue
+from typing import Any
+
+from graphql.language.ast import (
+    BooleanValueNode,
+    FloatValueNode,
+    IntValueNode,
+    StringValueNode,
+)
 
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
-
-if six.PY3:
-    from typing import Any
 
 
 class ScalarOptions(BaseOptions):
@@ -73,7 +76,7 @@ class Int(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, IntValue):
+        if isinstance(ast, IntValueNode):
             num = int(ast.value)
             if MIN_INT <= num <= MAX_INT:
                 return num
@@ -99,7 +102,7 @@ class Float(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, (FloatValue, IntValue)):
+        if isinstance(ast, (FloatValueNode, IntValueNode)):
             return float(ast.value)
 
 
@@ -114,14 +117,14 @@ class String(Scalar):
     def coerce_string(value):
         if isinstance(value, bool):
             return u"true" if value else u"false"
-        return six.text_type(value)
+        return str(value)
 
     serialize = coerce_string
     parse_value = coerce_string
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, StringValue):
+        if isinstance(ast, StringValueNode):
             return ast.value
 
 
@@ -135,7 +138,7 @@ class Boolean(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, BooleanValue):
+        if isinstance(ast, BooleanValueNode):
             return ast.value
 
 
@@ -153,5 +156,5 @@ class ID(Scalar):
 
     @staticmethod
     def parse_literal(ast):
-        if isinstance(ast, (StringValue, IntValue)):
+        if isinstance(ast, (StringValueNode, IntValueNode)):
             return ast.value

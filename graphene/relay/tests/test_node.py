@@ -1,12 +1,12 @@
-from collections import OrderedDict
-
 from graphql_relay import to_global_id
+
+from graphql.pyutils import dedent
 
 from ...types import ObjectType, Schema, String
 from ..node import Node, is_node
 
 
-class SharedNodeFields(object):
+class SharedNodeFields:
 
     shared = String()
     something_else = String()
@@ -70,17 +70,13 @@ def test_subclassed_node_query():
         % to_global_id("MyOtherNode", 1)
     )
     assert not executed.errors
-    assert executed.data == OrderedDict(
-        {
-            "node": OrderedDict(
-                [
-                    ("shared", "1"),
-                    ("extraField", "extra field info."),
-                    ("somethingElse", "----"),
-                ]
-            )
+    assert executed.data == {
+        "node": {
+            "shared": "1",
+            "extraField": "extra field info.",
+            "somethingElse": "----",
         }
-    )
+    }
 
 
 def test_node_requesting_non_node():
@@ -124,7 +120,7 @@ def test_node_field_only_type_wrong():
         % Node.to_global_id("MyOtherNode", 1)
     )
     assert len(executed.errors) == 1
-    assert str(executed.errors[0]) == "Must receive a MyNode id."
+    assert str(executed.errors[0]).startswith("Must receive a MyNode id.")
     assert executed.data == {"onlyNode": None}
 
 
@@ -143,39 +139,48 @@ def test_node_field_only_lazy_type_wrong():
         % Node.to_global_id("MyOtherNode", 1)
     )
     assert len(executed.errors) == 1
-    assert str(executed.errors[0]) == "Must receive a MyNode id."
+    assert str(executed.errors[0]).startswith("Must receive a MyNode id.")
     assert executed.data == {"onlyNodeLazy": None}
 
 
 def test_str_schema():
-    assert (
-        str(schema)
-        == """
-schema {
-  query: RootQuery
-}
+    assert str(schema) == dedent(
+        '''
+        schema {
+          query: RootQuery
+        }
 
-type MyNode implements Node {
-  id: ID!
-  name: String
-}
+        type MyNode implements Node {
+          """The ID of the object"""
+          id: ID!
+          name: String
+        }
 
-type MyOtherNode implements Node {
-  id: ID!
-  shared: String
-  somethingElse: String
-  extraField: String
-}
+        type MyOtherNode implements Node {
+          """The ID of the object"""
+          id: ID!
+          shared: String
+          somethingElse: String
+          extraField: String
+        }
 
-interface Node {
-  id: ID!
-}
+        """An object with an ID"""
+        interface Node {
+          """The ID of the object"""
+          id: ID!
+        }
 
-type RootQuery {
-  first: String
-  node(id: ID!): Node
-  onlyNode(id: ID!): MyNode
-  onlyNodeLazy(id: ID!): MyNode
-}
-""".lstrip()
+        type RootQuery {
+          first: String
+
+          """The ID of the object"""
+          node(id: ID!): Node
+
+          """The ID of the object"""
+          onlyNode(id: ID!): MyNode
+
+          """The ID of the object"""
+          onlyNodeLazy(id: ID!): MyNode
+        }
+        '''
     )
