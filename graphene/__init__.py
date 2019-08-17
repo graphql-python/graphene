@@ -45,6 +45,7 @@ from .utils.module_loading import lazy_import
 
 VERSION = (3, 0, 0, "alpha", 0)
 
+
 __version__ = get_version(VERSION)
 
 __all__ = [
