@@ -38,7 +38,7 @@ class InputField(MountedType):
         deprecation_reason (optional, str): Setting this value indicates that the field is
             depreciated and may provide instruction or reason on how for clients to proceed.
         description (optional, str): Description of the GraphQL field in the schema.
-        required (optional, bool): Indicates this input field as not null in the graphql scehma.
+        required (optional, bool): Indicates this input field as not null in the graphql schema.
             Raises a validation error if argument not provided. Same behavior as graphene.NonNull.
             Default False.
         **extra_args (optional, Dict): Not used.

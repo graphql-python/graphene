@@ -481,7 +481,7 @@ class Schema:
                 as string or parsed AST form from `graphql-core`.
             root_value (Any, optional): Value to use as the parent value object when resolving
                 root types.
-            context_value (Any, optional): Value to be made avaiable to all resolvers via
+            context_value (Any, optional): Value to be made available to all resolvers via
                 `info.context`. Can be used to share authorization, dataloaders or other
                 information needed to resolve an operation.
             variable_values (dict, optional): If variables are used in the request string, they can

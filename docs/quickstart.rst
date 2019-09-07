@@ -24,7 +24,7 @@ What is Graphene?
 
 Graphene is a library that provides tools to implement a GraphQL API in Python using a *code-first* approach.
 
-Compare Graphene's *code-first* approach to building a GraphQL API with *schema-first* approaches like `Apollo Server`_ (JavaScript) or Ariadne_ (Python). Instead of writing GraphQL **Schema Definition Langauge (SDL)**, we write Python code to describe the data provided by your server.
+Compare Graphene's *code-first* approach to building a GraphQL API with *schema-first* approaches like `Apollo Server`_ (JavaScript) or Ariadne_ (Python). Instead of writing GraphQL **Schema Definition Language (SDL)**, we write Python code to describe the data provided by your server.
 
 .. _Apollo Server: https://www.apollographql.com/docs/apollo-server/
 

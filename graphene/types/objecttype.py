@@ -22,7 +22,7 @@ class ObjectType(BaseType):
     have a name, but most importantly describe their fields.
 
     The name of the type defined by an _ObjectType_ defaults to the class name. The type
-    description defaults to the class docstring. This can be overriden by adding attributes
+    description defaults to the class docstring. This can be overridden by adding attributes
     to a Meta inner class.
 
     The class attributes of an _ObjectType_ are mounted as instances of ``graphene.Field``.
@@ -66,8 +66,8 @@ class ObjectType(BaseType):
             docstring.
         interfaces (Iterable[graphene.Interface]): GraphQL interfaces to extend with this object.
             all fields from interface will be included in this object's schema.
-        possible_types (Iterable[class]): Used to test parent value object via isintance to see if
-            this type can be used to resolve an ambigous type (interface, union).
+        possible_types (Iterable[class]): Used to test parent value object via isinstance to see if
+            this type can be used to resolve an ambiguous type (interface, union).
         default_resolver (any Callable resolver): Override the default resolver for this
             type. Defaults to graphene default resolver which returns an attribute or dictionary
             key with the same name as the field.
