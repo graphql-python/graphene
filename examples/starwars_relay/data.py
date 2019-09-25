@@ -14,7 +14,7 @@ def setup():
 
     # Yeah, technically it's Corellian. But it flew in the service of the rebels,
     # so for the purposes of this demo it's a rebel ship.
-    falcon = Ship(id="4", name="Millenium Falcon")
+    falcon = Ship(id="4", name="Millennium Falcon")
 
     homeOne = Ship(id="5", name="Home One")
 

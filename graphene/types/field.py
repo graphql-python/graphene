@@ -50,7 +50,7 @@ class Field(MountedType):
             object. Alternative to resolver (cannot set both source and resolver).
         deprecation_reason (optional, str): Setting this value indicates that the field is
             depreciated and may provide instruction or reason on how for clients to proceed.
-        required (optional, bool): indicates this field as not null in the graphql scehma. Same behavior as
+        required (optional, bool): indicates this field as not null in the graphql schema. Same behavior as
             graphene.NonNull. Default False.
         name (optional, str): the name of the GraphQL field (must be unique in a type). Defaults to attribute
             name.

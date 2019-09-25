@@ -195,7 +195,7 @@ The two resolvers in this example are effectively the same.
 
         # ...
 
-If you prefer your code to be more explict, feel free to use ``@staticmethod`` decorators. Otherwise, your code may be cleaner without them!
+If you prefer your code to be more explicit, feel free to use ``@staticmethod`` decorators. Otherwise, your code may be cleaner without them!
 
 .. _DefaultResolver:
 
@@ -251,7 +251,7 @@ GraphQL Argument defaults
 
 If you define an argument for a field that is not required (and in a query
 execution it is not provided as an argument) it will not be passed to the
-resolver function at all. This is so that the developer can differenciate
+resolver function at all. This is so that the developer can differentiate
 between a ``undefined`` value for an argument and an explicit ``null`` value.
 
 For example, given this schema:

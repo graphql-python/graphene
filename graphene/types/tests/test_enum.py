@@ -172,7 +172,7 @@ def test_enum_can_be_compared():
     assert RGB.BLUE == 3
 
 
-def test_enum_can_be_initialzied():
+def test_enum_can_be_initialized():
     class RGB(Enum):
         RED = 1
         GREEN = 2
