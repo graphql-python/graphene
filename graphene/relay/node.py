@@ -91,9 +91,13 @@ class Node(AbstractNode):
         try:
             _type, _id = cls.from_global_id(global_id)
             graphene_type = info.schema.get_type(_type).graphene_type
-        except Exception:
-            return None
-
+        except Exception as e:
+            raise Exception(
+                "Unable call from_global_id, is the id base64 encoding of 'TypeName:id': {} Exception: {}".format(
+                    str(global_id),
+                    str(e)
+                )
+            )
         if only_type:
             assert graphene_type == only_type, ("Must receive a {} id.").format(
                 only_type._meta.name
