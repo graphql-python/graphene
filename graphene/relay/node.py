@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from functools import partial
 from inspect import isclass
 
@@ -61,7 +62,14 @@ class NodeField(Field):
         )
 
     def get_resolver(self, parent_resolver):
-        return partial(self.node_type.node_resolver, get_type(self.field_type))
+        def return_partial(*args, **kwargs):
+            print("\n\nDebugging get_resolver: ")
+            print(parent_resolver, args, kwargs)
+            return partial(self.node_type.node_resolver, get_type(self.field_type))(
+                *args, **kwargs
+            )
+
+        return return_partial
 
 
 class AbstractNode(Interface):
@@ -71,7 +79,9 @@ class AbstractNode(Interface):
     @classmethod
     def __init_subclass_with_meta__(cls, **options):
         _meta = InterfaceOptions(cls)
-        _meta.fields = {"id": GlobalID(cls, description="The ID of the object")}
+        _meta.fields = OrderedDict(
+            id=GlobalID(cls, description="The ID of the object.")
+        )
         super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
 
@@ -92,12 +102,8 @@ class Node(AbstractNode):
             _type, _id = cls.from_global_id(global_id)
             graphene_type = info.schema.get_type(_type).graphene_type
         except Exception as e:
-            raise Exception(
-                "Unable call from_global_id, is the id base64 encoding of 'TypeName:id': {} Exception: {}".format(
-                    str(global_id),
-                    str(e)
-                )
-            )
+            print(e)
+            raise
         if only_type:
             assert graphene_type == only_type, ("Must receive a {} id.").format(
                 only_type._meta.name
