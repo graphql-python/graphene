@@ -90,7 +90,7 @@ def test_node_query_incorrect_id():
     executed = schema.execute(
         '{ node(id:"%s") { ... on MyNode { name } } }' % "something:2"
     )
-    assert not executed.errors
+    assert executed.errors
     assert executed.data == {"node": None}
 
 
