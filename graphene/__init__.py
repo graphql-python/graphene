@@ -1,7 +1,6 @@
 from .pyutils.version import get_version
 
 from .types import (
-    AbstractType,
     ObjectType,
     InputObjectType,
     Interface,
@@ -86,6 +85,4 @@ __all__ = [
     "lazy_import",
     "Context",
     "ResolveInfo",
-    # Deprecated
-    "AbstractType",
 ]
