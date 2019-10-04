@@ -1,4 +1,5 @@
 import re
+from unidecode import unidecode
 
 
 # Adapted from this response in Stackoverflow
@@ -18,4 +19,4 @@ def to_snake_case(name):
 
 
 def to_const(string):
-    return re.sub(r"[\W|^]+", "_", string).upper()  # noqa
+    return re.sub(r"[\W|^]+", "_", unidecode(string)).upper()  # noqa

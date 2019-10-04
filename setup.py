@@ -86,6 +86,7 @@ setup(
         "graphql-core>=3.0.0,<4",
         "graphql-relay>=3.0.0,<4",
         "aniso8601>=6,<9",
+        "unidecode>=1.1.1,<2",
     ],
     tests_require=tests_require,
     extras_require={"test": tests_require, "dev": dev_requires},
