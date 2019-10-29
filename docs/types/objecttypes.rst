@@ -212,7 +212,7 @@ If the :ref:`ResolverParamParent` is a dictionary, the resolver will look for a 
 
     from graphene import ObjectType, String, Field, Schema
 
-    PersonValueObject = namedtuple('Person', 'first_name', 'last_name')
+    PersonValueObject = namedtuple('Person', ['first_name', 'last_name'])
 
     class Person(ObjectType):
         first_name = String()
@@ -238,10 +238,10 @@ If the :ref:`ResolverParamParent` is a dictionary, the resolver will look for a 
         }
     ''')
     # With default resolvers we can resolve attributes from an object..
-    assert result['data']['me'] == {"firstName": "Luke", "lastName": "Skywalker"}
+    assert result.data['me'] == {"firstName": "Luke", "lastName": "Skywalker"}
 
     # With default resolvers, we can also resolve keys from a dictionary..
-    assert result['data']['my_best_friend'] == {"firstName": "R2", "lastName": "D2"}
+    assert result.data['myBestFriend'] == {"firstName": "R2", "lastName": "D2"}
 
 Advanced
 ~~~~~~~~
@@ -280,7 +280,7 @@ An error will be thrown:
 
     TypeError: resolve_hello() missing 1 required positional argument: 'name'
 
-You can fix this error in serveral ways. Either by combining all keyword arguments
+You can fix this error in several ways. Either by combining all keyword arguments
 into a dict:
 
 .. code:: python
