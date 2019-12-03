@@ -8,7 +8,9 @@ from graphql import (
     graphql_sync,
     introspection_types,
     is_type,
+    parse,
     print_schema,
+    subscribe,
     GraphQLArgument,
     GraphQLBoolean,
     GraphQLEnumValue,
@@ -365,7 +367,10 @@ class GrapheneGraphQLSchema(GraphQLSchema):
                     field_type,
                     args=args,
                     resolve=field.get_resolver(
-                        self.get_resolver_for_type(type_, name, field.default_value)
+                        self.get_resolver_for_type(type_, "resolve_{}", name, field.default_value)
+                    ),
+                    subscribe=field.get_resolver(
+                        self.get_resolver_for_type(type_, "subscribe_{}", name, field.default_value)
                     ),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description,
@@ -374,10 +379,11 @@ class GrapheneGraphQLSchema(GraphQLSchema):
             fields[field_name] = _field
         return fields
 
-    def get_resolver_for_type(self, type_, name, default_value):
+    def get_resolver_for_type(self, type_, pattern, name, default_value):
         if not issubclass(type_, ObjectType):
             return
-        resolver = getattr(type_, "resolve_{}".format(name), None)
+        func_name = pattern.format(name)
+        resolver = getattr(type_, func_name, None)
         if not resolver:
             # If we don't find the resolver in the ObjectType class, then try to
             # find it in each of the interfaces
@@ -385,7 +391,7 @@ class GrapheneGraphQLSchema(GraphQLSchema):
             for interface in type_._meta.interfaces:
                 if name not in interface._meta.fields:
                     continue
-                interface_resolver = getattr(interface, "resolve_{}".format(name), None)
+                interface_resolver = getattr(interface, func_name, None)
                 if interface_resolver:
                     break
             resolver = interface_resolver
@@ -504,6 +510,11 @@ class Schema:
         """
         kwargs = normalize_execute_kwargs(kwargs)
         return await graphql(self.graphql_schema, *args, **kwargs)
+
+    async def subscribe(self, query, *args, **kwargs):
+        document = parse(query)
+        kwargs = normalize_execute_kwargs(kwargs)
+        return await subscribe(self.graphql_schema, document, *args, **kwargs)
 
     def introspect(self):
         introspection = self.execute(introspection_query)
