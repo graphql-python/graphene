@@ -93,7 +93,7 @@ class Node(AbstractNode):
             graphene_type = info.schema.get_type(_type).graphene_type
         except Exception as e:
             raise Exception(
-                "Unable call from_global_id, is the id base64 encoding of 'TypeName:id': {} Exception: {}".format(
+                "Unable to call from_global_id, is the id a base64 encoding of 'TypeName:id': {} Exception: {}".format(
                     str(global_id), str(e)
                 )
             )
