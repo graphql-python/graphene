@@ -4,7 +4,7 @@ Executing a query
 =================
 
 
-For executing a query a schema, you can directly call the ``execute`` method on it.
+For executing a query against a schema, you can directly call the ``execute`` method on it.
 
 
 .. code:: python
