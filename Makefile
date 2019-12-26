@@ -5,7 +5,7 @@ help:
 
 .PHONY: install-dev ## Install development dependencies
 install-dev:
-	pip install -e ".[test]"
+	pip install -e ".[dev]"
 
 test:
 	py.test graphene examples tests_asyncio
@@ -17,3 +17,7 @@ docs: install-dev
 .PHONY: docs-live ## Generate docs with live reloading
 docs-live: install-dev
 	cd docs && make install && make livehtml
+
+.PHONY: format
+format:
+	black graphene examples setup.py tests_asyncio

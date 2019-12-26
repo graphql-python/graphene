@@ -59,6 +59,8 @@ tests_require = [
     "iso8601",
 ]
 
+dev_requires = ["black==19.3b0", "flake8==3.7.7"] + tests_require
+
 setup(
     name="graphene",
     version=version,
@@ -85,6 +87,6 @@ setup(
         "aniso8601>=6,<9",
     ],
     tests_require=tests_require,
-    extras_require={"test": tests_require},
+    extras_require={"test": tests_require, "dev": dev_requires},
     cmdclass={"test": PyTest},
 )
