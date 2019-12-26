@@ -21,3 +21,7 @@ docs-live: install-dev
 .PHONY: format
 format:
 	black graphene examples setup.py tests_asyncio
+
+.PHONY: lint
+lint:
+	flake8 graphene examples setup.py tests_asyncio
