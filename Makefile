@@ -8,7 +8,7 @@ install-dev:
 	pip install -e ".[test]"
 
 test:
-	py.test graphene
+	py.test graphene examples tests_asyncio
 
 .PHONY: docs ## Generate docs
 docs: install-dev
