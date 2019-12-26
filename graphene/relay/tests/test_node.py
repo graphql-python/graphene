@@ -183,15 +183,18 @@ def test_str_schema():
 
         type RootQuery {
           first: String
-
-          """The ID of the object"""
-          node(id: ID!): Node
-
-          """The ID of the object"""
-          onlyNode(id: ID!): MyNode
-
-          """The ID of the object"""
-          onlyNodeLazy(id: ID!): MyNode
+          node(
+            """The ID of the object"""
+            id: ID!
+          ): Node
+          onlyNode(
+            """The ID of the object"""
+            id: ID!
+          ): MyNode
+          onlyNodeLazy(
+            """The ID of the object"""
+            id: ID!
+          ): MyNode
         }
         '''
     )
