@@ -78,8 +78,10 @@ def test_str_schema_correct():
         }
 
         type RootQuery {
-          """The ID of the object"""
-          node(id: ID!): Node
+          node(
+            """The ID of the object"""
+            id: ID!
+          ): Node
         }
 
         type User implements Node {

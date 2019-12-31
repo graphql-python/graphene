@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
+
 snapshots = Snapshot()
 
 snapshots["test_correctly_fetches_id_name_rebels 1"] = {
@@ -84,9 +85,10 @@ type PageInfo {
 type Query {
   rebels: Faction
   empire: Faction
-
-  """The ID of the object"""
-  node(id: ID!): Node
+  node(
+    """The ID of the object"""
+    id: ID!
+  ): Node
 }
 
 """A ship in the Star Wars saga"""

@@ -59,6 +59,8 @@ tests_require = [
     "iso8601",
 ]
 
+dev_requires = ["black==19.3b0", "flake8==3.7.7"] + tests_require
+
 setup(
     name="graphene",
     version=version,
@@ -76,15 +78,16 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     keywords="api graphql protocol rest relay graphene",
     packages=find_packages(exclude=["tests", "tests.*", "examples"]),
     install_requires=[
-        "graphql-core>=3.0.0a0,<4",
-        "graphql-relay>=3.0.0a0,<4",
+        "graphql-core>=3.0.0,<4",
+        "graphql-relay>=3.0.0,<4",
         "aniso8601>=6,<9",
     ],
     tests_require=tests_require,
-    extras_require={"test": tests_require},
+    extras_require={"test": tests_require, "dev": dev_requires},
     cmdclass={"test": PyTest},
 )
