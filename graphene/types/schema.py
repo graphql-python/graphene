@@ -367,10 +367,14 @@ class GrapheneGraphQLSchema(GraphQLSchema):
                     field_type,
                     args=args,
                     resolve=field.get_resolver(
-                        self.get_resolver_for_type(type_, "resolve_{}", name, field.default_value)
+                        self.get_resolver_for_type(
+                            type_, "resolve_{}", name, field.default_value
+                        )
                     ),
                     subscribe=field.get_resolver(
-                        self.get_resolver_for_type(type_, "subscribe_{}", name, field.default_value)
+                        self.get_resolver_for_type(
+                            type_, "subscribe_{}", name, field.default_value
+                        )
                     ),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description,
