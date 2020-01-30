@@ -101,7 +101,7 @@ When we execute a query against that schema.
     query_string = "{ me { fullName } }"
     result = schema.execute(query_string)
 
-    assert result["data"]["me"] == {"fullName": "Luke Skywalker")
+    assert result.data["me"] == {"fullName": "Luke Skywalker")
 
 Then we go through the following steps to resolve this query:
 
@@ -212,7 +212,7 @@ If the :ref:`ResolverParamParent` is a dictionary, the resolver will look for a 
 
     from graphene import ObjectType, String, Field, Schema
 
-    PersonValueObject = namedtuple('Person', ['first_name', 'last_name'])
+    PersonValueObject = namedtuple("Person", ["first_name", "last_name"])
 
     class Person(ObjectType):
         first_name = String()
@@ -224,7 +224,7 @@ If the :ref:`ResolverParamParent` is a dictionary, the resolver will look for a 
 
         def resolve_me(parent, info):
             # always pass an object for `me` field
-            return PersonValueObject(first_name='Luke', last_name='Skywalker')
+            return PersonValueObject(first_name="Luke", last_name="Skywalker")
 
         def resolve_my_best_friend(parent, info):
             # always pass a dictionary for `my_best_fiend_field`
@@ -238,10 +238,10 @@ If the :ref:`ResolverParamParent` is a dictionary, the resolver will look for a 
         }
     ''')
     # With default resolvers we can resolve attributes from an object..
-    assert result.data['me'] == {"firstName": "Luke", "lastName": "Skywalker"}
+    assert result.data["me"] == {"firstName": "Luke", "lastName": "Skywalker"}
 
     # With default resolvers, we can also resolve keys from a dictionary..
-    assert result.data['myBestFriend'] == {"firstName": "R2", "lastName": "D2"}
+    assert result.data["myBestFriend"] == {"firstName": "R2", "lastName": "D2"}
 
 Advanced
 ~~~~~~~~
