@@ -46,7 +46,7 @@ type Faction implements Node {
 input IntroduceShipInput {
   shipName: String!
   factionId: String!
-  clientMutationId: String = null
+  clientMutationId: String
 }
 
 type IntroduceShipPayload {
