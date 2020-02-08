@@ -19,4 +19,4 @@ def to_snake_case(name):
 
 
 def to_const(string):
-    return re.sub(r"[\W|^]+", "_", unidecode(string)).upper()  # noqa
+    return re.sub(r"[\W|^]+", "_", unidecode(string)).upper()
