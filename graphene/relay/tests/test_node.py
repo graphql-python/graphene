@@ -1,3 +1,4 @@
+import re
 from graphql_relay import to_global_id
 
 from graphql.pyutils import dedent
@@ -83,6 +84,20 @@ def test_node_requesting_non_node():
     executed = schema.execute(
         '{ node(id:"%s") { __typename } } ' % Node.to_global_id("RootQuery", 1)
     )
+    assert executed.errors
+    assert re.match(
+        r"ObjectType .* does not implement the .* interface.",
+        executed.errors[0].message,
+    )
+    assert executed.data == {"node": None}
+
+
+def test_node_requesting_unknown_type():
+    executed = schema.execute(
+        '{ node(id:"%s") { __typename } } ' % Node.to_global_id("UnknownType", 1)
+    )
+    assert executed.errors
+    assert re.match(r"Relay Node .* not found in schema", executed.errors[0].message)
     assert executed.data == {"node": None}
 
 
@@ -90,7 +105,8 @@ def test_node_query_incorrect_id():
     executed = schema.execute(
         '{ node(id:"%s") { ... on MyNode { name } } }' % "something:2"
     )
-    assert not executed.errors
+    assert executed.errors
+    assert re.match(r"Unable to parse global ID .*", executed.errors[0].message)
     assert executed.data == {"node": None}
 
 
