@@ -127,7 +127,7 @@ Then we can start querying our **Schema** by passing a GraphQL query string to `
     query_string = '{ hello }'
     result = schema.execute(query_string)
     print(result.data['hello'])
-    # "Hello stranger"
+    # "Hello stranger!"
 
     # or passing the argument in the query
     query_with_argument = '{ hello(name: "GraphQL") }'
