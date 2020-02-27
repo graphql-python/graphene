@@ -22,7 +22,7 @@ from graphql import (
     GraphQLObjectType,
     GraphQLSchema,
     GraphQLString,
-    INVALID,
+    Undefined,
 )
 
 from ..utils.str_converters import to_camel_case
@@ -357,7 +357,7 @@ class GrapheneGraphQLSchema(GraphQLSchema):
                         arg_type,
                         out_name=arg_name,
                         description=arg.description,
-                        default_value=INVALID
+                        default_value=Undefined
                         if isinstance(arg.type, NonNull)
                         else arg.default_value,
                     )
