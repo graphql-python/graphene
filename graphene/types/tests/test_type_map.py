@@ -1,5 +1,3 @@
-from pytest import raises
-
 from graphql.type import (
     GraphQLArgument,
     GraphQLEnumType,
@@ -21,13 +19,13 @@ from ..interface import Interface
 from ..objecttype import ObjectType
 from ..scalars import Int, String
 from ..structures import List, NonNull
-from ..schema import GrapheneGraphQLSchema, resolve_type
+from ..schema import Schema
 
 
 def create_type_map(types, auto_camelcase=True):
-    query = GraphQLObjectType("Query", {})
-    schema = GrapheneGraphQLSchema(query, types=types, auto_camelcase=auto_camelcase)
-    return schema.type_map
+    query = type("Query", (ObjectType,), {})
+    schema = Schema(query, types=types, auto_camelcase=auto_camelcase)
+    return schema.graphql_schema.type_map
 
 
 def test_enum():
@@ -272,20 +270,3 @@ def test_objecttype_with_possible_types():
     assert graphql_type.is_type_of
     assert graphql_type.is_type_of({}, None) is True
     assert graphql_type.is_type_of(MyObjectType(), None) is False
-
-
-def test_resolve_type_with_missing_type():
-    class MyObjectType(ObjectType):
-        foo_bar = String()
-
-    class MyOtherObjectType(ObjectType):
-        fizz_buzz = String()
-
-    def resolve_type_func(root, info):
-        return MyOtherObjectType
-
-    type_map = create_type_map([MyObjectType])
-    with raises(AssertionError) as excinfo:
-        resolve_type(resolve_type_func, type_map, "MyOtherObjectType", {}, {}, None)
-
-    assert "MyOtherObjectTyp" in str(excinfo.value)

@@ -31,7 +31,16 @@ snapshots["test_correctly_refetches_xwing 1"] = {
 
 snapshots[
     "test_str_schema 1"
-] = '''"""A faction in the Star Wars saga"""
+] = '''type Query {
+  rebels: Faction
+  empire: Faction
+  node(
+    """The ID of the object"""
+    id: ID!
+  ): Node
+}
+
+"""A faction in the Star Wars saga"""
 type Faction implements Node {
   """The ID of the object"""
   id: ID!
@@ -43,26 +52,18 @@ type Faction implements Node {
   ships(before: String = null, after: String = null, first: Int = null, last: Int = null): ShipConnection
 }
 
-input IntroduceShipInput {
-  shipName: String!
-  factionId: String!
-  clientMutationId: String
-}
-
-type IntroduceShipPayload {
-  ship: Ship
-  faction: Faction
-  clientMutationId: String
-}
-
-type Mutation {
-  introduceShip(input: IntroduceShipInput!): IntroduceShipPayload
-}
-
 """An object with an ID"""
 interface Node {
   """The ID of the object"""
   id: ID!
+}
+
+type ShipConnection {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [ShipEdge]!
 }
 
 """
@@ -82,13 +83,13 @@ type PageInfo {
   endCursor: String
 }
 
-type Query {
-  rebels: Faction
-  empire: Faction
-  node(
-    """The ID of the object"""
-    id: ID!
-  ): Node
+"""A Relay edge containing a `Ship` and its cursor."""
+type ShipEdge {
+  """The item at the end of the edge"""
+  node: Ship
+
+  """A cursor for use in pagination"""
+  cursor: String!
 }
 
 """A ship in the Star Wars saga"""
@@ -100,20 +101,19 @@ type Ship implements Node {
   name: String
 }
 
-type ShipConnection {
-  """Pagination data for this connection."""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection."""
-  edges: [ShipEdge]!
+type Mutation {
+  introduceShip(input: IntroduceShipInput!): IntroduceShipPayload
 }
 
-"""A Relay edge containing a `Ship` and its cursor."""
-type ShipEdge {
-  """The item at the end of the edge"""
-  node: Ship
+type IntroduceShipPayload {
+  ship: Ship
+  faction: Faction
+  clientMutationId: String
+}
 
-  """A cursor for use in pagination"""
-  cursor: String!
+input IntroduceShipInput {
+  shipName: String!
+  factionId: String!
+  clientMutationId: String
 }
 '''

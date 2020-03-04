@@ -59,9 +59,12 @@ def test_str_schema_correct():
           query: RootQuery
         }
 
-        interface BasePhoto {
-          """The width of the photo in pixels"""
-          width: Int
+        type User implements Node {
+          """The ID of the object"""
+          id: ID!
+
+          """The full name of the user"""
+          name: String
         }
 
         interface Node {
@@ -77,19 +80,16 @@ def test_str_schema_correct():
           width: Int
         }
 
+        interface BasePhoto {
+          """The width of the photo in pixels"""
+          width: Int
+        }
+
         type RootQuery {
           node(
             """The ID of the object"""
             id: ID!
           ): Node
-        }
-
-        type User implements Node {
-          """The ID of the object"""
-          id: ID!
-
-          """The full name of the user"""
-          name: String
         }
         '''
     )

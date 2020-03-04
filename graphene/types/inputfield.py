@@ -1,4 +1,5 @@
 from graphql import Undefined
+
 from .mountedtype import MountedType
 from .structures import NonNull
 from .utils import get_type

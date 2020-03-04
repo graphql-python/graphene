@@ -183,18 +183,18 @@ def test_str_schema():
           name: String
         }
 
+        """An object with an ID"""
+        interface Node {
+          """The ID of the object"""
+          id: ID!
+        }
+
         type MyOtherNode implements Node {
           """The ID of the object"""
           id: ID!
           shared: String
           somethingElse: String
           extraField: String
-        }
-
-        """An object with an ID"""
-        interface Node {
-          """The ID of the object"""
-          id: ID!
         }
 
         type RootQuery {
