@@ -68,4 +68,4 @@ class Interface(BaseType):
             return type(instance)
 
     def __init__(self, *args, **kwargs):
-        raise Exception("An Interface cannot be intitialized")
+        raise Exception("An Interface cannot be initialized")

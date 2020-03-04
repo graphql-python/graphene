@@ -262,17 +262,14 @@ def test_query_input_field():
 
     result = test_schema.execute('{ test(aInput: {aField: "String!"} ) }', "Source!")
     assert not result.errors
-    assert result.data == {
-        "test": '["Source!",{"a_input":{"a_field":"String!","recursive_field":null}}]'
-    }
+    assert result.data == {"test": '["Source!",{"a_input":{"a_field":"String!"}}]'}
 
     result = test_schema.execute(
         '{ test(aInput: {recursiveField: {aField: "String!"}}) }', "Source!"
     )
     assert not result.errors
     assert result.data == {
-        "test": '["Source!",{"a_input":{"a_field":null,"recursive_field":'
-        '{"a_field":"String!","recursive_field":null}}}]'
+        "test": '["Source!",{"a_input":{"recursive_field":{"a_field":"String!"}}}]'
     }
 
 
@@ -408,7 +405,7 @@ def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
 
 
 def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark(
-    benchmark
+    benchmark,
 ):
     class Container(ObjectType):
         x = Int()

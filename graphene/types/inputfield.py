@@ -1,3 +1,5 @@
+from graphql import Undefined
+
 from .mountedtype import MountedType
 from .structures import NonNull
 from .utils import get_type
@@ -48,7 +50,7 @@ class InputField(MountedType):
         self,
         type,
         name=None,
-        default_value=None,
+        default_value=Undefined,
         deprecation_reason=None,
         description=None,
         required=False,

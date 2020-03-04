@@ -1,5 +1,6 @@
 from pytest import raises
 
+from graphql.type import GraphQLObjectType, GraphQLSchema
 from graphql.pyutils import dedent
 
 from ..field import Field
@@ -17,8 +18,13 @@ class Query(ObjectType):
 
 
 def test_schema():
-    schema = Schema(Query).graphql_schema
-    assert schema.query_type == schema.get_graphql_type(Query)
+    schema = Schema(Query)
+    graphql_schema = schema.graphql_schema
+    assert isinstance(graphql_schema, GraphQLSchema)
+    query_type = graphql_schema.query_type
+    assert isinstance(query_type, GraphQLObjectType)
+    assert query_type.name == "Query"
+    assert query_type.graphene_type is Query
 
 
 def test_schema_get_type():
@@ -39,12 +45,12 @@ def test_schema_str():
     schema = Schema(Query)
     assert str(schema) == dedent(
         """
-        type MyOtherType {
-          field: String
-        }
-
         type Query {
           inner: MyOtherType
+        }
+
+        type MyOtherType {
+          field: String
         }
         """
     )

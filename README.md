@@ -1,12 +1,18 @@
+# ![Graphene Logo](http://graphene-python.org/favicon.png) [Graphene](http://graphene-python.org) [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![PyPI version](https://badge.fury.io/py/graphene.svg)](https://badge.fury.io/py/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
+
+[💬 Join the community on Slack](https://join.slack.com/t/graphenetools/shared_invite/enQtOTE2MDQ1NTg4MDM1LTA4Nzk0MGU0NGEwNzUxZGNjNDQ4ZjAwNDJjMjY0OGE1ZDgxZTg4YjM2ZTc4MjE2ZTAzZjE2ZThhZTQzZTkyMmM)
+
 **We are looking for contributors**! Please check the [ROADMAP](https://github.com/graphql-python/graphene/blob/master/ROADMAP.md) to see how you can help ❤️
 
 ---
 
-# ![Graphene Logo](http://graphene-python.org/favicon.png) [Graphene](http://graphene-python.org) [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![PyPI version](https://badge.fury.io/py/graphene.svg)](https://badge.fury.io/py/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master)
+**The below readme is the documentation for the `dev` (prerelease) version of Graphene. To view the documentation for the latest stable Graphene version go to the [v2 docs](https://docs.graphene-python.org/en/stable/)**
+
+---
 
 ## Introduction
 
-[Graphene](http://graphene-python.org) is a Python library for building GraphQL schemas/types fast and easily.
+[Graphene](http://graphene-python.org) is an opinionated Python library for building GraphQL schemas/types fast and easily.
 
 - **Easy to use:** Graphene helps you use GraphQL in Python without effort.
 - **Relay:** Graphene has builtin support for Relay.
@@ -23,7 +29,6 @@ Graphene has multiple integrations with different frameworks:
 | Django            | [graphene-django](https://github.com/graphql-python/graphene-django/)                   |
 | SQLAlchemy        | [graphene-sqlalchemy](https://github.com/graphql-python/graphene-sqlalchemy/)           |
 | Google App Engine | [graphene-gae](https://github.com/graphql-python/graphene-gae/)                         |
-| Peewee            | _In progress_ ([Tracking Issue](https://github.com/graphql-python/graphene/issues/289)) |
 
 Also, Graphene is fully compatible with the GraphQL spec, working seamlessly with all GraphQL clients, such as [Relay](https://github.com/facebook/relay), [Apollo](https://github.com/apollographql/apollo-client) and [gql](https://github.com/graphql-python/gql).
 
@@ -34,10 +39,6 @@ For instaling graphene, just run this command in your shell
 ```bash
 pip install "graphene>=2.0"
 ```
-
-## 2.0 Upgrade Guide
-
-Please read [UPGRADE-v2.0.md](/UPGRADE-v2.0.md) to learn how to upgrade.
 
 ## Examples
 
