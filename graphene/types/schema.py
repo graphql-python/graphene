@@ -374,13 +374,13 @@ class Schema:
     questions about the types through introspection.
 
     Args:
-        query (ObjectType): Root query *ObjectType*. Describes entry point for fields to *read*
+        query (Type[ObjectType]): Root query *ObjectType*. Describes entry point for fields to *read*
             data in your Schema.
-        mutation (ObjectType, optional): Root mutation *ObjectType*. Describes entry point for
+        mutation (Optional[Type[ObjectType]]): Root mutation *ObjectType*. Describes entry point for
             fields to *create, update or delete* data in your API.
-        subscription (ObjectType, optional): Root subscription *ObjectType*. Describes entry point
+        subscription (Optional[Type[ObjectType]]): Root subscription *ObjectType*. Describes entry point
             for fields to receive continuous updates.
-        types (List[ObjectType], optional): List of any types to include in schema that
+        types (Optional[List[Type[ObjectType]]]): List of any types to include in schema that
             may not be introspected through root types.
         directives (List[GraphQLDirective], optional): List of custom directives to include in the
             GraphQL schema. Defaults to only include directives defined by GraphQL spec (@include
