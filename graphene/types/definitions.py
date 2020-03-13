@@ -45,8 +45,11 @@ class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
                 # Try and get enum by value
                 value = enum(value)
             except ValueError:
-                # Try ang get enum by name
-                value = enum[value]
+                # Try and get enum by name
+                try:
+                    value = enum[value]
+                except KeyError:
+                    value = None
         return super(GrapheneEnumType, self).serialize(value)
 
 

@@ -321,6 +321,32 @@ def test_enum_resolver_compat():
     assert results.data["colorByName"] == Color.RED.name
 
 
+def test_enum_resolver_invalid():
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    GColor = Enum.from_enum(Color)
+
+    class Query(ObjectType):
+        color = GColor(required=True)
+
+        def resolve_color(_, info):
+            return "BLACK"
+
+    schema = Schema(query=Query)
+
+    results = schema.execute("query { color }")
+    assert results.errors
+    assert (
+        results.errors[0].message
+        == "Expected a value of type 'Color' but received: 'BLACK'"
+    )
+
+
 def test_enum_mutation():
     from enum import Enum as PyEnum
 
