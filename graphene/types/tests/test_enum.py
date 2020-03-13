@@ -1,8 +1,11 @@
+from textwrap import dedent
+
 from ..argument import Argument
 from ..enum import Enum, PyEnum
 from ..field import Field
 from ..inputfield import InputField
 from ..schema import ObjectType, Schema
+from ..mutation import Mutation
 
 
 def test_enum_construction():
@@ -224,3 +227,143 @@ def test_enum_skip_meta_from_members():
         "GREEN": RGB1.GREEN,
         "BLUE": RGB1.BLUE,
     }
+
+
+def test_enum_types():
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    GColor = Enum.from_enum(Color)
+
+    class Query(ObjectType):
+        color = GColor(required=True)
+
+        def resolve_color(_, info):
+            return Color.RED.value
+
+    schema = Schema(query=Query)
+
+    assert str(schema) == dedent(
+        '''\
+        """An enumeration."""
+        enum Color {
+          RED
+          GREEN
+          BLUE
+        }
+
+        type Query {
+          color: Color!
+        }
+    '''
+    )
+
+
+def test_enum_resolver():
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    GColor = Enum.from_enum(Color)
+
+    class Query(ObjectType):
+        color = GColor(required=True)
+
+        def resolve_color(_, info):
+            return Color.RED
+
+    schema = Schema(query=Query)
+
+    results = schema.execute("query { color }")
+    assert not results.errors
+
+    assert results.data["color"] == Color.RED.name
+
+
+def test_enum_resolver_compat():
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    GColor = Enum.from_enum(Color)
+
+    class Query(ObjectType):
+        color = GColor(required=True)
+        color_by_name = GColor(required=True)
+
+        def resolve_color(_, info):
+            return Color.RED.value
+
+        def resolve_color_by_name(_, info):
+            return Color.RED.name
+
+    schema = Schema(query=Query)
+
+    results = schema.execute(
+        """query {
+            color
+            colorByName
+        }"""
+    )
+    assert not results.errors
+
+    assert results.data["color"] == Color.RED.name
+    assert results.data["colorByName"] == Color.RED.name
+
+
+def test_enum_mutation():
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    GColor = Enum.from_enum(Color)
+
+    my_fav_color = None
+
+    class Query(ObjectType):
+        fav_color = GColor(required=True)
+
+        def resolve_fav_color(_, info):
+            return my_fav_color
+
+    class SetFavColor(Mutation):
+        class Arguments:
+            fav_color = Argument(GColor, required=True)
+
+        Output = Query
+
+        def mutate(self, info, fav_color):
+            nonlocal my_fav_color
+            my_fav_color = fav_color
+            return Query()
+
+    class MyMutations(ObjectType):
+        set_fav_color = SetFavColor.Field()
+
+    schema = Schema(query=Query, mutation=MyMutations)
+
+    results = schema.execute(
+        """mutation {
+            setFavColor(favColor: RED) {
+                favColor
+            }
+        }"""
+    )
+    assert not results.errors
+
+    assert my_fav_color == Color.RED
+
+    assert results.data["setFavColor"]["favColor"] == Color.RED.name
