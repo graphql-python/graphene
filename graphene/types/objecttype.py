@@ -33,6 +33,8 @@ class ObjectTypeMeta(BaseTypeMeta):
             ]
             dataclass = make_dataclass(name, fields, bases=())
             InterObjectType.__init__ = dataclass.__init__
+            InterObjectType.__eq__ = dataclass.__eq__
+            InterObjectType.__repr__ = dataclass.__repr__
         return base_cls
 
 
