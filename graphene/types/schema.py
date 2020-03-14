@@ -7,7 +7,9 @@ from graphql import (
     graphql,
     graphql_sync,
     introspection_types,
+    parse,
     print_schema,
+    subscribe,
     GraphQLArgument,
     GraphQLBoolean,
     GraphQLEnumValue,
@@ -309,19 +311,51 @@ class TypeMap(dict):
                         if isinstance(arg.type, NonNull)
                         else arg.default_value,
                     )
-                resolve = field.get_resolver(
-                    self.get_resolver(graphene_type, name, field.default_value)
-                )
                 _field = GraphQLField(
                     field_type,
                     args=args,
-                    resolve=resolve,
+                    resolve=field.get_resolver(
+                        self.get_resolver_for_type(
+                            graphene_type, "resolve_{}", name, field.default_value
+                        )
+                    ),
+                    subscribe=field.get_resolver(
+                        self.get_resolver_for_type(
+                            graphene_type, "subscribe_{}", name, field.default_value
+                        )
+                    ),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description,
                 )
             field_name = field.name or self.get_name(name)
             fields[field_name] = _field
         return fields
+
+    def get_resolver_for_type(self, graphene_type, pattern, name, default_value):
+        if not issubclass(graphene_type, ObjectType):
+            return
+        func_name = pattern.format(name)
+        resolver = getattr(graphene_type, func_name, None)
+        if not resolver:
+            # If we don't find the resolver in the ObjectType class, then try to
+            # find it in each of the interfaces
+            interface_resolver = None
+            for interface in graphene_type._meta.interfaces:
+                if name not in interface._meta.fields:
+                    continue
+                interface_resolver = getattr(interface, func_name, None)
+                if interface_resolver:
+                    break
+            resolver = interface_resolver
+
+        # Only if is not decorated with classmethod
+        if resolver:
+            return get_unbound_function(resolver)
+
+        default_resolver = (
+            graphene_type._meta.default_resolver or get_default_resolver()
+        )
+        return partial(default_resolver, name, default_value)
 
     def resolve_type(self, resolve_type_func, type_name, root, info, _type):
         type_ = resolve_type_func(root, info)
@@ -467,6 +501,11 @@ class Schema:
         """
         kwargs = normalize_execute_kwargs(kwargs)
         return await graphql(self.graphql_schema, *args, **kwargs)
+
+    async def subscribe(self, query, *args, **kwargs):
+        document = parse(query)
+        kwargs = normalize_execute_kwargs(kwargs)
+        return await subscribe(self.graphql_schema, document, *args, **kwargs)
 
     def introspect(self):
         introspection = self.execute(introspection_query)
