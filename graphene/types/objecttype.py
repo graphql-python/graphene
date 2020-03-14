@@ -6,7 +6,7 @@ from .utils import yank_fields_from_attrs
 try:
     from dataclasses import make_dataclass, field
 except ImportError:
-    from ..pyutils.dataclasses import make_dataclass, field
+    from ..pyutils.dataclasses import make_dataclass, field  # type: ignore
 
 # For static type checking with Mypy
 MYPY = False
