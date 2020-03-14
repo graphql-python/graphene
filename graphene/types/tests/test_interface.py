@@ -1,5 +1,8 @@
 from ..field import Field
 from ..interface import Interface
+from ..objecttype import ObjectType
+from ..scalars import String
+from ..schema import Schema
 from ..unmountedtype import UnmountedType
 
 
@@ -88,3 +91,109 @@ def test_generate_interface_inherit_abstracttype_reversed():
 
     assert list(MyInterface._meta.fields) == ["field1", "field2"]
     assert [type(x) for x in MyInterface._meta.fields.values()] == [Field, Field]
+
+
+def test_resolve_type_default():
+    class MyInterface(Interface):
+        field2 = String()
+
+    class MyTestType(ObjectType):
+        class Meta:
+            interfaces = (MyInterface,)
+
+    class Query(ObjectType):
+        test = Field(MyInterface)
+
+        def resolve_test(_, info):
+            return MyTestType()
+
+    schema = Schema(query=Query, types=[MyTestType])
+
+    result = schema.execute(
+        """
+        query {
+            test {
+                __typename
+            }
+        }
+    """
+    )
+    assert not result.errors
+    assert result.data == {"test": {"__typename": "MyTestType"}}
+
+
+def test_resolve_type_custom():
+    class MyInterface(Interface):
+        field2 = String()
+
+        @classmethod
+        def resolve_type(cls, instance, info):
+            if instance["type"] == 1:
+                return MyTestType1
+            return MyTestType2
+
+    class MyTestType1(ObjectType):
+        class Meta:
+            interfaces = (MyInterface,)
+
+    class MyTestType2(ObjectType):
+        class Meta:
+            interfaces = (MyInterface,)
+
+    class Query(ObjectType):
+        test = Field(MyInterface)
+
+        def resolve_test(_, info):
+            return {"type": 1}
+
+    schema = Schema(query=Query, types=[MyTestType1, MyTestType2])
+
+    result = schema.execute(
+        """
+        query {
+            test {
+                __typename
+            }
+        }
+    """
+    )
+    assert not result.errors
+    assert result.data == {"test": {"__typename": "MyTestType1"}}
+
+
+def test_resolve_type_custom_interferes():
+    class MyInterface(Interface):
+        field2 = String()
+        type_ = String(name="type")
+
+        def resolve_type_(_, info):
+            return "foo"
+
+    class MyTestType1(ObjectType):
+        class Meta:
+            interfaces = (MyInterface,)
+
+    class MyTestType2(ObjectType):
+        class Meta:
+            interfaces = (MyInterface,)
+
+    class Query(ObjectType):
+        test = Field(MyInterface)
+
+        def resolve_test(_, info):
+            return MyTestType1()
+
+    schema = Schema(query=Query, types=[MyTestType1, MyTestType2])
+
+    result = schema.execute(
+        """
+        query {
+            test {
+                __typename
+                type
+            }
+        }
+    """
+    )
+    assert not result.errors
+    assert result.data == {"test": {"__typename": "MyTestType1", "type": "foo"}}
