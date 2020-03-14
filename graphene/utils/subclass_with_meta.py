@@ -1,10 +1,9 @@
 from inspect import isclass
 
-from ..pyutils.init_subclass import InitSubclassMeta
 from .props import props
 
 
-class SubclassWithMeta_Meta(InitSubclassMeta):
+class SubclassWithMeta_Meta(type):
     _meta = None
 
     def __str__(cls):
