@@ -28,6 +28,7 @@ class BaseOptions:
 
 BaseTypeMeta = SubclassWithMeta_Meta
 
+
 class BaseType(SubclassWithMeta):
     @classmethod
     def create_type(cls, class_name, **options):

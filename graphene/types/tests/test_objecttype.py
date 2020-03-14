@@ -158,9 +158,11 @@ def test_objecttype_as_container_only_args():
     assert container.field1 == "1"
     assert container.field2 == "2"
 
+
 def test_objecttype_repr():
     container = Container("1", "2")
     assert repr(container) == "Container(field1='1', field2='2')"
+
 
 def test_objecttype_eq():
     container1 = Container("1", "2")
@@ -169,6 +171,7 @@ def test_objecttype_eq():
     assert container1 == container1
     assert container1 == container2
     assert container2 != container3
+
 
 def test_objecttype_as_container_args_kwargs():
     container = Container("1", field2="2")
@@ -191,7 +194,9 @@ def test_objecttype_as_container_extra_args():
     with raises(TypeError) as excinfo:
         Container("1", "2", "3")
 
-    assert "__init__() takes from 1 to 3 positional arguments but 4 were given" == str(excinfo.value)
+    assert "__init__() takes from 1 to 3 positional arguments but 4 were given" == str(
+        excinfo.value
+    )
 
 
 def test_objecttype_as_container_invalid_kwargs():

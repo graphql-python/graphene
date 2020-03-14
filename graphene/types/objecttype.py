@@ -25,10 +25,18 @@ class ObjectTypeMeta(BaseTypeMeta):
         class InterObjectType:
             pass
 
-        base_cls = super().__new__(cls, name, (InterObjectType, ) + bases, namespace)
+        base_cls = super().__new__(cls, name, (InterObjectType,) + bases, namespace)
         if base_cls._meta:
             fields = [
-                (key, 'typing.Any', field(default=field_value.default_value if isinstance(field_value, Field) else None))
+                (
+                    key,
+                    "typing.Any",
+                    field(
+                        default=field_value.default_value
+                        if isinstance(field_value, Field)
+                        else None
+                    ),
+                )
                 for key, field_value in base_cls._meta.fields.items()
             ]
             dataclass = make_dataclass(name, fields, bases=())
