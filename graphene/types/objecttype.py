@@ -3,7 +3,10 @@ from .field import Field
 from .interface import Interface
 from .utils import yank_fields_from_attrs
 
-from ..pyutils.dataclasses import make_dataclass, field
+try:
+    from dataclasses import make_dataclass, field
+except ImportError:
+    from ..pyutils.dataclasses import make_dataclass, field
 
 # For static type checking with Mypy
 MYPY = False
