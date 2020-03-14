@@ -1,7 +1,9 @@
-from .base import BaseOptions, BaseType
+from .base import BaseOptions, BaseType, BaseTypeMeta
 from .field import Field
 from .interface import Interface
 from .utils import yank_fields_from_attrs
+
+from ..pyutils.dataclasses import make_dataclass, field
 
 # For static type checking with Mypy
 MYPY = False
@@ -14,7 +16,24 @@ class ObjectTypeOptions(BaseOptions):
     interfaces = ()  # type: Iterable[Type[Interface]]
 
 
-class ObjectType(BaseType):
+class ObjectTypeMeta(BaseTypeMeta):
+    def __new__(cls, name, bases, namespace):
+        # We create this type, to then overload it with the dataclass attrs
+        class InterObjectType:
+            pass
+
+        base_cls = super().__new__(cls, name, (InterObjectType, ) + bases, namespace)
+        if base_cls._meta:
+            fields = [
+                (key, 'typing.Any', field(default=field_value.default_value if isinstance(field_value, Field) else None))
+                for key, field_value in base_cls._meta.fields.items()
+            ]
+            dataclass = make_dataclass(name, fields, bases=())
+            InterObjectType.__init__ = dataclass.__init__
+        return base_cls
+
+
+class ObjectType(BaseType, metaclass=ObjectTypeMeta):
     """
     Object Type Definition
 

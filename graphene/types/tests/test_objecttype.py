@@ -83,6 +83,10 @@ def test_generate_objecttype_with_fields():
 
 def test_generate_objecttype_with_private_attributes():
     class MyObjectType(ObjectType):
+        def __init__(self, _private_state=None, **kwargs):
+            self._private_state = _private_state
+            super().__init__(**kwargs)
+
         _private_state = None
 
     assert "_private_state" not in MyObjectType._meta.fields
@@ -173,17 +177,17 @@ def test_objecttype_as_container_all_kwargs():
 
 
 def test_objecttype_as_container_extra_args():
-    with raises(IndexError) as excinfo:
+    with raises(TypeError) as excinfo:
         Container("1", "2", "3")
 
-    assert "Number of args exceeds number of fields" == str(excinfo.value)
+    assert "__init__() takes from 1 to 3 positional arguments but 4 were given" == str(excinfo.value)
 
 
 def test_objecttype_as_container_invalid_kwargs():
     with raises(TypeError) as excinfo:
         Container(unexisting_field="3")
 
-    assert "'unexisting_field' is an invalid keyword argument for Container" == str(
+    assert "__init__() got an unexpected keyword argument 'unexisting_field'" == str(
         excinfo.value
     )
 

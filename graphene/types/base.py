@@ -1,6 +1,6 @@
 from typing import Type
 
-from ..utils.subclass_with_meta import SubclassWithMeta
+from ..utils.subclass_with_meta import SubclassWithMeta, SubclassWithMeta_Meta
 from ..utils.trim_docstring import trim_docstring
 
 
@@ -25,6 +25,8 @@ class BaseOptions:
     def __repr__(self):
         return "<{} name={}>".format(self.__class__.__name__, repr(self.name))
 
+
+BaseTypeMeta = SubclassWithMeta_Meta
 
 class BaseType(SubclassWithMeta):
     @classmethod
