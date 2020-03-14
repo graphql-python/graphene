@@ -1,6 +1,9 @@
 from textwrap import dedent
+from graphql import OperationType
 
+from graphene.utils.str_converters import to_snake_case
 from ..argument import Argument
+from ..definitions import GrapheneEnumType
 from ..enum import Enum, PyEnum
 from ..field import Field
 from ..inputfield import InputField
@@ -391,5 +394,77 @@ def test_enum_mutation():
     assert not results.errors
 
     assert my_fav_color == Color.RED
+
+    assert results.data["setFavColor"]["favColor"] == Color.RED.name
+
+
+def get_underlying_type(_type):
+    while hasattr(_type, "of_type"):
+        _type = _type.of_type
+    return _type
+
+
+def test_enum_mutation_compat():
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    GColor = Enum.from_enum(Color)
+
+    my_fav_color = None
+
+    class Query(ObjectType):
+        fav_color = GColor(required=True)
+
+        def resolve_fav_color(_, info):
+            return my_fav_color
+
+    class SetFavColor(Mutation):
+        class Arguments:
+            fav_color = Argument(GColor, required=True)
+
+        Output = Query
+
+        def mutate(self, info, fav_color):
+            nonlocal my_fav_color
+            my_fav_color = fav_color
+            return Query()
+
+    class MyMutations(ObjectType):
+        set_fav_color = SetFavColor.Field()
+
+    def enum_compat_middleware(next, root, info, **args):
+        operation = info.operation.operation
+        if operation == OperationType.MUTATION:
+            input_arguments = info.parent_type.fields[info.field_name].args
+            for arg_name, arg in input_arguments.items():
+                _type = get_underlying_type(arg.type)
+                if isinstance(_type, GrapheneEnumType):
+                    # Convert inputs to value
+                    arg_name = to_snake_case(arg_name)
+                    input_value = args.get(arg_name, None)
+                    if input_value and isinstance(
+                        input_value, _type.graphene_type._meta.enum
+                    ):
+                        args[arg_name] = args[arg_name].value
+
+        return next(root, info, **args)
+
+    schema = Schema(query=Query, mutation=MyMutations)
+
+    results = schema.execute(
+        """mutation {
+            setFavColor(favColor: RED) {
+                favColor
+            }
+        }""",
+        middleware=[enum_compat_middleware],
+    )
+    assert not results.errors
+
+    assert my_fav_color == Color.RED.value
 
     assert results.data["setFavColor"]["favColor"] == Color.RED.name
