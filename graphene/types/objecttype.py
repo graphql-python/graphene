@@ -165,7 +165,6 @@ class ObjectType(BaseType):
                     pass
             if kwargs:
                 raise TypeError(
-                    "'{}' is an invalid keyword argument for {}".format(
-                        list(kwargs)[0], self.__class__.__name__
-                    )
+                    f"'{list(kwargs)[0]}' is an invalid keyword argument"
+                    f" for {self.__class__.__name__}"
                 )
