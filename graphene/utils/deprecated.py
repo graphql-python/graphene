@@ -2,7 +2,7 @@ import functools
 import inspect
 import warnings
 
-string_types = (type(b""), type(u""))
+string_types = (type(b""), type(""))
 
 
 def warn_deprecation(text):

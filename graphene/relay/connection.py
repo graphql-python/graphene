@@ -66,7 +66,7 @@ class Connection(ObjectType):
         assert node, f"You have to provide a node in {cls.__name__}.Meta"
         assert isinstance(node, NonNull) or issubclass(
             node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
-        ), (f"Received incompatible node \"{node}\" for Connection {cls.__name__}.")
+        ), f'Received incompatible node "{node}" for Connection {cls.__name__}.'
 
         base_name = re.sub("Connection$", "", name or cls.__name__) or node._meta.name
         if not name:
@@ -137,9 +137,9 @@ class IterableConnectionField(Field):
                 "Read more: https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#node-connections"
             )
 
-        assert issubclass(connection_type, Connection), (
-            f"{self.__class__.__name__} type has to be a subclass of Connection. Received \"{connection_type}\"."
-        )
+        assert issubclass(
+            connection_type, Connection
+        ), f'{self.__class__.__name__} type has to be a subclass of Connection. Received "{connection_type}".'
         return type
 
     @classmethod
@@ -149,7 +149,7 @@ class IterableConnectionField(Field):
 
         assert isinstance(resolved, Iterable), (
             f"Resolved value from the connection field has to be an iterable or instance of {connection_type}. "
-            f"Received \"{resolved}\""
+            f'Received "{resolved}"'
         )
         connection = connection_from_array(
             resolved,

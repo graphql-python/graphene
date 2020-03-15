@@ -58,9 +58,9 @@ def assert_valid_root_type(type_):
         return
     is_graphene_objecttype = inspect.isclass(type_) and issubclass(type_, ObjectType)
     is_graphql_objecttype = isinstance(type_, GraphQLObjectType)
-    assert is_graphene_objecttype or is_graphql_objecttype, (
-        f"Type {type_} is not a valid ObjectType."
-    )
+    assert (
+        is_graphene_objecttype or is_graphql_objecttype
+    ), f"Type {type_} is not a valid ObjectType."
 
 
 def is_graphene_type(type_):
@@ -113,9 +113,7 @@ class TypeMap(dict):
         try:
             name = graphene_type._meta.name
         except AttributeError:
-            raise TypeError(
-                f"Expected Graphene type, but received: {graphene_type}."
-            )
+            raise TypeError(f"Expected Graphene type, but received: {graphene_type}.")
         graphql_type = self.get(name)
         if graphql_type:
             return graphql_type
@@ -132,9 +130,7 @@ class TypeMap(dict):
         elif issubclass(graphene_type, Union):
             graphql_type = self.construct_union(graphene_type)
         else:
-            raise TypeError(
-                f"Expected Graphene type, but received: {graphene_type}."
-            )
+            raise TypeError(f"Expected Graphene type, but received: {graphene_type}.")
         self[name] = graphql_type
         return graphql_type
 
@@ -321,7 +317,10 @@ class TypeMap(dict):
                     ),
                     subscribe=field.get_resolver(
                         self.get_resolver_for_type(
-                            graphene_type, f"subscribe_{name}", name, field.default_value
+                            graphene_type,
+                            f"subscribe_{name}",
+                            name,
+                            field.default_value,
                         )
                     ),
                     deprecation_reason=field.deprecation_reason,
@@ -366,9 +365,9 @@ class TypeMap(dict):
         if inspect.isclass(type_) and issubclass(type_, ObjectType):
             graphql_type = self.get(type_._meta.name)
             assert graphql_type, f"Can't find type {type_._meta.name} in schema"
-            assert graphql_type.graphene_type == type_, (
-                f"The type {type_} does not match with the associated graphene type {graphql_type.graphene_type}."
-            )
+            assert (
+                graphql_type.graphene_type == type_
+            ), f"The type {type_} does not match with the associated graphene type {graphql_type.graphene_type}."
             return graphql_type
 
         return type_

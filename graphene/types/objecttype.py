@@ -93,7 +93,7 @@ class ObjectType(BaseType):
         possible_types=(),
         default_resolver=None,
         _meta=None,
-        **options
+        **options,
     ):
         if not _meta:
             _meta = ObjectTypeOptions(cls)
@@ -101,9 +101,9 @@ class ObjectType(BaseType):
         fields = {}
 
         for interface in interfaces:
-            assert issubclass(interface, Interface), (
-                f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
-            )
+            assert issubclass(
+                interface, Interface
+            ), f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
             fields.update(interface._meta.fields)
 
         for base in reversed(cls.__mro__):

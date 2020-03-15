@@ -72,7 +72,7 @@ class Mutation(ObjectType):
         output=None,
         arguments=None,
         _meta=None,
-        **options
+        **options,
     ):
         if not _meta:
             _meta = MutationOptions(cls)
@@ -81,9 +81,9 @@ class Mutation(ObjectType):
         fields = {}
 
         for interface in interfaces:
-            assert issubclass(interface, Interface), (
-                f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
-            )
+            assert issubclass(
+                interface, Interface
+            ), f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
             fields.update(interface._meta.fields)
 
         if not output:
