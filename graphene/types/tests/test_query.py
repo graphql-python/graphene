@@ -454,15 +454,15 @@ def test_query_annotated_resolvers():
         info = String()
 
         def resolve_annotated(self, info, id):
-            return "{}-{}".format(self, id)
+            return f"{self}-{id}"
 
         def resolve_context(self, info):
             assert isinstance(info.context, Context)
-            return "{}-{}".format(self, info.context.key)
+            return f"{self}-{info.context.key}"
 
         def resolve_info(self, info):
             assert isinstance(info, ResolveInfo)
-            return "{}-{}".format(self, info.field_name)
+            return f"{self}-{info.field_name}"
 
     test_schema = Schema(Query)
 

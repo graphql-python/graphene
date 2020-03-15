@@ -2,7 +2,7 @@ import functools
 import inspect
 import warnings
 
-string_types = (type(b""), type(u""))
+string_types = (type(b""), type(""))
 
 
 def warn_deprecation(text):
@@ -29,13 +29,13 @@ def deprecated(reason):
         def decorator(func1):
 
             if inspect.isclass(func1):
-                fmt1 = "Call to deprecated class {name} ({reason})."
+                fmt1 = f"Call to deprecated class {func1.__name__} ({reason})."
             else:
-                fmt1 = "Call to deprecated function {name} ({reason})."
+                fmt1 = f"Call to deprecated function {func1.__name__} ({reason})."
 
             @functools.wraps(func1)
             def new_func1(*args, **kwargs):
-                warn_deprecation(fmt1.format(name=func1.__name__, reason=reason))
+                warn_deprecation(fmt1)
                 return func1(*args, **kwargs)
 
             return new_func1
@@ -55,13 +55,13 @@ def deprecated(reason):
         func2 = reason
 
         if inspect.isclass(func2):
-            fmt2 = "Call to deprecated class {name}."
+            fmt2 = f"Call to deprecated class {func2.__name__}."
         else:
-            fmt2 = "Call to deprecated function {name}."
+            fmt2 = f"Call to deprecated function {func2.__name__}."
 
         @functools.wraps(func2)
         def new_func2(*args, **kwargs):
-            warn_deprecation(fmt2.format(name=func2.__name__))
+            warn_deprecation(fmt2)
             return func2(*args, **kwargs)
 
         return new_func2

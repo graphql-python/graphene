@@ -180,9 +180,7 @@ def test_time_query_variable(sample_time):
 def test_bad_variables(sample_date, sample_datetime, sample_time):
     def _test_bad_variables(type_, input_):
         result = schema.execute(
-            """query Test($input: {}){{ {}(in: $input) }}""".format(
-                type_, type_.lower()
-            ),
+            f"""query Test($input: {type_}){{ {type_.lower()}(in: $input) }}""",
             variables={"input": input_},
         )
         assert isinstance(result.errors, list)

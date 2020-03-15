@@ -112,7 +112,7 @@ def test_inputobjecttype_of_input():
 
         @property
         def full_name(self):
-            return "{} {}".format(self.first_name, self.last_name)
+            return f"{self.first_name} {self.last_name}"
 
     class Parent(InputObjectType):
         child = InputField(Child)

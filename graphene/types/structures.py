@@ -14,9 +14,8 @@ class Structure(UnmountedType):
             cls_name = type(self).__name__
             of_type_name = type(of_type).__name__
             raise Exception(
-                "{} could not have a mounted {}() as inner type. Try with {}({}).".format(
-                    cls_name, of_type_name, cls_name, of_type_name
-                )
+                f"{cls_name} could not have a mounted {of_type_name}()"
+                f" as inner type. Try with {cls_name}({of_type_name})."
             )
         self._of_type = of_type
 
@@ -50,7 +49,7 @@ class List(Structure):
     """
 
     def __str__(self):
-        return "[{}]".format(self.of_type)
+        return f"[{self.of_type}]"
 
     def __eq__(self, other):
         return isinstance(other, List) and (
@@ -85,12 +84,12 @@ class NonNull(Structure):
 
     def __init__(self, *args, **kwargs):
         super(NonNull, self).__init__(*args, **kwargs)
-        assert not isinstance(self._of_type, NonNull), (
-            "Can only create NonNull of a Nullable GraphQLType but got: {}."
-        ).format(self._of_type)
+        assert not isinstance(
+            self._of_type, NonNull
+        ), f"Can only create NonNull of a Nullable GraphQLType but got: {self._of_type}."
 
     def __str__(self):
-        return "{}!".format(self.of_type)
+        return f"{self.of_type}!"
 
     def __eq__(self, other):
         return isinstance(other, NonNull) and (

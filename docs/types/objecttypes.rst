@@ -331,7 +331,7 @@ A field can use a custom resolver from outside the class:
     from graphene import ObjectType, String
 
     def resolve_full_name(person, info):
-        return '{} {}'.format(person.first_name, person.last_name)
+        return f"{person.first_name} {person.last_name}"
 
     class Person(ObjectType):
         first_name = String()

@@ -27,7 +27,7 @@ class ClientIDMutation(Mutation):
             input_fields = {}
 
         cls.Input = type(
-            "{}Input".format(base_name),
+            f"{base_name}Input",
             bases,
             dict(input_fields, client_mutation_id=String(name="clientMutationId")),
         )
@@ -39,12 +39,12 @@ class ClientIDMutation(Mutation):
         mutate_and_get_payload = getattr(cls, "mutate_and_get_payload", None)
         if cls.mutate and cls.mutate.__func__ == ClientIDMutation.mutate.__func__:
             assert mutate_and_get_payload, (
-                "{name}.mutate_and_get_payload method is required"
+                f"{name or cls.__name__}.mutate_and_get_payload method is required"
                 " in a ClientIDMutation."
-            ).format(name=name or cls.__name__)
+            )
 
         if not name:
-            name = "{}Payload".format(base_name)
+            name = f"{base_name}Payload"
 
         super(ClientIDMutation, cls).__init_subclass_with_meta__(
             output=None, arguments=arguments, name=name, **options
@@ -58,9 +58,7 @@ class ClientIDMutation(Mutation):
                 payload.client_mutation_id = input.get("client_mutation_id")
             except Exception:
                 raise Exception(
-                    ("Cannot set client_mutation_id in the payload object {}").format(
-                        repr(payload)
-                    )
+                    f"Cannot set client_mutation_id in the payload object {repr(payload)}"
                 )
             return payload
 

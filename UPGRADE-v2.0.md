@@ -377,10 +377,7 @@ class Base(ObjectType):
     id = ID()
 
     def resolve_id(root, info):
-        return "{type}_{id}".format(
-            type=root.__class__.__name__,
-            id=root.id
-        )
+        return f"{root.__class__.__name__}_{root.id}"
 ```
 
 ### UUID Scalar

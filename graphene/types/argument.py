@@ -94,18 +94,17 @@ def to_arguments(args, extra_args=None):
 
         if isinstance(arg, (InputField, Field)):
             raise ValueError(
-                "Expected {} to be Argument, but received {}. Try using Argument({}).".format(
-                    default_name, type(arg).__name__, arg.type
-                )
+                f"Expected {default_name} to be Argument, "
+                f"but received {type(arg).__name__}. Try using Argument({arg.type})."
             )
 
         if not isinstance(arg, Argument):
-            raise ValueError('Unknown argument "{}".'.format(default_name))
+            raise ValueError(f'Unknown argument "{default_name}".')
 
         arg_name = default_name or arg.name
         assert (
             arg_name not in arguments
-        ), 'More than one Argument have same name "{}".'.format(arg_name)
+        ), f'More than one Argument have same name "{arg_name}".'
         arguments[arg_name] = arg
 
     return arguments
