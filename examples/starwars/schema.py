@@ -39,13 +39,13 @@ class Query(graphene.ObjectType):
     human = graphene.Field(Human, id=graphene.String())
     droid = graphene.Field(Droid, id=graphene.String())
 
-    def resolve_hero(self, info, episode=None):
+    def resolve_hero(root, info, episode=None):
         return get_hero(episode)
 
-    def resolve_human(self, info, id):
+    def resolve_human(root, info, id):
         return get_human(id)
 
-    def resolve_droid(self, info, id):
+    def resolve_droid(root, info, id):
         return get_droid(id)
 
 

@@ -17,7 +17,7 @@ class Address(graphene.ObjectType):
 class Query(graphene.ObjectType):
     address = graphene.Field(Address, geo=GeoInput(required=True))
 
-    def resolve_address(self, info, geo):
+    def resolve_address(root, info, geo):
         return Address(latlng=geo.latlng)
 
 
@@ -27,7 +27,7 @@ class CreateAddress(graphene.Mutation):
 
     Output = Address
 
-    def mutate(self, info, geo):
+    def mutate(root, info, geo):
         return Address(latlng=geo.latlng)
 
 

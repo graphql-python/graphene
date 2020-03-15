@@ -11,7 +11,7 @@ class Query(graphene.ObjectType):
 
     patron = graphene.Field(Patron)
 
-    def resolve_patron(self, info):
+    def resolve_patron(root, info):
         return Patron(id=1, name="Syrus", age=27)
 
 

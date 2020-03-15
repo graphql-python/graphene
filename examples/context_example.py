@@ -9,7 +9,7 @@ class User(graphene.ObjectType):
 class Query(graphene.ObjectType):
     me = graphene.Field(User)
 
-    def resolve_me(self, info):
+    def resolve_me(root, info):
         return info.context["user"]
 
 
