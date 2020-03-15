@@ -63,16 +63,14 @@ class Connection(ObjectType):
     @classmethod
     def __init_subclass_with_meta__(cls, node=None, name=None, **options):
         _meta = ConnectionOptions(cls)
-        assert node, "You have to provide a node in {}.Meta".format(cls.__name__)
+        assert node, f"You have to provide a node in {cls.__name__}.Meta"
         assert isinstance(node, NonNull) or issubclass(
             node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
-        ), ('Received incompatible node "{}" for Connection {}.').format(
-            node, cls.__name__
-        )
+        ), f'Received incompatible node "{node}" for Connection {cls.__name__}.'
 
         base_name = re.sub("Connection$", "", name or cls.__name__) or node._meta.name
         if not name:
-            name = "{}Connection".format(base_name)
+            name = f"{base_name}Connection"
 
         edge_class = getattr(cls, "Edge", None)
         _node = node
@@ -82,11 +80,9 @@ class Connection(ObjectType):
             cursor = String(required=True, description="A cursor for use in pagination")
 
         class EdgeMeta:
-            description = "A Relay edge containing a `{}` and its cursor.".format(
-                base_name
-            )
+            description = f"A Relay edge containing a `{base_name}` and its cursor."
 
-        edge_name = "{}Edge".format(base_name)
+        edge_name = f"{base_name}Edge"
         if edge_class:
             edge_bases = (edge_class, EdgeBase, ObjectType)
         else:
@@ -141,9 +137,9 @@ class IterableConnectionField(Field):
                 "Read more: https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#node-connections"
             )
 
-        assert issubclass(connection_type, Connection), (
-            '{} type has to be a subclass of Connection. Received "{}".'
-        ).format(self.__class__.__name__, connection_type)
+        assert issubclass(
+            connection_type, Connection
+        ), f'{self.__class__.__name__} type has to be a subclass of Connection. Received "{connection_type}".'
         return type
 
     @classmethod
@@ -152,9 +148,9 @@ class IterableConnectionField(Field):
             return resolved
 
         assert isinstance(resolved, Iterable), (
-            "Resolved value from the connection field has to be an iterable or instance of {}. "
-            'Received "{}"'
-        ).format(connection_type, resolved)
+            f"Resolved value from the connection field has to be an iterable or instance of {connection_type}. "
+            f'Received "{resolved}"'
+        )
         connection = connection_from_array(
             resolved,
             args,

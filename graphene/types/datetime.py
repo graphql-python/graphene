@@ -21,14 +21,14 @@ class Date(Scalar):
         if isinstance(date, datetime.datetime):
             date = date.date()
         if not isinstance(date, datetime.date):
-            raise GraphQLError("Date cannot represent value: {}".format(repr(date)))
+            raise GraphQLError(f"Date cannot represent value: {repr(date)}")
         return date.isoformat()
 
     @classmethod
     def parse_literal(cls, node):
         if not isinstance(node, StringValueNode):
             raise GraphQLError(
-                "Date cannot represent non-string value: {}".format(print_ast(node))
+                f"Date cannot represent non-string value: {print_ast(node)}"
             )
         return cls.parse_value(node.value)
 
@@ -37,13 +37,11 @@ class Date(Scalar):
         if isinstance(value, datetime.date):
             return value
         if not isinstance(value, str):
-            raise GraphQLError(
-                "Date cannot represent non-string value: {}".format(repr(value))
-            )
+            raise GraphQLError(f"Date cannot represent non-string value: {repr(value)}")
         try:
             return parse_date(value)
         except ValueError:
-            raise GraphQLError("Date cannot represent value: {}".format(repr(value)))
+            raise GraphQLError(f"Date cannot represent value: {repr(value)}")
 
 
 class DateTime(Scalar):
@@ -56,14 +54,14 @@ class DateTime(Scalar):
     @staticmethod
     def serialize(dt):
         if not isinstance(dt, (datetime.datetime, datetime.date)):
-            raise GraphQLError("DateTime cannot represent value: {}".format(repr(dt)))
+            raise GraphQLError(f"DateTime cannot represent value: {repr(dt)}")
         return dt.isoformat()
 
     @classmethod
     def parse_literal(cls, node):
         if not isinstance(node, StringValueNode):
             raise GraphQLError(
-                "DateTime cannot represent non-string value: {}".format(print_ast(node))
+                f"DateTime cannot represent non-string value: {print_ast(node)}"
             )
         return cls.parse_value(node.value)
 
@@ -73,14 +71,12 @@ class DateTime(Scalar):
             return value
         if not isinstance(value, str):
             raise GraphQLError(
-                "DateTime cannot represent non-string value: {}".format(repr(value))
+                f"DateTime cannot represent non-string value: {repr(value)}"
             )
         try:
             return parse_datetime(value)
         except ValueError:
-            raise GraphQLError(
-                "DateTime cannot represent value: {}".format(repr(value))
-            )
+            raise GraphQLError(f"DateTime cannot represent value: {repr(value)}")
 
 
 class Time(Scalar):
@@ -93,14 +89,14 @@ class Time(Scalar):
     @staticmethod
     def serialize(time):
         if not isinstance(time, datetime.time):
-            raise GraphQLError("Time cannot represent value: {}".format(repr(time)))
+            raise GraphQLError(f"Time cannot represent value: {repr(time)}")
         return time.isoformat()
 
     @classmethod
     def parse_literal(cls, node):
         if not isinstance(node, StringValueNode):
             raise GraphQLError(
-                "Time cannot represent non-string value: {}".format(print_ast(node))
+                f"Time cannot represent non-string value: {print_ast(node)}"
             )
         return cls.parse_value(node.value)
 
@@ -109,10 +105,8 @@ class Time(Scalar):
         if isinstance(value, datetime.time):
             return value
         if not isinstance(value, str):
-            raise GraphQLError(
-                "Time cannot represent non-string value: {}".format(repr(value))
-            )
+            raise GraphQLError(f"Time cannot represent non-string value: {repr(value)}")
         try:
             return parse_time(value)
         except ValueError:
-            raise GraphQLError("Time cannot represent value: {}".format(repr(value)))
+            raise GraphQLError(f"Time cannot represent value: {repr(value)}")

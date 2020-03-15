@@ -52,7 +52,7 @@ Example of a custom node:
 
         @staticmethod
         def to_global_id(type, id):
-            return '{}:{}'.format(type, id)
+            return f"{type}:{id}"
 
         @staticmethod
         def get_node_from_global_id(info, global_id, only_type=None):

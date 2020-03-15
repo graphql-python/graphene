@@ -15,7 +15,7 @@ def test_enum_construction():
 
         @property
         def description(self):
-            return "Description {}".format(self.name)
+            return f"Description {self.name}"
 
     assert RGB._meta.name == "RGB"
     assert RGB._meta.description == "Description"

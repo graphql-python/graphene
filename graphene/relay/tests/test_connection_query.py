@@ -134,32 +134,28 @@ async def test_respects_an_overly_large_last():
 
 @mark.asyncio
 async def test_respects_first_and_after():
-    await check(
-        'first: 2, after: "{}"'.format(cursor_for("B")), "CD", has_next_page=True
-    )
+    await check(f'first: 2, after: "{cursor_for("B")}"', "CD", has_next_page=True)
 
 
 @mark.asyncio
 async def test_respects_first_and_after_with_long_first():
-    await check('first: 10, after: "{}"'.format(cursor_for("B")), "CDE")
+    await check(f'first: 10, after: "{cursor_for("B")}"', "CDE")
 
 
 @mark.asyncio
 async def test_respects_last_and_before():
-    await check(
-        'last: 2, before: "{}"'.format(cursor_for("D")), "BC", has_previous_page=True
-    )
+    await check(f'last: 2, before: "{cursor_for("D")}"', "BC", has_previous_page=True)
 
 
 @mark.asyncio
 async def test_respects_last_and_before_with_long_last():
-    await check('last: 10, before: "{}"'.format(cursor_for("D")), "ABC")
+    await check(f'last: 10, before: "{cursor_for("D")}"', "ABC")
 
 
 @mark.asyncio
 async def test_respects_first_and_after_and_before_too_few():
     await check(
-        'first: 2, after: "{}", before: "{}"'.format(cursor_for("A"), cursor_for("E")),
+        f'first: 2, after: "{cursor_for("A")}", before: "{cursor_for("E")}"',
         "BC",
         has_next_page=True,
     )
@@ -168,23 +164,21 @@ async def test_respects_first_and_after_and_before_too_few():
 @mark.asyncio
 async def test_respects_first_and_after_and_before_too_many():
     await check(
-        'first: 4, after: "{}", before: "{}"'.format(cursor_for("A"), cursor_for("E")),
-        "BCD",
+        f'first: 4, after: "{cursor_for("A")}", before: "{cursor_for("E")}"', "BCD",
     )
 
 
 @mark.asyncio
 async def test_respects_first_and_after_and_before_exactly_right():
     await check(
-        'first: 3, after: "{}", before: "{}"'.format(cursor_for("A"), cursor_for("E")),
-        "BCD",
+        f'first: 3, after: "{cursor_for("A")}", before: "{cursor_for("E")}"', "BCD",
     )
 
 
 @mark.asyncio
 async def test_respects_last_and_after_and_before_too_few():
     await check(
-        'last: 2, after: "{}", before: "{}"'.format(cursor_for("A"), cursor_for("E")),
+        f'last: 2, after: "{cursor_for("A")}", before: "{cursor_for("E")}"',
         "CD",
         has_previous_page=True,
     )
@@ -193,16 +187,14 @@ async def test_respects_last_and_after_and_before_too_few():
 @mark.asyncio
 async def test_respects_last_and_after_and_before_too_many():
     await check(
-        'last: 4, after: "{}", before: "{}"'.format(cursor_for("A"), cursor_for("E")),
-        "BCD",
+        f'last: 4, after: "{cursor_for("A")}", before: "{cursor_for("E")}"', "BCD",
     )
 
 
 @mark.asyncio
 async def test_respects_last_and_after_and_before_exactly_right():
     await check(
-        'last: 3, after: "{}", before: "{}"'.format(cursor_for("A"), cursor_for("E")),
-        "BCD",
+        f'last: 3, after: "{cursor_for("A")}", before: "{cursor_for("E")}"', "BCD",
     )
 
 
@@ -219,9 +211,7 @@ async def test_returns_all_elements_if_cursors_are_invalid():
 @mark.asyncio
 async def test_returns_all_elements_if_cursors_are_on_the_outside():
     await check(
-        'before: "{}" after: "{}"'.format(
-            base64("arrayconnection:%s" % 6), base64("arrayconnection:%s" % -1)
-        ),
+        f'before: "{base64("arrayconnection:%s" % 6)}" after: "{base64("arrayconnection:%s" % -1)}"',
         "ABCDE",
     )
 
@@ -229,9 +219,7 @@ async def test_returns_all_elements_if_cursors_are_on_the_outside():
 @mark.asyncio
 async def test_returns_no_elements_if_cursors_cross():
     await check(
-        'before: "{}" after: "{}"'.format(
-            base64("arrayconnection:%s" % 2), base64("arrayconnection:%s" % 4)
-        ),
+        f'before: "{base64("arrayconnection:%s" % 2)}" after: "{base64("arrayconnection:%s" % 4)}"',
         "",
     )
 

@@ -55,12 +55,9 @@ logs the time it takes to resolve each field
     def timing_middleware(next, root, info, **args):
         start = timer()
         return_value = next(root, info, **args)
-        duration = timer() - start
-        logger.debug("{parent_type}.{field_name}: {duration} ms".format(
-            parent_type=root._meta.name if root and hasattr(root, '_meta') else '',
-            field_name=info.field_name,
-            duration=round(duration * 1000, 2)
-        ))
+        duration = round((timer() - start) * 1000, 2)
+        parent_type_name = root._meta.name if root and hasattr(root, '_meta') else ''
+        logger.debug(f"{parent_type_name}.{info.field_name}: {duration} ms")
         return return_value
 
 
