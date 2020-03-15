@@ -93,33 +93,29 @@ class Node(AbstractNode):
         except Exception as e:
             raise Exception(
                 (
-                    'Unable to parse global ID "{global_id}". '
+                    f"Unable to parse global ID \"{global_id}\". "
                     'Make sure it is a base64 encoded string in the format: "TypeName:id". '
-                    "Exception message: {exception}".format(
-                        global_id=global_id, exception=str(e)
-                    )
+                    f"Exception message: {str(e)}"
                 )
             )
 
         graphene_type = info.schema.get_type(_type)
         if graphene_type is None:
             raise Exception(
-                'Relay Node "{_type}" not found in schema'.format(_type=_type)
+                f"Relay Node \"{_type}\" not found in schema"
             )
 
         graphene_type = graphene_type.graphene_type
 
         if only_type:
-            assert graphene_type == only_type, ("Must receive a {} id.").format(
-                only_type._meta.name
+            assert graphene_type == only_type, (
+                f"Must receive a {only_type._meta.name} id."
             )
 
         # We make sure the ObjectType implements the "Node" interface
         if cls not in graphene_type._meta.interfaces:
             raise Exception(
-                'ObjectType "{_type}" does not implement the "{cls}" interface.'.format(
-                    _type=_type, cls=cls
-                )
+                f"ObjectType \"{_type}\" does not implement the \"{cls}\" interface."
             )
 
         get_node = getattr(graphene_type, "get_node", None)

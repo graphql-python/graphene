@@ -59,8 +59,8 @@ def assert_valid_root_type(type_):
     is_graphene_objecttype = inspect.isclass(type_) and issubclass(type_, ObjectType)
     is_graphql_objecttype = isinstance(type_, GraphQLObjectType)
     assert is_graphene_objecttype or is_graphql_objecttype, (
-        "Type {} is not a valid ObjectType."
-    ).format(type_)
+        f"Type {type_} is not a valid ObjectType."
+    )
 
 
 def is_graphene_type(type_):
@@ -114,7 +114,7 @@ class TypeMap(dict):
             name = graphene_type._meta.name
         except AttributeError:
             raise TypeError(
-                "Expected Graphene type, but received: {}.".format(graphene_type)
+                f"Expected Graphene type, but received: {graphene_type}."
             )
         graphql_type = self.get(name)
         if graphql_type:
@@ -133,7 +133,7 @@ class TypeMap(dict):
             graphql_type = self.construct_union(graphene_type)
         else:
             raise TypeError(
-                "Expected Graphene type, but received: {}.".format(graphene_type)
+                f"Expected Graphene type, but received: {graphene_type}."
             )
         self[name] = graphql_type
         return graphql_type
@@ -316,12 +316,12 @@ class TypeMap(dict):
                     args=args,
                     resolve=field.get_resolver(
                         self.get_resolver_for_type(
-                            graphene_type, "resolve_{}", name, field.default_value
+                            graphene_type, f"resolve_{name}", name, field.default_value
                         )
                     ),
                     subscribe=field.get_resolver(
                         self.get_resolver_for_type(
-                            graphene_type, "subscribe_{}", name, field.default_value
+                            graphene_type, f"subscribe_{name}", name, field.default_value
                         )
                     ),
                     deprecation_reason=field.deprecation_reason,
@@ -331,10 +331,9 @@ class TypeMap(dict):
             fields[field_name] = _field
         return fields
 
-    def get_resolver_for_type(self, graphene_type, pattern, name, default_value):
+    def get_resolver_for_type(self, graphene_type, func_name, name, default_value):
         if not issubclass(graphene_type, ObjectType):
             return
-        func_name = pattern.format(name)
         resolver = getattr(graphene_type, func_name, None)
         if not resolver:
             # If we don't find the resolver in the ObjectType class, then try to
@@ -366,10 +365,10 @@ class TypeMap(dict):
 
         if inspect.isclass(type_) and issubclass(type_, ObjectType):
             graphql_type = self.get(type_._meta.name)
-            assert graphql_type, "Can't find type {} in schema".format(type_._meta.name)
+            assert graphql_type, f"Can't find type {type_._meta.name} in schema"
             assert graphql_type.graphene_type == type_, (
-                "The type {} does not match with the associated graphene type {}."
-            ).format(type_, graphql_type.graphene_type)
+                f"The type {type_} does not match with the associated graphene type {graphql_type.graphene_type}."
+            )
             return graphql_type
 
         return type_
@@ -377,7 +376,7 @@ class TypeMap(dict):
     def get_resolver(self, graphene_type, name, default_value):
         if not issubclass(graphene_type, ObjectType):
             return
-        resolver = getattr(graphene_type, "resolve_{}".format(name), None)
+        resolver = getattr(graphene_type, f"resolve_{name}", None)
         if not resolver:
             # If we don't find the resolver in the ObjectType class, then try to
             # find it in each of the interfaces
@@ -385,7 +384,7 @@ class TypeMap(dict):
             for interface in graphene_type._meta.interfaces:
                 if name not in interface._meta.fields:
                     continue
-                interface_resolver = getattr(interface, "resolve_{}".format(name), None)
+                interface_resolver = getattr(interface, f"resolve_{name}", None)
                 if interface_resolver:
                     break
             resolver = interface_resolver
@@ -458,7 +457,7 @@ class Schema:
         """
         _type = self.graphql_schema.get_type(type_name)
         if _type is None:
-            raise AttributeError('Type "{}" not found in the Schema'.format(type_name))
+            raise AttributeError(f'Type "{type_name}" not found in the Schema')
         if isinstance(_type, GrapheneGraphQLType):
             return _type.graphene_type
         return _type

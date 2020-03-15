@@ -82,8 +82,8 @@ class Mutation(ObjectType):
 
         for interface in interfaces:
             assert issubclass(interface, Interface), (
-                'All interfaces of {} must be a subclass of Interface. Received "{}".'
-            ).format(cls.__name__, interface)
+                f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
+            )
             fields.update(interface._meta.fields)
 
         if not output:
@@ -100,11 +100,11 @@ class Mutation(ObjectType):
                 if input_class:
                     warn_deprecation(
                         (
-                            "Please use {name}.Arguments instead of {name}.Input."
+                            f"Please use {cls.__name__}.Arguments instead of {cls.__name__}.Input."
                             " Input is now only used in ClientMutationID.\n"
                             "Read more:"
                             " https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#mutation-input"
-                        ).format(name=cls.__name__)
+                        )
                     )
 
             if input_class:
