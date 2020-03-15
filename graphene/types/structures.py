@@ -14,7 +14,8 @@ class Structure(UnmountedType):
             cls_name = type(self).__name__
             of_type_name = type(of_type).__name__
             raise Exception(
-                f"{cls_name} could not have a mounted {of_type_name}() as inner type. Try with {cls_name}({of_type_name})."
+                f"{cls_name} could not have a mounted {of_type_name}()"
+                f" as inner type. Try with {cls_name}({of_type_name})."
             )
         self._of_type = of_type
 

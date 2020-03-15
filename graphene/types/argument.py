@@ -94,7 +94,8 @@ def to_arguments(args, extra_args=None):
 
         if isinstance(arg, (InputField, Field)):
             raise ValueError(
-                f"Expected {default_name} to be Argument, but received {type(arg).__name__}. Try using Argument({arg.type})."
+                f"Expected {default_name} to be Argument, "
+                f"but received {type(arg).__name__}. Try using Argument({arg.type})."
             )
 
         if not isinstance(arg, Argument):
