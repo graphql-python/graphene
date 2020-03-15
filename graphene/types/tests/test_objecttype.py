@@ -275,3 +275,12 @@ def test_objecttype_meta_with_annotations():
 
     schema = Schema(query=Query)
     assert schema is not None
+
+
+def test_objecttype_meta_extra_fields():
+    class Query(ObjectType):
+        class Meta:
+            name = "MyQuery"
+            foo = "bar"
+
+    assert Query._meta.foo == "bar"
