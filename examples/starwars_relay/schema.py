@@ -64,10 +64,10 @@ class Query(graphene.ObjectType):
     empire = graphene.Field(Faction)
     node = relay.Node.Field()
 
-    def resolve_rebels(self, info):
+    def resolve_rebels(root, info):
         return get_rebels()
 
-    def resolve_empire(self, info):
+    def resolve_empire(root, info):
         return get_empire()
 
 
