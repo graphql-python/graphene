@@ -372,31 +372,6 @@ class TypeMap(dict):
 
         return type_
 
-    def get_resolver(self, graphene_type, name, default_value):
-        if not issubclass(graphene_type, ObjectType):
-            return
-        resolver = getattr(graphene_type, f"resolve_{name}", None)
-        if not resolver:
-            # If we don't find the resolver in the ObjectType class, then try to
-            # find it in each of the interfaces
-            interface_resolver = None
-            for interface in graphene_type._meta.interfaces:
-                if name not in interface._meta.fields:
-                    continue
-                interface_resolver = getattr(interface, f"resolve_{name}", None)
-                if interface_resolver:
-                    break
-            resolver = interface_resolver
-
-        # Only if is not decorated with classmethod
-        if resolver:
-            return get_unbound_function(resolver)
-
-        default_resolver = (
-            graphene_type._meta.default_resolver or get_default_resolver()
-        )
-        return partial(default_resolver, name, default_value)
-
 
 class Schema:
     """Schema Definition.
