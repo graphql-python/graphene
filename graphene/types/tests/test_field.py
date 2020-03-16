@@ -66,6 +66,13 @@ def test_field_source():
     assert field.resolver(MyInstance(), None) == MyInstance.value
 
 
+def test_field_source_dict_or_attr():
+    MyType = object()
+    field = Field(MyType, source="value")
+    assert field.resolver(MyInstance(), None) == MyInstance.value
+    assert field.resolver({"value": MyInstance.value}, None) == MyInstance.value
+
+
 def test_field_with_lazy_type():
     MyType = object()
     field = Field(lambda: MyType)
