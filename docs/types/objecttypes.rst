@@ -158,6 +158,22 @@ You can then execute the following query:
         }
     }
 
+*Note:* There are several arguments to a field that are "reserved" by Graphene
+(see :ref:`fields-mounted-types`).
+You can still define an argument that clashes with one of these fields by using
+the ``args`` parameter like so:
+
+.. code:: python
+
+    from graphene import ObjectType, Field, String
+
+    class Query(ObjectType):
+        answer = String(args={'description': String()})
+
+        def resolve_answer(parent, info, description):
+            return description
+
+
 Convenience Features of Graphene Resolvers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

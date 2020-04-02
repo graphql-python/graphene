@@ -20,6 +20,8 @@ Object types
 .. autoclass:: graphene.Mutation
     :members:
 
+.. _fields-mounted-types:
+
 Fields (Mounted Types)
 ----------------------
 
