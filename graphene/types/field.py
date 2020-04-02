@@ -45,7 +45,7 @@ class Field(MountedType):
             field in the GraphQL schema.
         args (optional, Dict[str, graphene.Argument]): Arguments that can be input to the field.
             Prefer to use ``**extra_args``, unless you use an argument name that clashes with one
-            of the Field arguments presented here (see :ref:`example<Scalars>`).
+            of the Field arguments presented here (see :ref:`example<ResolverParamGraphQLArguments>`).
         resolver (optional, Callable): A function to get the value for a Field from the parent
             value object. If not set, the default resolver method for the schema is used.
         source (optional, str): attribute name to resolve for this field from the parent value
