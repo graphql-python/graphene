@@ -75,6 +75,11 @@ If you want to learn even more, you can also check the following [examples](exam
 Documentation and links to additional resources are available at
 https://docs.graphene-python.org/en/latest/
 
+## GraphQL testing clients
+ - [Firecamp](https://firecamp.io/graphql)
+ - [GraphiQL](https://github.com/graphql/graphiql)
+
+
 ## Contributing
 
 After cloning this repo, create a [virtualenv](https://virtualenv.pypa.io/en/stable/) and ensure dependencies are installed by running:
