@@ -49,4 +49,5 @@ __all__ = [
     "Union",
     "Context",
     "ResolveInfo",
+    "datetime",
 ]
