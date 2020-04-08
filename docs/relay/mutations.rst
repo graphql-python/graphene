@@ -22,8 +22,8 @@ subclass of ``relay.ClientIDMutation``.
 
         @classmethod
         def mutate_and_get_payload(cls, root, info, **input):
-            ship_name = input.ship_name
-            faction_id = input.faction_id
+            ship_name = input["ship_name"]
+            faction_id = input["faction_id"]
             ship = create_ship(ship_name, faction_id)
             faction = get_faction(faction_id)
             return IntroduceShip(ship=ship, faction=faction)
