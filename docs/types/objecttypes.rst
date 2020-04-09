@@ -52,6 +52,7 @@ Resolvers are lazily executed, so if a field is not included in a query, its res
 Each field on an *ObjectType* in Graphene should have a corresponding resolver method to fetch data. This resolver method should match the field name. For example, in the ``Person`` type above, the ``full_name`` field is resolved by the method ``resolve_full_name``.
 
 Each resolver method takes the parameters:
+
 * :ref:`ResolverParamParent` for the value object use to resolve most fields
 * :ref:`ResolverParamInfo` for query and schema meta information and per-request context
 * :ref:`ResolverParamGraphQLArguments` as defined on the **Field**.
