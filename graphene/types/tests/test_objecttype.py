@@ -35,6 +35,40 @@ class MyScalar(UnmountedType):
         return MyType
 
 
+def test_equality():
+    # instances of object with no properties are equal
+    class NoPropertiesObject(ObjectType):
+        pass
+
+    my_obj = NoPropertiesObject()
+    assert my_obj == NoPropertiesObject()
+
+
+    # different classes are unequal
+    class OtherNoPropertiesObject(ObjectType):
+        pass
+
+    assert NoPropertiesObject() != OtherNoPropertiesObject()
+
+
+    # compare instances of the same simple class
+    class MyObjectType(ObjectType):
+        prop = String()
+
+    my_obj = MyObjectType(prop="a")
+    assert my_obj == MyObjectType(prop="a")
+    assert my_obj != MyObjectType(prop="b")
+
+
+    # complex instances of the same class
+    # class contains another class in a field
+    class ParentObjectType(ObjectType):
+        child = Field(MyObjectType)
+
+    my_obj = ParentObjectType(child=MyObjectType(prop="a"))
+    assert my_obj == ParentObjectType(child=MyObjectType(prop="a"))
+    assert my_obj != ParentObjectType(child=MyObjectType(prop="b"))
+
 def test_generate_objecttype():
     class MyObjectType(ObjectType):
         """Documentation"""

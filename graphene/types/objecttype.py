@@ -118,6 +118,11 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
         **kwargs (Dict[str: Any]): Keyword arguments to use for Field values of value object
     """
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
     @classmethod
     def __init_subclass_with_meta__(
         cls,
