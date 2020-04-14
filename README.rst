@@ -67,6 +67,8 @@ Here is one example for you to get started:
 
 .. code:: python
 
+    import graphene
+
     class Query(graphene.ObjectType):
         hello = graphene.String(description='A typical hello world')
 

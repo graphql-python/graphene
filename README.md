@@ -45,6 +45,8 @@ pip install "graphene>=2.0"
 Here is one example for you to get started:
 
 ```python
+import graphene
+
 class Query(graphene.ObjectType):
     hello = graphene.String(description='A typical hello world')
 
