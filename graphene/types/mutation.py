@@ -86,7 +86,7 @@ class Mutation(ObjectType):
             ), f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
             fields.update(interface._meta.fields)
 
-        if not output:
+        if output:
             # If output is defined, we don't need to get the fields
             fields = {}
             for base in reversed(cls.__mro__):
