@@ -80,7 +80,7 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     keywords="api graphql protocol rest relay graphene",
-    packages=find_packages(exclude=["tests", "tests.*", "examples*"]),
+    packages=find_packages(exclude=["examples*"]),
     install_requires=[
         "graphql-core>=3.1.0b1,<4",
         "graphql-relay>=3.0,<4",
