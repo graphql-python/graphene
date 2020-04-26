@@ -56,6 +56,7 @@ tests_require = [
     "mock>=4.0,<5",
     "pytz==2019.3",
     "iso8601>=0.1,<2",
+    "aiodataloader<1",
 ]
 
 dev_requires = ["black==19.10b0", "flake8>=3.7,<4"] + tests_require
