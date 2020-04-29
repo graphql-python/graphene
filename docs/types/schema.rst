@@ -18,8 +18,8 @@ Schema will collect all type definitions related to the root operations and then
 A Root Query is just a special :ref:`ObjectType` that :ref:`defines the fields <Scalars>` that are the entrypoint for your API. Root Mutation and Root Subscription are similar to Root Query, but for different operation types:
 
 * Query fetches data
-* Mutation to changes data and retrieve the changes
-* Subscription to sends changes to clients in real time
+* Mutation changes data and retrieves the changes
+* Subscription sends changes to clients in real time
 
 Review the `GraphQL documentation on Schema`_ for a brief overview of fields, schema and operations.
 
@@ -56,7 +56,7 @@ In this case, we need to use the ``types`` argument when creating the Schema.
 
 .. _SchemaAutoCamelCase:
 
-Auto CamelCase field names
+Auto camelCase field names
 --------------------------
 
 By default all field and argument names (that are not
