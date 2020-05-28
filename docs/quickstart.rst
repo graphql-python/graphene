@@ -103,7 +103,7 @@ For each **Field** in our **Schema**, we write a **Resolver** method to fetch da
 Schema Definition Language (SDL)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the `GraphQL Schema Definition Language`_, we could describe the fields defined by our example code as show below.
+In the `GraphQL Schema Definition Language`_, we could describe the fields defined by our example code as shown below.
 
 .. _GraphQL Schema Definition Language: https://graphql.org/learn/schema/
 
