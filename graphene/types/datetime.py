@@ -25,7 +25,7 @@ class Date(Scalar):
         return date.isoformat()
 
     @classmethod
-    def parse_literal(cls, node):
+    def parse_literal(cls, node, _variables=None):
         if not isinstance(node, StringValueNode):
             raise GraphQLError(
                 f"Date cannot represent non-string value: {print_ast(node)}"
@@ -58,7 +58,7 @@ class DateTime(Scalar):
         return dt.isoformat()
 
     @classmethod
-    def parse_literal(cls, node):
+    def parse_literal(cls, node, _variables=None):
         if not isinstance(node, StringValueNode):
             raise GraphQLError(
                 f"DateTime cannot represent non-string value: {print_ast(node)}"
@@ -93,7 +93,7 @@ class Time(Scalar):
         return time.isoformat()
 
     @classmethod
-    def parse_literal(cls, node):
+    def parse_literal(cls, node, _variables=None):
         if not isinstance(node, StringValueNode):
             raise GraphQLError(
                 f"Time cannot represent non-string value: {print_ast(node)}"
