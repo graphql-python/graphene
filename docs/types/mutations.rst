@@ -104,7 +104,6 @@ To use an InputField you define an InputObjectType that specifies the structure 
 
         person = graphene.Field(Person)
 
-        @staticmethod
         def mutate(root, info, person_data=None):
             person = Person(
                 name=person_data.name,
