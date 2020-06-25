@@ -1,5 +1,5 @@
 # coding: utf-8
-from ..str_converters import to_camel_case, to_const, to_snake_case
+from ..str_converters import to_camel_case, to_snake_case
 
 
 def test_snake_case():
@@ -17,11 +17,3 @@ def test_camel_case():
     assert to_camel_case("snakes_on_a__plane") == "snakesOnA_Plane"
     assert to_camel_case("i_phone_hysteria") == "iPhoneHysteria"
     assert to_camel_case("field_i18n") == "fieldI18n"
-
-
-def test_to_const():
-    assert to_const('snakes $1. on a "#plane') == "SNAKES_1_ON_A_PLANE"
-
-
-def test_to_const_unicode():
-    assert to_const("Skoða þetta unicode stöff") == "SKODA_THETTA_UNICODE_STOFF"
