@@ -246,7 +246,7 @@ def test_enum_types():
         color = GColor(required=True)
 
         def resolve_color(_, info):
-            return Color.RED.value
+            return Color.RED
 
     schema = Schema(query=Query)
 
