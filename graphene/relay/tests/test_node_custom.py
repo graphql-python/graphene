@@ -11,7 +11,7 @@ class CustomNode(Node):
         name = "Node"
 
     @staticmethod
-    def to_global_id(type, id):
+    def to_global_id(type_, id):
         return id
 
     @staticmethod

@@ -117,19 +117,19 @@ def connection_adapter(cls, edges, pageInfo):
 
 
 class IterableConnectionField(Field):
-    def __init__(self, type, *args, **kwargs):
+    def __init__(self, type_, *args, **kwargs):
         kwargs.setdefault("before", String())
         kwargs.setdefault("after", String())
         kwargs.setdefault("first", Int())
         kwargs.setdefault("last", Int())
-        super(IterableConnectionField, self).__init__(type, *args, **kwargs)
+        super(IterableConnectionField, self).__init__(type_, *args, **kwargs)
 
     @property
     def type(self):
-        type = super(IterableConnectionField, self).type
-        connection_type = type
-        if isinstance(type, NonNull):
-            connection_type = type.of_type
+        type_ = super(IterableConnectionField, self).type
+        connection_type = type_
+        if isinstance(type_, NonNull):
+            connection_type = type_.of_type
 
         if is_node(connection_type):
             raise Exception(
@@ -140,7 +140,7 @@ class IterableConnectionField(Field):
         assert issubclass(
             connection_type, Connection
         ), f'{self.__class__.__name__} type has to be a subclass of Connection. Received "{connection_type}".'
-        return type
+        return type_
 
     @classmethod
     def resolve_connection(cls, connection_type, args, resolved):

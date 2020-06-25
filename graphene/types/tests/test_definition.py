@@ -234,10 +234,10 @@ def test_stringifies_simple_types():
 #         (InputObjectType, True)
 #     )
 
-#     for type, answer in expected:
-#         assert is_input_type(type) == answer
-#         assert is_input_type(GraphQLList(type)) == answer
-#         assert is_input_type(GraphQLNonNull(type)) == answer
+#     for type_, answer in expected:
+#         assert is_input_type(type_) == answer
+#         assert is_input_type(GraphQLList(type_)) == answer
+#         assert is_input_type(GraphQLNonNull(type_)) == answer
 
 
 # def test_identifies_output_types():

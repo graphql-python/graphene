@@ -40,7 +40,7 @@ class Argument(MountedType):
 
     def __init__(
         self,
-        type,
+        type_,
         default_value=None,
         description=None,
         name=None,
@@ -50,10 +50,10 @@ class Argument(MountedType):
         super(Argument, self).__init__(_creation_counter=_creation_counter)
 
         if required:
-            type = NonNull(type)
+            type_ = NonNull(type_)
 
         self.name = name
-        self._type = type
+        self._type = type_
         self.default_value = default_value
         self.description = description
 

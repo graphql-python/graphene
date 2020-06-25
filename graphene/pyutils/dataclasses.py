@@ -845,7 +845,9 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
     # Now find fields in our class.  While doing so, validate some
     # things, and set the default values (as class attributes) where
     # we can.
-    cls_fields = [_get_field(cls, name, type) for name, type in cls_annotations.items()]
+    cls_fields = [
+        _get_field(cls, name, type_) for name, type_ in cls_annotations.items()
+    ]
     for f in cls_fields:
         fields[f.name] = f
 
