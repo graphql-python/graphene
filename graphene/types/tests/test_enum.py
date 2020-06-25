@@ -234,8 +234,10 @@ def test_enum_types():
     from enum import Enum as PyEnum
 
     class Color(PyEnum):
+        """Primary colors"""
+
         RED = 1
-        GREEN = 2
+        YELLOW = 2
         BLUE = 3
 
     GColor = Enum.from_enum(Color)
@@ -250,15 +252,15 @@ def test_enum_types():
 
     assert str(schema) == dedent(
         '''\
-        """An enumeration."""
-        enum Color {
-          RED
-          GREEN
-          BLUE
-        }
-
         type Query {
           color: Color!
+        }
+
+        """Primary colors"""
+        enum Color {
+          RED
+          YELLOW
+          BLUE
         }
     '''
     )
