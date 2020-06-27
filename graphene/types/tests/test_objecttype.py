@@ -306,3 +306,10 @@ def test_objecttype_meta_arguments():
 
     assert MyType._meta.interfaces == [MyInterface]
     assert list(MyType._meta.fields.keys()) == ["foo", "bar"]
+
+
+def test_objecttype_type_name():
+    class MyObjectType(ObjectType, name="FooType"):
+        pass
+
+    assert MyObjectType._meta.name == "FooType"
