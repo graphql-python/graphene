@@ -20,12 +20,14 @@ class ObjectTypeOptions(BaseOptions):
 
 
 class ObjectTypeMeta(BaseTypeMeta):
-    def __new__(cls, name, bases, namespace):
+    def __new__(cls, name, bases, namespace, **kwargs):
         # We create this type, to then overload it with the dataclass attrs
         class InterObjectType:
             pass
 
-        base_cls = super().__new__(cls, name, (InterObjectType,) + bases, namespace)
+        base_cls = super().__new__(
+            cls, name, (InterObjectType,) + bases, namespace, **kwargs
+        )
         if base_cls._meta:
             fields = [
                 (
