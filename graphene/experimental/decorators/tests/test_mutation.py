@@ -179,30 +179,25 @@ def test_mutation_complex_input():
         name = String(required=True)
         email = String(required=True)
 
-    class CreateUserSuccess(ObjectType):
+    MUTATION_PREFIX = "CreateUser"
+
+    class Success(ObjectType, type_name=f"{MUTATION_PREFIX}Success"):
         user = Field(User, required=True)
 
-    class CreateUserError(ObjectType):
+    class Error(ObjectType, type_name=f"{MUTATION_PREFIX}Error"):
         error_message = String(required=True)
 
-    class CreateUserOutput(Union):
-        class Meta:
-            types = [
-                CreateUserSuccess,
-                CreateUserError,
-            ]
-
-    class CreateUserInput(InputObjectType):
+    class Input(InputObjectType, type_name=f"{MUTATION_PREFIX}Input"):
         name = String(required=True)
         email = String(required=True)
 
     @mutation(
-        CreateUserOutput,
+        Union.create_type(f"{MUTATION_PREFIX}Output", types=[Success, Error]),
         required=True,
-        arguments={"user": CreateUserInput(required=True)},
+        arguments={"user": Input(required=True)},
     )
     def create_user(root, info, user):
-        return CreateUserSuccess(user=User(**user))
+        return Success(user=User(**user))
 
     class Query(ObjectType):
         a = String()
