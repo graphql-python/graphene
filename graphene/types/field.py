@@ -64,7 +64,7 @@ class Field(MountedType):
 
     def __init__(
         self,
-        type,
+        type_,
         args=None,
         resolver=None,
         source=None,
@@ -88,7 +88,7 @@ class Field(MountedType):
         ), f'The default value can not be a function but received "{base_type(default_value)}".'
 
         if required:
-            type = NonNull(type)
+            type_ = NonNull(type_)
 
         # Check if name is actually an argument of the field
         if isinstance(name, (Argument, UnmountedType)):
@@ -101,7 +101,7 @@ class Field(MountedType):
             source = None
 
         self.name = name
-        self._type = type
+        self._type = type_
         self.args = to_arguments(args or {}, extra_args)
         if source:
             resolver = partial(source_resolver, source)

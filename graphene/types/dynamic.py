@@ -10,10 +10,10 @@ class Dynamic(MountedType):
     the schema. So we can have lazy fields.
     """
 
-    def __init__(self, type, with_schema=False, _creation_counter=None):
+    def __init__(self, type_, with_schema=False, _creation_counter=None):
         super(Dynamic, self).__init__(_creation_counter=_creation_counter)
-        assert inspect.isfunction(type) or isinstance(type, partial)
-        self.type = type
+        assert inspect.isfunction(type_) or isinstance(type_, partial)
+        self.type = type_
         self.with_schema = with_schema
 
     def get_type(self, schema=None):

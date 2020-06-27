@@ -47,15 +47,15 @@ class GlobalID(Field):
 
 
 class NodeField(Field):
-    def __init__(self, node, type=False, **kwargs):
+    def __init__(self, node, type_=False, **kwargs):
         assert issubclass(node, Node), "NodeField can only operate in Nodes"
         self.node_type = node
-        self.field_type = type
+        self.field_type = type_
 
         super(NodeField, self).__init__(
             # If we don's specify a type, the field type will be the node
             # interface
-            type or node,
+            type_ or node,
             id=ID(required=True, description="The ID of the object"),
             **kwargs,
         )
@@ -125,5 +125,5 @@ class Node(AbstractNode):
         return from_global_id(global_id)
 
     @classmethod
-    def to_global_id(cls, type, id):
-        return to_global_id(type, id)
+    def to_global_id(cls, type_, id):
+        return to_global_id(type_, id)
