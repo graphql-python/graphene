@@ -42,7 +42,7 @@ from .enum import Enum
 from .field import Field
 from .inputobjecttype import InputObjectType
 from .interface import Interface
-from .objecttype import ObjectType
+from .objecttype import ObjectType, ObjectTypeOptions
 from .resolver import get_default_resolver
 from .scalars import ID, Boolean, Float, Int, Scalar, String
 from .structures import List, NonNull
@@ -74,6 +74,17 @@ def is_graphene_type(type_):
 
 def is_type_of_from_possible_types(possible_types, root, _info):
     return isinstance(root, possible_types)
+
+
+def convert_mutation_list_to_mutation_type(mutations):
+    fields = {}
+    for mutation in mutations:
+        assert isinstance(mutation, Field)
+        fields[mutation.name] = mutation
+
+    options = ObjectTypeOptions(ObjectType)
+    options.fields = fields
+    return ObjectType.create_type("Mutation", _meta=options)
 
 
 class TypeMap(dict):
@@ -385,6 +396,7 @@ class Schema:
             data in your Schema.
         mutation (Optional[Type[ObjectType]]): Root mutation *ObjectType*. Describes entry point for
             fields to *create, update or delete* data in your API.
+        mutations (Optional[Type[Field]]): List of mutation fields to *create, update or delete* data in your API.
         subscription (Optional[Type[ObjectType]]): Root subscription *ObjectType*. Describes entry point
             for fields to receive continuous updates.
         types (Optional[List[Type[ObjectType]]]): List of any types to include in schema that
@@ -400,16 +412,32 @@ class Schema:
         self,
         query=None,
         mutation=None,
+        mutations=None,
         subscription=None,
         types=None,
         directives=None,
         auto_camelcase=True,
     ):
         self.query = query
-        self.mutation = mutation
+
+        if mutation is not None and mutations is not None:
+            raise Exception(
+                "Both the `mutation` and `mutations` arguments cannot be set when instantiating the Schema. "
+                "Choose one or the other."
+            )
+
+        if mutations is not None:
+            self.mutation = convert_mutation_list_to_mutation_type(mutations)
+        elif mutation is not None:
+            self.mutation = mutation
+
         self.subscription = subscription
         type_map = TypeMap(
-            query, mutation, subscription, types, auto_camelcase=auto_camelcase
+            self.query,
+            self.mutation,
+            self.subscription,
+            types,
+            auto_camelcase=auto_camelcase,
         )
         self.graphql_schema = GraphQLSchema(
             type_map.query,
