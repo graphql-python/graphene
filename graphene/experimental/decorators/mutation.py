@@ -6,6 +6,7 @@ from graphene.types.inputobjecttype import InputObjectType
 from graphene.types.scalars import Scalar
 from graphene.types.utils import get_underlying_type
 from graphene.utils.str_converters import to_camel_case
+from graphene.utils.trim_docstring import trim_docstring
 
 
 class MutationInvalidArgumentsError(Exception):
@@ -35,7 +36,9 @@ def mutation(return_type, arguments=None, **kwargs):
 
     def decorate(resolver_function):
         name = kwargs.pop("name", None) or resolver_function.__name__
-        description = kwargs.pop("description", None) or resolver_function.__doc__
+        description = kwargs.pop("description", None) or trim_docstring(
+            resolver_function.__doc__
+        )
 
         invalid_arguments = []
         for argument_name, argument in arguments.items():
