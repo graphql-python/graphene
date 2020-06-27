@@ -1,8 +1,10 @@
+import inspect
 from typing import List
 
 from graphene.types.field import Field
 from graphene.types.inputobjecttype import InputObjectType
 from graphene.types.scalars import Scalar
+from graphene.types.utils import get_underlying_type
 from graphene.utils.str_converters import to_camel_case
 
 
@@ -37,9 +39,11 @@ def mutation(return_type, arguments=None, **kwargs):
 
         invalid_arguments = []
         for argument_name, argument in arguments.items():
-            if not (
-                isinstance(argument, Scalar) or isinstance(argument, InputObjectType)
-            ):
+            if inspect.isclass(argument):
+                type_ = argument
+            else:
+                type_ = get_underlying_type(argument.get_type())
+            if not (issubclass(type_, Scalar) or issubclass(type_, InputObjectType)):
                 invalid_arguments.append(argument_name)
 
         if len(invalid_arguments) > 0:

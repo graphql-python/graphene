@@ -2,7 +2,17 @@ from textwrap import dedent
 
 import pytest
 
-from graphene import Boolean, Field, InputObjectType, ObjectType, Schema, String, Union
+from graphene import (
+    Boolean,
+    Field,
+    InputObjectType,
+    ObjectType,
+    Schema,
+    String,
+    Union,
+    List,
+    NonNull,
+)
 
 from ..mutation import mutation, MutationInvalidArgumentsError
 
@@ -251,6 +261,69 @@ def test_mutation_complex_input():
     )
 
 
+def test_mutation_list_input():
+    class User(ObjectType):
+        name = String(required=True)
+        email = String(required=True)
+
+    class CreateUsersSuccess(ObjectType):
+        users = List(NonNull(User), required=True)
+
+    class CreateUsersError(ObjectType):
+        error_message = String(required=True)
+
+    class CreateUsersOutput(Union):
+        class Meta:
+            types = [
+                CreateUsersSuccess,
+                CreateUsersError,
+            ]
+
+    class CreateUserInput(InputObjectType):
+        name = String(required=True)
+        email = String(required=True)
+
+    @mutation(
+        CreateUsersOutput,
+        required=True,
+        arguments={"users": List(NonNull(CreateUserInput), required=True)},
+    )
+    def create_users(root, info, users):
+        return CreateUsersSuccess(users=[User(**user) for user in users])
+
+    class Query(ObjectType):
+        a = String()
+
+    schema = Schema(query=Query, mutations=[create_users])
+    result = schema.execute(
+        """
+        mutation CreateUserMutation {
+            createUsers(
+                users: [
+                    { name: "Kate", email: "kate@example.com" },
+                    { name: "Jo", email: "jo@example.com" },
+                ]
+            ) {
+                __typename
+                ... on CreateUsersSuccess {
+                    users {
+                        name
+                    }
+                }
+            }
+        }
+    """
+    )
+
+    assert not result.errors
+    assert result.data == {
+        "createUsers": {
+            "__typename": "CreateUsersSuccess",
+            "users": [{"name": "Kate"}, {"name": "Jo"}],
+        }
+    }
+
+
 def test_raises_error_invalid_input():
     class User(ObjectType):
         name = String(required=True)
@@ -279,5 +352,18 @@ def test_raises_error_invalid_input():
 
     assert str(validation_error.value) == (
         "Arguments `user` and `user2` are not valid types in mutation `create_user2`. "
+        "Arguments to a mutation need to be either a Scalar type or an InputObjectType."
+    )
+
+    with pytest.raises(MutationInvalidArgumentsError) as validation_error:
+
+        @mutation(
+            Boolean, required=True, arguments={"users": List(User)},
+        )
+        def create_user3(root, info, user):
+            return True
+
+    assert str(validation_error.value) == (
+        "Argument `users` is not a valid type in mutation `create_user3`. "
         "Arguments to a mutation need to be either a Scalar type or an InputObjectType."
     )
