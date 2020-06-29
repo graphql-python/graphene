@@ -350,98 +350,221 @@ def test_enum_resolver_invalid():
     )
 
 
-def test_enum_mutation():
-    from enum import Enum as PyEnum
-
-    class Color(PyEnum):
+def test_field_enum_argument():
+    class Color(Enum):
         RED = 1
         GREEN = 2
         BLUE = 3
 
-    GColor = Enum.from_enum(Color)
+    class Brick(ObjectType):
+        color = Color(required=True)
 
-    my_fav_color = None
+    color_filter = None
 
     class Query(ObjectType):
-        fav_color = GColor(required=True)
+        bricks_by_color = Field(Brick, color=Color(required=True))
 
-        def resolve_fav_color(_, info):
-            return my_fav_color
+        def resolve_bricks_by_color(_, info, color):
+            nonlocal color_filter
+            color_filter = color
+            return Brick(color=color)
 
-    class SetFavColor(Mutation):
-        class Arguments:
-            fav_color = Argument(GColor, required=True)
-
-        Output = Query
-
-        def mutate(self, info, fav_color):
-            nonlocal my_fav_color
-            my_fav_color = fav_color
-            return Query()
-
-    class MyMutations(ObjectType):
-        set_fav_color = SetFavColor.Field()
-
-    schema = Schema(query=Query, mutation=MyMutations)
+    schema = Schema(query=Query)
 
     results = schema.execute(
-        """mutation {
-            setFavColor(favColor: RED) {
-                favColor
+        """
+        query {
+            bricksByColor(color: RED) {
+                color
             }
-        }"""
+        }
+    """
     )
     assert not results.errors
-
-    assert my_fav_color == Color.RED
-
-    assert results.data["setFavColor"]["favColor"] == Color.RED.name
+    assert results.data == {"bricksByColor": {"color": "RED"}}
+    assert color_filter == Color.RED
 
 
-def test_enum_mutation_compat():
-    from enum import Enum as PyEnum
+def test_mutation_enum_input():
+    class RGB(Enum):
+        """Available colors"""
 
-    class Color(PyEnum):
         RED = 1
         GREEN = 2
         BLUE = 3
 
-    GColor = Enum.from_enum(Color)
+    color_input = None
 
-    my_fav_color = None
+    class CreatePaint(Mutation):
+        class Arguments:
+            color = RGB(required=True)
+
+        color = RGB(required=True)
+
+        def mutate(_, info, color):
+            nonlocal color_input
+            color_input = color
+            return CreatePaint(color=color)
+
+    class MyMutation(ObjectType):
+        create_paint = CreatePaint.Field()
 
     class Query(ObjectType):
-        fav_color = GColor(required=True)
+        a = String()
 
-        def resolve_fav_color(_, info):
-            return my_fav_color
+    schema = Schema(query=Query, mutation=MyMutation)
+    result = schema.execute(
+        """ mutation MyMutation {
+        createPaint(color: RED) {
+            color
+        }
+    }
+    """
+    )
+    assert not result.errors
+    assert result.data == {"createPaint": {"color": "RED"}}
 
-    class SetFavColor(Mutation):
+    assert color_input == RGB.RED
+
+
+def test_mutation_enum_input_type():
+    class RGB(Enum):
+        """Available colors"""
+
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    class ColorInput(InputObjectType):
+        color = RGB(required=True)
+
+    color_input_value = None
+
+    class CreatePaint(Mutation):
         class Arguments:
-            fav_color = Argument(GColor, required=True)
+            color_input = ColorInput(required=True)
 
-        Output = Query
+        color = RGB(required=True)
 
-        def mutate(self, info, fav_color):
-            nonlocal my_fav_color
-            my_fav_color = fav_color
-            return Query()
+        def mutate(_, info, color_input):
+            nonlocal color_input_value
+            color_input_value = color_input.color
+            return CreatePaint(color=color_input.color)
 
-    class MyMutations(ObjectType):
-        set_fav_color = SetFavColor.Field()
+    class MyMutation(ObjectType):
+        create_paint = CreatePaint.Field()
 
-    schema = Schema(query=Query, mutation=MyMutations)
+    class Query(ObjectType):
+        a = String()
 
-    results = schema.execute(
-        """mutation {
-            setFavColor(favColor: RED) {
-                favColor
-            }
-        }""",
+    schema = Schema(query=Query, mutation=MyMutation)
+    result = schema.execute(
+        """ mutation MyMutation {
+        createPaint(colorInput: { color: RED }) {
+            color
+        }
+    }
+    """,
+    )
+    assert not result.errors
+    assert result.data == {"createPaint": {"color": "RED"}}
+
+    assert color_input_value == RGB.RED
+
+
+def test_mutation_enum_input_compatability_middleware():
+    """Test the `enum_value_convertor_middleware`"""
+
+    class RGB(Enum):
+        """Available colors"""
+
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    color_input = None
+
+    class CreatePaint(Mutation):
+        class Arguments:
+            color = RGB(required=True)
+
+        color = RGB(required=True)
+
+        def mutate(_, info, color):
+            nonlocal color_input
+            color_input = color
+            return CreatePaint(color=color)
+
+    class MyMutation(ObjectType):
+        create_paint = CreatePaint.Field()
+
+    class Query(ObjectType):
+        a = String()
+
+    schema = Schema(query=Query, mutation=MyMutation)
+    result = schema.execute(
+        """ mutation MyMutation {
+        createPaint(color: RED) {
+            color
+        }
+    }
+    """,
         middleware=[enum_value_convertor_middleware],
     )
-    assert not results.errors
+    assert not result.errors
+    assert result.data == {"createPaint": {"color": "RED"}}
 
-    assert my_fav_color == Color.RED.value
+    assert color_input == 1
+    assert type(color_input) == int
 
-    assert results.data["setFavColor"]["favColor"] == Color.RED.name
+
+def test_mutation_enum_input_compatability_middleware_input_type():
+    """Test the `enum_value_convertor_middleware`"""
+
+    class RGB(Enum):
+        """Available colors"""
+
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    class SecondColorInput(InputObjectType):
+        color = RGB(required=True)
+
+    class ColorInput(InputObjectType):
+        color_input = SecondColorInput(required=True)
+
+    color_input_value = None
+
+    class CreatePaint(Mutation):
+        class Arguments:
+            color_input = ColorInput(required=True)
+
+        color = RGB(required=True)
+
+        def mutate(_, info, color_input):
+            nonlocal color_input_value
+            color_input_value = color_input.color_input.color
+            return CreatePaint(color=color_input_value)
+
+    class MyMutation(ObjectType):
+        create_paint = CreatePaint.Field()
+
+    class Query(ObjectType):
+        a = String()
+
+    schema = Schema(query=Query, mutation=MyMutation)
+    result = schema.execute(
+        """ mutation MyMutation {
+        createPaint(colorInput: { colorInput: { color: RED } }) {
+            color
+        }
+    }
+    """,
+        middleware=[enum_value_convertor_middleware],
+    )
+    assert not result.errors
+    assert result.data == {"createPaint": {"color": "RED"}}
+
+    assert color_input_value == 1
+    assert type(color_input_value) == int
