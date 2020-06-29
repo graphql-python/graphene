@@ -59,3 +59,12 @@ def test_schema_str():
 def test_schema_introspect():
     schema = Schema(Query)
     assert "__schema" in schema.introspect()
+
+
+def test_schema_requires_query_type():
+    schema = Schema()
+    result = schema.execute("query {}")
+
+    assert len(result.errors) == 1
+    error = result.errors[0]
+    assert error.message == "Query root type must be provided."

@@ -48,7 +48,11 @@ So, we can finish our schema like this:
     class MyMutations(graphene.ObjectType):
         create_person = CreatePerson.Field()
 
-    schema = graphene.Schema(mutation=MyMutations)
+    # We must define a query for our schema
+    class Query(graphene.ObjectType):
+        person = graphene.Field(Person)
+
+    schema = graphene.Schema(query=Query, mutation=MyMutations)
 
 Executing the Mutation
 ----------------------

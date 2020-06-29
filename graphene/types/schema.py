@@ -381,7 +381,7 @@ class Schema:
     questions about the types through introspection.
 
     Args:
-        query (Optional[Type[ObjectType]]): Root query *ObjectType*. Describes entry point for fields to *read*
+        query (Type[ObjectType]): Root query *ObjectType*. Describes entry point for fields to *read*
             data in your Schema.
         mutation (Optional[Type[ObjectType]]): Root mutation *ObjectType*. Describes entry point for
             fields to *create, update or delete* data in your API.
