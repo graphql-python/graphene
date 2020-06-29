@@ -295,3 +295,21 @@ def test_objecttype_meta_with_annotations():
 
     schema = Schema(query=Query)
     assert schema is not None
+
+
+def test_objecttype_meta_arguments():
+    class MyInterface(Interface):
+        foo = String()
+
+    class MyType(ObjectType, interfaces=[MyInterface]):
+        bar = String()
+
+    assert MyType._meta.interfaces == [MyInterface]
+    assert list(MyType._meta.fields.keys()) == ["foo", "bar"]
+
+
+def test_objecttype_type_name():
+    class MyObjectType(ObjectType, name="FooType"):
+        pass
+
+    assert MyObjectType._meta.name == "FooType"
