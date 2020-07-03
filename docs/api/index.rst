@@ -64,6 +64,8 @@ Graphene Scalars
 
 .. autoclass:: graphene.JSONString()
 
+.. autoclass:: graphene.Base64()
+
 Enum
 ----
 
