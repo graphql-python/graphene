@@ -1,3 +1,5 @@
+from textwrap import dedent
+
 from graphql.type import (
     GraphQLArgument,
     GraphQLEnumType,
@@ -270,3 +272,44 @@ def test_objecttype_with_possible_types():
     assert graphql_type.is_type_of
     assert graphql_type.is_type_of({}, None) is True
     assert graphql_type.is_type_of(MyObjectType(), None) is False
+
+
+def test_graphql_type():
+    """Type map should allow direct GraphQL types"""
+    MyGraphQLType = GraphQLObjectType(
+        name="MyGraphQLType",
+        fields={
+            "hello": GraphQLField(GraphQLString, resolve=lambda obj, info: "world")
+        },
+    )
+
+    class Query(ObjectType):
+        graphql_type = Field(MyGraphQLType)
+
+        def resolve_graphql_type(root, info):
+            return {}
+
+    schema = Schema(query=Query)
+    assert str(schema) == dedent(
+        """\
+        type Query {
+          graphqlType: MyGraphQLType
+        }
+
+        type MyGraphQLType {
+          hello: String
+        }
+    """
+    )
+
+    results = schema.execute(
+        """
+        query {
+            graphqlType {
+                hello
+            }
+        }
+    """
+    )
+    assert not results.errors
+    assert results.data == {"graphqlType": {"hello": "world"}}

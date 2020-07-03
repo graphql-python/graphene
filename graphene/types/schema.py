@@ -23,6 +23,7 @@ from graphql import (
     GraphQLObjectType,
     GraphQLSchema,
     GraphQLString,
+    GraphQLType,
     Undefined,
 )
 
@@ -106,6 +107,11 @@ class TypeMap(dict):
     def add_type(self, graphene_type):
         if inspect.isfunction(graphene_type):
             graphene_type = graphene_type()
+
+        # If type is a GraphQLType from graphql-core then return it immediately
+        if isinstance(graphene_type, GraphQLType):
+            return graphene_type
+
         if isinstance(graphene_type, List):
             return GraphQLList(self.add_type(graphene_type.of_type))
         if isinstance(graphene_type, NonNull):
