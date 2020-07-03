@@ -3,6 +3,11 @@
 Scalars
 =======
 
+Scalar types represent concrete values at the leaves of a query. There are
+several built in types that Graphene provides out of the box which represent common
+values in Python. You can also create your own Scalar types to better express
+values that you might have in your data model.
+
 All Scalar types accept the following arguments. All are optional:
 
 ``name``: *string*
@@ -27,34 +32,39 @@ All Scalar types accept the following arguments. All are optional:
 
 
 
-Base scalars
-------------
+Built in scalars
+----------------
 
-Graphene defines the following base Scalar Types:
+Graphene defines the following base Scalar Types that match the default `GraphQL types <https://graphql.org/learn/schema/#scalar-types>`_:
 
 ``graphene.String``
+^^^^^^^^^^^^^^^^^^^
 
     Represents textual data, represented as UTF-8
     character sequences. The String type is most often used by GraphQL to
     represent free-form human-readable text.
 
 ``graphene.Int``
+^^^^^^^^^^^^^^^^
 
     Represents non-fractional signed whole numeric
     values. Int is a signed 32‐bit integer per the
     `GraphQL spec <https://facebook.github.io/graphql/June2018/#sec-Int>`_
 
 ``graphene.Float``
+^^^^^^^^^^^^^^^^^^
 
     Represents signed double-precision fractional
     values as specified by
     `IEEE 754 <http://en.wikipedia.org/wiki/IEEE_floating_point>`_.
 
 ``graphene.Boolean``
+^^^^^^^^^^^^^^^^^^^^
 
     Represents `true` or `false`.
 
 ``graphene.ID``
+^^^^^^^^^^^^^^^
 
     Represents a unique identifier, often used to
     refetch an object or as key for a cache. The ID type appears in a JSON
@@ -62,9 +72,12 @@ Graphene defines the following base Scalar Types:
     When expected as an input type, any string (such as `"4"`) or integer
     (such as `4`) input value will be accepted as an ID.
 
-Graphene also provides custom scalars for common types:
+----
+
+Graphene also provides custom scalars for common values:
 
 ``graphene.Date``
+^^^^^^^^^^^^^^^^^
 
     Represents a Date value as specified by `iso8601 <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
@@ -92,6 +105,7 @@ Graphene also provides custom scalars for common types:
 
 
 ``graphene.DateTime``
+^^^^^^^^^^^^^^^^^^^^^
 
     Represents a DateTime value as specified by `iso8601 <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
@@ -118,6 +132,7 @@ Graphene also provides custom scalars for common types:
     assert results.data == {"oneHourFrom": "2006-01-02T16:04:05"}
 
 ``graphene.Time``
+^^^^^^^^^^^^^^^^^
 
     Represents a Time value as specified by `iso8601 <https://en.wikipedia.org/wiki/ISO_8601>`_.
 
@@ -144,7 +159,35 @@ Graphene also provides custom scalars for common types:
 
     assert results.data == {"oneHourFrom": "16:04:05"}
 
+``graphene.Decimal``
+^^^^^^^^^^^^^^^^^^^^
+
+    Represents a Python Decimal value.
+
+.. code:: python
+
+    import decimal
+    from graphene import Schema, ObjectType, Decimal
+
+    class Query(ObjectType):
+        add_one_to = Decimal(required=True, decimal_input=Decimal(required=True))
+
+        def resolve_add_one_to(root, info, decimal_input):
+            assert decimal_input == decimal.Decimal("10.50")
+            return decimal_input + decimal.Decimal("1")
+
+    schema = Schema(query=Query)
+
+    results = schema.execute("""
+        query {
+            addOneTo(decimalInput: "10.50")
+        }
+    """)
+
+    assert results.data == {"addOneTo": "11.50"}
+
 ``graphene.JSONString``
+^^^^^^^^^^^^^^^^^^^^^^^
 
     Represents a JSON string.
 
@@ -177,6 +220,7 @@ Graphene also provides custom scalars for common types:
 
 
 ``graphene.Base64``
+^^^^^^^^^^^^^^^^^^^
 
     Represents a Base64 encoded string.
 
@@ -203,6 +247,7 @@ Graphene also provides custom scalars for common types:
     """)
 
     assert results.data == {"incrementEncodedId": "NQ=="}
+
 
 
 Custom scalars
