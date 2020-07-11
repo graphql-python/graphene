@@ -320,7 +320,9 @@ class TypeMap(dict):
                     field_type,
                     args=args,
                     resolve=field.get_resolver(
-                        self.get_resolver(graphene_type, name, field.default_value)
+                        self.get_query_resolver(
+                            graphene_type, name, field.default_value
+                        )
                     ),
                     subscribe=field.get_resolver(
                         self.get_subscribe_resolver(
@@ -353,7 +355,7 @@ class TypeMap(dict):
 
         return wrapped_resolver
 
-    def get_resolver(self, graphene_type, name, default_value):
+    def get_query_resolver(self, graphene_type, name, default_value):
         if not issubclass(graphene_type, ObjectType):
             return
 

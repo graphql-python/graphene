@@ -1,9 +1,7 @@
-from datetime import datetime
 from pytest import mark
 
-from graphene import ObjectType, Int, String, Schema, DateTime
+from graphene import ObjectType, Int, String, Schema
 from graphene.types.objecttype import ObjectTypeOptions
-from graphene.utils.get_unbound_function import get_unbound_function
 
 
 MYPY = False
