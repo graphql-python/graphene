@@ -315,14 +315,14 @@ class TypeMap(dict):
                             graphene_type, f"resolve_{name}", name, field.default_value
                         )
                     ),
-                    subscribe=field.get_resolver(
-                        self.get_resolver_for_type(
-                            graphene_type,
-                            f"subscribe_{name}",
-                            name,
-                            field.default_value,
-                        )
-                    ),
+                    # subscribe=field.get_resolver(
+                    #     self.get_resolver_for_type(
+                    #         graphene_type,
+                    #         f"subscribe_{name}",
+                    #         name,
+                    #         field.default_value,
+                    #     )
+                    # ),
                     deprecation_reason=field.deprecation_reason,
                     description=field.description,
                 )
@@ -478,7 +478,14 @@ class Schema:
     async def subscribe(self, query, *args, **kwargs):
         document = parse(query)
         kwargs = normalize_execute_kwargs(kwargs)
-        return await subscribe(self.graphql_schema, document, *args, **kwargs)
+        subscription = self.graphql_schema.subscription_type
+        return await subscribe(
+            self.graphql_schema,
+            document,
+            *args,
+            subscribe_field_resolver=subscription.graphene_type._meta.resolver,
+            **kwargs,
+        )
 
     def introspect(self):
         introspection = self.execute(introspection_query)
