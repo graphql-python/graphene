@@ -1,44 +1,23 @@
 from pytest import mark
 
 from graphene import ObjectType, Int, String, Schema
-from graphene.types.objecttype import ObjectTypeOptions
-
-
-MYPY = False
-if MYPY:
-    from typing import Callable  # NOQA
 
 
 class Query(ObjectType):
     a = String()
 
 
-class SubscriptionOptions(ObjectTypeOptions):
-    pass
-
-
 class Subscription(ObjectType):
-    @classmethod
-    def __init_subclass_with_meta__(
-        cls, _meta=None, **options,
-    ):
-        if not _meta:
-            _meta = SubscriptionOptions(cls)
+    count_to_ten = Int()
 
-        super().__init_subclass_with_meta__(_meta=_meta, **options)
-
-
-class MySubscription(Subscription):
-    count_to_ten = Int(yes=Int())
-
-    async def subscribe_count_to_ten(root, info, **kwargs):
+    async def subscribe_count_to_ten(root, info):
         count = 0
         while count < 10:
             count += 1
             yield count
 
 
-schema = Schema(query=Query, subscription=MySubscription)
+schema = Schema(query=Query, subscription=Subscription)
 
 
 @mark.asyncio

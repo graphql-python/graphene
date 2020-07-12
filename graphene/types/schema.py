@@ -348,7 +348,7 @@ class TypeMap(dict):
 
         resolver = get_unbound_function(resolver)
 
-        # TODO wrap resolver
+        # Wrap resolver
         def wrapped_resolver(*args, **kwargs):
             result = resolver(*args, **kwargs)
             return MapAsyncIterator(result, partial(map_payload_to_object, name))
