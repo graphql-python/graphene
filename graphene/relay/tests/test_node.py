@@ -1,7 +1,7 @@
 import re
 from graphql_relay import to_global_id
 
-from graphql.pyutils import dedent
+from graphene.tests.utils import dedent
 
 from ...types import ObjectType, Schema, String
 from ..node import Node, is_node

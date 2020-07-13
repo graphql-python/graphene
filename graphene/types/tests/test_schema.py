@@ -1,7 +1,7 @@
+from graphql.type import GraphQLObjectType, GraphQLSchema
 from pytest import raises
 
-from graphql.type import GraphQLObjectType, GraphQLSchema
-from graphql.pyutils import dedent
+from graphene.tests.utils import dedent
 
 from ..field import Field
 from ..objecttype import ObjectType

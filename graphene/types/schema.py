@@ -172,7 +172,7 @@ class TypeMap(dict):
                 deprecation_reason = graphene_type._meta.deprecation_reason(value)
 
             values[name] = GraphQLEnumValue(
-                value=value.value,
+                value=value,
                 description=description,
                 deprecation_reason=deprecation_reason,
             )
