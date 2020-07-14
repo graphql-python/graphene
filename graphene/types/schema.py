@@ -475,7 +475,7 @@ class Schema:
         kwargs = normalize_execute_kwargs(kwargs)
         return await graphql(self.graphql_schema, *args, **kwargs)
 
-    async def subscribe(self, query, *args, **kwargs):
+    async def EXPERIMENTAL_subscribe(self, query, *args, **kwargs):
         document = parse(query)
         kwargs = normalize_execute_kwargs(kwargs)
         return await subscribe(self.graphql_schema, document, *args, **kwargs)

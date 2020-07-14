@@ -26,7 +26,7 @@ schema = Schema(query=Query, subscription=Subscription)
 @mark.asyncio
 async def test_subscription():
     subscription = "subscription { countToTen }"
-    result = await schema.subscribe(subscription)
+    result = await schema.EXPERIMENTAL_subscribe(subscription)
     count = 0
     async for item in result:
         count = item.data["countToTen"]
