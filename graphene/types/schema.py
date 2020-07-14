@@ -476,6 +476,11 @@ class Schema:
         return await graphql(self.graphql_schema, *args, **kwargs)
 
     async def EXPERIMENTAL_subscribe(self, query, *args, **kwargs):
+        """Create a GraphQL subscription.
+
+        NOTE: this is an EXPERIMENTAL API and as such does not follow the normal semver release guarantees. Use it at
+        your own risk.
+        """
         document = parse(query)
         kwargs = normalize_execute_kwargs(kwargs)
         return await subscribe(self.graphql_schema, document, *args, **kwargs)
