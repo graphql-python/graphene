@@ -1,3 +1,5 @@
+import inspect
+
 from .base import BaseOptions, BaseType, BaseTypeMeta
 from .field import Field
 from .interface import Interface
@@ -137,7 +139,7 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
         fields = {}
 
         for interface in interfaces:
-            assert issubclass(
+            assert inspect.isclass(interface) and issubclass(
                 interface, Interface
             ), f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
             fields.update(interface._meta.fields)

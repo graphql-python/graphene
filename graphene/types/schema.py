@@ -258,7 +258,8 @@ class TypeMap(dict):
             union_types = []
             for graphene_objecttype in graphene_type._meta.types:
                 object_type = create_graphql_type(graphene_objecttype)
-                assert object_type.graphene_type == graphene_objecttype
+                if hasattr(object_type, "graphene_type"):
+                    assert object_type.graphene_type == graphene_objecttype
                 union_types.append(object_type)
             return union_types
 
