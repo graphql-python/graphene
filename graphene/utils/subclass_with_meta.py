@@ -19,7 +19,12 @@ class SubclassWithMeta(metaclass=SubclassWithMeta_Meta):
     """This class improves __init_subclass__ to receive automatically the options from meta"""
 
     def __init_subclass__(cls, **meta_options):
-        """This method just terminates the super() chain"""
+        """Consume all the passed kwargs and cls's possible `Meta`.
+
+        The consumed kwargs and all of the attributes from `Meta`
+        will be passed for further processing to the next
+        `__init_subclass_with_meta__` in the method resolution order.
+        """
         _Meta = getattr(cls, "Meta", None)
         _meta_props = {}
         if _Meta:
@@ -44,6 +49,7 @@ class SubclassWithMeta(metaclass=SubclassWithMeta_Meta):
             super_class = super(cls, cls)
             if hasattr(super_class, "__init_subclass_with_meta__"):
                 super_class.__init_subclass_with_meta__(**options)
+        super().__init_subclass__()
 
     @classmethod
     def __init_subclass_with_meta__(cls, **meta_options):
