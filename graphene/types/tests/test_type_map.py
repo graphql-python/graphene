@@ -1,6 +1,7 @@
 from textwrap import dedent
 
 import pytest
+from graphql import parse, build_ast_schema
 from graphql.type import (
     GraphQLArgument,
     GraphQLEnumType,
@@ -392,3 +393,39 @@ def test_graphql_type_union():
     )
     assert not results.errors
     assert results.data == {"myUnion": {"__typename": "MyGraphQLType"}}
+
+
+def test_graphql_type_from_sdl():
+    types = """
+        type Pet {
+            name: String!
+        }
+
+        type User {
+            name: String!
+            pets: [Pet!]!
+        }
+    """
+    ast_document = parse(types)
+    sdl_schema = build_ast_schema(ast_document)
+
+    class Query(ObjectType):
+        my_user = Field(sdl_schema.get_type("User"))
+
+    schema = Schema(query=Query)
+    assert str(schema) == dedent(
+        """\
+        type Query {
+          myUser: User
+        }
+
+        type User {
+          name: String!
+          pets: [Pet!]!
+        }
+
+        type Pet {
+          name: String!
+        }
+    """
+    )
