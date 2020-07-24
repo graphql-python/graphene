@@ -21,8 +21,8 @@ class SubclassWithMeta(metaclass=SubclassWithMeta_Meta):
     def __init_subclass__(cls, **meta_options):
         """Consume all the passed kwargs and cls's possible `Meta`.
 
-        The consumed kwargs and all of the attributes from `Meta`
-        will be passed for further processing to the next
+        The consumed kwargs and all of the attributes/keys from `Meta`
+        will be combined into a dict and passed for further processing to the next
         `__init_subclass_with_meta__` in the method resolution order.
         """
         _Meta = getattr(cls, "Meta", None)
