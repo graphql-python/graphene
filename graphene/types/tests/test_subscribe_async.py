@@ -51,4 +51,6 @@ async def test_subscription_fails_when_query_is_not_valid():
     result = await schema.subscribe(subscription)
     assert not result.data
     assert result.errors
-    assert "Anonymous Subscription must select only one top level field." in str(result.errors[0])
+    assert "Anonymous Subscription must select only one top level field." in str(
+        result.errors[0]
+    )

@@ -317,10 +317,7 @@ class TypeMap(dict):
                     )
                 subscribe = field.wrap_subscribe(
                     self.get_function_for_type(
-                        graphene_type,
-                        f"subscribe_{name}",
-                        name,
-                        field.default_value,
+                        graphene_type, f"subscribe_{name}", name, field.default_value,
                     )
                 )
 
@@ -333,14 +330,17 @@ class TypeMap(dict):
                     default_resolver = (
                         graphene_type._meta.default_resolver or get_default_resolver()
                     )
-                    field_default_resolver = partial(default_resolver, name, field.default_value)
+                    field_default_resolver = partial(
+                        default_resolver, name, field.default_value
+                    )
                 else:
                     field_default_resolver = None
 
                 resolve = field.wrap_resolve(
                     self.get_function_for_type(
                         graphene_type, f"resolve_{name}", name, field.default_value
-                    ) or field_default_resolver
+                    )
+                    or field_default_resolver
                 )
 
                 _field = GraphQLField(
@@ -356,7 +356,7 @@ class TypeMap(dict):
         return fields
 
     def get_function_for_type(self, graphene_type, func_name, name, default_value):
-        '''Gets a resolve or subscribe function for a given ObjectType'''
+        """Gets a resolve or subscribe function for a given ObjectType"""
         if not issubclass(graphene_type, ObjectType):
             return
         resolver = getattr(graphene_type, func_name, None)
