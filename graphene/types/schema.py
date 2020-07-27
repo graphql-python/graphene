@@ -509,7 +509,7 @@ class Schema:
         if validation_errors:
             return ExecutionResult(data=None, errors=validation_errors)
 
-        # Execute queryss
+        # Execute the query
         kwargs = normalize_execute_kwargs(kwargs)
         return await subscribe(self.graphql_schema, document, *args, **kwargs)
 
