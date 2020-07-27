@@ -8,6 +8,7 @@ from .resolver import default_resolver
 from .structures import NonNull
 from .unmountedtype import UnmountedType
 from .utils import get_type
+from ..utils.deprecated import warn_deprecation
 
 base_type = type
 
@@ -114,5 +115,22 @@ class Field(MountedType):
     def type(self):
         return get_type(self._type)
 
-    def get_resolver(self, parent_resolver):
+    get_resolver = None
+
+    def wrap_resolve(self, parent_resolver):
+        '''
+        Wraps a function resolver, using the ObjectType resolve_{FIELD_NAME}
+        (parent_resolver) if the Field definition has no resolver.
+        '''
+        if self.get_resolver is not None:
+            warn_deprecation("The get_resolver method is being deprecated, please rename it to wrap_resolve.")
+            return self.get_resolver(parent_resolver)
+
         return self.resolver or parent_resolver
+
+    def wrap_subscribe(self, parent_subscribe):
+        '''
+        Wraps a function subscribe, using the ObjectType subscribe_{FIELD_NAME}
+        (parent_subscribe) if the Field definition has no subscribe.
+        '''
+        return parent_subscribe

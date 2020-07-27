@@ -17,7 +17,7 @@ class Subscription(ObjectType):
         count = 0
         while count < 10:
             count += 1
-            yield {"count_to_ten": count}
+            yield count
 
 
 schema = Schema(query=Query, subscription=Subscription)
@@ -31,3 +31,24 @@ async def test_subscription():
     async for item in result:
         count = item.data["countToTen"]
     assert count == 10
+
+
+@mark.asyncio
+async def test_subscription_fails_with_invalid_query():
+    # It fails if the provided query is invalid
+    subscription = "subscription { "
+    result = await schema.subscribe(subscription)
+    assert not result.data
+    assert result.errors
+    assert "Syntax Error: Expected Name, found <EOF>" in str(result.errors[0])
+
+
+@mark.asyncio
+async def test_subscription_fails_when_query_is_not_valid():
+    # It can't subscribe to two fields at the same time, triggering a
+    # validation error.
+    subscription = "subscription { countToTen, b: countToTen }"
+    result = await schema.subscribe(subscription)
+    assert not result.data
+    assert result.errors
+    assert "Anonymous Subscription must select only one top level field." in str(result.errors[0])
