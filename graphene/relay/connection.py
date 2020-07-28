@@ -171,8 +171,8 @@ class IterableConnectionField(Field):
         on_resolve = partial(cls.resolve_connection, connection_type, args)
         return maybe_thenable(resolved, on_resolve)
 
-    def get_resolver(self, parent_resolver):
-        resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)
+    def wrap_resolve(self, parent_resolver):
+        resolver = super(IterableConnectionField, self).wrap_resolve(parent_resolver)
         return partial(self.connection_resolver, resolver, self.type)
 
 

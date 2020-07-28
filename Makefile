@@ -8,7 +8,7 @@ install-dev:
 	pip install -e ".[dev]"
 
 test:
-	py.test graphene examples tests_asyncio
+	py.test graphene examples
 
 .PHONY: docs ## Generate docs
 docs: install-dev
@@ -20,8 +20,8 @@ docs-live: install-dev
 
 .PHONY: format
 format:
-	black graphene examples setup.py tests_asyncio
+	black graphene examples setup.py
 
 .PHONY: lint
 lint:
-	flake8 graphene examples setup.py tests_asyncio
+	flake8 graphene examples setup.py
