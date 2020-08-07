@@ -9,3 +9,4 @@ Execution
    middleware
    dataloader
    fileuploading
+   subscriptions
