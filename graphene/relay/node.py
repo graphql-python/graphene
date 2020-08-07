@@ -99,7 +99,7 @@ class Node(AbstractNode):
                 )
             )
 
-        graphene_type = info.schema.get_type(_type)
+        graphene_type = info.schema.graphql_schema.get_type(_type)
         if graphene_type is None:
             raise Exception(f'Relay Node "{_type}" not found in schema')
 
