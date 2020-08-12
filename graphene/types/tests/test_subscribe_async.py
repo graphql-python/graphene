@@ -54,3 +54,27 @@ async def test_subscription_fails_when_query_is_not_valid():
     assert "Anonymous Subscription must select only one top level field." in str(
         result.errors[0]
     )
+
+
+@mark.asyncio
+async def test_subscription_with_args():
+    class Query(ObjectType):
+        hello = String()
+
+    class Subscription(ObjectType):
+        count_upwards = Field(Int, limit=Int(required=True))
+
+        async def subscribe_count_upwards(root, info, limit):
+            count = 0
+            while count < limit:
+                count += 1
+                yield count
+
+    schema = Schema(query=Query, subscription=Subscription)
+
+    subscription = "subscription { countUpwards(limit: 5) }"
+    result = await schema.subscribe(subscription)
+    count = 0
+    async for item in result:
+        count = item.data["countUpwards"]
+    assert count == 5
