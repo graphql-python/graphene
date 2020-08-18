@@ -1,12 +1,13 @@
 from graphql.type import GraphQLObjectType, GraphQLSchema
-from pytest import raises
+from graphql import GraphQLError
+from pytest import raises, fixture
 
 from graphene.tests.utils import dedent
 
 from ..field import Field
 from ..objecttype import ObjectType
 from ..scalars import String
-from ..schema import Schema
+from ..schema import Schema, UnforgivingExecutionContext
 
 
 class MyOtherType(ObjectType):
@@ -68,3 +69,53 @@ def test_schema_requires_query_type():
     assert len(result.errors) == 1
     error = result.errors[0]
     assert error.message == "Query root type must be provided."
+
+
+class TestUnforgivingExecutionContext:
+    @fixture
+    def schema(self):
+        class MyQuery(ObjectType):
+            sanity_field = String()
+            expected_error_field = String()
+            unexpected_error_field = String()
+
+            @staticmethod
+            def resolve_sanity_field(obj, info):
+                return "not an error"
+
+            @staticmethod
+            def resolve_expected_error_field(obj, info):
+                raise GraphQLError("expected error")
+
+            @staticmethod
+            def resolve_unexpected_error_field(obj, info):
+                raise ValueError("unexpected error")
+
+        schema = Schema(query=MyQuery)
+        return schema
+
+    def test_sanity_check(self, schema):
+        # this should pass with no errors (sanity check)
+        result = schema.execute(
+            "query { sanityField }",
+            execution_context_class=UnforgivingExecutionContext,
+        )
+        assert not result.errors
+        assert result.data == {"sanityField": "not an error"}
+
+    def test_graphql_error(self, schema):
+        result = schema.execute(
+            "query { expectedErrorField }",
+            execution_context_class=UnforgivingExecutionContext,
+        )
+        assert len(result.errors) == 1
+        assert result.errors[0].message == "expected error"
+        assert result.data == {"expectedErrorField": None}
+
+    def test_unexpected_error(self, schema):
+        with raises(ValueError):
+            # no result, but the exception should be propagated
+            schema.execute(
+                "query { unexpectedErrorField }",
+                execution_context_class=UnforgivingExecutionContext,
+            )
