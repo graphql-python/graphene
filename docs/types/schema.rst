@@ -15,7 +15,7 @@ Schema will collect all type definitions related to the root operations and then
         subscription=MyRootSubscription
     )
 
-A Root Query is just a special :ref:`ObjectType` that :ref:` defines the fields <Scalars>` that are the entrypoint for your API. Root Mutation and Root Subscription are similar to Root Query, but for different operation types:
+A Root Query is just a special :ref:`ObjectType` that defines the fields that are the entrypoint for your API. Root Mutation and Root Subscription are similar to Root Query, but for different operation types:
 
 * Query fetches data
 * Mutation changes data and retrieves the changes
