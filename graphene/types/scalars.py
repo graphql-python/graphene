@@ -82,6 +82,33 @@ class Int(Scalar):
                 return num
 
 
+class BigInt(Scalar):
+    """
+    The `BigInt` scalar type represents non-fractional whole numeric values.
+    `BigInt` is not constrained to 32-bit like the `Int` type and thus is a less
+    compatible type.
+    """
+
+    @staticmethod
+    def coerce_int(value):
+        try:
+            num = int(value)
+        except ValueError:
+            try:
+                num = int(float(value))
+            except ValueError:
+                return None
+        return num
+
+    serialize = coerce_int
+    parse_value = coerce_int
+
+    @staticmethod
+    def parse_literal(ast):
+        if isinstance(ast, IntValueNode):
+            return int(ast.value)
+
+
 class Float(Scalar):
     """
     The `Float` scalar type represents signed double-precision fractional
