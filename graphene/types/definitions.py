@@ -1,14 +1,8 @@
 from enum import Enum as PyEnum
 
-from graphql import (
-    GraphQLEnumType,
-    GraphQLInputObjectType,
-    GraphQLInterfaceType,
-    GraphQLObjectType,
-    GraphQLScalarType,
-    GraphQLUnionType,
-    Undefined,
-)
+from graphql import (GraphQLEnumType, GraphQLInputObjectType,
+                     GraphQLInterfaceType, GraphQLObjectType,
+                     GraphQLScalarType, GraphQLUnionType, Undefined)
 
 
 class GrapheneGraphQLType:

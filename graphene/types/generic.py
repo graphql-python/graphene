@@ -1,13 +1,8 @@
 from __future__ import unicode_literals
 
-from graphql.language.ast import (
-    BooleanValueNode,
-    FloatValueNode,
-    IntValueNode,
-    ListValueNode,
-    ObjectValueNode,
-    StringValueNode,
-)
+from graphql.language.ast import (BooleanValueNode, FloatValueNode,
+                                  IntValueNode, ListValueNode, ObjectValueNode,
+                                  StringValueNode)
 
 from graphene.types.scalars import MAX_INT, MIN_INT
 

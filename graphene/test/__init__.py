@@ -1,6 +1,6 @@
-from promise import Promise, is_thenable
-from graphql.error import format_error as format_graphql_error
 from graphql.error import GraphQLError
+from graphql.error import format_error as format_graphql_error
+from promise import Promise, is_thenable
 
 from graphene.types.schema import Schema
 

@@ -1,43 +1,11 @@
 from .pyutils.version import get_version
-from .relay import (
-    ClientIDMutation,
-    Connection,
-    ConnectionField,
-    GlobalID,
-    Node,
-    PageInfo,
-    is_node,
-)
-from .types import (
-    ID,
-    UUID,
-    Argument,
-    Base64,
-    Boolean,
-    Context,
-    Date,
-    DateTime,
-    Decimal,
-    Dynamic,
-    Enum,
-    Field,
-    Float,
-    InputField,
-    InputObjectType,
-    Int,
-    Interface,
-    JSONString,
-    List,
-    Mutation,
-    NonNull,
-    ObjectType,
-    ResolveInfo,
-    Scalar,
-    Schema,
-    String,
-    Time,
-    Union,
-)
+from .relay import (ClientIDMutation, Connection, ConnectionField, GlobalID,
+                    Node, PageInfo, is_node)
+from .types import (ID, UUID, Argument, Base64, Boolean, Context, Date,
+                    DateTime, Decimal, Dynamic, Enum, Field, Float, InputField,
+                    InputObjectType, Int, Interface, JSONString, List,
+                    Mutation, NonNull, ObjectType, ResolveInfo, Scalar, Schema,
+                    String, Time, Union)
 from .utils.module_loading import lazy_import
 from .utils.resolve_only_args import resolve_only_args
 

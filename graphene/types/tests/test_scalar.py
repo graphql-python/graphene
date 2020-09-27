@@ -1,5 +1,6 @@
-from ..scalars import Scalar, Int, BigInt
 from graphql.language.ast import IntValueNode
+
+from ..scalars import BigInt, Int, Scalar
 
 
 def test_scalar():

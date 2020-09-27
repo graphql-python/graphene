@@ -1,45 +1,21 @@
 import inspect
 from functools import partial
 
-from graphql import (
-    default_type_resolver,
-    get_introspection_query,
-    graphql,
-    graphql_sync,
-    introspection_types,
-    parse,
-    print_schema,
-    subscribe,
-    validate,
-    ExecutionResult,
-    GraphQLArgument,
-    GraphQLBoolean,
-    GraphQLError,
-    GraphQLEnumValue,
-    GraphQLField,
-    GraphQLFloat,
-    GraphQLID,
-    GraphQLInputField,
-    GraphQLInt,
-    GraphQLList,
-    GraphQLNonNull,
-    GraphQLObjectType,
-    GraphQLSchema,
-    GraphQLString,
-    Undefined,
-)
+from graphql import (ExecutionResult, GraphQLArgument, GraphQLBoolean,
+                     GraphQLEnumValue, GraphQLError, GraphQLField,
+                     GraphQLFloat, GraphQLID, GraphQLInputField, GraphQLInt,
+                     GraphQLList, GraphQLNonNull, GraphQLObjectType,
+                     GraphQLSchema, GraphQLString, Undefined,
+                     default_type_resolver, get_introspection_query, graphql,
+                     graphql_sync, introspection_types, parse, print_schema,
+                     subscribe, validate)
 
-from ..utils.str_converters import to_camel_case
 from ..utils.get_unbound_function import get_unbound_function
-from .definitions import (
-    GrapheneEnumType,
-    GrapheneGraphQLType,
-    GrapheneInputObjectType,
-    GrapheneInterfaceType,
-    GrapheneObjectType,
-    GrapheneScalarType,
-    GrapheneUnionType,
-)
+from ..utils.str_converters import to_camel_case
+from .definitions import (GrapheneEnumType, GrapheneGraphQLType,
+                          GrapheneInputObjectType, GrapheneInterfaceType,
+                          GrapheneObjectType, GrapheneScalarType,
+                          GrapheneUnionType)
 from .dynamic import Dynamic
 from .enum import Enum
 from .field import Field

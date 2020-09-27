@@ -1,11 +1,7 @@
 from typing import Any
 
-from graphql.language.ast import (
-    BooleanValueNode,
-    FloatValueNode,
-    IntValueNode,
-    StringValueNode,
-)
+from graphql.language.ast import (BooleanValueNode, FloatValueNode,
+                                  IntValueNode, StringValueNode)
 
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType

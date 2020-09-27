@@ -2,7 +2,6 @@ import datetime
 
 import pytz
 from graphql import GraphQLError
-
 from pytest import fixture
 
 from ..datetime import Date, DateTime, Time

@@ -1,5 +1,5 @@
-from binascii import Error as _Error
 from base64 import b64decode, b64encode
+from binascii import Error as _Error
 
 from graphql.error import GraphQLError
 from graphql.language import StringValueNode, print_ast

@@ -4,9 +4,9 @@ from .interface import Interface
 from .utils import yank_fields_from_attrs
 
 try:
-    from dataclasses import make_dataclass, field
+    from dataclasses import field, make_dataclass
 except ImportError:
-    from ..pyutils.dataclasses import make_dataclass, field  # type: ignore
+    from ..pyutils.dataclasses import field, make_dataclass  # type: ignore
 
 # For static type checking with Mypy
 MYPY = False

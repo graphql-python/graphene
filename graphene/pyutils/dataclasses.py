@@ -2,12 +2,12 @@
 # https://docs.python.org/3/library/dataclasses.html
 # Original PEP proposal: PEP 557
 # https://www.python.org/dev/peps/pep-0557/
-import re
-import sys
 import copy
-import types
 import inspect
 import keyword
+import re
+import sys
+import types
 
 __all__ = [
     "dataclass",
