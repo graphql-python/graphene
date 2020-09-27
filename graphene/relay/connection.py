@@ -4,7 +4,8 @@ from functools import partial
 
 from graphql_relay import connection_from_array
 
-from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String, Union
+from ..types import (Boolean, Enum, Int, Interface, List, NonNull, Scalar,
+                     String, Union)
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
 from ..utils.thenables import maybe_thenable

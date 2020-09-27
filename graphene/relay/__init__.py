@@ -1,6 +1,6 @@
-from .node import Node, is_node, GlobalID
-from .mutation import ClientIDMutation
 from .connection import Connection, ConnectionField, PageInfo
+from .mutation import ClientIDMutation
+from .node import GlobalID, Node, is_node
 
 __all__ = [
     "Node",

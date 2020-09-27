@@ -1,10 +1,9 @@
+from graphql_relay.utils import base64
 from pytest import mark
 
-from graphql_relay.utils import base64
-
-from graphene.types import ObjectType, Schema, String
 from graphene.relay.connection import Connection, ConnectionField, PageInfo
 from graphene.relay.node import Node
+from graphene.types import ObjectType, Schema, String
 
 letter_chars = ["A", "B", "C", "D", "E"]
 

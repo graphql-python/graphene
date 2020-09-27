@@ -1,6 +1,5 @@
-from pytest import mark
-
 from graphql_relay.utils import base64
+from pytest import mark
 
 from ...types import ObjectType, Schema, String
 from ..connection import Connection, ConnectionField, PageInfo

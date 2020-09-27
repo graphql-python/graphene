@@ -1,6 +1,7 @@
 from pytest import raises
 
-from ...types import Argument, Field, Int, List, NonNull, ObjectType, Schema, String
+from ...types import (Argument, Field, Int, List, NonNull, ObjectType, Schema,
+                      String)
 from ..connection import Connection, ConnectionField, PageInfo
 from ..node import Node
 

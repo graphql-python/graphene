@@ -1,15 +1,7 @@
 from pytest import mark, raises
 
-from ...types import (
-    ID,
-    Argument,
-    Field,
-    InputField,
-    InputObjectType,
-    NonNull,
-    ObjectType,
-    Schema,
-)
+from ...types import (ID, Argument, Field, InputField, InputObjectType,
+                      NonNull, ObjectType, Schema)
 from ...types.scalars import String
 from ..mutation import ClientIDMutation
 
