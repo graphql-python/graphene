@@ -319,7 +319,7 @@ class TypeMap(dict):
                     )
                 subscribe = field.wrap_subscribe(
                     self.get_function_for_type(
-                        graphene_type, f"subscribe_{name}", name, field.default_value,
+                        graphene_type, f"subscribe_{name}", name, field.default_value
                     )
                 )
 
@@ -405,7 +405,7 @@ class UnforgivingExecutionContext(ExecutionContext):
     """
 
     def resolve_field_value_or_error(
-        self, field_def, field_nodes, resolve_fn, source, info,
+        self, field_def, field_nodes, resolve_fn, source, info
     ):
         """Resolve field to a value or an error.
 
@@ -445,6 +445,50 @@ class UnforgivingExecutionContext(ExecutionContext):
 
         # Yes, this is commented out code. It's been intentionally _not_
         # removed to show what has changed from the original implementation.
+
+    def complete_value_catching_error(
+        self, return_type, field_nodes, info, path, result
+    ):
+        """Complete a value while catching an error.
+
+        This is a small wrapper around completeValue which detects and logs errors in
+        the execution context.
+        """
+        try:
+            if self.is_awaitable(result):
+
+                async def await_result():
+                    value = self.complete_value(
+                        return_type, field_nodes, info, path, await result
+                    )
+                    if self.is_awaitable(value):
+                        return await value
+                    return value
+
+                completed = await_result()
+            else:
+                completed = self.complete_value(
+                    return_type, field_nodes, info, path, result
+                )
+            if self.is_awaitable(completed):
+                # noinspection PyShadowingNames
+                async def await_completed():
+                    try:
+                        return await completed
+
+                    # CHANGE WAS MADE HERE
+                    # ``GraphQLError`` was swapped in for ``except Exception``
+                    except GraphQLError as error:
+                        self.handle_field_error(error, field_nodes, path, return_type)
+
+                return await_completed()
+            return completed
+
+        # CHANGE WAS MADE HERE
+        # ``GraphQLError`` was swapped in for ``except Exception``
+        except GraphQLError as error:
+            self.handle_field_error(error, field_nodes, path, return_type)
+            return None
 
 
 class Schema:
