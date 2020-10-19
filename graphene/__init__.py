@@ -38,6 +38,10 @@ from .relay import (
     Connection,
     ConnectionField,
     PageInfo,
+    BaseGlobalIDType,
+    DefaultGlobalIDType,
+    SimpleGlobalIDType,
+    UUIDGlobalIDType,
 )
 from .utils.resolve_only_args import resolve_only_args
 from .utils.module_loading import lazy_import
@@ -85,6 +89,10 @@ __all__ = [
     "lazy_import",
     "Context",
     "ResolveInfo",
+    "BaseGlobalIDType",
+    "DefaultGlobalIDType",
+    "SimpleGlobalIDType",
+    "UUIDGlobalIDType",
     # Deprecated
     "AbstractType",
 ]
