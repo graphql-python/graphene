@@ -47,10 +47,16 @@ class TestUUIDGlobalID:
         fields = [f for t, f in parsed]
         custom_node_interface = "interface CustomNode"
         assert custom_node_interface in types
-        assert '"""The ID of the object"""\n  id: UUID!' == fields[types.index(custom_node_interface)]
+        assert (
+            '"""The ID of the object"""\n  id: UUID!'
+            == fields[types.index(custom_node_interface)]
+        )
         user_type = "type User implements CustomNode"
         assert user_type in types
-        assert '"""The ID of the object"""\n  id: UUID!\n  name: String' == fields[types.index(user_type)]
+        assert (
+            '"""The ID of the object"""\n  id: UUID!\n  name: String'
+            == fields[types.index(user_type)]
+        )
 
     def test_get_by_id(self):
         query = """query userById($id: UUID!) {
@@ -61,7 +67,9 @@ class TestUUIDGlobalID:
         }"""
         # UUID need to be converted to string for serialization
         result = graphql_sync(
-            self.graphql_schema, query, variable_values={"id": str(self.user_list[0]["id"])}
+            self.graphql_schema,
+            query,
+            variable_values={"id": str(self.user_list[0]["id"])},
         )
         assert not result.errors
         assert result.data["user"]["id"] == str(self.user_list[0]["id"])
@@ -107,10 +115,16 @@ class TestSimpleGlobalID:
         fields = [f for t, f in parsed]
         custom_node_interface = "interface CustomNode"
         assert custom_node_interface in types
-        assert '"""The ID of the object"""\n  id: ID!' == fields[types.index(custom_node_interface)]
+        assert (
+            '"""The ID of the object"""\n  id: ID!'
+            == fields[types.index(custom_node_interface)]
+        )
         user_type = "type User implements CustomNode"
         assert user_type in types
-        assert '"""The ID of the object"""\n  id: ID!\n  name: String' == fields[types.index(user_type)]
+        assert (
+            '"""The ID of the object"""\n  id: ID!\n  name: String'
+            == fields[types.index(user_type)]
+        )
 
     def test_get_by_id(self):
         query = """query {
@@ -180,10 +194,16 @@ class TestCustomGlobalID:
         fields = [f for t, f in parsed]
         custom_node_interface = "interface CustomNode"
         assert custom_node_interface in types
-        assert '"""The ID of the object"""\n  id: Int!' == fields[types.index(custom_node_interface)]
+        assert (
+            '"""The ID of the object"""\n  id: Int!'
+            == fields[types.index(custom_node_interface)]
+        )
         user_type = "type User implements CustomNode"
         assert user_type in types
-        assert '"""The ID of the object"""\n  id: Int!\n  name: String' == fields[types.index(user_type)]
+        assert (
+            '"""The ID of the object"""\n  id: Int!\n  name: String'
+            == fields[types.index(user_type)]
+        )
 
     def test_get_by_id(self):
         query = """query {
