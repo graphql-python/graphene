@@ -1,6 +1,9 @@
 from graphql_relay import from_global_id, to_global_id
 
 from ..types import ID, UUID
+from ..types.base import BaseType
+
+from typing import Type
 
 
 class BaseGlobalIDType:
@@ -8,7 +11,7 @@ class BaseGlobalIDType:
     Base class that define the required attributes/method for a type.
     """
 
-    graphene_type = None
+    graphene_type: Type[BaseType] = ID
 
     @classmethod
     def resolve_global_id(cls, info, global_id):

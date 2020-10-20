@@ -26,8 +26,18 @@ def is_node(objecttype):
 
 
 class GlobalID(Field):
-    def __init__(self, node=None, parent_type=None, required=True, global_id_type=DefaultGlobalIDType, *args, **kwargs):
-        super(GlobalID, self).__init__(global_id_type.graphene_type, required=required, *args, **kwargs)
+    def __init__(
+        self,
+        node=None,
+        parent_type=None,
+        required=True,
+        global_id_type=DefaultGlobalIDType,
+        *args,
+        **kwargs
+    ):
+        super(GlobalID, self).__init__(
+            global_id_type.graphene_type, required=required, *args, **kwargs
+        )
         self.node = node or Node
         self.parent_type_name = parent_type._meta.name if parent_type else None
 
@@ -70,12 +80,15 @@ class AbstractNode(Interface):
 
     @classmethod
     def __init_subclass_with_meta__(cls, global_id_type=DefaultGlobalIDType, **options):
-        assert issubclass(global_id_type, BaseGlobalIDType), \
-            "Custom ID type need to be implemented as a subclass of BaseGlobalIDType."
+        assert issubclass(
+            global_id_type, BaseGlobalIDType
+        ), "Custom ID type need to be implemented as a subclass of BaseGlobalIDType."
         _meta = InterfaceOptions(cls)
         _meta.global_id_type = global_id_type
         _meta.fields = OrderedDict(
-            id=GlobalID(cls, global_id_type=global_id_type, description="The ID of the object.")
+            id=GlobalID(
+                cls, global_id_type=global_id_type, description="The ID of the object."
+            )
         )
         super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 

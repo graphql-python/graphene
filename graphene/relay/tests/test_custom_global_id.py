@@ -3,7 +3,6 @@ from uuid import uuid4
 
 from graphql import graphql
 
-from ..connection import Connection, ConnectionField
 from ..id_type import BaseGlobalIDType, SimpleGlobalIDType, UUIDGlobalIDType
 from ..node import Node
 from ...types import Int, ObjectType, Schema, String
@@ -60,7 +59,9 @@ class TestUUIDGlobalID:
             }
         }"""
         # UUID need to be converted to string for serialization
-        result = graphql(self.schema, query, variable_values={"id": str(self.user_list[0]["id"])})
+        result = graphql(
+            self.schema, query, variable_values={"id": str(self.user_list[0]["id"])}
+        )
         assert not result.errors
         assert result.data["user"]["id"] == str(self.user_list[0]["id"])
         assert result.data["user"]["name"] == self.user_list[0]["name"]
