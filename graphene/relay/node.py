@@ -1,11 +1,10 @@
 from functools import partial
 from inspect import isclass
 
-from graphql_relay import from_global_id, to_global_id
-
-from ..types import ID, Field, Interface, ObjectType
+from ..types import Field, Interface, ObjectType
 from ..types.interface import InterfaceOptions
 from ..types.utils import get_type
+from .id_type import BaseGlobalIDType, DefaultGlobalIDType
 
 
 def is_node(objecttype):
@@ -26,8 +25,18 @@ def is_node(objecttype):
 
 
 class GlobalID(Field):
-    def __init__(self, node=None, parent_type=None, required=True, *args, **kwargs):
-        super(GlobalID, self).__init__(ID, required=required, *args, **kwargs)
+    def __init__(
+        self,
+        node=None,
+        parent_type=None,
+        required=True,
+        global_id_type=DefaultGlobalIDType,
+        *args,
+        **kwargs,
+    ):
+        super(GlobalID, self).__init__(
+            global_id_type.graphene_type, required=required, *args, **kwargs
+        )
         self.node = node or Node
         self.parent_type_name = parent_type._meta.name if parent_type else None
 
@@ -51,12 +60,14 @@ class NodeField(Field):
         assert issubclass(node, Node), "NodeField can only operate in Nodes"
         self.node_type = node
         self.field_type = type_
+        global_id_type = node._meta.global_id_type
 
         super(NodeField, self).__init__(
-            # If we don's specify a type, the field type will be the node
-            # interface
+            # If we don't specify a type, the field type will be the node interface
             type_ or node,
-            id=ID(required=True, description="The ID of the object"),
+            id=global_id_type.graphene_type(
+                required=True, description="The ID of the object"
+            ),
             **kwargs,
         )
 
@@ -69,10 +80,22 @@ class AbstractNode(Interface):
         abstract = True
 
     @classmethod
-    def __init_subclass_with_meta__(cls, **options):
+    def __init_subclass_with_meta__(cls, global_id_type=DefaultGlobalIDType, **options):
+        assert issubclass(
+            global_id_type, BaseGlobalIDType
+        ), "Custom ID type need to be implemented as a subclass of BaseGlobalIDType."
         _meta = InterfaceOptions(cls)
-        _meta.fields = {"id": GlobalID(cls, description="The ID of the object")}
+        _meta.global_id_type = global_id_type
+        _meta.fields = {
+            "id": GlobalID(
+                cls, global_id_type=global_id_type, description="The ID of the object"
+            )
+        }
         super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+
+    @classmethod
+    def resolve_global_id(cls, info, global_id):
+        return cls._meta.global_id_type.resolve_global_id(info, global_id)
 
 
 class Node(AbstractNode):
@@ -89,7 +112,7 @@ class Node(AbstractNode):
     @classmethod
     def get_node_from_global_id(cls, info, global_id, only_type=None):
         try:
-            _type, _id = cls.from_global_id(global_id)
+            _type, _id = cls.resolve_global_id(info, global_id)
         except Exception as e:
             raise Exception(
                 (
@@ -121,9 +144,5 @@ class Node(AbstractNode):
             return get_node(info, _id)
 
     @classmethod
-    def from_global_id(cls, global_id):
-        return from_global_id(global_id)
-
-    @classmethod
     def to_global_id(cls, type_, id):
-        return to_global_id(type_, id)
+        return cls._meta.global_id_type.to_global_id(type_, id)
