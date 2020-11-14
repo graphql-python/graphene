@@ -1,5 +1,6 @@
 import inspect
 from functools import partial
+from typing import Type
 
 from graphql import (
     default_type_resolver,
@@ -516,7 +517,7 @@ class Schema:
 
     def __init__(
         self,
-        query=None,
+        query: Type[ObjectType]=None,
         mutation=None,
         subscription=None,
         types=None,
