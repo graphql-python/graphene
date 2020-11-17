@@ -5,7 +5,7 @@ import re
 # http://stackoverflow.com/a/19053800/1072990
 def to_camel_case(snake_str):
 
-	# We capitalize the first letter of each component except the first one
+    # We capitalize the first letter of each component except the first one
     # with the 'capitalize' method and join them together.
     def _camel_case_convert(components):
         return components[0] + "".join(x.capitalize() if x else "_" for x in components[1:])
