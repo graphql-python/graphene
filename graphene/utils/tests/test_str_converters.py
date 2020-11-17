@@ -17,3 +17,4 @@ def test_camel_case():
     assert to_camel_case("snakes_on_a__plane") == "snakesOnA_Plane"
     assert to_camel_case("i_phone_hysteria") == "iPhoneHysteria"
     assert to_camel_case("field_i18n") == "fieldI18n"
+    assert to_camel_case("_private_field") == "_privateField"
