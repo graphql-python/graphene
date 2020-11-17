@@ -26,4 +26,3 @@ Useful links
 .. _Getting started with Relay: https://facebook.github.io/relay/docs/en/quick-start-guide.html
 .. _Relay Global Identification Specification: https://facebook.github.io/relay/graphql/objectidentification.htm
 .. _Relay Cursor Connection Specification: https://facebook.github.io/relay/graphql/connections.htm
-.. _Relay input Object Mutation: https://facebook.github.io/relay/graphql/mutations.htm
