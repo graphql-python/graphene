@@ -5,6 +5,8 @@ import re
 # http://stackoverflow.com/a/19053800/1072990
 def to_camel_case(snake_str):
 
+	# We capitalize the first letter of each component except the first one
+    # with the 'capitalize' method and join them together.
     def _camel_case_convert(components):
         return components[0] + "".join(x.capitalize() if x else "_" for x in components[1:])
 
@@ -15,8 +17,6 @@ def to_camel_case(snake_str):
 
     components = snake_str.split("_")
 
-    # We capitalize the first letter of each component except the first one
-    # with the 'capitalize' method and join them together.
     if leading_underscore:
         return "_" + _camel_case_convert(components)
     return _camel_case_convert(components)
