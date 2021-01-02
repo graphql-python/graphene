@@ -41,3 +41,11 @@ def test_bad_decimal_query():
     result = schema.execute("""{ decimal(input: "%s") }""" % not_a_decimal)
     assert len(result.errors) == 1
     assert result.data is None
+
+
+def test_decimal_string_query_integer():
+    decimal_value = 1
+    result = schema.execute("""{ decimal(input: %s) }""" % decimal_value)
+    assert not result.errors
+    assert result.data == {"decimal": str(decimal_value)}
+    assert decimal.Decimal(result.data["decimal"]) == decimal_value
