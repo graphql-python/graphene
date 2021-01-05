@@ -1,6 +1,5 @@
 from graphql.error import format_error as format_graphql_error
 from graphql.error import GraphQLError
-from graphql.pyutils import is_awaitable
 
 from graphene.types.schema import Schema
 
@@ -32,14 +31,10 @@ class Client:
 
     def execute(self, *args, **kwargs):
         executed = self.schema.execute(*args, **dict(self.execute_options, **kwargs))
-        if is_awaitable(executed):
-            executed = asyncio.run(executed)
 
         return self.format_result(executed)
 
     async def execute_async(self, *args, **kwargs):
-        executed = self.schema.execute(*args, **dict(self.execute_options, **kwargs))
-        if is_awaitable(executed):
-            executed = await executed
+        executed = await self.schema.execute_async(*args, **dict(self.execute_options, **kwargs))
 
         return self.format_result(executed)
