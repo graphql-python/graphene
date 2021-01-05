@@ -40,6 +40,6 @@ class Client:
     async def execute_async(self, *args, **kwargs):
         executed = self.schema.execute(*args, **dict(self.execute_options, **kwargs))
         if is_awaitable(executed):
-            executed = await asyncio.run(executed)
+            executed = await executed
 
         return self.format_result(executed)
