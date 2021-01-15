@@ -226,11 +226,20 @@ class TypeMap(dict):
             else None
         )
 
+        def interfaces():
+            interfaces = []
+            for graphene_interface in graphene_type._meta.interfaces:
+                interface = self.add_type(graphene_interface)
+                assert interface.graphene_type == graphene_interface
+                interfaces.append(interface)
+            return interfaces
+
         return GrapheneInterfaceType(
             graphene_type=graphene_type,
             name=graphene_type._meta.name,
             description=graphene_type._meta.description,
             fields=partial(self.create_fields_for_type, graphene_type),
+            interfaces=interfaces,
             resolve_type=resolve_type,
         )
 
