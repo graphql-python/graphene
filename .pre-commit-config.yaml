@@ -1,28 +1,31 @@
 repos:
--   repo: git://github.com/pre-commit/pre-commit-hooks
-    rev: v2.1.0
-    hooks:
-    -   id: check-merge-conflict
-    -   id: check-json
-    -   id: check-yaml
-    -   id: debug-statements
-    -   id: end-of-file-fixer
-        exclude: ^docs/.*$
-    -   id: pretty-format-json
-        args:
-        - --autofix
-    -   id: trailing-whitespace
-        exclude: README.md
--   repo: https://github.com/asottile/pyupgrade
-    rev: v1.12.0
-    hooks:
-    -   id: pyupgrade
--   repo: https://github.com/ambv/black
-    rev: 19.10b0
-    hooks:
-    - id: black
-      language_version: python3
--   repo: https://github.com/PyCQA/flake8
-    rev: 3.7.8
-    hooks:
-    -   id: flake8
+    - repo: git://github.com/pre-commit/pre-commit-hooks
+      rev: v3.4.0
+      hooks:
+          - id: check-merge-conflict
+          - id: check-json
+          - id: check-yaml
+          - id: debug-statements
+          - id: end-of-file-fixer
+            exclude: ^docs/.*$
+          - id: pretty-format-json
+            args:
+                - --autofix
+          - id: trailing-whitespace
+            exclude: README.md
+    - repo: https://github.com/asottile/pyupgrade
+      rev: v2.9.0
+      hooks:
+          - id: pyupgrade
+    - repo: https://github.com/psf/black
+      rev: 20.8b1
+      hooks:
+          - id: black
+    - repo: https://github.com/PyCQA/flake8
+      rev: 3.8.4
+      hooks:
+          - id: flake8
+    - repo: https://github.com/pycqa/isort
+      rev: 5.6.4
+      hooks:
+          - id: isort

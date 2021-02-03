@@ -1,4 +1,4 @@
-from .pyutils.version import get_version
+from ._version import __version__
 from .relay import (
     ClientIDMutation,
     Connection,
@@ -40,11 +40,6 @@ from .types import (
 )
 from .utils.module_loading import lazy_import
 from .utils.resolve_only_args import resolve_only_args
-
-VERSION = (3, 0, 0, "beta", 7)
-
-
-__version__ = get_version(VERSION)
 
 __all__ = [
     "__version__",

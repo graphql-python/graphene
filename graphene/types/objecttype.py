@@ -1,12 +1,9 @@
+from dataclasses import field, make_dataclass
+
 from .base import BaseOptions, BaseType, BaseTypeMeta
 from .field import Field
 from .interface import Interface
 from .utils import yank_fields_from_attrs
-
-try:
-    from dataclasses import make_dataclass, field
-except ImportError:
-    from ..pyutils.dataclasses import make_dataclass, field  # type: ignore
 
 # For static type checking with Mypy
 MYPY = False
@@ -28,7 +25,11 @@ class ObjectTypeMeta(BaseTypeMeta):
             pass
 
         base_cls = super().__new__(
-            cls, name_, (InterObjectType,) + bases, namespace, **options,
+            cls,
+            name_,
+            (InterObjectType,) + bases,
+            namespace,
+            **options,
         )
         if base_cls._meta:
             fields = [

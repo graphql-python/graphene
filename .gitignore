@@ -16,6 +16,7 @@ dist/
 downloads/
 eggs/
 .eggs/
+_version.py
 lib/
 lib64/
 parts/

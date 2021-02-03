@@ -24,11 +24,11 @@
 
 Graphene has multiple integrations with different frameworks:
 
-| integration       | Package                                                                                 |
-| ----------------- | --------------------------------------------------------------------------------------- |
-| Django            | [graphene-django](https://github.com/graphql-python/graphene-django/)                   |
-| SQLAlchemy        | [graphene-sqlalchemy](https://github.com/graphql-python/graphene-sqlalchemy/)           |
-| Google App Engine | [graphene-gae](https://github.com/graphql-python/graphene-gae/)                         |
+| integration       | Package                                                                       |
+| ----------------- | ----------------------------------------------------------------------------- |
+| Django            | [graphene-django](https://github.com/graphql-python/graphene-django/)         |
+| SQLAlchemy        | [graphene-sqlalchemy](https://github.com/graphql-python/graphene-sqlalchemy/) |
+| Google App Engine | [graphene-gae](https://github.com/graphql-python/graphene-gae/)               |
 
 Also, Graphene is fully compatible with the GraphQL spec, working seamlessly with all GraphQL clients, such as [Relay](https://github.com/facebook/relay), [Apollo](https://github.com/apollographql/apollo-client) and [gql](https://github.com/graphql-python/gql).
 

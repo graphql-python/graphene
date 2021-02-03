@@ -1,10 +1,12 @@
 language: python
-dist: xenial
+dist: focal
 
 python:
   - "3.6"
   - "3.7"
   - "3.8"
+  - "3.9"
+  - "nightly"
 
 install:
   - pip install tox tox-travis
@@ -13,9 +15,7 @@ after_success:
   - pip install coveralls
   - coveralls
 cache:
-  directories:
-    - $HOME/.cache/pip
-    - $HOME/.cache/pre-commit
+  - pip
 
 stages:
   - test
@@ -23,6 +23,8 @@ stages:
     if: tag IS present
 
 jobs:
+  allow_failures:
+    - python: "nightly"
   fast_finish: true
   include:
     - env: TOXENV=pre-commit
