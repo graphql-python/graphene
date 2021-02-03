@@ -71,9 +71,9 @@ class Argument(MountedType):
 
 
 def to_arguments(args, extra_args=None):
-    from .unmountedtype import UnmountedType
     from .field import Field
     from .inputfield import InputField
+    from .unmountedtype import UnmountedType
 
     if extra_args:
         extra_args = sorted(extra_args.items(), key=lambda f: f[1])

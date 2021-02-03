@@ -143,7 +143,7 @@ class String(Scalar):
     @staticmethod
     def coerce_string(value):
         if isinstance(value, bool):
-            return u"true" if value else u"false"
+            return "true" if value else "false"
         return str(value)
 
     serialize = coerce_string

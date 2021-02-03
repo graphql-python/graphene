@@ -2,15 +2,16 @@ from ..utils.deprecated import warn_deprecation
 from ..utils.get_unbound_function import get_unbound_function
 from ..utils.props import props
 from .field import Field
+from .interface import Interface
 from .objecttype import ObjectType, ObjectTypeOptions
 from .utils import yank_fields_from_attrs
-from .interface import Interface
 
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
+    from typing import Callable, Dict, Iterable, Type  # NOQA
+
     from .argument import Argument  # NOQA
-    from typing import Dict, Type, Callable, Iterable  # NOQA
 
 
 class MutationOptions(ObjectTypeOptions):
@@ -99,12 +100,10 @@ class Mutation(ObjectType):
                 input_class = getattr(cls, "Input", None)
                 if input_class:
                     warn_deprecation(
-                        (
-                            f"Please use {cls.__name__}.Arguments instead of {cls.__name__}.Input."
-                            " Input is now only used in ClientMutationID.\n"
-                            "Read more:"
-                            " https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#mutation-input"
-                        )
+                        f"Please use {cls.__name__}.Arguments instead of {cls.__name__}.Input."
+                        " Input is now only used in ClientMutationID.\n"
+                        "Read more:"
+                        " https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#mutation-input"
                     )
 
             if input_class:

@@ -1,6 +1,6 @@
 from pytest import mark
 
-from graphene import ObjectType, Int, String, Schema, Field
+from graphene import Field, Int, ObjectType, Schema, String
 
 
 class Query(ObjectType):

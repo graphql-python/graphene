@@ -2,13 +2,13 @@ import inspect
 from collections.abc import Mapping
 from functools import partial
 
+from ..utils.deprecated import warn_deprecation
 from .argument import Argument, to_arguments
 from .mountedtype import MountedType
 from .resolver import default_resolver
 from .structures import NonNull
 from .unmountedtype import UnmountedType
 from .utils import get_type
-from ..utils.deprecated import warn_deprecation
 
 base_type = type
 

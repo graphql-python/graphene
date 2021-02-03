@@ -4,7 +4,7 @@ data = {}
 def setup():
     global data
 
-    from .schema import Ship, Faction
+    from .schema import Faction, Ship
 
     xwing = Ship(id="1", name="X-Wing")
 

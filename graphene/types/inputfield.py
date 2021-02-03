@@ -55,7 +55,7 @@ class InputField(MountedType):
         description=None,
         required=False,
         _creation_counter=None,
-        **extra_args
+        **extra_args,
     ):
         super(InputField, self).__init__(_creation_counter=_creation_counter)
         self.name = name

@@ -1,7 +1,7 @@
 from ..resolver import (
     attr_resolver,
-    dict_resolver,
     dict_or_attr_resolver,
+    dict_resolver,
     get_default_resolver,
     set_default_resolver,
 )

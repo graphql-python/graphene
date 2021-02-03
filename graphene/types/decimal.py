@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from decimal import Decimal as _Decimal
 
-from graphql.language.ast import StringValueNode, IntValueNode
+from graphql.language.ast import IntValueNode, StringValueNode
 
 from .scalars import Scalar
 

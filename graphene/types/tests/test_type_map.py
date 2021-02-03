@@ -18,8 +18,8 @@ from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
 from ..scalars import Int, String
-from ..structures import List, NonNull
 from ..schema import Schema
+from ..structures import List, NonNull
 
 
 def create_type_map(types, auto_camelcase=True):

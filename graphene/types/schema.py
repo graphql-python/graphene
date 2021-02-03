@@ -2,20 +2,11 @@ import inspect
 from functools import partial
 
 from graphql import (
-    default_type_resolver,
-    get_introspection_query,
-    graphql,
-    graphql_sync,
-    introspection_types,
-    parse,
-    print_schema,
-    subscribe,
-    validate,
     ExecutionResult,
     GraphQLArgument,
     GraphQLBoolean,
-    GraphQLError,
     GraphQLEnumValue,
+    GraphQLError,
     GraphQLField,
     GraphQLFloat,
     GraphQLID,
@@ -27,12 +18,21 @@ from graphql import (
     GraphQLSchema,
     GraphQLString,
     Undefined,
+    default_type_resolver,
+    get_introspection_query,
+    graphql,
+    graphql_sync,
+    introspection_types,
+    parse,
+    print_schema,
+    subscribe,
+    validate,
 )
 from graphql.execution import ExecutionContext
 from graphql.execution.values import get_argument_values
 
-from ..utils.str_converters import to_camel_case
 from ..utils.get_unbound_function import get_unbound_function
+from ..utils.str_converters import to_camel_case
 from .definitions import (
     GrapheneEnumType,
     GrapheneGraphQLType,

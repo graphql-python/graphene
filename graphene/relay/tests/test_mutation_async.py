@@ -1,8 +1,8 @@
 from pytest import mark
 
+from graphene.relay.mutation import ClientIDMutation
 from graphene.types import ID, Field, ObjectType, Schema
 from graphene.types.scalars import String
-from graphene.relay.mutation import ClientIDMutation
 
 
 class SharedFields(object):

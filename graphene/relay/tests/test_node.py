@@ -1,4 +1,5 @@
 import re
+
 from graphql_relay import to_global_id
 
 from graphene.tests.utils import dedent

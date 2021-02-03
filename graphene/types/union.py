@@ -4,8 +4,9 @@ from .unmountedtype import UnmountedType
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
-    from .objecttype import ObjectType  # NOQA
     from typing import Iterable, Type  # NOQA
+
+    from .objecttype import ObjectType  # NOQA
 
 
 class UnionOptions(BaseOptions):

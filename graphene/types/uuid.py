@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 from uuid import UUID as _UUID
 
 from graphql.language.ast import StringValueNode
