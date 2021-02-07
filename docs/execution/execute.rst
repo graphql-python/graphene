@@ -76,13 +76,22 @@ Value used for :ref:`ResolverParamParent` in root queries and mutations can be o
 
 .. code:: python
 
-    from graphene import ObjectType, Field, Schema
+    from graphene import ObjectType, Field, Schema, String, ID
+
+
+    class User(ObjectType):
+        id = ID()
+        name = String()
+        first_name = String()
+        last_name = String()
+
 
     class Query(ObjectType):
-        me = Field(User)
+        user = Field(User)
 
         def resolve_user(root, info):
-            return {'id': root.id, 'firstName': root.name}
+            return User(id=root.id, first_name=root.name)
+
 
     schema = Schema(Query)
     user_root = User(id=12, name='bob')
@@ -98,7 +107,8 @@ Value used for :ref:`ResolverParamParent` in root queries and mutations can be o
         ''',
         root=user_root
     )
-    assert result.data['user']['id'] == user_root.id
+    assert result.data['user']['id'] == str(user_root.id)
+
 
 Operation Name
 ______________
