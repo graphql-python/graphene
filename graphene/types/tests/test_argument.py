@@ -7,6 +7,8 @@ from ..field import Field
 from ..inputfield import InputField
 from ..scalars import String
 from ..structures import NonNull
+from ..mutation import Mutation
+from graphene.utils.props import props
 
 
 def test_argument():
@@ -74,3 +76,16 @@ def test_argument_with_lazy_partial_type():
     MyType = object()
     arg = Argument(partial(lambda: MyType))
     assert arg.type == MyType
+
+
+def test_arguments_raise_if_type_annotations():
+    class Arguments:
+        id: String()
+
+    with raises(ValueError) as exec_info:
+        to_arguments(props(Arguments))
+
+    assert str(exec_info.value) == (
+        f"Arguments class doesn't have any field but has type annotations. "
+        f"You probably used ':' instead of '=' in class definition"
+    )

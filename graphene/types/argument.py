@@ -75,6 +75,10 @@ def to_arguments(args, extra_args=None):
     from .field import Field
     from .inputfield import InputField
 
+    if type(args) == dict and len(args) == 1 and '__annotations__' in args:
+        raise ValueError(f"Arguments class doesn't have any field but has type annotations. "
+                         f"You probably used ':' instead of '=' in class definition")
+
     if extra_args:
         extra_args = sorted(extra_args.items(), key=lambda f: f[1])
     else:
