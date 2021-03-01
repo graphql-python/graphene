@@ -128,9 +128,7 @@ def test_query_interface():
 
     executed = hello_schema.execute("{ interfaces { __typename } }")
     assert not executed.errors
-    assert executed.data == {
-        "interfaces": [{"__typename": "One"}, {"__typename": "Two"}]
-    }
+    assert executed.data == {"interfaces": [{"__typename": "One"}, {"__typename": "Two"}]}
 
 
 def test_query_dynamic():
@@ -179,10 +177,7 @@ def test_query_wrong_default_value():
 
     executed = hello_schema.execute("{ hello { field } }")
     assert len(executed.errors) == 1
-    assert (
-        executed.errors[0].message
-        == GraphQLError("Expected value of type 'MyType' but got: 'hello'.").message
-    )
+    assert executed.errors[0].message == GraphQLError("Expected value of type 'MyType' but got: 'hello'.").message
     assert executed.data == {"hello": None}
 
 
@@ -229,11 +224,11 @@ def test_query_arguments():
 
     result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {"test": '[null,{"a_str":null,"a_int":null}]'}
+    assert result.data == {"test": "[null,{}]"}
 
     result = test_schema.execute('{ test(aStr: "String!") }', "Source!")
     assert not result.errors
-    assert result.data == {"test": '["Source!",{"a_str":"String!","a_int":null}]'}
+    assert result.data == {"test": '["Source!",{"a_str":"String!"}]'}
 
     result = test_schema.execute('{ test(aInt: -123, aStr: "String!") }', "Source!")
     assert not result.errors
@@ -258,19 +253,15 @@ def test_query_input_field():
 
     result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {"test": '[null,{"a_input":null}]'}
+    assert result.data == {"test": "[null,{}]"}
 
     result = test_schema.execute('{ test(aInput: {aField: "String!"} ) }', "Source!")
     assert not result.errors
     assert result.data == {"test": '["Source!",{"a_input":{"a_field":"String!"}}]'}
 
-    result = test_schema.execute(
-        '{ test(aInput: {recursiveField: {aField: "String!"}}) }', "Source!"
-    )
+    result = test_schema.execute('{ test(aInput: {recursiveField: {aField: "String!"}}) }', "Source!")
     assert not result.errors
-    assert result.data == {
-        "test": '["Source!",{"a_input":{"recursive_field":{"a_field":"String!"}}}]'
-    }
+    assert result.data == {"test": '["Source!",{"a_input":{"recursive_field":{"a_field":"String!"}}}]'}
 
 
 def test_query_middlewares():
@@ -289,9 +280,7 @@ def test_query_middlewares():
 
     hello_schema = Schema(Query)
 
-    executed = hello_schema.execute(
-        "{ hello, other }", middleware=[reversed_middleware]
-    )
+    executed = hello_schema.execute("{ hello, other }", middleware=[reversed_middleware])
     assert not executed.errors
     assert executed.data == {"hello": "dlroW", "other": "rehto"}
 
@@ -397,11 +386,7 @@ def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
     big_list_query = partial(hello_schema.execute, "{ allContainers { x, y, z, o } }")
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {
-        "allContainers": [
-            {"x": c.x, "y": c.y, "z": c.z, "o": c.o} for c in big_container_list
-        ]
-    }
+    assert result.data == {"allContainers": [{"x": c.x, "y": c.y, "z": c.z, "o": c.o} for c in big_container_list]}
 
 
 def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark(
@@ -438,11 +423,7 @@ def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark
     big_list_query = partial(hello_schema.execute, "{ allContainers { x, y, z, o } }")
     result = benchmark(big_list_query)
     assert not result.errors
-    assert result.data == {
-        "allContainers": [
-            {"x": c.x, "y": c.y, "z": c.z, "o": c.o} for c in big_container_list
-        ]
-    }
+    assert result.data == {"allContainers": [{"x": c.x, "y": c.y, "z": c.z, "o": c.o} for c in big_container_list]}
 
 
 def test_query_annotated_resolvers():

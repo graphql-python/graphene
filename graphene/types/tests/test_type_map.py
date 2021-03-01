@@ -1,3 +1,4 @@
+from graphql import Undefined
 from graphql.type import (
     GraphQLArgument,
     GraphQLEnumType,
@@ -51,9 +52,7 @@ def test_enum():
     assert graphql_enum.name == "MyEnum"
     assert graphql_enum.description == "Description"
     assert graphql_enum.values == {
-        "foo": GraphQLEnumValue(
-            value=1, description="Description foo=1", deprecation_reason="Is deprecated"
-        ),
+        "foo": GraphQLEnumValue(value=1, description="Description foo=1", deprecation_reason="Is deprecated"),
         "bar": GraphQLEnumValue(value=2, description="Description bar=2"),
     }
 
@@ -227,9 +226,7 @@ def test_objecttype_camelcase():
     assert list(fields) == ["fooBar"]
     foo_field = fields["fooBar"]
     assert isinstance(foo_field, GraphQLField)
-    assert foo_field.args == {
-        "barFoo": GraphQLArgument(GraphQLString, default_value=None, out_name="bar_foo")
-    }
+    assert foo_field.args == {"barFoo": GraphQLArgument(GraphQLString, default_value=Undefined, out_name="bar_foo")}
 
 
 def test_objecttype_camelcase_disabled():
@@ -249,11 +246,7 @@ def test_objecttype_camelcase_disabled():
     assert list(fields) == ["foo_bar"]
     foo_field = fields["foo_bar"]
     assert isinstance(foo_field, GraphQLField)
-    assert foo_field.args == {
-        "bar_foo": GraphQLArgument(
-            GraphQLString, default_value=None, out_name="bar_foo"
-        )
-    }
+    assert foo_field.args == {"bar_foo": GraphQLArgument(GraphQLString, default_value=Undefined, out_name="bar_foo")}
 
 
 def test_objecttype_with_possible_types():
