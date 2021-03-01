@@ -104,7 +104,9 @@ def to_arguments(args, extra_args=None):
             raise ValueError(f'Unknown argument "{default_name}".')
 
         arg_name = default_name or arg.name
-        assert arg_name not in arguments, f'More than one Argument have same name "{arg_name}".'
+        assert (
+            arg_name not in arguments
+        ), f'More than one Argument have same name "{arg_name}".'
         arguments[arg_name] = arg
 
     return arguments
