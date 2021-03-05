@@ -77,13 +77,13 @@ Snapshot testing
 As our APIs evolve, we need to know when our changes introduce any breaking changes that might break
 some of the clients of our GraphQL app.
 
-However, writing tests and replicate the same response we expect from our GraphQL application can be
+However, writing tests and replicating the same response we expect from our GraphQL application can be a
 tedious and repetitive task, and sometimes it's easier to skip this process.
 
 Because of that, we recommend the usage of `SnapshotTest <https://github.com/syrusakbary/snapshottest/>`_.
 
-SnapshotTest let us write all this tests in a breeze, as creates automatically the ``snapshots`` for us
-the first time the test is executed.
+SnapshotTest lets us write all these tests in a breeze, as it automatically creates the ``snapshots`` for us
+the first time the test are executed.
 
 
 Here is a simple example on how our tests will look if we use ``pytest``:
