@@ -7,7 +7,7 @@ to specify any common fields between the types.
 The basics:
 
 - Each Union is a Python class that inherits from ``graphene.Union``.
-- Unions don't have any fields on it, just links to the possible objecttypes.
+- Unions don't have any fields on it, just links to the possible ObjectTypes.
 
 Quick example
 -------------
