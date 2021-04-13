@@ -71,8 +71,6 @@ For example with the ObjectType the ``last_name`` field name is converted to ``l
         last_name = graphene.String()
         other_name = graphene.String(name='_other_Name')
 
-
-
 In case you don't want to apply this transformation, provide a ``name`` argument to the field constructor.
 ``other_name`` converts to ``_other_Name`` (without further transformations).
 
