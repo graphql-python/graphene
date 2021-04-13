@@ -28,8 +28,8 @@ Create loaders by providing a batch loading function.
 A batch loading function accepts a list of keys, and returns a ``Promise``
 which resolves to a list of ``values``.
 
-``DataLoader`` will coalesce all individual loads which occur within a 
-single frame of execution (executed once the wrapping promise is resolved) 
+``DataLoader`` will coalesce all individual loads which occur within a
+single frame of execution (executed once the wrapping promise is resolved)
 and then call your batch function with all requested keys.
 
 
