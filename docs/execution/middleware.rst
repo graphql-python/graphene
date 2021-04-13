@@ -46,7 +46,7 @@ Functional example
 ------------------
 
 Middleware can also be defined as a function. Here we define a middleware that
-logs the time it takes to resolve each field
+logs the time it takes to resolve each field:
 
 .. code:: python
 
