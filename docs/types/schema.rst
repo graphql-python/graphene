@@ -44,7 +44,7 @@ There are some cases where the schema cannot access all of the types that we pla
 For example, when a field returns an ``Interface``, the schema doesn't know about any of the
 implementations.
 
-In this case, we need to use the ``types`` argument when creating the Schema.
+In this case, we need to use the ``types`` argument when creating the Schema:
 
 
 .. code:: python
@@ -63,7 +63,7 @@ By default all field and argument names (that are not
 explicitly set with the ``name`` arg) will be converted from
 ``snake_case`` to ``camelCase`` (as the API is usually being consumed by a js/mobile client)
 
-For example with the ObjectType
+For example with the ObjectType the ``last_name`` field name is converted to ``lastName``:
 
 .. code:: python
 
@@ -71,12 +71,12 @@ For example with the ObjectType
         last_name = graphene.String()
         other_name = graphene.String(name='_other_Name')
 
-the ``last_name`` field name is converted to ``lastName``.
+
 
 In case you don't want to apply this transformation, provide a ``name`` argument to the field constructor.
 ``other_name`` converts to ``_other_Name`` (without further transformations).
 
-Your query should look like
+Your query should look like:
 
 .. code::
 
@@ -86,7 +86,7 @@ Your query should look like
     }
 
 
-To disable this behavior, set the ``auto_camelcase`` to ``False`` upon schema instantiation.
+To disable this behavior, set the ``auto_camelcase`` to ``False`` upon schema instantiation:
 
 .. code:: python
 
