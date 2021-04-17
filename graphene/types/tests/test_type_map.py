@@ -97,9 +97,7 @@ def test_objecttype():
 
 def test_required_argument_with_default_value():
     class MyObjectType(ObjectType):
-        foo = String(
-            bar=String(required=True, default_value="x")
-        )
+        foo = String(bar=String(required=True, default_value="x"))
 
     type_map = create_type_map([MyObjectType])
 
