@@ -26,7 +26,6 @@ from graphql import (
     GraphQLObjectType,
     GraphQLSchema,
     GraphQLString,
-    Undefined,
 )
 from graphql.execution import ExecutionContext
 from graphql.execution.values import get_argument_values
