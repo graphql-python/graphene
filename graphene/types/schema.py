@@ -313,9 +313,7 @@ class TypeMap(dict):
                         arg_type,
                         out_name=arg_name,
                         description=arg.description,
-                        default_value=Undefined
-                        if isinstance(arg.type, NonNull)
-                        else arg.default_value,
+                        default_value=arg.default_value,
                     )
                 subscribe = field.wrap_subscribe(
                     self.get_function_for_type(
