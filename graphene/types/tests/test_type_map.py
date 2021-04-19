@@ -6,6 +6,7 @@ from graphql.type import (
     GraphQLInputField,
     GraphQLInputObjectType,
     GraphQLInterfaceType,
+    GraphQLNonNull,
     GraphQLObjectType,
     GraphQLString,
 )
@@ -92,6 +93,21 @@ def test_objecttype():
             out_name="bar",
         )
     }
+
+
+def test_required_argument_with_default_value():
+    class MyObjectType(ObjectType):
+        foo = String(bar=String(required=True, default_value="x"))
+
+    type_map = create_type_map([MyObjectType])
+
+    graphql_type = type_map["MyObjectType"]
+    foo_field = graphql_type.fields["foo"]
+
+    bar_argument = foo_field.args["bar"]
+    assert bar_argument.default_value == "x"
+    assert isinstance(bar_argument.type, GraphQLNonNull)
+    assert bar_argument.type.of_type == GraphQLString
 
 
 def test_dynamic_objecttype():
