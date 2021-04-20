@@ -110,7 +110,7 @@ If there are multiple operations defined in a query string, ``operation_name`` s
     from graphene import ObjectType, Field, Schema
 
     class Query(ObjectType):
-        me = Field(User)
+        user = Field(User)
 
         def resolve_user(root, info):
             return get_user_by_id(12)
