@@ -84,7 +84,7 @@ setup(
     install_requires=[
         "graphql-core>=3.1.2,<4",
         "graphql-relay>=3.0,<4",
-        "aniso8601>=8,<9",
+        "aniso8601>=8,<10",
     ],
     tests_require=tests_require,
     extras_require={"test": tests_require, "dev": dev_requires},
