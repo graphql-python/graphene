@@ -54,7 +54,7 @@ tests_require = [
     "coveralls>=1.11,<2",
     "promise>=2.3,<3",
     "mock>=4.0,<5",
-    "pytz==2019.3",
+    "pytz==2021.1",
     "iso8601>=0.1,<2",
 ]
 
