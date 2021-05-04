@@ -34,7 +34,8 @@ class Schema(GraphQLSchema):
     about the types through introspection.
 
     Args:
-        query (ObjectType): Root query *ObjectType*. Describes entry point for fields to *read*
+        
+        query (Type[ObjectType]): Root query *ObjectType*. Describes entry point for fields to *read*
             data in your Schema.
         mutation (ObjectType, optional): Root mutation *ObjectType*. Describes entry point for
             fields to *create, update or delete* data in your API.
