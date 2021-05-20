@@ -1,5 +1,5 @@
 import inspect
-from collections import Mapping, OrderedDict
+from collections.abc import Mapping
 from functools import partial
 
 from .argument import Argument, to_arguments
@@ -100,7 +100,7 @@ class Field(MountedType):
 
         self.name = name
         self._type = type
-        self.args = to_arguments(args or OrderedDict(), extra_args)
+        self.args = to_arguments(args or dict(), extra_args)
         if source:
             resolver = partial(source_resolver, source)
         self.resolver = resolver
