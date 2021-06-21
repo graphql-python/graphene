@@ -15,7 +15,7 @@ def either(expected):
             if not any(arg_list):
                 raise TooFewArgs("Too few arguments, must be either of: " + ",".join(expected))
 
-            if all(arg_list) or arg_list.count(True) > 1:
+            if arg_list.count(True) > 1:
                 raise TooManyArgs("Too many arguments, must be either of: " + ",".join(expected))
 
             return func(*args, **kwargs)
