@@ -66,7 +66,7 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
     Methods starting with ``resolve_<field_name>`` are bound as resolvers of the matching Field
     name. If no resolver is provided, the default resolver is used.
 
-    Ambiguous types with Interface and Union can be determined through``is_type_of`` method and
+    Ambiguous types with Interface and Union can be determined through ``is_type_of`` method and
     ``Meta.possible_types`` attribute.
 
     .. code:: python
