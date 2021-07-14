@@ -135,7 +135,7 @@ class Mutation(ObjectType):
     def Field(
         cls, name=None, description=None, deprecation_reason=None, required=False
     ):
-        """ Mount instance of mutation Field. """
+        """Mount instance of mutation Field."""
         return Field(
             cls._meta.output,
             args=cls._meta.arguments,
