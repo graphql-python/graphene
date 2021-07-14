@@ -49,6 +49,7 @@ tests_require = [
     "pytest-benchmark",
     "pytest-cov",
     "pytest-mock",
+    "fastdiff==0.2.0",
     "snapshottest",
     "coveralls",
     "promise",
