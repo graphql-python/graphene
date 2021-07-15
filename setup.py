@@ -49,6 +49,8 @@ tests_require = [
     "pytest-benchmark",
     "pytest-cov",
     "pytest-mock",
+    # pinning fastdiff dep (required by snapshottest) because later versions
+    # require wasmer 1.0.0 which is not compatible with Python 2.7
     "fastdiff==0.2.0",
     "snapshottest",
     "coveralls",
