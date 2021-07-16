@@ -1,6 +1,10 @@
 import inspect
 from collections import OrderedDict
-from collections.abc import Mapping
+try:
+    from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
+
 from functools import partial
 
 from .argument import Argument, to_arguments

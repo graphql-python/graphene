@@ -1,5 +1,8 @@
 from collections import OrderedDict
-from collections.abc import Mapping
+try:
+    from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
 
 
 def deflate(node, index=None, path=None):

@@ -1,6 +1,10 @@
 import re
 from collections import OrderedDict
-from collections.abc import Iterable
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
+
 from functools import partial
 
 from graphql_relay import connection_from_list
