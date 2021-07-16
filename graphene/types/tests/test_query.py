@@ -399,7 +399,7 @@ def test_big_list_of_containers_multiple_fields_query_benchmark(benchmark):
 
 
 def test_big_list_of_containers_multiple_fields_custom_resolvers_query_benchmark(
-    benchmark
+    benchmark,
 ):
     class Container(ObjectType):
         x = Int()

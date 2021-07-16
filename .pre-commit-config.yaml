@@ -18,11 +18,11 @@ repos:
     hooks:
     -   id: pyupgrade
 -   repo: https://github.com/ambv/black
-    rev: 18.9b0
+    rev: 21.6b0
     hooks:
     - id: black
       language_version: python3
 -   repo: https://github.com/PyCQA/flake8
-    rev: 3.7.7
+    rev: 3.9.2
     hooks:
     -   id: flake8

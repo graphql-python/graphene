@@ -54,10 +54,10 @@ for i, letter in enumerate(letter_chars):
 def edges(selected_letters):
     return [
         {
-            "node": {"id": base64("Letter:%s" % l.id), "letter": l.letter},
-            "cursor": base64("arrayconnection:%s" % l.id),
+            "node": {"id": base64("Letter:%s" % letter.id), "letter": letter.letter},
+            "cursor": base64("arrayconnection:%s" % letter.id),
         }
-        for l in [letters[i] for i in selected_letters]
+        for letter in [letters[i] for i in selected_letters]
     ]
 
 
