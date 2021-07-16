@@ -1,5 +1,6 @@
 import inspect
 from collections import OrderedDict
+
 try:
     from collections.abc import Mapping
 except ImportError:

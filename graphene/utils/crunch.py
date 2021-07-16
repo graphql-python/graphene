@@ -1,4 +1,5 @@
 import json
+
 try:
     from collections.abc import Mapping
 except ImportError:
