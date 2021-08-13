@@ -1,7 +1,7 @@
 Validators
 ==========
 
-Validation rules help validate a given GraphQL query, before executing it.To help with common use
+Validation rules help validate a given GraphQL query, before executing it. To help with common use
 cases, graphene provides a few validation rules out of the box.
 
 
