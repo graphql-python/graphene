@@ -28,7 +28,7 @@
 import re
 from typing import Callable, Dict, List, Optional, Union
 
-from graphql import GraphQLError, is_introspection_type
+from graphql import GraphQLError
 from graphql.language import (
     DefinitionNode,
     FieldNode,
