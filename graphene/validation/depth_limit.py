@@ -29,6 +29,7 @@ import re
 from typing import Callable, Dict, List, Optional, Union
 
 from graphql import GraphQLError
+from graphql.validation import ValidationContext, ValidationRule
 from graphql.language import (
     DefinitionNode,
     FieldNode,
@@ -38,7 +39,8 @@ from graphql.language import (
     Node,
     OperationDefinitionNode,
 )
-from graphql.validation import ValidationContext, ValidationRule
+
+from ..utils.is_introspection_key import is_introspection_key
 
 
 IgnoreType = Union[Callable[[str], bool], re.Pattern, str]
@@ -121,11 +123,7 @@ def determine_depth(
         return depth_so_far
 
     if isinstance(node, FieldNode):
-        # from: https://spec.graphql.org/June2018/#sec-Schema
-        # > All types and directives defined within a schema must not have a name which
-        # > begins with "__" (two underscores), as this is used exclusively
-        # > by GraphQL’s introspection system.
-        should_ignore = str(node.name.value).startswith("__") or is_ignored(
+        should_ignore = is_introspection_key(node.name.value) or is_ignored(
             node, ignore
         )
 

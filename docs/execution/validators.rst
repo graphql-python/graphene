@@ -20,7 +20,7 @@ Example
 Here is how you would implement depth-limiting on your schema.
 
 .. code:: python
-    from graphene.validators import depth_limit_validator
+    from graphene.validation import depth_limit_validator
 
     # The following schema doesn't execute queries
     # which have a depth more than 20.
