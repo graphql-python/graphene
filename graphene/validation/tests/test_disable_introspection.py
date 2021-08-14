@@ -18,10 +18,6 @@ def run_query(query: str):
 
     result = None
 
-    def callback(query_depths):
-        nonlocal result
-        result = query_depths
-
     errors = validate(
         schema.graphql_schema,
         document,
