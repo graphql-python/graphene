@@ -19,8 +19,8 @@ def run_query(query: str):
     result = None
 
     errors = validate(
-        schema.graphql_schema,
-        document,
+        schema=schema.graphql_schema,
+        document_ast=document,
         rules=(
             disable_introspection(),
         ),

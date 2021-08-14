@@ -87,8 +87,8 @@ def run_query(query: str, max_depth: int, ignore=None):
         result = query_depths
 
     errors = validate(
-        schema.graphql_schema,
-        document,
+        schema=schema.graphql_schema,
+        document_ast=document,
         rules=(
             depth_limit_validator(
                 max_depth=max_depth,

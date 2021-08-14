@@ -20,7 +20,7 @@ Example
 Here is how you would implement depth-limiting on your schema.
 
 .. code:: python
-    from graphql import validate
+    from graphql import validate, parse
     from graphene import ObjectType, Schema, String
     from graphene.validation import depth_limit_validator
 
@@ -36,7 +36,7 @@ Here is how you would implement depth-limiting on your schema.
 
     validation_errors = validate(
         schema=schema,
-        document='THE QUERY',
+        document_ast=parse('THE QUERY'),
         rules=(
             depth_limit_validator(
                 max_depth=20
