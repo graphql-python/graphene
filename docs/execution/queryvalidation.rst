@@ -56,7 +56,7 @@ perform validation, your validator class should define one or more of enter_* an
 enter/leave items as well as details on function documentation, please see contents of the visitor module. To make
 validation fail, you should call validator's report_error method with the instance of GraphQLError describing failure
 reason. Here is an example query validator that visits field definitions in GraphQL query and fails query validation
-if any of those fields are introspection fields:
+if any of those fields are blacklisted fields:
 
 .. code:: python
     from graphql import GraphQLError
