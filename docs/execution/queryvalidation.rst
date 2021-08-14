@@ -16,7 +16,7 @@ queries. It takes in the following arguments.
 - ``ignore`` Stops recursive depth checking based on a field name. Either a string or regexp to match the name, or a function that returns a boolean
 - ``callback`` Called each time validation runs. Receives an Object which is a map of the depths for each operation.
 
-Example
+Usage
 -------
 
 Here is how you would implement depth-limiting on your schema.
@@ -33,7 +33,7 @@ Here is how you would implement depth-limiting on your schema.
 
     schema = Schema(query=MyQuery)
 
-    # Queries which have a depth more than 20
+    # queries which have a depth more than 20
     # will not be executed.
 
     validation_errors = validate(
@@ -47,6 +47,39 @@ Here is how you would implement depth-limiting on your schema.
     )
 
 
+Disable Introspection
+---------------------
+the disable introspection validation rule ensures that your schema cannot be introspected.
+This is a useful security measure in production environments.
+
+Usage
+-------
+
+Here is how you would disable introspection for your schema.
+
+.. code:: python
+    from graphql import validate, parse
+    from graphene import ObjectType, Schema, String
+    from graphene.validation import DisableIntrospection
+
+
+    class MyQuery(ObjectType):
+        name = String(required=True)
+
+
+    schema = Schema(query=MyQuery)
+
+    # introspection queries will not be executed.
+
+    validation_errors = validate(
+        schema=schema,
+        document_ast=parse('THE QUERY'),
+        rules=(
+            DisableIntrospection,
+        )
+    )
+
+
 Implementing custom validators
 ------------------------------
 All custom query validators should extend the `ValidationRule <https://github.com/graphql-python/graphql-core/blob/v3.0.5/src/graphql/validation/rules/__init__.py#L37>`_
@@ -56,7 +89,7 @@ perform validation, your validator class should define one or more of enter_* an
 enter/leave items as well as details on function documentation, please see contents of the visitor module. To make
 validation fail, you should call validator's report_error method with the instance of GraphQLError describing failure
 reason. Here is an example query validator that visits field definitions in GraphQL query and fails query validation
-if any of those fields are blacklisted fields:
+if any of those fields are blacklisted:
 
 .. code:: python
     from graphql import GraphQLError
@@ -70,7 +103,7 @@ if any of those fields are blacklisted fields:
 
 
     def is_blacklisted_field(field_name: str):
-        return key.lower() in my_blacklist
+        return field_name.lower() in my_blacklist
 
 
     class BlackListRule(ValidationRule):

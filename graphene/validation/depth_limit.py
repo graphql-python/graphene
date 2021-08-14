@@ -116,7 +116,7 @@ def determine_depth(
     if depth_so_far > max_depth:
         context.report_error(
             GraphQLError(
-                f"'{operation_name}' exceeds maximum operation depth of {max_depth}",
+                f"'{operation_name}' exceeds maximum operation depth of {max_depth}.",
                 [node],
             )
         )
@@ -172,7 +172,7 @@ def determine_depth(
             )
         )
     else:
-        raise Exception(f"Depth crawler cannot handle: {node.kind}")  # pragma: no cover
+        raise Exception(f"Depth crawler cannot handle: {node.kind}.")  # pragma: no cover
 
 
 def is_ignored(node: FieldNode, ignore: Optional[List[IgnoreType]] = None) -> bool:
@@ -191,6 +191,6 @@ def is_ignored(node: FieldNode, ignore: Optional[List[IgnoreType]] = None) -> bo
             if rule(field_name):
                 return True
         else:
-            raise ValueError(f"Invalid ignore option: {rule}")
+            raise ValueError(f"Invalid ignore option: {rule}.")
 
     return False

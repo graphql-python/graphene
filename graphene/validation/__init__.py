@@ -1,8 +1,8 @@
 from .depth_limit import depth_limit_validator
-from .disable_introspection import disable_introspection
+from .disable_introspection import DisableIntrospection
 
 
 __all__ = [
-    "depth_limit_validator",
-    "disable_introspection"
+    "DisableIntrospection",
+    "depth_limit_validator"
 ]
