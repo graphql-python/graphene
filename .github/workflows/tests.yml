@@ -57,6 +57,10 @@ jobs:
     # check coverage increase/decrease
     needs: tests
     runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - { os: ubuntu-latest }
     steps:
       - name: Coveralls Finished
         uses: AndreMiras/coveralls-python-action@develop
@@ -66,12 +70,16 @@ jobs:
   deploy:
     # builds and publishes to PyPi
     runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - { python: '3.7', os: ubuntu-latest }
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: ${{ matrix.python }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
