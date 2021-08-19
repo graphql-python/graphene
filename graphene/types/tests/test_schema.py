@@ -175,6 +175,11 @@ class TestUnforgivingExecutionContext:
         ],
     )
     def test_unexpected_error(self, field, exception, schema):
+        # FIXME: tests are failing currently because no exception
+        #  is being raised below. Instead, the errors are being propagated
+        #  to the `errors` array of the response. If this is intended
+        #  behaviour, we need to check if the error exists in the `errors`
+        #  array rather than checking if an exception is raised.
         with raises(exception):
             # no result, but the exception should be propagated
             schema.execute(
