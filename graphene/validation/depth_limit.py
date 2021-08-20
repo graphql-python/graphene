@@ -31,6 +31,7 @@ except ImportError:
     # backwards compatibility for v3.6
     from typing import Pattern
 
+import re
 from typing import Callable, Dict, List, Optional, Union
 
 from graphql import GraphQLError
