@@ -25,7 +25,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import re
+try:
+    from re import Pattern
+except ImportError:
+    # backwards compatibility for v3.6
+    from typing import Pattern
+
 from typing import Callable, Dict, List, Optional, Union
 
 from graphql import GraphQLError
@@ -43,7 +48,7 @@ from graphql.language import (
 from ..utils.is_introspection_key import is_introspection_key
 
 
-IgnoreType = Union[Callable[[str], bool], re.Pattern, str]
+IgnoreType = Union[Callable[[str], bool], Pattern, str]
 
 
 def depth_limit_validator(
