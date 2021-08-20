@@ -391,3 +391,137 @@ class TypeMap(dict):
             return graphql_type
 
         return type_
+
+
+class Schema:
+    """Schema Definition.
+    A Graphene Schema can execute operations (query, mutation, subscription) against the defined
+    types. For advanced purposes, the schema can be used to lookup type definitions and answer
+    questions about the types through introspection.
+    Args:
+        query (Type[ObjectType]): Root query *ObjectType*. Describes entry point for fields to *read*
+            data in your Schema.
+        mutation (Optional[Type[ObjectType]]): Root mutation *ObjectType*. Describes entry point for
+            fields to *create, update or delete* data in your API.
+        subscription (Optional[Type[ObjectType]]): Root subscription *ObjectType*. Describes entry point
+            for fields to receive continuous updates.
+        types (Optional[List[Type[ObjectType]]]): List of any types to include in schema that
+            may not be introspected through root types.
+        directives (List[GraphQLDirective], optional): List of custom directives to include in the
+            GraphQL schema. Defaults to only include directives defined by GraphQL spec (@include
+            and @skip) [GraphQLIncludeDirective, GraphQLSkipDirective].
+        auto_camelcase (bool): Fieldnames will be transformed in Schema's TypeMap from snake_case
+            to camelCase (preferred by GraphQL standard). Default True.
+    """
+
+    def __init__(
+        self,
+        query=None,
+        mutation=None,
+        subscription=None,
+        types=None,
+        directives=None,
+        auto_camelcase=True,
+    ):
+        self.query = query
+        self.mutation = mutation
+        self.subscription = subscription
+        type_map = TypeMap(
+            query, mutation, subscription, types, auto_camelcase=auto_camelcase
+        )
+        self.graphql_schema = GraphQLSchema(
+            type_map.query,
+            type_map.mutation,
+            type_map.subscription,
+            type_map.types,
+            directives,
+        )
+
+    def __str__(self):
+        return print_schema(self.graphql_schema)
+
+    def __getattr__(self, type_name):
+        """
+        This function let the developer select a type in a given schema
+        by accessing its attrs.
+        Example: using schema.Query for accessing the "Query" type in the Schema
+        """
+        _type = self.graphql_schema.get_type(type_name)
+        if _type is None:
+            raise AttributeError(f'Type "{type_name}" not found in the Schema')
+        if isinstance(_type, GrapheneGraphQLType):
+            return _type.graphene_type
+        return _type
+
+    def lazy(self, _type):
+        return lambda: self.get_type(_type)
+
+    def execute(self, *args, **kwargs):
+        """Execute a GraphQL query on the schema.
+        Use the `graphql_sync` function from `graphql-core` to provide the result
+        for a query string. Most of the time this method will be called by one of the Graphene
+        :ref:`Integrations` via a web request.
+        Args:
+            request_string (str or Document): GraphQL request (query, mutation or subscription)
+                as string or parsed AST form from `graphql-core`.
+            root_value (Any, optional): Value to use as the parent value object when resolving
+                root types.
+            context_value (Any, optional): Value to be made available to all resolvers via
+                `info.context`. Can be used to share authorization, dataloaders or other
+                information needed to resolve an operation.
+            variable_values (dict, optional): If variables are used in the request string, they can
+                be provided in dictionary form mapping the variable name to the variable value.
+            operation_name (str, optional): If multiple operations are provided in the
+                request_string, an operation name must be provided for the result to be provided.
+            middleware (List[SupportsGraphQLMiddleware]): Supply request level middleware as
+                defined in `graphql-core`.
+            execution_context_class (ExecutionContext, optional): The execution context class
+                to use when resolving queries and mutations.
+        Returns:
+            :obj:`ExecutionResult` containing any data and errors for the operation.
+        """
+        kwargs = normalize_execute_kwargs(kwargs)
+        return graphql_sync(self.graphql_schema, *args, **kwargs)
+
+    async def execute_async(self, *args, **kwargs):
+        """Execute a GraphQL query on the schema asynchronously.
+        Same as `execute`, but uses `graphql` instead of `graphql_sync`.
+        """
+        kwargs = normalize_execute_kwargs(kwargs)
+        return await graphql(self.graphql_schema, *args, **kwargs)
+
+    async def subscribe(self, query, *args, **kwargs):
+        """Execute a GraphQL subscription on the schema asynchronously."""
+        # Do parsing
+        try:
+            document = parse(query)
+        except GraphQLError as error:
+            return ExecutionResult(data=None, errors=[error])
+
+        # Do validation
+        validation_errors = validate(self.graphql_schema, document)
+        if validation_errors:
+            return ExecutionResult(data=None, errors=validation_errors)
+
+        # Execute the query
+        kwargs = normalize_execute_kwargs(kwargs)
+        return await subscribe(self.graphql_schema, document, *args, **kwargs)
+
+    def introspect(self):
+        introspection = self.execute(introspection_query)
+        if introspection.errors:
+            raise introspection.errors[0]
+        return introspection.data
+
+
+def normalize_execute_kwargs(kwargs):
+    """Replace alias names in keyword arguments for graphql()"""
+    if "root" in kwargs and "root_value" not in kwargs:
+        kwargs["root_value"] = kwargs.pop("root")
+    if "context" in kwargs and "context_value" not in kwargs:
+        kwargs["context_value"] = kwargs.pop("context")
+    if "variables" in kwargs and "variable_values" not in kwargs:
+        kwargs["variable_values"] = kwargs.pop("variables")
+    if "operation" in kwargs and "operation_name" not in kwargs:
+        kwargs["operation_name"] = kwargs.pop("operation")
+    return kwargs
