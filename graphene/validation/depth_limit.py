@@ -31,7 +31,6 @@ except ImportError:
     # backwards compatibility for v3.6
     from typing import Pattern
 
-import re
 from typing import Callable, Dict, List, Optional, Union
 
 from graphql import GraphQLError
@@ -190,7 +189,7 @@ def is_ignored(node: FieldNode, ignore: Optional[List[IgnoreType]] = None) -> bo
         if isinstance(rule, str):
             if field_name == rule:
                 return True
-        elif isinstance(rule, re.Pattern):
+        elif isinstance(rule, Pattern):
             if rule.match(field_name):
                 return True
         elif callable(rule):
