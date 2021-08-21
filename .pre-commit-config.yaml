@@ -13,16 +13,16 @@ repos:
         - --autofix
     -   id: trailing-whitespace
         exclude: README.md
--   repo: https://github.com/asottile/pyupgrade
+-   repo: git://github.com/asottile/pyupgrade
     rev: v2.24.0
     hooks:
     -   id: pyupgrade
--   repo: https://github.com/ambv/black
+-   repo: git://github.com/ambv/black
     rev: 19.3b0
     hooks:
     -   id: black
         language_version: python3
--   repo: https://github.com/PyCQA/flake8
+-   repo: git://github.com/PyCQA/flake8
     rev: 3.8.4
     hooks:
     -   id: flake8
