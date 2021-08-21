@@ -393,108 +393,11 @@ class TypeMap(dict):
         return type_
 
 
-class UnforgivingExecutionContext(ExecutionContext):
-    """An execution context which doesn't swallow exceptions.
-
-    The only difference between this execution context and the one it inherits from is
-    that ``except Exception`` is commented out within ``resolve_field_value_or_error``.
-    By removing that exception handling, only ``GraphQLError``'s are caught.
-    """
-
-    def resolve_field_value_or_error(
-        self, field_def, field_nodes, resolve_fn, source, info
-    ):
-        """Resolve field to a value or an error.
-
-        Isolates the "ReturnOrAbrupt" behavior to not de-opt the resolve_field()
-        method. Returns the result of resolveFn or the abrupt-return Error object.
-
-        For internal use only.
-        """
-        try:
-            # Build a dictionary of arguments from the field.arguments AST, using the
-            # variables scope to fulfill any variable references.
-            args = get_argument_values(field_def, field_nodes[0], self.variable_values)
-
-            # Note that contrary to the JavaScript implementation, we pass the context
-            # value as part of the resolve info.
-            result = resolve_fn(source, info, **args)
-            if self.is_awaitable(result):
-                # noinspection PyShadowingNames
-                async def await_result():
-                    try:
-                        return await result
-                    except GraphQLError as error:
-                        return error
-                    # except Exception as error:
-                    #     return GraphQLError(str(error), original_error=error)
-
-                    # Yes, this is commented out code. It's been intentionally
-                    # _not_ removed to show what has changed from the original
-                    # implementation.
-
-                return await_result()
-            return result
-        except GraphQLError as error:
-            return error
-        # except Exception as error:
-        #     return GraphQLError(str(error), original_error=error)
-
-        # Yes, this is commented out code. It's been intentionally _not_
-        # removed to show what has changed from the original implementation.
-
-    def complete_value_catching_error(
-        self, return_type, field_nodes, info, path, result
-    ):
-        """Complete a value while catching an error.
-
-        This is a small wrapper around completeValue which detects and logs errors in
-        the execution context.
-        """
-        try:
-            if self.is_awaitable(result):
-
-                async def await_result():
-                    value = self.complete_value(
-                        return_type, field_nodes, info, path, await result
-                    )
-                    if self.is_awaitable(value):
-                        return await value
-                    return value
-
-                completed = await_result()
-            else:
-                completed = self.complete_value(
-                    return_type, field_nodes, info, path, result
-                )
-            if self.is_awaitable(completed):
-                # noinspection PyShadowingNames
-                async def await_completed():
-                    try:
-                        return await completed
-
-                    # CHANGE WAS MADE HERE
-                    # ``GraphQLError`` was swapped in for ``except Exception``
-                    except GraphQLError as error:
-                        self.handle_field_error(error, field_nodes, path, return_type)
-
-                return await_completed()
-            return completed
-
-        # CHANGE WAS MADE HERE
-        # ``GraphQLError`` was swapped in for ``except Exception``
-        except GraphQLError as error:
-            self.handle_field_error(error, field_nodes, path, return_type)
-            return None
-
-
 class Schema:
     """Schema Definition.
-
     A Graphene Schema can execute operations (query, mutation, subscription) against the defined
     types. For advanced purposes, the schema can be used to lookup type definitions and answer
     questions about the types through introspection.
-
     Args:
         query (Type[ObjectType]): Root query *ObjectType*. Describes entry point for fields to *read*
             data in your Schema.
@@ -541,7 +444,6 @@ class Schema:
         """
         This function let the developer select a type in a given schema
         by accessing its attrs.
-
         Example: using schema.Query for accessing the "Query" type in the Schema
         """
         _type = self.graphql_schema.get_type(type_name)
@@ -556,11 +458,9 @@ class Schema:
 
     def execute(self, *args, **kwargs):
         """Execute a GraphQL query on the schema.
-
         Use the `graphql_sync` function from `graphql-core` to provide the result
         for a query string. Most of the time this method will be called by one of the Graphene
         :ref:`Integrations` via a web request.
-
         Args:
             request_string (str or Document): GraphQL request (query, mutation or subscription)
                 as string or parsed AST form from `graphql-core`.
@@ -577,7 +477,6 @@ class Schema:
                 defined in `graphql-core`.
             execution_context_class (ExecutionContext, optional): The execution context class
                 to use when resolving queries and mutations.
-
         Returns:
             :obj:`ExecutionResult` containing any data and errors for the operation.
         """
@@ -586,7 +485,6 @@ class Schema:
 
     async def execute_async(self, *args, **kwargs):
         """Execute a GraphQL query on the schema asynchronously.
-
         Same as `execute`, but uses `graphql` instead of `graphql_sync`.
         """
         kwargs = normalize_execute_kwargs(kwargs)
