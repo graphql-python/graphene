@@ -19,7 +19,6 @@ on:
 jobs:
   coveralls_finish:
     # check coverage increase/decrease
-    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Coveralls Finished
