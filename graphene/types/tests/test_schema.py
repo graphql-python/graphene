@@ -1,6 +1,5 @@
 from graphql.type import GraphQLObjectType, GraphQLSchema
-from graphql import GraphQLError
-from pytest import mark, raises, fixture
+from pytest import raises
 
 from graphene.tests.utils import dedent
 
