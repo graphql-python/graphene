@@ -27,7 +27,6 @@ from graphql import (
     GraphQLSchema,
     GraphQLString,
 )
-from graphql.execution import ExecutionContext
 from graphql.execution.values import get_argument_values
 
 from ..utils.str_converters import to_camel_case
