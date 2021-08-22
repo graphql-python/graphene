@@ -48,26 +48,11 @@ class HumanType(ObjectType):
 
 
 class Query(ObjectType):
-    user = Field(
-        HumanType,
-        required=True,
-        name=String()
-    )
-    version = String(
-        required=True
-    )
-    user1 = Field(
-        HumanType,
-        required=True
-    )
-    user2 = Field(
-        HumanType,
-        required=True
-    )
-    user3 = Field(
-        HumanType,
-        required=True
-    )
+    user = Field(HumanType, required=True, name=String())
+    version = String(required=True)
+    user1 = Field(HumanType, required=True)
+    user2 = Field(HumanType, required=True)
+    user3 = Field(HumanType, required=True)
 
     @staticmethod
     def resolve_user(root, info, name=None):
@@ -91,9 +76,7 @@ def run_query(query: str, max_depth: int, ignore=None):
         document_ast=document,
         rules=(
             depth_limit_validator(
-                max_depth=max_depth,
-                ignore=ignore,
-                callback=callback
+                max_depth=max_depth, ignore=ignore, callback=callback
             ),
         ),
     )

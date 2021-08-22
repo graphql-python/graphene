@@ -5,9 +5,7 @@ from ..disable_introspection import DisableIntrospection
 
 
 class Query(ObjectType):
-    name = String(
-        required=True
-    )
+    name = String(required=True)
 
     @staticmethod
     def resolve_name(root, info):
@@ -23,9 +21,7 @@ def run_query(query: str):
     errors = validate(
         schema=schema.graphql_schema,
         document_ast=document,
-        rules=(
-            DisableIntrospection,
-        ),
+        rules=(DisableIntrospection,),
     )
 
     return errors
