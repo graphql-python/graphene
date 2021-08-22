@@ -1,3 +1,6 @@
+default_language_version:
+  python: python3.8
+
 repos:
 -   repo: git://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
@@ -21,7 +24,6 @@ repos:
     rev: 19.3b0
     hooks:
     -   id: black
-        language_version: python3
 -   repo: git://github.com/PyCQA/flake8
     rev: 3.8.4
     hooks:
