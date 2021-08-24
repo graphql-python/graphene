@@ -163,16 +163,14 @@ async def test_respects_first_and_after_and_before_too_few():
 @mark.asyncio
 async def test_respects_first_and_after_and_before_too_many():
     await check(
-        f'first: 4, after: "{cursor_for("A")}", before: "{cursor_for("E")}"',
-        "BCD",
+        f'first: 4, after: "{cursor_for("A")}", before: "{cursor_for("E")}"', "BCD"
     )
 
 
 @mark.asyncio
 async def test_respects_first_and_after_and_before_exactly_right():
     await check(
-        f'first: 3, after: "{cursor_for("A")}", before: "{cursor_for("E")}"',
-        "BCD",
+        f'first: 3, after: "{cursor_for("A")}", before: "{cursor_for("E")}"', "BCD"
     )
 
 
@@ -188,16 +186,14 @@ async def test_respects_last_and_after_and_before_too_few():
 @mark.asyncio
 async def test_respects_last_and_after_and_before_too_many():
     await check(
-        f'last: 4, after: "{cursor_for("A")}", before: "{cursor_for("E")}"',
-        "BCD",
+        f'last: 4, after: "{cursor_for("A")}", before: "{cursor_for("E")}"', "BCD"
     )
 
 
 @mark.asyncio
 async def test_respects_last_and_after_and_before_exactly_right():
     await check(
-        f'last: 3, after: "{cursor_for("A")}", before: "{cursor_for("E")}"',
-        "BCD",
+        f'last: 3, after: "{cursor_for("A")}", before: "{cursor_for("E")}"', "BCD"
     )
 
 

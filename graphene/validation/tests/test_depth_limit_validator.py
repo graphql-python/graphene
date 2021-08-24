@@ -236,11 +236,7 @@ def test_should_ignore_field():
     errors, result = run_query(
         query,
         10,
-        ignore=[
-            "user1",
-            re.compile("user2"),
-            lambda field_name: field_name == "user3",
-        ],
+        ignore=["user1", re.compile("user2"), lambda field_name: field_name == "user3"],
     )
 
     expected = {"read1": 2, "read2": 0}
@@ -255,8 +251,4 @@ def test_should_raise_invalid_ignore():
     }
     """
     with raises(ValueError, match="Invalid ignore option:"):
-        run_query(
-            query,
-            10,
-            ignore=[True],
-        )
+        run_query(query, 10, ignore=[True])

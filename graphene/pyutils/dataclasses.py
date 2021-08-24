@@ -291,14 +291,7 @@ class Field:
 
 
 class _DataclassParams:
-    __slots__ = (
-        "init",
-        "repr",
-        "eq",
-        "order",
-        "unsafe_hash",
-        "frozen",
-    )
+    __slots__ = ("init", "repr", "eq", "order", "unsafe_hash", "frozen")
 
     def __init__(self, init, repr, eq, order, unsafe_hash, frozen):
         self.init = init
@@ -1157,10 +1150,7 @@ def make_dataclass(
             name = item
             tp = "typing.Any"
         elif len(item) == 2:
-            (
-                name,
-                tp,
-            ) = item
+            (name, tp) = item
         elif len(item) == 3:
             name, tp, spec = item
             namespace[name] = spec

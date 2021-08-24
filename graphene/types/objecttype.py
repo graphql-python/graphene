@@ -27,11 +27,7 @@ class ObjectTypeMeta(BaseTypeMeta):
             pass
 
         base_cls = super().__new__(
-            cls,
-            name_,
-            (InterObjectType,) + bases,
-            namespace,
-            **options,
+            cls, name_, (InterObjectType,) + bases, namespace, **options
         )
         if base_cls._meta:
             fields = [
