@@ -6,7 +6,7 @@ from ..schema import Schema
 
 
 class Query(ObjectType):
-    decimal = Decimal(input=Decimal())
+    decimal = Decimal(input=Decimal(required=False))
 
     def resolve_decimal(self, info, input):
         return input
@@ -49,3 +49,10 @@ def test_decimal_string_query_integer():
     assert not result.errors
     assert result.data == {"decimal": str(decimal_value)}
     assert decimal.Decimal(result.data["decimal"]) == decimal_value
+
+def test_parse_decimal_empty_string():
+    """Parsing an empty string should return None"""
+    result = schema.execute("""{ decimal(input: \"\") }""")
+    assert not result.errors
+    assert result.data == {"decimal": None}
+
