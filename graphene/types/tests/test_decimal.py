@@ -6,7 +6,7 @@ from ..schema import Schema
 
 
 class Query(ObjectType):
-    decimal = Decimal(input=Decimal(required=False))
+    decimal = Decimal(input=Decimal())
 
     def resolve_decimal(self, info, input):
         return input
