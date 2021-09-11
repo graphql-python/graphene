@@ -477,8 +477,11 @@ def test_enum_inheritance():
     class ParentRGB(Enum):
         RED = 1
 
-    class ChildRGB(ParentRGB, Enum):
+    class ChildRGB(Enum):
         BLUE = 2
+
+        class Meta:
+            enums = (ParentRGB,)
 
     class Query(ObjectType):
         color = ChildRGB(required=True)
