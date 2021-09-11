@@ -471,3 +471,31 @@ def test_mutation_enum_input_type():
     assert result.data == {"createPaint": {"color": "RED"}}
 
     assert color_input_value == RGB.RED
+
+
+def test_enum_inheritance():
+    class ParentRGB(Enum):
+        RED = 1
+
+    class ChildRGB(ParentRGB, Enum):
+        BLUE = 2
+
+    class Query(ObjectType):
+        color = ChildRGB(required=True)
+
+        def resolve_color(_, info):
+            return ChildRGB.RED
+
+    schema = Schema(query=Query)
+    assert str(schema) == dedent(
+        '''\
+        type Query {
+          color: ChildRGB!
+        }
+
+        enum ChildRGB {
+          RED
+          BLUE
+        }
+    '''
+    )
