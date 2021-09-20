@@ -11,6 +11,7 @@ from graphql import (
     print_schema,
     subscribe,
     validate,
+    ExecutionContext,
     ExecutionResult,
     GraphQLArgument,
     GraphQLBoolean,
@@ -53,6 +54,22 @@ from .utils import get_field_as
 
 introspection_query = get_introspection_query()
 IntrospectionSchema = introspection_types["__Schema"]
+
+class UnforgivingExecutionContext(ExecutionContext):
+    """An execution context which doesn't swallow exceptions.
+    Instead it re-raises the original error, except for
+    GraphQLError, which is handled by graphql-core
+    """
+
+    def handle_field_error(
+        self,
+        error: GraphQLError,
+        return_type,
+    ) -> None:
+        if type(error.original_error) is GraphQLError:
+            super().handle_field_error(error, return_type)
+        else:
+            raise error.original_error
 
 
 def assert_valid_root_type(type_):
