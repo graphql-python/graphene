@@ -28,7 +28,7 @@ Compare Graphene's *code-first* approach to building a GraphQL API with *schema-
 
 .. _Apollo Server: https://www.apollographql.com/docs/apollo-server/
 
-.. _Ariadne: https://ariadne.readthedocs.io
+.. _Ariadne: https://ariadnegraphql.org/
 
 Graphene is fully featured with integrations for the most popular web frameworks and ORMs. Graphene produces schemas that are fully compliant with the GraphQL spec and provides tools and patterns for building a Relay-Compliant API as well.
 
