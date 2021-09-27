@@ -47,8 +47,8 @@ class Scalar(UnmountedType, BaseType):
 #
 # n.b. JavaScript's integers are safe between -(2^53 - 1) and 2^53 - 1 because
 # they are internally represented as IEEE 754 doubles.
-MAX_INT = 2147483647
-MIN_INT = -2147483648
+MAX_INT = 9007199254740991
+MIN_INT = -9007199254740991
 
 
 class Int(Scalar):
