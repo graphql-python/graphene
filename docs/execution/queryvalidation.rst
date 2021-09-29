@@ -38,7 +38,7 @@ Here is how you would implement depth-limiting on your schema.
     # will not be executed.
 
     validation_errors = validate(
-        schema=schema,
+        schema=schema.graphql_schema,
         document_ast=parse('THE QUERY'),
         rules=(
             depth_limit_validator(
@@ -74,7 +74,7 @@ Here is how you would disable introspection for your schema.
     # introspection queries will not be executed.
 
     validation_errors = validate(
-        schema=schema,
+        schema=schema.graphql_schema,
         document_ast=parse('THE QUERY'),
         rules=(
             DisableIntrospection,
