@@ -30,7 +30,6 @@ try:
 except ImportError:
     # backwards compatibility for v3.6
     from typing import Pattern
-
 from typing import Callable, Dict, List, Optional, Union
 
 from graphql import GraphQLError
@@ -75,7 +74,6 @@ def depth_limit_validator(
                     operation_name=name,
                     ignore=ignore,
                 )
-
             if callable(callback):
                 callback(query_depths)
             super().__init__(validation_context)
@@ -90,7 +88,6 @@ def get_fragments(
     for definition in definitions:
         if isinstance(definition, FragmentDefinitionNode):
             fragments[definition.name.value] = definition
-
     return fragments
 
 
@@ -105,7 +102,6 @@ def get_queries_and_mutations(
         if isinstance(definition, OperationDefinitionNode):
             operation = definition.name.value if definition.name else "anonymous"
             operations[operation] = definition
-
     return operations
 
 
@@ -126,7 +122,6 @@ def determine_depth(
             )
         )
         return depth_so_far
-
     if isinstance(node, FieldNode):
         should_ignore = is_introspection_key(node.name.value) or is_ignored(
             node, ignore
@@ -134,7 +129,6 @@ def determine_depth(
 
         if should_ignore or not node.selection_set:
             return 0
-
         return 1 + max(
             map(
                 lambda selection: determine_depth(
@@ -177,13 +171,14 @@ def determine_depth(
             )
         )
     else:
-        raise Exception(f"Depth crawler cannot handle: {node.kind}.")  # pragma: no cover
+        raise Exception(
+            f"Depth crawler cannot handle: {node.kind}."
+        )  # pragma: no cover
 
 
 def is_ignored(node: FieldNode, ignore: Optional[List[IgnoreType]] = None) -> bool:
     if ignore is None:
         return False
-
     for rule in ignore:
         field_name = node.name.value
         if isinstance(rule, str):
@@ -197,5 +192,4 @@ def is_ignored(node: FieldNode, ignore: Optional[List[IgnoreType]] = None) -> bo
                 return True
         else:
             raise ValueError(f"Invalid ignore option: {rule}.")
-
     return False

@@ -92,11 +92,9 @@ class Node(AbstractNode):
             _type, _id = cls.from_global_id(global_id)
         except Exception as e:
             raise Exception(
-                (
-                    f'Unable to parse global ID "{global_id}". '
-                    'Make sure it is a base64 encoded string in the format: "TypeName:id". '
-                    f"Exception message: {str(e)}"
-                )
+                f'Unable to parse global ID "{global_id}". '
+                'Make sure it is a base64 encoded string in the format: "TypeName:id". '
+                f"Exception message: {str(e)}"
             )
 
         graphene_type = info.schema.get_type(_type)

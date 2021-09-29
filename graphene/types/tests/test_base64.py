@@ -64,15 +64,11 @@ def test_base64_query_none():
 
 
 def test_base64_query_invalid():
-    bad_inputs = [
-        dict(),
-        123,
-        "This is not valid base64",
-    ]
+    bad_inputs = [dict(), 123, "This is not valid base64"]
 
     for input_ in bad_inputs:
         result = schema.execute(
-            """{ base64(input: $input) }""", variables={"input": input_},
+            """{ base64(input: $input) }""", variables={"input": input_}
         )
         assert isinstance(result.errors, list)
         assert len(result.errors) == 1

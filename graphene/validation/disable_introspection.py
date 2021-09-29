@@ -11,7 +11,6 @@ class DisableIntrospection(ValidationRule):
         if is_introspection_key(field_name):
             self.report_error(
                 GraphQLError(
-                    f"Cannot query '{field_name}': introspection is disabled.",
-                    node,
+                    f"Cannot query '{field_name}': introspection is disabled.", node
                 )
             )
