@@ -54,7 +54,7 @@ graphql_schema = schema.graphql_schema
 
 
 def test_str_schema_correct():
-    assert str(schema) == dedent(
+    assert str(schema).rstrip() + "\n" == dedent(
         '''
         schema {
           query: RootQuery

@@ -171,7 +171,7 @@ def test_node_field_only_lazy_type_wrong():
 
 
 def test_str_schema():
-    assert str(schema) == dedent(
+    assert str(schema).rstrip() + "\n" == dedent(
         '''
         schema {
           query: RootQuery

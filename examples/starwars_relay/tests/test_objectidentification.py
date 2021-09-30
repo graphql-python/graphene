@@ -9,7 +9,7 @@ client = Client(schema)
 
 
 def test_str_schema(snapshot):
-    snapshot.assert_match(str(schema))
+    snapshot.assert_match(str(schema).rstrip() + "\n")
 
 
 def test_correctly_fetches_id_name_rebels(snapshot):

@@ -43,7 +43,7 @@ def test_schema_get_type_error():
 
 def test_schema_str():
     schema = Schema(Query)
-    assert str(schema) == dedent(
+    assert str(schema).rstrip() + "\n" == dedent(
         """
         type Query {
           inner: MyOtherType

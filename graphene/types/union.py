@@ -72,4 +72,4 @@ class Union(UnmountedType, BaseType):
         from .objecttype import ObjectType  # NOQA
 
         if isinstance(instance, ObjectType):
-            return type(instance)
+            return instance._meta.name
