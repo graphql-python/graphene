@@ -80,6 +80,10 @@ If we have a schema with Person type and one field on the root query.
 
     from graphene import ObjectType, String, Field
 
+    def get_human(name):
+        first_name, last_name = name.split()
+        return Person(first_name, last_name)
+
     class Person(ObjectType):
         full_name = String()
 
