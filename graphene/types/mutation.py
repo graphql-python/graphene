@@ -29,21 +29,21 @@ class Mutation(ObjectType):
 
     .. code:: python
 
-        from graphene import Mutation, ObjectType, String, Boolean, Field
+        import graphene
 
-        class CreatePerson(Mutation):
+        class CreatePerson(graphene.Mutation):
             class Arguments:
-                name = String()
+                name = graphene.String()
 
-            ok = Boolean()
-            person = Field(Person)
+            ok = graphene.Boolean()
+            person = graphene.Field(Person)
 
             def mutate(parent, info, name):
                 person = Person(name=name)
                 ok = True
                 return CreatePerson(person=person, ok=ok)
 
-        class Mutation(ObjectType):
+        class Mutation(graphene.ObjectType):
             create_person = CreatePerson.Field()
 
     Meta class options (optional):
