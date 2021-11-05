@@ -18,11 +18,7 @@ def is_node(objecttype):
     if not issubclass(objecttype, ObjectType):
         return False
 
-    for i in objecttype._meta.interfaces:
-        if issubclass(i, Node):
-            return True
-
-    return False
+    return any(issubclass(i, Node) for i in objecttype._meta.interfaces)
 
 
 class GlobalID(Field):
@@ -92,9 +88,7 @@ class Node(AbstractNode):
             _type, _id = cls.from_global_id(global_id)
         except Exception as e:
             raise Exception(
-                f'Unable to parse global ID "{global_id}". '
-                'Make sure it is a base64 encoded string in the format: "TypeName:id". '
-                f"Exception message: {str(e)}"
+                f'Unable to parse global ID "{global_id}". Make sure it is a base64 encoded string in the format: "TypeName:id". Exception message: {e}'
             )
 
         graphene_type = info.schema.get_type(_type)

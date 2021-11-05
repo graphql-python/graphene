@@ -18,13 +18,11 @@ schema = Schema(query=Query)
 def run_query(query: str):
     document = parse(query)
 
-    errors = validate(
+    return validate(
         schema=schema.graphql_schema,
         document_ast=document,
         rules=(DisableIntrospection,),
     )
-
-    return errors
 
 
 def test_disallows_introspection_queries():

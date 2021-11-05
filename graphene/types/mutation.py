@@ -101,10 +101,7 @@ class Mutation(ObjectType):
                         "Read more:"
                         " https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#mutation-input"
                     )
-            if input_class:
-                arguments = props(input_class)
-            else:
-                arguments = {}
+            arguments = props(input_class) if input_class else {}
         if not resolver:
             mutate = getattr(cls, "mutate", None)
             assert mutate, "All mutations must define a mutate method in it"
