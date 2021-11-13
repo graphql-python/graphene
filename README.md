@@ -4,12 +4,6 @@
 
 **We are looking for contributors**! Please check the [ROADMAP](https://github.com/graphql-python/graphene/blob/master/ROADMAP.md) to see how you can help ❤️
 
----
-
-**The below readme is the documentation for the `dev` (prerelease) version of Graphene. To view the documentation for the latest stable Graphene version go to the [v2 docs](https://docs.graphene-python.org/en/stable/)**
-
----
-
 ## Introduction
 
 [Graphene](http://graphene-python.org) is an opinionated Python library for building GraphQL schemas/types fast and easily.
@@ -37,7 +31,7 @@ Also, Graphene is fully compatible with the GraphQL spec, working seamlessly wit
 For instaling graphene, just run this command in your shell
 
 ```bash
-pip install "graphene>=2.0"
+pip install "graphene>=3.0"
 ```
 
 ## Examples
