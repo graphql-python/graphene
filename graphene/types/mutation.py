@@ -104,9 +104,7 @@ class Mutation(ObjectType):
                     )
             arguments = props(input_class) if input_class else {}
         if not resolver:
-            mutate = getattr(cls, "mutate", None)
-            assert mutate, "All mutations must define a mutate method in it"
-            resolver = get_unbound_function(mutate)
+            resolver = get_unbound_function(cls.mutate)
         if _meta.fields:
             _meta.fields.update(fields)
         else:
@@ -117,6 +115,10 @@ class Mutation(ObjectType):
         _meta.arguments = arguments
 
         super(Mutation, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+ 
+    @classmethod
+    def mutate(cls, parent, info, **kwargs):
+        raise NotImplementedError("All mutations must define a mutate method in it")
 
     @classmethod
     def Field(
