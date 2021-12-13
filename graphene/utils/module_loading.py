@@ -27,19 +27,18 @@ def import_string(dotted_path, dotted_attributes=None):
 
     if not dotted_attributes:
         return result
-    else:
-        attributes = dotted_attributes.split(".")
-        traveled_attributes = []
-        try:
-            for attribute in attributes:
-                traveled_attributes.append(attribute)
-                result = getattr(result, attribute)
-            return result
-        except AttributeError:
-            raise ImportError(
-                'Module "%s" does not define a "%s" attribute inside attribute/class "%s"'
-                % (module_path, ".".join(traveled_attributes), class_name)
-            )
+    attributes = dotted_attributes.split(".")
+    traveled_attributes = []
+    try:
+        for attribute in attributes:
+            traveled_attributes.append(attribute)
+            result = getattr(result, attribute)
+        return result
+    except AttributeError:
+        raise ImportError(
+            'Module "%s" does not define a "%s" attribute inside attribute/class "%s"'
+            % (module_path, ".".join(traveled_attributes), class_name)
+        )
 
 
 def lazy_import(dotted_path, dotted_attributes=None):
