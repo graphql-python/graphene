@@ -4,6 +4,7 @@ from .dynamic import Dynamic
 from .mountedtype import MountedType
 from .structures import NonNull
 from .utils import get_type
+from graphql import Undefined
 
 
 class Argument(MountedType):
@@ -41,7 +42,7 @@ class Argument(MountedType):
     def __init__(
         self,
         type_,
-        default_value=None,
+        default_value=Undefined,
         description=None,
         name=None,
         required=False,

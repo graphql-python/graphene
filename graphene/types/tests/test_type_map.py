@@ -244,7 +244,7 @@ def test_objecttype_camelcase():
     foo_field = fields["fooBar"]
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.args == {
-        "barFoo": GraphQLArgument(GraphQLString, default_value=None, out_name="bar_foo")
+        "barFoo": GraphQLArgument(GraphQLString, out_name="bar_foo")
     }
 
 
@@ -267,7 +267,7 @@ def test_objecttype_camelcase_disabled():
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.args == {
         "bar_foo": GraphQLArgument(
-            GraphQLString, default_value=None, out_name="bar_foo"
+            GraphQLString, out_name="bar_foo"
         )
     }
 
