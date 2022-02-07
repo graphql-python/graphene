@@ -123,7 +123,7 @@ def resolve_my_field(root, info, my_arg):
     return ...
 ```
 
-**PS.: Take care with receiving args like `my_arg` as above. This doesn't work for optional (non-required) arguments as stantard `Connection`'s arguments (first, before, after, before).**
+**PS.: Take care with receiving args like `my_arg` as above. This doesn't work for optional (non-required) arguments as stantard `Connection`'s arguments (first, last, after, before).**
 You may need something like this:
 
 ```python
