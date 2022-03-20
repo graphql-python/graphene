@@ -24,8 +24,8 @@ from ...types.uuid import UUID
         (ID, "1"),
         (DateTime, '"2022-02-02T11:11:11"'),
         (UUID, '"cbebbc62-758e-4f75-a890-bc73b5017d81"'),
-        (Decimal, "1.1"),
-        (JSONString, '{key:"foo",value:"bar"}'),
+        (Decimal, '"1.1"'),
+        (JSONString, '"{\\"key\\":\\"foo\\",\\"value\\":\\"bar\\"}"'),
         (Base64, '"Q2hlbG8gd29ycmxkCg=="'),
     ],
 )
