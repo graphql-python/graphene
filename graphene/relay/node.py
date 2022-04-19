@@ -97,6 +97,13 @@ class Node(AbstractNode):
                 f"Exception message: {str(e)}"
             )
 
+        # from_global_id returns "" in the case of decode errors
+        if _type == "" and _id == "":
+            raise Exception(
+                f'Unable to parse global ID "{global_id}". '
+                'Make sure it is a base64 encoded string in the format: "TypeName:id". '
+            )
+
         graphene_type = info.schema.get_type(_type)
         if graphene_type is None:
             raise Exception(f'Relay Node "{_type}" not found in schema')
