@@ -21,7 +21,7 @@ class UUID(Scalar):
         return str(uuid)
 
     @staticmethod
-    def parse_literal(node):
+    def parse_literal(node, _variables=None):
         if isinstance(node, StringValueNode):
             return _UUID(node.value)
 
