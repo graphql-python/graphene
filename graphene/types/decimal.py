@@ -22,7 +22,7 @@ class Decimal(Scalar):
         return str(dec)
 
     @classmethod
-    def parse_literal(cls, node):
+    def parse_literal(cls, node, _variables=None):
         if isinstance(node, (StringValueNode, IntValueNode)):
             return cls.parse_value(node.value)
 
