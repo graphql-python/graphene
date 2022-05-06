@@ -3,7 +3,7 @@ default_language_version:
 
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.2.0
     hooks:
     -   id: check-merge-conflict
     -   id: check-json
@@ -17,11 +17,11 @@ repos:
     -   id: trailing-whitespace
         exclude: README.md
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.31.0
+    rev: v2.32.1
     hooks:
     -   id: pyupgrade
 -   repo: https://github.com/ambv/black
-    rev: 21.12b0
+    rev: 22.3.0
     hooks:
     -   id: black
 -   repo: https://github.com/PyCQA/flake8

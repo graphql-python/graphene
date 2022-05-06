@@ -53,12 +53,12 @@ tests_require = [
     "snapshottest>=0.6,<1",
     "coveralls>=3.3,<4",
     "promise>=2.3,<3",
-    "mock>=4.0,<5",
-    "pytz==2021.3",
+    "mock>=4,<5",
+    "pytz==2022.1",
     "iso8601>=1,<2",
 ]
 
-dev_requires = ["black==19.10b0", "flake8>=3.7,<4"] + tests_require
+dev_requires = ["black==22.3.0", "flake8>=4,<5"] + tests_require
 
 setup(
     name="graphene",
