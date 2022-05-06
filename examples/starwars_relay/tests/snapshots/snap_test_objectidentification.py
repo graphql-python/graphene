@@ -115,5 +115,4 @@ input IntroduceShipInput {
   shipName: String!
   factionId: String!
   clientMutationId: String
-}
-'''
+}'''

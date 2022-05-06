@@ -7,7 +7,6 @@ from graphql import (
     GraphQLObjectType,
     GraphQLScalarType,
     GraphQLUnionType,
-    Undefined,
 )
 
 
@@ -50,7 +49,7 @@ class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
                 try:
                     value = enum[value]
                 except KeyError:
-                    return Undefined
+                    pass
         return super(GrapheneEnumType, self).serialize(value)
 
 

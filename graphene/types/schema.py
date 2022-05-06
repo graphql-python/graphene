@@ -376,19 +376,11 @@ class TypeMap(dict):
     def resolve_type(self, resolve_type_func, type_name, root, info, _type):
         type_ = resolve_type_func(root, info)
 
-        if not type_:
-            return_type = self[type_name]
-            return default_type_resolver(root, info, return_type)
-
         if inspect.isclass(type_) and issubclass(type_, ObjectType):
-            graphql_type = self.get(type_._meta.name)
-            assert graphql_type, f"Can't find type {type_._meta.name} in schema"
-            assert (
-                graphql_type.graphene_type == type_
-            ), f"The type {type_} does not match with the associated graphene type {graphql_type.graphene_type}."
-            return graphql_type
+            return type_._meta.name
 
-        return type_
+        return_type = self[type_name]
+        return default_type_resolver(root, info, return_type)
 
 
 class Schema:

@@ -1,6 +1,6 @@
-from graphql import graphql_sync
+from textwrap import dedent
 
-from graphene.tests.utils import dedent
+from graphql import graphql_sync
 
 from ...types import Interface, ObjectType, Schema
 from ...types.scalars import Int, String
@@ -54,8 +54,10 @@ graphql_schema = schema.graphql_schema
 
 
 def test_str_schema_correct():
-    assert str(schema) == dedent(
-        '''
+    assert (
+        str(schema).strip()
+        == dedent(
+            '''
         schema {
           query: RootQuery
         }
@@ -93,6 +95,7 @@ def test_str_schema_correct():
           ): Node
         }
         '''
+        ).strip()
     )
 
 
