@@ -105,6 +105,7 @@ An example with `is_type_of` and `Meta.possible_types`:
 An example with `resolve_type`:
 
 .. code:: python
+
     class One(ObjectType):
         one = String()
 
