@@ -61,3 +61,63 @@ The above types have the following representation in a schema:
 
     union SearchResult = Human | Droid | Starship
 
+Resolving Types
+~~~~~~~~~~~~~~~
+
+When defining Unions, as with Interfaces, we need to tell the schema how to resolve the type of a returned object.
+
+This can be achieved by:
+
+- defining an `is_type_of`-method on each `ObjectType`
+- defining the attribute `possible_types` on the Meta class
+- defining a `resolve_type` on the Union
+
+Examples:
+^^^^^^^^^
+
+An example with `is_type_of` and `Meta.possible_types`:
+
+.. code:: python
+
+    class one_object:
+        one = 'one'
+
+    class two_object:
+        two = 'two'
+
+    class One(ObjectType):
+        one = String()
+
+        @classmethod
+        def is_type_of(cls, root, info):
+            return isinstance(root, one_object)
+
+    class Two(ObjectType):
+        class Meta:
+            possible_types = (two_object,)
+        two = String()
+
+    class MyUnion(Union):
+        class Meta:
+            types = (One, Two)
+
+
+An example with `resolve_type`:
+
+.. code:: python
+    class One(ObjectType):
+        one = String()
+
+    class Two(ObjectType):
+        two = String()
+
+    class MyUnion(Union):
+        class Meta:
+            types = (One, Two)
+
+        @classmethod
+        def resolve_type(cls, instance, info)
+            if hasattr(instance, 'one'):
+                return One
+            else:
+                return Two
