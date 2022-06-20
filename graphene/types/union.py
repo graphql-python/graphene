@@ -21,7 +21,7 @@ class Union(UnmountedType, BaseType):
     to determine which type is actually used when the field is resolved.
 
     The schema in this example can take a search text and return any of the GraphQL object types
-    indicated: Human, Droid or Startship.
+    indicated: Human, Droid or Starship.
 
     Ambiguous return types can be resolved on each ObjectType through ``Meta.possible_types``
     attribute or ``is_type_of`` method. Or by implementing ``resolve_type`` class method on the
