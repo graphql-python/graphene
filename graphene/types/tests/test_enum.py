@@ -328,6 +328,52 @@ def test_enum_resolver_compat():
     assert results.data["colorByName"] == Color.RED.name
 
 
+def test_enum_with_name():
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        RED = 1
+        YELLOW = 2
+        BLUE = 3
+
+    GColor = Enum.from_enum(Color, description="original colors")
+    UniqueGColor = Enum.from_enum(
+        Color, name="UniqueColor", description="unique colors"
+    )
+
+    class Query(ObjectType):
+        color = GColor(required=True)
+        unique_color = UniqueGColor(required=True)
+
+    schema = Schema(query=Query)
+
+    assert (
+        str(schema).strip()
+        == dedent(
+            '''
+            type Query {
+              color: Color!
+              uniqueColor: UniqueColor!
+            }
+
+            """original colors"""
+            enum Color {
+              RED
+              YELLOW
+              BLUE
+            }
+
+            """unique colors"""
+            enum UniqueColor {
+              RED
+              YELLOW
+              BLUE
+            }
+            '''
+        ).strip()
+    )
+
+
 def test_enum_resolver_invalid():
     from enum import Enum as PyEnum
 
