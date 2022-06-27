@@ -73,7 +73,6 @@ class DateTime(Scalar):
             )
         return cls.parse_value(node.value)
 
-
     @staticmethod
     def parse_value(value):
         if isinstance(value, datetime.datetime):
