@@ -65,6 +65,15 @@ class DateTime(Scalar):
             )
         return cls.parse_value(node.value)
 
+    @classmethod
+    def parse_literal_codecov_test(cls, node, _variables=None):
+        if not isinstance(node, StringValueNode):
+            raise GraphQLError(
+                f"DateTime cannot represent non-string value: {print_ast(node)}"
+            )
+        return cls.parse_value(node.value)
+
+
     @staticmethod
     def parse_value(value):
         if isinstance(value, datetime.datetime):
