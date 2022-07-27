@@ -28,10 +28,9 @@ Create loaders by providing a batch loading function.
 A batch loading function accepts a list of keys, and returns a ``Promise``
 which resolves to a list of ``values``.
 
-Then load individual values from the loader. ``DataLoader`` will coalesce all
-individual loads which occur within a single frame of execution (executed once
-the wrapping promise is resolved) and then call your batch function with all
-requested keys.
+``DataLoader`` will coalesce all individual loads which occur within a
+single frame of execution (executed once the wrapping promise is resolved)
+and then call your batch function with all requested keys.
 
 
 .. code:: python
@@ -96,7 +95,7 @@ Consider the following GraphQL request:
     }
 
 
-Naively, if ``me``, ``bestFriend`` and ``friends`` each need to request the backend,
+If ``me``, ``bestFriend`` and ``friends`` each need to send a request to the backend,
 there could be at most 13 database requests!
 
 

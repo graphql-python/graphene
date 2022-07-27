@@ -22,7 +22,7 @@ class Base64(Scalar):
         return b64encode(value).decode("utf-8")
 
     @classmethod
-    def parse_literal(cls, node):
+    def parse_literal(cls, node, _variables=None):
         if not isinstance(node, StringValueNode):
             raise GraphQLError(
                 f"Base64 cannot represent non-string value: {print_ast(node)}"

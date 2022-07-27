@@ -7,7 +7,6 @@ try:
     from dataclasses import make_dataclass, field
 except ImportError:
     from ..pyutils.dataclasses import make_dataclass, field  # type: ignore
-
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
@@ -28,7 +27,7 @@ class ObjectTypeMeta(BaseTypeMeta):
             pass
 
         base_cls = super().__new__(
-            cls, name_, (InterObjectType,) + bases, namespace, **options,
+            cls, name_, (InterObjectType,) + bases, namespace, **options
         )
         if base_cls._meta:
             fields = [
@@ -66,7 +65,7 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
     Methods starting with ``resolve_<field_name>`` are bound as resolvers of the matching Field
     name. If no resolver is provided, the default resolver is used.
 
-    Ambiguous types with Interface and Union can be determined through``is_type_of`` method and
+    Ambiguous types with Interface and Union can be determined through ``is_type_of`` method and
     ``Meta.possible_types`` attribute.
 
     .. code:: python
@@ -133,7 +132,6 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
     ):
         if not _meta:
             _meta = ObjectTypeOptions(cls)
-
         fields = {}
 
         for interface in interfaces:
@@ -141,10 +139,8 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
                 interface, Interface
             ), f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
             fields.update(interface._meta.fields)
-
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=Field))
-
         assert not (possible_types and cls.is_type_of), (
             f"{cls.__name__}.Meta.possible_types will cause type collision with {cls.__name__}.is_type_of. "
             "Please use one or other."
@@ -154,7 +150,6 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
             _meta.fields.update(fields)
         else:
             _meta.fields = fields
-
         if not _meta.interfaces:
             _meta.interfaces = interfaces
         _meta.possible_types = possible_types

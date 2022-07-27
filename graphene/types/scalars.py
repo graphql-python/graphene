@@ -75,7 +75,7 @@ class Int(Scalar):
     parse_value = coerce_int
 
     @staticmethod
-    def parse_literal(ast):
+    def parse_literal(ast, _variables=None):
         if isinstance(ast, IntValueNode):
             num = int(ast.value)
             if MIN_INT <= num <= MAX_INT:
@@ -104,7 +104,7 @@ class BigInt(Scalar):
     parse_value = coerce_int
 
     @staticmethod
-    def parse_literal(ast):
+    def parse_literal(ast, _variables=None):
         if isinstance(ast, IntValueNode):
             return int(ast.value)
 
@@ -128,7 +128,7 @@ class Float(Scalar):
     parse_value = coerce_float
 
     @staticmethod
-    def parse_literal(ast):
+    def parse_literal(ast, _variables=None):
         if isinstance(ast, (FloatValueNode, IntValueNode)):
             return float(ast.value)
 
@@ -143,14 +143,14 @@ class String(Scalar):
     @staticmethod
     def coerce_string(value):
         if isinstance(value, bool):
-            return u"true" if value else u"false"
+            return "true" if value else "false"
         return str(value)
 
     serialize = coerce_string
     parse_value = coerce_string
 
     @staticmethod
-    def parse_literal(ast):
+    def parse_literal(ast, _variables=None):
         if isinstance(ast, StringValueNode):
             return ast.value
 
@@ -164,7 +164,7 @@ class Boolean(Scalar):
     parse_value = bool
 
     @staticmethod
-    def parse_literal(ast):
+    def parse_literal(ast, _variables=None):
         if isinstance(ast, BooleanValueNode):
             return ast.value
 
@@ -182,6 +182,6 @@ class ID(Scalar):
     parse_value = str
 
     @staticmethod
-    def parse_literal(ast):
+    def parse_literal(ast, _variables=None):
         if isinstance(ast, (StringValueNode, IntValueNode)):
             return ast.value

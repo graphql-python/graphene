@@ -6,7 +6,7 @@ from graphene.types.schema import Schema
 
 def default_format_error(error):
     if isinstance(error, GraphQLError):
-        return format_graphql_error(error)
+        return error.formatted
     return {"message": str(error)}
 
 

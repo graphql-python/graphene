@@ -60,14 +60,14 @@ Requirements
 ~~~~~~~~~~~~
 
 -  Python (2.7, 3.4, 3.5, 3.6, pypy)
--  Graphene (2.0)
+-  Graphene (3.0)
 
 Project setup
 ~~~~~~~~~~~~~
 
 .. code:: bash
 
-    pip install "graphene>=2.0"
+    pip install "graphene>=3.0"
 
 Creating a basic Schema
 ~~~~~~~~~~~~~~~~~~~~~~~

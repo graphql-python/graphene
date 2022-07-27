@@ -1,0 +1,25 @@
+name: 📊 Check Coverage
+on:
+  push:
+    branches:
+      - master
+      - '*.x'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.rst'
+  pull_request:
+    branches:
+      - master
+      - '*.x'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.rst'
+jobs:
+  coveralls_finish:
+    # check coverage increase/decrease
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: AndreMiras/coveralls-python-action@develop

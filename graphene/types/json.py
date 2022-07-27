@@ -20,7 +20,7 @@ class JSONString(Scalar):
         return json.dumps(dt)
 
     @staticmethod
-    def parse_literal(node):
+    def parse_literal(node, _variables=None):
         if isinstance(node, StringValueNode):
             return json.loads(node.value)
 
