@@ -52,7 +52,10 @@ class EnumMeta(SubclassWithMeta_Meta):
         return super(EnumMeta, cls).__call__(*args, **kwargs)
         # return cls._meta.enum(*args, **kwargs)
 
-    def from_enum(cls, enum, description=None, deprecation_reason=None):  # noqa: N805
+    def from_enum(
+        cls, enum, name=None, description=None, deprecation_reason=None
+    ):  # noqa: N805
+        name = name or enum.__name__
         description = description or enum.__doc__
         meta_dict = {
             "enum": enum,
@@ -60,7 +63,7 @@ class EnumMeta(SubclassWithMeta_Meta):
             "deprecation_reason": deprecation_reason,
         }
         meta_class = type("Meta", (object,), meta_dict)
-        return type(meta_class.enum.__name__, (Enum,), {"Meta": meta_class})
+        return type(name, (Enum,), {"Meta": meta_class})
 
 
 class Enum(UnmountedType, BaseType, metaclass=EnumMeta):

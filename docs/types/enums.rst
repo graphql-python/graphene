@@ -86,7 +86,7 @@ In the Python ``Enum`` implementation you can access a member by initing the Enu
     assert Color(1) == Color.RED
 
 
-However, in Graphene ``Enum`` you need to call get to have the same effect:
+However, in Graphene ``Enum`` you need to call `.get` to have the same effect:
 
 .. code:: python
 
