@@ -1,3 +1,4 @@
+from graphql import Undefined
 from graphql.type import (
     GraphQLArgument,
     GraphQLEnumType,
@@ -6,6 +7,7 @@ from graphql.type import (
     GraphQLInputField,
     GraphQLInputObjectType,
     GraphQLInterfaceType,
+    GraphQLNonNull,
     GraphQLObjectType,
     GraphQLString,
 )
@@ -92,6 +94,21 @@ def test_objecttype():
             out_name="bar",
         )
     }
+
+
+def test_required_argument_with_default_value():
+    class MyObjectType(ObjectType):
+        foo = String(bar=String(required=True, default_value="x"))
+
+    type_map = create_type_map([MyObjectType])
+
+    graphql_type = type_map["MyObjectType"]
+    foo_field = graphql_type.fields["foo"]
+
+    bar_argument = foo_field.args["bar"]
+    assert bar_argument.default_value == "x"
+    assert isinstance(bar_argument.type, GraphQLNonNull)
+    assert bar_argument.type.of_type == GraphQLString
 
 
 def test_dynamic_objecttype():
@@ -228,7 +245,9 @@ def test_objecttype_camelcase():
     foo_field = fields["fooBar"]
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.args == {
-        "barFoo": GraphQLArgument(GraphQLString, default_value=None, out_name="bar_foo")
+        "barFoo": GraphQLArgument(
+            GraphQLString, default_value=Undefined, out_name="bar_foo"
+        )
     }
 
 
@@ -251,7 +270,7 @@ def test_objecttype_camelcase_disabled():
     assert isinstance(foo_field, GraphQLField)
     assert foo_field.args == {
         "bar_foo": GraphQLArgument(
-            GraphQLString, default_value=None, out_name="bar_foo"
+            GraphQLString, default_value=Undefined, out_name="bar_foo"
         )
     }
 
@@ -270,3 +289,33 @@ def test_objecttype_with_possible_types():
     assert graphql_type.is_type_of
     assert graphql_type.is_type_of({}, None) is True
     assert graphql_type.is_type_of(MyObjectType(), None) is False
+
+
+def test_interface_with_interfaces():
+    class FooInterface(Interface):
+        foo = String()
+
+    class BarInterface(Interface):
+        class Meta:
+            interfaces = [FooInterface]
+
+        foo = String()
+        bar = String()
+
+    type_map = create_type_map([FooInterface, BarInterface])
+    assert "FooInterface" in type_map
+    foo_graphql_type = type_map["FooInterface"]
+    assert isinstance(foo_graphql_type, GraphQLInterfaceType)
+    assert foo_graphql_type.name == "FooInterface"
+
+    assert "BarInterface" in type_map
+    bar_graphql_type = type_map["BarInterface"]
+    assert isinstance(bar_graphql_type, GraphQLInterfaceType)
+    assert bar_graphql_type.name == "BarInterface"
+
+    fields = bar_graphql_type.fields
+    assert list(fields) == ["foo", "bar"]
+    assert isinstance(fields["foo"], GraphQLField)
+    assert isinstance(fields["bar"], GraphQLField)
+
+    assert list(bar_graphql_type.interfaces) == list([foo_graphql_type])

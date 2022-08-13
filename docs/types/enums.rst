@@ -61,7 +61,8 @@ you can add description etc. to your enum without changing the original:
 
     graphene.Enum.from_enum(
         AlreadyExistingPyEnum,
-        description=lambda v: return 'foo' if v == AlreadyExistingPyEnum.Foo else 'bar')
+        description=lambda v: return 'foo' if v == AlreadyExistingPyEnum.Foo else 'bar'
+    )
 
 
 Notes
@@ -76,6 +77,7 @@ In the Python ``Enum`` implementation you can access a member by initing the Enu
 .. code:: python
 
     from enum import Enum
+
     class Color(Enum):
         RED = 1
         GREEN = 2
@@ -84,11 +86,12 @@ In the Python ``Enum`` implementation you can access a member by initing the Enu
     assert Color(1) == Color.RED
 
 
-However, in Graphene ``Enum`` you need to call get to have the same effect:
+However, in Graphene ``Enum`` you need to call `.get` to have the same effect:
 
 .. code:: python
 
     from graphene import Enum
+
     class Color(Enum):
         RED = 1
         GREEN = 2

@@ -1,7 +1,8 @@
+from textwrap import dedent
+
 from pytest import raises
 
 from graphql.type import GraphQLObjectType, GraphQLSchema
-from graphql.pyutils import dedent
 
 from ..field import Field
 from ..objecttype import ObjectType
@@ -43,8 +44,10 @@ def test_schema_get_type_error():
 
 def test_schema_str():
     schema = Schema(Query)
-    assert str(schema) == dedent(
-        """
+    assert (
+        str(schema).strip()
+        == dedent(
+            """
         type Query {
           inner: MyOtherType
         }
@@ -53,9 +56,19 @@ def test_schema_str():
           field: String
         }
         """
+        ).strip()
     )
 
 
 def test_schema_introspect():
     schema = Schema(Query)
     assert "__schema" in schema.introspect()
+
+
+def test_schema_requires_query_type():
+    schema = Schema()
+    result = schema.execute("query {}")
+
+    assert len(result.errors) == 1
+    error = result.errors[0]
+    assert error.message == "Query root type must be provided."

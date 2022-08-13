@@ -21,14 +21,14 @@ class EnumOptions(BaseOptions):
 
 
 class EnumMeta(SubclassWithMeta_Meta):
-    def __new__(cls, name, bases, classdict, **options):
+    def __new__(cls, name_, bases, classdict, **options):
         enum_members = dict(classdict, __eq__=eq_enum)
         # We remove the Meta attribute from the class to not collide
         # with the enum values.
         enum_members.pop("Meta", None)
         enum = PyEnum(cls.__name__, enum_members)
         return SubclassWithMeta_Meta.__new__(
-            cls, name, bases, dict(classdict, __enum__=enum), **options
+            cls, name_, bases, dict(classdict, __enum__=enum), **options
         )
 
     def get(cls, value):
@@ -52,7 +52,10 @@ class EnumMeta(SubclassWithMeta_Meta):
         return super(EnumMeta, cls).__call__(*args, **kwargs)
         # return cls._meta.enum(*args, **kwargs)
 
-    def from_enum(cls, enum, description=None, deprecation_reason=None):  # noqa: N805
+    def from_enum(
+        cls, enum, name=None, description=None, deprecation_reason=None
+    ):  # noqa: N805
+        name = name or enum.__name__
         description = description or enum.__doc__
         meta_dict = {
             "enum": enum,
@@ -60,7 +63,7 @@ class EnumMeta(SubclassWithMeta_Meta):
             "deprecation_reason": deprecation_reason,
         }
         meta_class = type("Meta", (object,), meta_dict)
-        return type(meta_class.enum.__name__, (Enum,), {"Meta": meta_class})
+        return type(name, (Enum,), {"Meta": meta_class})
 
 
 class Enum(UnmountedType, BaseType, metaclass=EnumMeta):

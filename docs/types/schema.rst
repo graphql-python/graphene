@@ -1,11 +1,11 @@
 Schema
 ======
 
-A GraphQL **Schema** defines the types and relationship between **Fields** in your API.
+A GraphQL **Schema** defines the types and relationships between **Fields** in your API.
 
 A Schema is created by supplying the root :ref:`ObjectType` of each operation, query (mandatory), mutation and subscription.
 
-Schema will collect all type definitions related to the root operations and then supplied to the validator and executor.
+Schema will collect all type definitions related to the root operations and then supply them to the validator and executor.
 
 .. code:: python
 
@@ -15,11 +15,11 @@ Schema will collect all type definitions related to the root operations and then
         subscription=MyRootSubscription
     )
 
-A Root Query is just a special :ref:`ObjectType` that :ref:`defines the fields <Scalars>` that are the entrypoint for your API. Root Mutation and Root Subscription are similar to Root Query, but for different operation types:
+A Root Query is just a special :ref:`ObjectType` that defines the fields that are the entrypoint for your API. Root Mutation and Root Subscription are similar to Root Query, but for different operation types:
 
 * Query fetches data
-* Mutation to changes data and retrieve the changes
-* Subscription to sends changes to clients in real time
+* Mutation changes data and retrieves the changes
+* Subscription sends changes to clients in real-time
 
 Review the `GraphQL documentation on Schema`_ for a brief overview of fields, schema and operations.
 
@@ -44,7 +44,7 @@ There are some cases where the schema cannot access all of the types that we pla
 For example, when a field returns an ``Interface``, the schema doesn't know about any of the
 implementations.
 
-In this case, we need to use the ``types`` argument when creating the Schema.
+In this case, we need to use the ``types`` argument when creating the Schema:
 
 
 .. code:: python
@@ -56,14 +56,14 @@ In this case, we need to use the ``types`` argument when creating the Schema.
 
 .. _SchemaAutoCamelCase:
 
-Auto CamelCase field names
+Auto camelCase field names
 --------------------------
 
 By default all field and argument names (that are not
 explicitly set with the ``name`` arg) will be converted from
 ``snake_case`` to ``camelCase`` (as the API is usually being consumed by a js/mobile client)
 
-For example with the ObjectType
+For example with the ObjectType the ``last_name`` field name is converted to ``lastName``:
 
 .. code:: python
 
@@ -71,12 +71,10 @@ For example with the ObjectType
         last_name = graphene.String()
         other_name = graphene.String(name='_other_Name')
 
-the ``last_name`` field name is converted to ``lastName``.
-
 In case you don't want to apply this transformation, provide a ``name`` argument to the field constructor.
 ``other_name`` converts to ``_other_Name`` (without further transformations).
 
-Your query should look like
+Your query should look like:
 
 .. code::
 
@@ -86,7 +84,7 @@ Your query should look like
     }
 
 
-To disable this behavior, set the ``auto_camelcase`` to ``False`` upon schema instantiation.
+To disable this behavior, set the ``auto_camelcase`` to ``False`` upon schema instantiation:
 
 .. code:: python
 

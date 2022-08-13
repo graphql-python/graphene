@@ -1,5 +1,4 @@
 from promise import Promise, is_thenable
-from graphql.error import format_error as format_graphql_error
 from graphql.error import GraphQLError
 
 from graphene.types.schema import Schema
@@ -7,7 +6,7 @@ from graphene.types.schema import Schema
 
 def default_format_error(error):
     if isinstance(error, GraphQLError):
-        return format_graphql_error(error)
+        return error.formatted
     return {"message": str(error)}
 
 

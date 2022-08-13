@@ -1,4 +1,5 @@
 from itertools import chain
+from graphql import Undefined
 
 from .dynamic import Dynamic
 from .mountedtype import MountedType
@@ -40,8 +41,8 @@ class Argument(MountedType):
 
     def __init__(
         self,
-        type,
-        default_value=None,
+        type_,
+        default_value=Undefined,
         description=None,
         name=None,
         required=False,
@@ -50,10 +51,10 @@ class Argument(MountedType):
         super(Argument, self).__init__(_creation_counter=_creation_counter)
 
         if required:
-            type = NonNull(type)
+            type_ = NonNull(type_)
 
         self.name = name
-        self._type = type
+        self._type = type_
         self.default_value = default_value
         self.description = description
 

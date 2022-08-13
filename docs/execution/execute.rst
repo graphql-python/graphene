@@ -3,7 +3,6 @@
 Executing a query
 =================
 
-
 For executing a query against a schema, you can directly call the ``execute`` method on it.
 
 
@@ -16,43 +15,6 @@ For executing a query against a schema, you can directly call the ``execute`` me
 
 ``result`` represents the result of execution. ``result.data`` is the result of executing the query, ``result.errors`` is ``None`` if no errors occurred, and is a non-empty list if an error occurred.
 
-
-For executing a subscription, you can directly call the ``subscribe`` method on it.
-This method is async and must be awaited.
-
-.. code:: python
-
-    import asyncio
-    from datetime import datetime
-    from graphene import ObjectType, String, Schema, Field
-
-    # All schema require a query.
-    class Query(ObjectType):
-        hello = String()
-
-        def resolve_hello(root, info):
-            return 'Hello, world!'
-
-    class Subscription(ObjectType):
-        time_of_day = Field(String)
-
-        async def subscribe_time_of_day(root, info):
-            while True:
-                yield { 'time_of_day': datetime.now().isoformat()}
-                await asyncio.sleep(1)
-
-    SCHEMA = Schema(query=Query, subscription=Subscription)
-
-    async def main(schema):
-
-        subscription = 'subscription { timeOfDay }'
-        result = await schema.subscribe(subscription)
-        async for item in result:
-            print(item.data['timeOfDay'])
-
-    asyncio.run(main(SCHEMA))
-
-The ``result`` is an async iterator which yields items in the same manner as a query.
 
 .. _SchemaExecuteContext:
 
@@ -123,7 +85,7 @@ Value used for :ref:`ResolverParamParent` in root queries and mutations can be o
             return {'id': root.id, 'firstName': root.name}
 
     schema = Schema(Query)
-    user_root = User(id=12, name='bob'}
+    user_root = User(id=12, name='bob')
     result = schema.execute(
         '''
         query getUser {
@@ -148,7 +110,7 @@ If there are multiple operations defined in a query string, ``operation_name`` s
     from graphene import ObjectType, Field, Schema
 
     class Query(ObjectType):
-        me = Field(User)
+        user = Field(User)
 
         def resolve_user(root, info):
             return get_user_by_id(12)

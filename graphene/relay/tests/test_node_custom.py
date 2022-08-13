@@ -1,5 +1,6 @@
+from textwrap import dedent
+
 from graphql import graphql_sync
-from graphql.pyutils import dedent
 
 from ...types import Interface, ObjectType, Schema
 from ...types.scalars import Int, String
@@ -11,7 +12,7 @@ class CustomNode(Node):
         name = "Node"
 
     @staticmethod
-    def to_global_id(type, id):
+    def to_global_id(type_, id):
         return id
 
     @staticmethod
@@ -53,8 +54,10 @@ graphql_schema = schema.graphql_schema
 
 
 def test_str_schema_correct():
-    assert str(schema) == dedent(
-        '''
+    assert (
+        str(schema).strip()
+        == dedent(
+            '''
         schema {
           query: RootQuery
         }
@@ -92,6 +95,7 @@ def test_str_schema_correct():
           ): Node
         }
         '''
+        ).strip()
     )
 
 

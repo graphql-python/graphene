@@ -291,14 +291,7 @@ class Field:
 
 
 class _DataclassParams:
-    __slots__ = (
-        "init",
-        "repr",
-        "eq",
-        "order",
-        "unsafe_hash",
-        "frozen",
-    )
+    __slots__ = ("init", "repr", "eq", "order", "unsafe_hash", "frozen")
 
     def __init__(self, init, repr, eq, order, unsafe_hash, frozen):
         self.init = init
@@ -442,13 +435,11 @@ def _field_init(f, frozen, globals, self_name):
             # This field does not need initialization.  Signify that
             # to the caller by returning None.
             return None
-
     # Only test this now, so that we can create variables for the
     # default.  However, return None to signify that we're not going
     # to actually do the assignment statement for InitVars.
     if f._field_type == _FIELD_INITVAR:
         return None
-
     # Now, actually generate the field assignment.
     return _field_assign(frozen, f.name, value, self_name)
 
@@ -490,7 +481,6 @@ def _init_fn(fields, frozen, has_post_init, self_name):
                 raise TypeError(
                     f"non-default argument {f.name!r} " "follows default argument"
                 )
-
     globals = {"MISSING": MISSING, "_HAS_DEFAULT_FACTORY": _HAS_DEFAULT_FACTORY}
 
     body_lines = []
@@ -500,16 +490,13 @@ def _init_fn(fields, frozen, has_post_init, self_name):
         # initialization (it's a pseudo-field).  Just skip it.
         if line:
             body_lines.append(line)
-
     # Does this class have a post-init function?
     if has_post_init:
         params_str = ",".join(f.name for f in fields if f._field_type is _FIELD_INITVAR)
         body_lines.append(f"{self_name}.{_POST_INIT_NAME}({params_str})")
-
     # If no body lines, use 'pass'.
     if not body_lines:
         body_lines = ["pass"]
-
     locals = {f"_type_{f.name}": f.type for f in fields}
     return _create_fn(
         "__init__",
@@ -674,7 +661,6 @@ def _get_field(cls, a_name, a_type):
             # This is a field in __slots__, so it has no default value.
             default = MISSING
         f = field(default=default)
-
     # Only at this point do we know the name and the type.  Set them.
     f.name = a_name
     f.type = a_type
@@ -705,7 +691,6 @@ def _get_field(cls, a_name, a_type):
             and _is_type(f.type, cls, typing, typing.ClassVar, _is_classvar)
         ):
             f._field_type = _FIELD_CLASSVAR
-
     # If the type is InitVar, or if it's a matching string annotation,
     # then it's an InitVar.
     if f._field_type is _FIELD:
@@ -717,7 +702,6 @@ def _get_field(cls, a_name, a_type):
             and _is_type(f.type, cls, dataclasses, dataclasses.InitVar, _is_initvar)
         ):
             f._field_type = _FIELD_INITVAR
-
     # Validations for individual fields.  This is delayed until now,
     # instead of in the Field() constructor, since only here do we
     # know the field name, which allows for better error reporting.
@@ -731,14 +715,12 @@ def _get_field(cls, a_name, a_type):
         # example, how about init=False (or really,
         # init=<not-the-default-init-value>)?  It makes no sense for
         # ClassVar and InitVar to specify init=<anything>.
-
     # For real fields, disallow mutable defaults for known types.
     if f._field_type is _FIELD and isinstance(f.default, (list, dict, set)):
         raise ValueError(
             f"mutable default {type(f.default)} for field "
             f"{f.name} is not allowed: use default_factory"
         )
-
     return f
 
 
@@ -827,7 +809,6 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
                 fields[f.name] = f
             if getattr(b, _PARAMS).frozen:
                 any_frozen_base = True
-
     # Annotations that are defined in this class (not in base
     # classes).  If __annotations__ isn't present, then this class
     # adds no new annotations.  We use this to compute fields that are
@@ -845,7 +826,9 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
     # Now find fields in our class.  While doing so, validate some
     # things, and set the default values (as class attributes) where
     # we can.
-    cls_fields = [_get_field(cls, name, type) for name, type in cls_annotations.items()]
+    cls_fields = [
+        _get_field(cls, name, type_) for name, type_ in cls_annotations.items()
+    ]
     for f in cls_fields:
         fields[f.name] = f
 
@@ -864,22 +847,18 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
                 delattr(cls, f.name)
             else:
                 setattr(cls, f.name, f.default)
-
     # Do we have any Field members that don't also have annotations?
     for name, value in cls.__dict__.items():
         if isinstance(value, Field) and not name in cls_annotations:
             raise TypeError(f"{name!r} is a field but has no type annotation")
-
     # Check rules that apply if we are derived from any dataclasses.
     if has_dataclass_bases:
         # Raise an exception if any of our bases are frozen, but we're not.
         if any_frozen_base and not frozen:
             raise TypeError("cannot inherit non-frozen dataclass from a " "frozen one")
-
         # Raise an exception if we're frozen, but none of our bases are.
         if not any_frozen_base and frozen:
             raise TypeError("cannot inherit frozen dataclass from a " "non-frozen one")
-
     # Remember all of the fields on our class (including bases).  This
     # also marks this class as being a dataclass.
     setattr(cls, _FIELDS, fields)
@@ -898,7 +877,6 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
     # eq methods.
     if order and not eq:
         raise ValueError("eq must be true if order is true")
-
     if init:
         # Does this class have a post-init function?
         has_post_init = hasattr(cls, _POST_INIT_NAME)
@@ -918,7 +896,6 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
                 "__dataclass_self__" if "self" in fields else "self",
             ),
         )
-
     # Get the fields as a list, and include only real fields.  This is
     # used in all of the following methods.
     field_list = [f for f in fields.values() if f._field_type is _FIELD]
@@ -926,7 +903,6 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
     if repr:
         flds = [f for f in field_list if f.repr]
         _set_new_attribute(cls, "__repr__", _repr_fn(flds))
-
     if eq:
         # Create _eq__ method.  There's no need for a __ne__ method,
         # since python will call __eq__ and negate it.
@@ -936,7 +912,6 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
         _set_new_attribute(
             cls, "__eq__", _cmp_fn("__eq__", "==", self_tuple, other_tuple)
         )
-
     if order:
         # Create and set the ordering methods.
         flds = [f for f in field_list if f.compare]
@@ -956,7 +931,6 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
                     f"in class {cls.__name__}. Consider using "
                     "functools.total_ordering"
                 )
-
     if frozen:
         for fn in _frozen_get_del_attr(cls, field_list):
             if _set_new_attribute(cls, fn.__name__, fn):
@@ -964,7 +938,6 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
                     f"Cannot overwrite attribute {fn.__name__} "
                     f"in class {cls.__name__}"
                 )
-
     # Decide if/how we're going to create a hash function.
     hash_action = _hash_action[
         bool(unsafe_hash), bool(eq), bool(frozen), has_explicit_hash
@@ -973,11 +946,9 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen):
         # No need to call _set_new_attribute here, since by the time
         # we're here the overwriting is unconditional.
         cls.__hash__ = hash_action(cls, field_list)
-
     if not getattr(cls, "__doc__"):
         # Create a class doc-string.
         cls.__doc__ = cls.__name__ + str(inspect.signature(cls)).replace(" -> None", "")
-
     return cls
 
 
@@ -1013,7 +984,6 @@ def dataclass(
     if _cls is None:
         # We're called with parens.
         return wrap
-
     # We're called as @dataclass without parens.
     return wrap(_cls)
 
@@ -1030,7 +1000,6 @@ def fields(class_or_instance):
         fields = getattr(class_or_instance, _FIELDS)
     except AttributeError:
         raise TypeError("must be called with a dataclass type or instance")
-
     # Exclude pseudo-fields.  Note that fields is sorted by insertion
     # order, so the order of the tuple is as the fields were defined.
     return tuple(f for f in fields.values() if f._field_type is _FIELD)
@@ -1172,7 +1141,6 @@ def make_dataclass(
     else:
         # Copy namespace since we're going to mutate it.
         namespace = namespace.copy()
-
     # While we're looking through the field names, validate that they
     # are identifiers, are not keywords, and not duplicates.
     seen = set()
@@ -1182,23 +1150,20 @@ def make_dataclass(
             name = item
             tp = "typing.Any"
         elif len(item) == 2:
-            name, tp, = item
+            (name, tp) = item
         elif len(item) == 3:
             name, tp, spec = item
             namespace[name] = spec
         else:
             raise TypeError(f"Invalid field: {item!r}")
-
         if not isinstance(name, str) or not name.isidentifier():
             raise TypeError(f"Field names must be valid identifers: {name!r}")
         if keyword.iskeyword(name):
             raise TypeError(f"Field names must not be keywords: {name!r}")
         if name in seen:
             raise TypeError(f"Field name duplicated: {name!r}")
-
         seen.add(name)
         anns[name] = tp
-
     namespace["__annotations__"] = anns
     # We use `types.new_class()` instead of simply `type()` to allow dynamic creation
     # of generic dataclassses.
@@ -1227,14 +1192,13 @@ def replace(obj, **changes):
       c = C(1, 2)
       c1 = replace(c, x=3)
       assert c1.x == 3 and c1.y == 2
-      """
+    """
 
     # We're going to mutate 'changes', but that's okay because it's a
     # new dict, even if called with 'replace(obj, **my_changes)'.
 
     if not _is_dataclass_instance(obj):
         raise TypeError("replace() should be called on dataclass instances")
-
     # It's an error to have init=False fields in 'changes'.
     # If a field is not in 'changes', read its value from the provided obj.
 
@@ -1248,10 +1212,8 @@ def replace(obj, **changes):
                     "replace()"
                 )
             continue
-
         if f.name not in changes:
             changes[f.name] = getattr(obj, f.name)
-
     # Create the new object, which calls __init__() and
     # __post_init__() (if defined), using all of the init fields we've
     # added and/or left in 'changes'.  If there are values supplied in

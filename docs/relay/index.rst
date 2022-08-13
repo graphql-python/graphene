@@ -19,11 +19,8 @@ Useful links
 -  `Getting started with Relay`_
 -  `Relay Global Identification Specification`_
 -  `Relay Cursor Connection Specification`_
--  `Relay input Object Mutation`_
 
-.. _Relay: https://facebook.github.io/relay/docs/en/graphql-server-specification.html
-.. _Relay specification: https://facebook.github.io/relay/graphql/objectidentification.htm#sec-Node-root-field
-.. _Getting started with Relay: https://facebook.github.io/relay/docs/en/quick-start-guide.html
-.. _Relay Global Identification Specification: https://facebook.github.io/relay/graphql/objectidentification.htm
-.. _Relay Cursor Connection Specification: https://facebook.github.io/relay/graphql/connections.htm
-.. _Relay input Object Mutation: https://facebook.github.io/relay/graphql/mutations.htm
+.. _Relay: https://relay.dev/docs/guides/graphql-server-specification/
+.. _Getting started with Relay: https://relay.dev/docs/getting-started/step-by-step-guide/
+.. _Relay Global Identification Specification: https://relay.dev/graphql/objectidentification.htm
+.. _Relay Cursor Connection Specification: https://relay.dev/graphql/connections.htm

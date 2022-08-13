@@ -7,7 +7,6 @@ try:
     from dataclasses import make_dataclass, field
 except ImportError:
     from ..pyutils.dataclasses import make_dataclass, field  # type: ignore
-
 # For static type checking with Mypy
 MYPY = False
 if MYPY:
@@ -20,12 +19,16 @@ class ObjectTypeOptions(BaseOptions):
 
 
 class ObjectTypeMeta(BaseTypeMeta):
-    def __new__(cls, name, bases, namespace):
+    def __new__(cls, name_, bases, namespace, **options):
+        # Note: it's safe to pass options as keyword arguments as they are still type-checked by ObjectTypeOptions.
+
         # We create this type, to then overload it with the dataclass attrs
         class InterObjectType:
             pass
 
-        base_cls = super().__new__(cls, name, (InterObjectType,) + bases, namespace)
+        base_cls = super().__new__(
+            cls, name_, (InterObjectType,) + bases, namespace, **options
+        )
         if base_cls._meta:
             fields = [
                 (
@@ -39,7 +42,7 @@ class ObjectTypeMeta(BaseTypeMeta):
                 )
                 for key, field_value in base_cls._meta.fields.items()
             ]
-            dataclass = make_dataclass(name, fields, bases=())
+            dataclass = make_dataclass(name_, fields, bases=())
             InterObjectType.__init__ = dataclass.__init__
             InterObjectType.__eq__ = dataclass.__eq__
             InterObjectType.__repr__ = dataclass.__repr__
@@ -62,7 +65,7 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
     Methods starting with ``resolve_<field_name>`` are bound as resolvers of the matching Field
     name. If no resolver is provided, the default resolver is used.
 
-    Ambiguous types with Interface and Union can be determined through``is_type_of`` method and
+    Ambiguous types with Interface and Union can be determined through ``is_type_of`` method and
     ``Meta.possible_types`` attribute.
 
     .. code:: python
@@ -129,7 +132,6 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
     ):
         if not _meta:
             _meta = ObjectTypeOptions(cls)
-
         fields = {}
 
         for interface in interfaces:
@@ -137,10 +139,8 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
                 interface, Interface
             ), f'All interfaces of {cls.__name__} must be a subclass of Interface. Received "{interface}".'
             fields.update(interface._meta.fields)
-
         for base in reversed(cls.__mro__):
             fields.update(yank_fields_from_attrs(base.__dict__, _as=Field))
-
         assert not (possible_types and cls.is_type_of), (
             f"{cls.__name__}.Meta.possible_types will cause type collision with {cls.__name__}.is_type_of. "
             "Please use one or other."
@@ -150,7 +150,6 @@ class ObjectType(BaseType, metaclass=ObjectTypeMeta):
             _meta.fields.update(fields)
         else:
             _meta.fields = fields
-
         if not _meta.interfaces:
             _meta.interfaces = interfaces
         _meta.possible_types = possible_types

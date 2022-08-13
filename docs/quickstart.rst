@@ -60,14 +60,14 @@ Requirements
 ~~~~~~~~~~~~
 
 -  Python (2.7, 3.4, 3.5, 3.6, pypy)
--  Graphene (2.0)
+-  Graphene (3.0)
 
 Project setup
 ~~~~~~~~~~~~~
 
 .. code:: bash
 
-    pip install "graphene>=2.0"
+    pip install "graphene>=3.0"
 
 Creating a basic Schema
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,7 +103,7 @@ For each **Field** in our **Schema**, we write a **Resolver** method to fetch da
 Schema Definition Language (SDL)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the `GraphQL Schema Definition Language`_, we could describe the fields defined by our example code as show below.
+In the `GraphQL Schema Definition Language`_, we could describe the fields defined by our example code as shown below.
 
 .. _GraphQL Schema Definition Language: https://graphql.org/learn/schema/
 

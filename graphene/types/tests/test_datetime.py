@@ -60,6 +60,23 @@ def test_datetime_query(sample_datetime):
     assert result.data == {"datetime": isoformat}
 
 
+def test_datetime_query_with_variables(sample_datetime):
+    isoformat = sample_datetime.isoformat()
+
+    result = schema.execute(
+        """
+        query GetDate($datetime: DateTime) {
+          literal: datetime(in: "%s")
+          value: datetime(in: $datetime)
+        }
+        """
+        % isoformat,
+        variable_values={"datetime": isoformat},
+    )
+    assert not result.errors
+    assert result.data == {"literal": isoformat, "value": isoformat}
+
+
 def test_date_query(sample_date):
     isoformat = sample_date.isoformat()
 
@@ -68,12 +85,46 @@ def test_date_query(sample_date):
     assert result.data == {"date": isoformat}
 
 
+def test_date_query_with_variables(sample_date):
+    isoformat = sample_date.isoformat()
+
+    result = schema.execute(
+        """
+        query GetDate($date: Date) {
+          literal: date(in: "%s")
+          value: date(in: $date)
+        }
+        """
+        % isoformat,
+        variable_values={"date": isoformat},
+    )
+    assert not result.errors
+    assert result.data == {"literal": isoformat, "value": isoformat}
+
+
 def test_time_query(sample_time):
     isoformat = sample_time.isoformat()
 
     result = schema.execute("""{ time(at: "%s") }""" % isoformat)
     assert not result.errors
     assert result.data == {"time": isoformat}
+
+
+def test_time_query_with_variables(sample_time):
+    isoformat = sample_time.isoformat()
+
+    result = schema.execute(
+        """
+        query GetTime($time: Time) {
+          literal: time(at: "%s")
+          value: time(at: $time)
+        }
+        """
+        % isoformat,
+        variable_values={"time": isoformat},
+    )
+    assert not result.errors
+    assert result.data == {"literal": isoformat, "value": isoformat}
 
 
 def test_bad_datetime_query():

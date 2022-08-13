@@ -102,7 +102,7 @@ When we execute a query against that schema.
     query_string = "{ me { fullName } }"
     result = schema.execute(query_string)
 
-    assert result.data["me"] == {"fullName": "Luke Skywalker")
+    assert result.data["me"] == {"fullName": "Luke Skywalker"}
 
 Then we go through the following steps to resolve this query:
 

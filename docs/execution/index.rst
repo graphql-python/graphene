@@ -9,3 +9,5 @@ Execution
    middleware
    dataloader
    fileuploading
+   subscriptions
+   queryvalidation

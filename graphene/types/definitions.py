@@ -1,3 +1,5 @@
+from enum import Enum as PyEnum
+
 from graphql import (
     GraphQLEnumType,
     GraphQLInputObjectType,
@@ -36,7 +38,19 @@ class GrapheneScalarType(GrapheneGraphQLType, GraphQLScalarType):
 
 
 class GrapheneEnumType(GrapheneGraphQLType, GraphQLEnumType):
-    pass
+    def serialize(self, value):
+        if not isinstance(value, PyEnum):
+            enum = self.graphene_type._meta.enum
+            try:
+                # Try and get enum by value
+                value = enum(value)
+            except ValueError:
+                # Try and get enum by name
+                try:
+                    value = enum[value]
+                except KeyError:
+                    pass
+        return super(GrapheneEnumType, self).serialize(value)
 
 
 class GrapheneInputObjectType(GrapheneGraphQLType, GraphQLInputObjectType):

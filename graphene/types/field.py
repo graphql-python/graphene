@@ -8,6 +8,7 @@ from .resolver import default_resolver
 from .structures import NonNull
 from .unmountedtype import UnmountedType
 from .utils import get_type
+from ..utils.deprecated import warn_deprecation
 
 base_type = type
 
@@ -64,7 +65,7 @@ class Field(MountedType):
 
     def __init__(
         self,
-        type,
+        type_,
         args=None,
         resolver=None,
         source=None,
@@ -88,7 +89,7 @@ class Field(MountedType):
         ), f'The default value can not be a function but received "{base_type(default_value)}".'
 
         if required:
-            type = NonNull(type)
+            type_ = NonNull(type_)
 
         # Check if name is actually an argument of the field
         if isinstance(name, (Argument, UnmountedType)):
@@ -101,7 +102,7 @@ class Field(MountedType):
             source = None
 
         self.name = name
-        self._type = type
+        self._type = type_
         self.args = to_arguments(args or {}, extra_args)
         if source:
             resolver = partial(source_resolver, source)
@@ -114,5 +115,24 @@ class Field(MountedType):
     def type(self):
         return get_type(self._type)
 
-    def get_resolver(self, parent_resolver):
+    get_resolver = None
+
+    def wrap_resolve(self, parent_resolver):
+        """
+        Wraps a function resolver, using the ObjectType resolve_{FIELD_NAME}
+        (parent_resolver) if the Field definition has no resolver.
+        """
+        if self.get_resolver is not None:
+            warn_deprecation(
+                "The get_resolver method is being deprecated, please rename it to wrap_resolve."
+            )
+            return self.get_resolver(parent_resolver)
+
         return self.resolver or parent_resolver
+
+    def wrap_subscribe(self, parent_subscribe):
+        """
+        Wraps a function subscribe, using the ObjectType subscribe_{FIELD_NAME}
+        (parent_subscribe) if the Field definition has no subscribe.
+        """
+        return parent_subscribe

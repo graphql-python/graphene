@@ -85,9 +85,9 @@ We should receive:
 
 InputFields and InputObjectTypes
 ----------------------------------
-InputFields are used in mutations to allow nested input data for mutations
+InputFields are used in mutations to allow nested input data for mutations.
 
-To use an InputField you define an InputObjectType that specifies the structure of your input data
+To use an InputField you define an InputObjectType that specifies the structure of your input data:
 
 
 .. code:: python
@@ -104,7 +104,6 @@ To use an InputField you define an InputObjectType that specifies the structure 
 
         person = graphene.Field(Person)
 
-        @staticmethod
         def mutate(root, info, person_data=None):
             person = Person(
                 name=person_data.name,
@@ -113,7 +112,7 @@ To use an InputField you define an InputObjectType that specifies the structure 
             return CreatePerson(person=person)
 
 
-Note that  **name** and **age** are part of **person_data** now
+Note that  **name** and **age** are part of **person_data** now.
 
 Using the above mutation your new query would look like this:
 
@@ -129,7 +128,7 @@ Using the above mutation your new query would look like this:
     }
 
 InputObjectTypes can also be fields of InputObjectTypes allowing you to have
-as complex of input data as you need
+as complex of input data as you need:
 
 .. code:: python
 
@@ -161,7 +160,7 @@ To return an existing ObjectType instead of a mutation-specific type, set the **
         def mutate(root, info, name):
             return Person(name=name)
 
-Then, if we query (``schema.execute(query_str)``) the following:
+Then, if we query (``schema.execute(query_str)``) with the following:
 
 .. code::
 
