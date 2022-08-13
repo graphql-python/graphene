@@ -303,6 +303,7 @@ def test_interface_with_interfaces():
         bar = String()
 
     type_map = create_type_map([FooInterface, BarInterface])
+
     assert "FooInterface" in type_map
     foo_graphql_type = type_map["FooInterface"]
     assert isinstance(foo_graphql_type, GraphQLInterfaceType)
@@ -317,5 +318,4 @@ def test_interface_with_interfaces():
     assert list(fields) == ["foo", "bar"]
     assert isinstance(fields["foo"], GraphQLField)
     assert isinstance(fields["bar"], GraphQLField)
-
-    assert bar_graphql_type.interfaces == [foo_graphql_type]
+    assert list(bar_graphql_type.interfaces) == list([foo_graphql_type])
