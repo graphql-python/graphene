@@ -53,6 +53,7 @@ tests_require = [
     "snapshottest>=0.6,<1",
     "coveralls>=3.3,<4",
     "promise>=2.3,<3",
+    "aiodataloader<1",
     "mock>=4,<5",
     "pytz==2022.1",
     "iso8601>=1,<2",
