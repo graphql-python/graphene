@@ -318,4 +318,4 @@ def test_interface_with_interfaces():
     assert isinstance(fields["foo"], GraphQLField)
     assert isinstance(fields["bar"], GraphQLField)
 
-    assert bar_graphql_type.interfaces == [foo_graphql_type]
+    assert list(bar_graphql_type.interfaces) == list([foo_graphql_type])
