@@ -289,3 +289,33 @@ def test_objecttype_with_possible_types():
     assert graphql_type.is_type_of
     assert graphql_type.is_type_of({}, None) is True
     assert graphql_type.is_type_of(MyObjectType(), None) is False
+
+
+def test_interface_with_interfaces():
+    class FooInterface(Interface):
+        foo = String()
+
+    class BarInterface(Interface):
+        class Meta:
+            interfaces = [FooInterface]
+
+        foo = String()
+        bar = String()
+
+    type_map = create_type_map([FooInterface, BarInterface])
+    assert "FooInterface" in type_map
+    foo_graphql_type = type_map["FooInterface"]
+    assert isinstance(foo_graphql_type, GraphQLInterfaceType)
+    assert foo_graphql_type.name == "FooInterface"
+
+    assert "BarInterface" in type_map
+    bar_graphql_type = type_map["BarInterface"]
+    assert isinstance(bar_graphql_type, GraphQLInterfaceType)
+    assert bar_graphql_type.name == "BarInterface"
+
+    fields = bar_graphql_type.fields
+    assert list(fields) == ["foo", "bar"]
+    assert isinstance(fields["foo"], GraphQLField)
+    assert isinstance(fields["bar"], GraphQLField)
+
+    assert bar_graphql_type.interfaces == [foo_graphql_type]
