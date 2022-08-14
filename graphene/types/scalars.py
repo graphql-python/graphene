@@ -1,5 +1,6 @@
 from typing import Any
 
+from graphql import Undefined
 from graphql.language.ast import (
     BooleanValueNode,
     FloatValueNode,
@@ -67,9 +68,10 @@ class Int(Scalar):
             try:
                 num = int(float(value))
             except ValueError:
-                return None
+                return Undefined
         if MIN_INT <= num <= MAX_INT:
             return num
+        return Undefined
 
     serialize = coerce_int
     parse_value = coerce_int
@@ -80,6 +82,7 @@ class Int(Scalar):
             num = int(ast.value)
             if MIN_INT <= num <= MAX_INT:
                 return num
+        return Undefined
 
 
 class BigInt(Scalar):
@@ -97,7 +100,7 @@ class BigInt(Scalar):
             try:
                 num = int(float(value))
             except ValueError:
-                return None
+                return Undefined
         return num
 
     serialize = coerce_int
@@ -107,6 +110,7 @@ class BigInt(Scalar):
     def parse_literal(ast, _variables=None):
         if isinstance(ast, IntValueNode):
             return int(ast.value)
+        return Undefined
 
 
 class Float(Scalar):
@@ -122,7 +126,7 @@ class Float(Scalar):
         try:
             return float(value)
         except ValueError:
-            return None
+            return Undefined
 
     serialize = coerce_float
     parse_value = coerce_float
@@ -131,6 +135,7 @@ class Float(Scalar):
     def parse_literal(ast, _variables=None):
         if isinstance(ast, (FloatValueNode, IntValueNode)):
             return float(ast.value)
+        return Undefined
 
 
 class String(Scalar):
@@ -153,6 +158,7 @@ class String(Scalar):
     def parse_literal(ast, _variables=None):
         if isinstance(ast, StringValueNode):
             return ast.value
+        return Undefined
 
 
 class Boolean(Scalar):
@@ -167,6 +173,7 @@ class Boolean(Scalar):
     def parse_literal(ast, _variables=None):
         if isinstance(ast, BooleanValueNode):
             return ast.value
+        return Undefined
 
 
 class ID(Scalar):
@@ -185,3 +192,4 @@ class ID(Scalar):
     def parse_literal(ast, _variables=None):
         if isinstance(ast, (StringValueNode, IntValueNode)):
             return ast.value
+        return Undefined
