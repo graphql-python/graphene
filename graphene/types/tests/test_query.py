@@ -229,11 +229,11 @@ def test_query_arguments():
 
     result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {"test": '[null,{"a_str":null,"a_int":null}]'}
+    assert result.data == {"test": "[null,{}]"}
 
     result = test_schema.execute('{ test(aStr: "String!") }', "Source!")
     assert not result.errors
-    assert result.data == {"test": '["Source!",{"a_str":"String!","a_int":null}]'}
+    assert result.data == {"test": '["Source!",{"a_str":"String!"}]'}
 
     result = test_schema.execute('{ test(aInt: -123, aStr: "String!") }', "Source!")
     assert not result.errors
@@ -258,7 +258,7 @@ def test_query_input_field():
 
     result = test_schema.execute("{ test }", None)
     assert not result.errors
-    assert result.data == {"test": '[null,{"a_input":null}]'}
+    assert result.data == {"test": "[null,{}]"}
 
     result = test_schema.execute('{ test(aInput: {aField: "String!"} ) }', "Source!")
     assert not result.errors

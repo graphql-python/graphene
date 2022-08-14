@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from uuid import UUID as _UUID
 
 from graphql.language.ast import StringValueNode
+from graphql import Undefined
 
 from .scalars import Scalar
 
@@ -21,9 +22,10 @@ class UUID(Scalar):
         return str(uuid)
 
     @staticmethod
-    def parse_literal(node):
+    def parse_literal(node, _variables=None):
         if isinstance(node, StringValueNode):
             return _UUID(node.value)
+        return Undefined
 
     @staticmethod
     def parse_value(value):

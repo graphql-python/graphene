@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from decimal import Decimal as _Decimal
 
+from graphql import Undefined
 from graphql.language.ast import StringValueNode, IntValueNode
 
 from .scalars import Scalar
@@ -22,13 +23,14 @@ class Decimal(Scalar):
         return str(dec)
 
     @classmethod
-    def parse_literal(cls, node):
+    def parse_literal(cls, node, _variables=None):
         if isinstance(node, (StringValueNode, IntValueNode)):
             return cls.parse_value(node.value)
+        return Undefined
 
     @staticmethod
     def parse_value(value):
         try:
             return _Decimal(value)
-        except ValueError:
-            return None
+        except Exception:
+            return Undefined

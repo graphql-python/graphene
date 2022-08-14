@@ -1,3 +1,4 @@
+from graphql import Undefined
 from ..scalars import Boolean, Float, Int, String
 
 
@@ -9,12 +10,12 @@ def test_serializes_output_int():
     assert Int.serialize(1.1) == 1
     assert Int.serialize(-1.1) == -1
     assert Int.serialize(1e5) == 100000
-    assert Int.serialize(9876504321) is None
-    assert Int.serialize(-9876504321) is None
-    assert Int.serialize(1e100) is None
-    assert Int.serialize(-1e100) is None
+    assert Int.serialize(9876504321) is Undefined
+    assert Int.serialize(-9876504321) is Undefined
+    assert Int.serialize(1e100) is Undefined
+    assert Int.serialize(-1e100) is Undefined
     assert Int.serialize("-1.1") == -1
-    assert Int.serialize("one") is None
+    assert Int.serialize("one") is Undefined
     assert Int.serialize(False) == 0
     assert Int.serialize(True) == 1
 
@@ -27,7 +28,7 @@ def test_serializes_output_float():
     assert Float.serialize(1.1) == 1.1
     assert Float.serialize(-1.1) == -1.1
     assert Float.serialize("-1.1") == -1.1
-    assert Float.serialize("one") is None
+    assert Float.serialize("one") is Undefined
     assert Float.serialize(False) == 0
     assert Float.serialize(True) == 1
 
@@ -38,7 +39,7 @@ def test_serializes_output_string():
     assert String.serialize(-1.1) == "-1.1"
     assert String.serialize(True) == "true"
     assert String.serialize(False) == "false"
-    assert String.serialize(u"\U0001F601") == u"\U0001F601"
+    assert String.serialize("\U0001F601") == "\U0001F601"
 
 
 def test_serializes_output_boolean():

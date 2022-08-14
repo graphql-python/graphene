@@ -251,19 +251,22 @@ def test_enum_types():
 
     schema = Schema(query=Query)
 
-    assert str(schema) == dedent(
-        '''\
-        type Query {
-          color: Color!
-        }
+    assert (
+        str(schema).strip()
+        == dedent(
+            '''
+            type Query {
+              color: Color!
+            }
 
-        """Primary colors"""
-        enum Color {
-          RED
-          YELLOW
-          BLUE
-        }
-    '''
+            """Primary colors"""
+            enum Color {
+              RED
+              YELLOW
+              BLUE
+            }
+            '''
+        ).strip()
     )
 
 
@@ -325,6 +328,52 @@ def test_enum_resolver_compat():
     assert results.data["colorByName"] == Color.RED.name
 
 
+def test_enum_with_name():
+    from enum import Enum as PyEnum
+
+    class Color(PyEnum):
+        RED = 1
+        YELLOW = 2
+        BLUE = 3
+
+    GColor = Enum.from_enum(Color, description="original colors")
+    UniqueGColor = Enum.from_enum(
+        Color, name="UniqueColor", description="unique colors"
+    )
+
+    class Query(ObjectType):
+        color = GColor(required=True)
+        unique_color = UniqueGColor(required=True)
+
+    schema = Schema(query=Query)
+
+    assert (
+        str(schema).strip()
+        == dedent(
+            '''
+            type Query {
+              color: Color!
+              uniqueColor: UniqueColor!
+            }
+
+            """original colors"""
+            enum Color {
+              RED
+              YELLOW
+              BLUE
+            }
+
+            """unique colors"""
+            enum UniqueColor {
+              RED
+              YELLOW
+              BLUE
+            }
+            '''
+        ).strip()
+    )
+
+
 def test_enum_resolver_invalid():
     from enum import Enum as PyEnum
 
@@ -345,10 +394,7 @@ def test_enum_resolver_invalid():
 
     results = schema.execute("query { color }")
     assert results.errors
-    assert (
-        results.errors[0].message
-        == "Expected a value of type 'Color' but received: 'BLACK'"
-    )
+    assert results.errors[0].message == "Enum 'Color' cannot represent value: 'BLACK'"
 
 
 def test_field_enum_argument():
@@ -460,12 +506,13 @@ def test_mutation_enum_input_type():
 
     schema = Schema(query=Query, mutation=MyMutation)
     result = schema.execute(
-        """ mutation MyMutation {
-        createPaint(colorInput: { color: RED }) {
-            color
+        """
+        mutation MyMutation {
+            createPaint(colorInput: { color: RED }) {
+                color
+            }
         }
-    }
-    """
+        """
     )
     assert not result.errors
     assert result.data == {"createPaint": {"color": "RED"}}
