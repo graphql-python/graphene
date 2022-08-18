@@ -28,7 +28,7 @@ Also, Graphene is fully compatible with the GraphQL spec, working seamlessly wit
 
 ## Installation
 
-For instaling graphene, just run this command in your shell
+To install `graphene`, just run this command in your shell
 
 ```bash
 pip install "graphene>=3.0"

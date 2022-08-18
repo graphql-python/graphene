@@ -49,7 +49,7 @@ seamlessly with all GraphQL clients, such as
 Installation
 ------------
 
-For instaling graphene, just run this command in your shell
+To install `graphene`, just run this command in your shell
 
 .. code:: bash
 
