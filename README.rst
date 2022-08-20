@@ -1,18 +1,18 @@
+|Graphene Logo| `Graphene <http://graphene-python.org>`__ |Build Status| |PyPI version| |Coverage Status|
+=========================================================================================================
+
+`💬 Join the community on
+Slack <https://join.slack.com/t/graphenetools/shared_invite/enQtOTE2MDQ1NTg4MDM1LTA4Nzk0MGU0NGEwNzUxZGNjNDQ4ZjAwNDJjMjY0OGE1ZDgxZTg4YjM2ZTc4MjE2ZTAzZjE2ZThhZTQzZTkyMmM>`__
+
 **We are looking for contributors**! Please check the
 `ROADMAP <https://github.com/graphql-python/graphene/blob/master/ROADMAP.md>`__
 to see how you can help ❤️
 
---------------
-
-|Graphene Logo| `Graphene <http://graphene-python.org>`__ |Build Status| |PyPI version| |Coverage Status|
-=========================================================================================================
-
-
 Introduction
 ------------
 
-`Graphene <http://graphene-python.org>`__ is a Python library for
-building GraphQL schemas/types fast and easily.
+`Graphene <http://graphene-python.org>`__ is an opinionated Python
+library for building GraphQL schemas/types fast and easily.
 
 -  **Easy to use:** Graphene helps you use GraphQL in Python without
    effort.
@@ -27,17 +27,18 @@ Integrations
 
 Graphene has multiple integrations with different frameworks:
 
-+---------------------+----------------------------------------------------------------------------------------------+
-| integration         | Package                                                                                      |
-+=====================+==============================================================================================+
-| Django              | `graphene-django <https://github.com/graphql-python/graphene-django/>`__                     |
-+---------------------+----------------------------------------------------------------------------------------------+
-| SQLAlchemy          | `graphene-sqlalchemy <https://github.com/graphql-python/graphene-sqlalchemy/>`__             |
-+---------------------+----------------------------------------------------------------------------------------------+
-| Google App Engine   | `graphene-gae <https://github.com/graphql-python/graphene-gae/>`__                           |
-+---------------------+----------------------------------------------------------------------------------------------+
-| Peewee              | *In progress* (`Tracking Issue <https://github.com/graphql-python/graphene/issues/289>`__)   |
-+---------------------+----------------------------------------------------------------------------------------------+
++-------------------+-------------------------------------------------+
+| integration       | Package                                         |
++===================+=================================================+
+| Django            | `graphene-django <https:/                       |
+|                   | /github.com/graphql-python/graphene-django/>`__ |
++-------------------+-------------------------------------------------+
+| SQLAlchemy        | `graphene-sqlalchemy <https://git               |
+|                   | hub.com/graphql-python/graphene-sqlalchemy/>`__ |
++-------------------+-------------------------------------------------+
+| Google App Engine | `graphene-gae <http                             |
+|                   | s://github.com/graphql-python/graphene-gae/>`__ |
++-------------------+-------------------------------------------------+
 
 Also, Graphene is fully compatible with the GraphQL spec, working
 seamlessly with all GraphQL clients, such as
@@ -48,17 +49,11 @@ seamlessly with all GraphQL clients, such as
 Installation
 ------------
 
-For instaling graphene, just run this command in your shell
+To install `graphene`, just run this command in your shell
 
 .. code:: bash
 
-    pip install "graphene>=2.0"
-
-2.0 Upgrade Guide
------------------
-
-Please read `UPGRADE-v2.0.md </UPGRADE-v2.0.md>`__ to learn how to
-upgrade.
+   pip install "graphene>=3.0"
 
 Examples
 --------
@@ -67,26 +62,26 @@ Here is one example for you to get started:
 
 .. code:: python
 
-    import graphene
+   import graphene
 
-    class Query(graphene.ObjectType):
-        hello = graphene.String(description='A typical hello world')
+   class Query(graphene.ObjectType):
+       hello = graphene.String(description='A typical hello world')
 
-        def resolve_hello(self, info):
-            return 'World'
+       def resolve_hello(self, info):
+           return 'World'
 
-    schema = graphene.Schema(query=Query)
+   schema = graphene.Schema(query=Query)
 
 Then Querying ``graphene.Schema`` is as simple as:
 
 .. code:: python
 
-    query = '''
-        query SayHello {
-          hello
-        }
-    '''
-    result = schema.execute(query)
+   query = '''
+       query SayHello {
+         hello
+       }
+   '''
+   result = schema.execute(query)
 
 If you want to learn even more, you can also check the following
 `examples <examples/>`__:
@@ -110,20 +105,20 @@ dependencies are installed by running:
 
 .. code:: sh
 
-    virtualenv venv
-    source venv/bin/activate
-    pip install -e ".[test]"
+   virtualenv venv
+   source venv/bin/activate
+   pip install -e ".[test]"
 
 Well-written tests and maintaining good test coverage is important to
 this project. While developing, run new and existing tests with:
 
 .. code:: sh
 
-    py.test graphene/relay/tests/test_node.py # Single file
-    py.test graphene/relay # All tests in directory
+   py.test graphene/relay/tests/test_node.py # Single file
+   py.test graphene/relay # All tests in directory
 
 Add the ``-s`` flag if you have introduced breakpoints into the code for
-debugging. Add the ``-v`` ("verbose") flag to get more detailed test
+debugging. Add the ``-v`` (“verbose”) flag to get more detailed test
 output. For even more detailed output, use ``-vv``. Check out the
 `pytest documentation <https://docs.pytest.org/en/latest/>`__ for more
 options and test running controls.
@@ -132,7 +127,7 @@ You can also run the benchmarks with:
 
 .. code:: sh
 
-    py.test graphene --benchmark-only
+   py.test graphene --benchmark-only
 
 Graphene supports several versions of Python. To make sure that changes
 do not break compatibility with any of those versions, we use ``tox`` to
@@ -142,14 +137,14 @@ config file, just run:
 
 .. code:: sh
 
-    tox
+   tox
 
 If you wish to run against a specific version defined in the ``tox.ini``
 file:
 
 .. code:: sh
 
-    tox -e py36
+   tox -e py36
 
 Tox can only use whatever versions of Python are installed on your
 system. When you create a pull request, Travis will also be running the
@@ -168,7 +163,7 @@ An HTML version of the documentation is produced by running:
 
 .. code:: sh
 
-    make docs
+   make docs
 
 .. |Graphene Logo| image:: http://graphene-python.org/favicon.png
 .. |Build Status| image:: https://travis-ci.org/graphql-python/graphene.svg?branch=master

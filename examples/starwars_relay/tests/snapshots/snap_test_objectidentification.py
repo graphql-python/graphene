@@ -49,7 +49,7 @@ type Faction implements Node {
   name: String
 
   """The ships used by the faction."""
-  ships(before: String = null, after: String = null, first: Int = null, last: Int = null): ShipConnection
+  ships(before: String, after: String, first: Int, last: Int): ShipConnection
 }
 
 """An object with an ID"""
@@ -115,5 +115,4 @@ input IntroduceShipInput {
   shipName: String!
   factionId: String!
   clientMutationId: String
-}
-'''
+}'''

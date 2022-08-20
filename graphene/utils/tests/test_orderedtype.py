@@ -38,4 +38,4 @@ def test_orderedtype_non_orderabletypes():
 
     assert one.__lt__(1) == NotImplemented
     assert one.__gt__(1) == NotImplemented
-    assert not one == 1
+    assert one != 1

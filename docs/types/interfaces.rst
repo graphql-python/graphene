@@ -44,7 +44,7 @@ Both of these types have all of the fields from the ``Character`` interface,
 but also bring in extra fields, ``home_planet``, ``starships`` and
 ``primary_function``, that are specific to that particular type of character.
 
-The full GraphQL schema defition will look like this:
+The full GraphQL schema definition will look like this:
 
 .. code::
 

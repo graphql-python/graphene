@@ -1,9 +1,9 @@
 default_language_version:
-  python: python3.8
+  python: python3.9
 
 repos:
--   repo: git://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
     hooks:
     -   id: check-merge-conflict
     -   id: check-json
@@ -16,15 +16,15 @@ repos:
         - --autofix
     -   id: trailing-whitespace
         exclude: README.md
--   repo: git://github.com/asottile/pyupgrade
-    rev: v2.24.0
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.37.3
     hooks:
     -   id: pyupgrade
--   repo: git://github.com/ambv/black
-    rev: 19.3b0
+-   repo: https://github.com/psf/black
+    rev: 22.6.0
     hooks:
     -   id: black
--   repo: git://github.com/PyCQA/flake8
-    rev: 3.8.4
+-   repo: https://github.com/PyCQA/flake8
+    rev: 5.0.4
     hooks:
     -   id: flake8

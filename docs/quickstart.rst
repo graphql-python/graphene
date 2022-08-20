@@ -59,15 +59,15 @@ When we send a **Query** requesting only one **Field**, ``hello``, and specify a
 Requirements
 ~~~~~~~~~~~~
 
--  Python (2.7, 3.4, 3.5, 3.6, pypy)
--  Graphene (2.0)
+-  Python (3.6, 3.7, 3.8, 3.9, 3.10, pypy)
+-  Graphene (3.0)
 
 Project setup
 ~~~~~~~~~~~~~
 
 .. code:: bash
 
-    pip install "graphene>=2.0"
+    pip install "graphene>=3.0"
 
 Creating a basic Schema
 ~~~~~~~~~~~~~~~~~~~~~~~

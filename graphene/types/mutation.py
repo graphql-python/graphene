@@ -29,21 +29,21 @@ class Mutation(ObjectType):
 
     .. code:: python
 
-        from graphene import Mutation, ObjectType, String, Boolean, Field
+        import graphene
 
-        class CreatePerson(Mutation):
+        class CreatePerson(graphene.Mutation):
             class Arguments:
-                name = String()
+                name = graphene.String()
 
-            ok = Boolean()
-            person = Field(Person)
+            ok = graphene.Boolean()
+            person = graphene.Field(Person)
 
             def mutate(parent, info, name):
                 person = Person(name=name)
                 ok = True
                 return CreatePerson(person=person, ok=ok)
 
-        class Mutation(ObjectType):
+        class Mutation(graphene.ObjectType):
             create_person = CreatePerson.Field()
 
     Meta class options (optional):
@@ -101,10 +101,7 @@ class Mutation(ObjectType):
                         "Read more:"
                         " https://github.com/graphql-python/graphene/blob/v2.0.0/UPGRADE-v2.0.md#mutation-input"
                     )
-            if input_class:
-                arguments = props(input_class)
-            else:
-                arguments = {}
+            arguments = props(input_class) if input_class else {}
         if not resolver:
             mutate = getattr(cls, "mutate", None)
             assert mutate, "All mutations must define a mutate method in it"

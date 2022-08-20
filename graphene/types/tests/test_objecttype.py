@@ -191,21 +191,15 @@ def test_objecttype_as_container_all_kwargs():
 
 
 def test_objecttype_as_container_extra_args():
-    with raises(TypeError) as excinfo:
-        Container("1", "2", "3")
-
-    assert "__init__() takes from 1 to 3 positional arguments but 4 were given" == str(
-        excinfo.value
-    )
+    msg = r"__init__\(\) takes from 1 to 3 positional arguments but 4 were given"
+    with raises(TypeError, match=msg):
+        Container("1", "2", "3")  # type: ignore
 
 
 def test_objecttype_as_container_invalid_kwargs():
-    with raises(TypeError) as excinfo:
-        Container(unexisting_field="3")
-
-    assert "__init__() got an unexpected keyword argument 'unexisting_field'" == str(
-        excinfo.value
-    )
+    msg = r"__init__\(\) got an unexpected keyword argument 'unexisting_field'"
+    with raises(TypeError, match=msg):
+        Container(unexisting_field="3")  # type: ignore
 
 
 def test_objecttype_container_benchmark(benchmark):

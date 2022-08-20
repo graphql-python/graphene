@@ -22,6 +22,7 @@ Usage
 Here is how you would implement depth-limiting on your schema.
 
 .. code:: python
+
     from graphql import validate, parse
     from graphene import ObjectType, Schema, String
     from graphene.validation import depth_limit_validator
@@ -37,7 +38,7 @@ Here is how you would implement depth-limiting on your schema.
     # will not be executed.
 
     validation_errors = validate(
-        schema=schema,
+        schema=schema.graphql_schema,
         document_ast=parse('THE QUERY'),
         rules=(
             depth_limit_validator(
@@ -58,6 +59,7 @@ Usage
 Here is how you would disable introspection for your schema.
 
 .. code:: python
+
     from graphql import validate, parse
     from graphene import ObjectType, Schema, String
     from graphene.validation import DisableIntrospection
@@ -72,7 +74,7 @@ Here is how you would disable introspection for your schema.
     # introspection queries will not be executed.
 
     validation_errors = validate(
-        schema=schema,
+        schema=schema.graphql_schema,
         document_ast=parse('THE QUERY'),
         rules=(
             DisableIntrospection,
@@ -92,6 +94,7 @@ reason. Here is an example query validator that visits field definitions in Grap
 if any of those fields are blacklisted:
 
 .. code:: python
+
     from graphql import GraphQLError
     from graphql.language import FieldNode
     from graphql.validation import ValidationRule

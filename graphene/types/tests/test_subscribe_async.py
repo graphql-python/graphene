@@ -14,9 +14,7 @@ class Subscription(ObjectType):
     count_to_ten = Field(Int)
 
     async def subscribe_count_to_ten(root, info):
-        count = 0
-        while count < 10:
-            count += 1
+        for count in range(1, 11):
             yield count
 
 

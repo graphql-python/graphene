@@ -153,7 +153,7 @@ class Query(ObjectType):
 ```
 
 Also, if you wanted to create an `ObjectType` that implements `Node`, you have to do it
-explicity.
+explicitly.
 
 ## Django
 

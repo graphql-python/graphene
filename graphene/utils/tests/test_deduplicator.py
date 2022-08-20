@@ -94,6 +94,7 @@ TEST_DATA = {
     ],
     "movies": {
         "1198359": {
+            "id": "1198359",
             "name": "King Arthur: Legend of the Sword",
             "synopsis": (
                 "When the child Arthur's father is murdered, Vortigern, "
@@ -159,7 +160,7 @@ def test_example_end_to_end():
                 "date": "2017-05-19",
                 "movie": {
                     "__typename": "Movie",
-                    "id": "TW92aWU6Tm9uZQ==",
+                    "id": "TW92aWU6MTE5ODM1OQ==",
                     "name": "King Arthur: Legend of the Sword",
                     "synopsis": (
                         "When the child Arthur's father is murdered, Vortigern, "
@@ -172,7 +173,7 @@ def test_example_end_to_end():
                 "__typename": "Event",
                 "id": "RXZlbnQ6MjM0",
                 "date": "2017-05-20",
-                "movie": {"__typename": "Movie", "id": "TW92aWU6Tm9uZQ=="},
+                "movie": {"__typename": "Movie", "id": "TW92aWU6MTE5ODM1OQ=="},
             },
         ]
     }

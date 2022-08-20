@@ -25,13 +25,18 @@ def test_generate_interface():
 
 
 def test_generate_interface_with_meta():
+    class MyFirstInterface(Interface):
+        pass
+
     class MyInterface(Interface):
         class Meta:
             name = "MyOtherInterface"
             description = "Documentation"
+            interfaces = [MyFirstInterface]
 
     assert MyInterface._meta.name == "MyOtherInterface"
     assert MyInterface._meta.description == "Documentation"
+    assert MyInterface._meta.interfaces == [MyFirstInterface]
 
 
 def test_generate_interface_with_fields():
