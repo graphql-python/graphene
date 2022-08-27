@@ -15,7 +15,7 @@ from .interface import Interface
 from .json import JSONString
 from .mutation import Mutation
 from .objecttype import ObjectType
-from .scalars import ID, Boolean, Float, Int, Scalar, String
+from .scalars import ID, BigInt, Boolean, Float, Int, Scalar, String
 from .schema import Schema
 from .structures import List, NonNull
 from .union import Union
@@ -24,6 +24,7 @@ from .uuid import UUID
 __all__ = [
     "Argument",
     "Base64",
+    "BigInt",
     "Boolean",
     "Context",
     "Date",
