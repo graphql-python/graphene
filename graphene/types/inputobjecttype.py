@@ -9,11 +9,6 @@ if MYPY:
     from typing import Dict, Callable  # NOQA
 
 
-class InputObjectTypeOptions(BaseOptions):
-    fields: Dict[str, InputField] = None
-    container: InputObjectTypeContainer = None
-
-
 class InputObjectTypeContainer(dict, BaseType):
     class Meta:
         abstract = True
@@ -25,6 +20,11 @@ class InputObjectTypeContainer(dict, BaseType):
 
     def __init_subclass__(cls, *args, **kwargs):
         pass
+
+
+class InputObjectTypeOptions(BaseOptions):
+    fields: Dict[str, InputField] = None
+    container: InputObjectTypeContainer = None
 
 
 class InputObjectType(UnmountedType, BaseType):

@@ -8,11 +8,6 @@ if MYPY:
     from typing import Dict, Iterable, Type  # NOQA
 
 
-class InterfaceOptions(BaseOptions):
-    fields: Dict[str, Field] = None
-    interfaces: Iterable[Type[Interface]] = ()
-
-
 class Interface(BaseType):
     """
     Interface Type Definition
@@ -73,3 +68,8 @@ class Interface(BaseType):
 
     def __init__(self, *args, **kwargs):
         raise Exception("An Interface cannot be initialized")
+
+
+class InterfaceOptions(BaseOptions):
+    fields: Dict[str, Field] = None
+    interfaces: Iterable[Type[Interface]] = ()
