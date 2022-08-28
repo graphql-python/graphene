@@ -23,7 +23,7 @@ class InputObjectTypeContainer(dict, BaseType):
 
 
 class InputObjectTypeOptions(BaseOptions):
-    fields: Dict[str, InputField] = None
+    fields: Dict[str, InputField] = None  # typing: ignore
     container: InputObjectTypeContainer = None
 
 
