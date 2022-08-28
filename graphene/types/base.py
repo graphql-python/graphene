@@ -5,13 +5,13 @@ from ..utils.trim_docstring import trim_docstring
 
 
 class BaseOptions:
-    name = None  # type: str
-    description = None  # type: str
+    name: str = None
+    description: str = None
 
-    _frozen = False  # type: bool
+    _frozen: bool = False
 
     def __init__(self, class_type):
-        self.class_type = class_type  # type: Type
+        self.class_type: Type = class_type
 
     def freeze(self):
         self._frozen = True

@@ -16,7 +16,7 @@ EnumType = type(PyEnum)
 
 
 class EnumOptions(BaseOptions):
-    enum = None  # type: Enum
+    enum: Enum = None
     deprecation_reason = None
 
 

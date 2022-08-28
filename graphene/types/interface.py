@@ -9,8 +9,8 @@ if MYPY:
 
 
 class InterfaceOptions(BaseOptions):
-    fields = None  # type: Dict[str, Field]
-    interfaces = ()  # type: Iterable[Type[Interface]]
+    fields: Dict[str, Field] = None
+    interfaces: Iterable[Type[Interface]] = ()
 
 
 class Interface(BaseType):

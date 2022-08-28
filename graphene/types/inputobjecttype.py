@@ -10,8 +10,8 @@ if MYPY:
 
 
 class InputObjectTypeOptions(BaseOptions):
-    fields = None  # type: Dict[str, InputField]
-    container = None  # type: InputObjectTypeContainer
+    fields: Dict[str, InputField] = None
+    container: InputObjectTypeContainer = None
 
 
 class InputObjectTypeContainer(dict, BaseType):

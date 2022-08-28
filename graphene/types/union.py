@@ -9,7 +9,7 @@ if MYPY:
 
 
 class UnionOptions(BaseOptions):
-    types = ()  # type: Iterable[Type[ObjectType]]
+    types: Iterable[Type[ObjectType]] = ()
 
 
 class Union(UnmountedType, BaseType):

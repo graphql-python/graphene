@@ -14,10 +14,10 @@ if MYPY:
 
 
 class MutationOptions(ObjectTypeOptions):
-    arguments = None  # type: Dict[str, Argument]
-    output = None  # type: Type[ObjectType]
-    resolver = None  # type: Callable
-    interfaces = ()  # type: Iterable[Type[Interface]]
+    arguments: Dict[str, Argument] = None
+    output: Type[ObjectType] = None
+    resolver: Callable = None
+    interfaces: Iterable[Type[Interface]] = ()
 
 
 class Mutation(ObjectType):

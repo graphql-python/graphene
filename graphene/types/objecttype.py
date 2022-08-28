@@ -14,8 +14,8 @@ if MYPY:
 
 
 class ObjectTypeOptions(BaseOptions):
-    fields = None  # type: Dict[str, Field]
-    interfaces = ()  # type: Iterable[Type[Interface]]
+    fields: Dict[str, Field] = None
+    interfaces: Iterable[Type[Interface]] = ()
 
 
 class ObjectTypeMeta(BaseTypeMeta):
