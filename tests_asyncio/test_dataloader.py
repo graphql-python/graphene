@@ -1,7 +1,8 @@
 from collections import namedtuple
 from unittest.mock import Mock
+
+from graphene.utils.dataloader import DataLoader
 from pytest import mark
-from aiodataloader import DataLoader
 
 from graphene import ObjectType, String, Schema, Field, List
 
