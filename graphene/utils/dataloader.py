@@ -34,8 +34,7 @@ class DataLoader(object):
         loop=None,
     ):
 
-        # Create empty _loop which will be populated with asyncio's event loop as soon as it's needed.
-        self._loop = None
+        self._loop = loop
 
         if batch_load_fn is not None:
             self.batch_load_fn = batch_load_fn
