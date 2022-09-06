@@ -2,7 +2,7 @@
 
 [💬 Join the community on Slack](https://join.slack.com/t/graphenetools/shared_invite/enQtOTE2MDQ1NTg4MDM1LTA4Nzk0MGU0NGEwNzUxZGNjNDQ4ZjAwNDJjMjY0OGE1ZDgxZTg4YjM2ZTc4MjE2ZTAzZjE2ZThhZTQzZTkyMmM)
 
-**We are looking for contributors**! Please check the [ROADMAP](https://github.com/graphql-python/graphene/blob/master/ROADMAP.md) to see how you can help ❤️
+**We are looking for contributors**! Please check the current issues to see how you can help ❤️
 
 ## Introduction
 
@@ -10,7 +10,7 @@
 
 - **Easy to use:** Graphene helps you use GraphQL in Python without effort.
 - **Relay:** Graphene has builtin support for Relay.
-- **Data agnostic:** Graphene supports any kind of data source: SQL (Django, SQLAlchemy), NoSQL, custom Python objects, etc.
+- **Data agnostic:** Graphene supports any kind of data source: SQL (Django, SQLAlchemy), Mongo, custom Python objects, etc.
   We believe that by providing a complete API you could plug Graphene anywhere your data lives and make your data available
   through GraphQL.
 
@@ -20,9 +20,10 @@ Graphene has multiple integrations with different frameworks:
 
 | integration       | Package                                                                                 |
 | ----------------- | --------------------------------------------------------------------------------------- |
-| Django            | [graphene-django](https://github.com/graphql-python/graphene-django/)                   |
 | SQLAlchemy        | [graphene-sqlalchemy](https://github.com/graphql-python/graphene-sqlalchemy/)           |
-| Google App Engine | [graphene-gae](https://github.com/graphql-python/graphene-gae/)                         |
+| Mongo             | [graphene-mongo](https://github.com/graphql-python/graphene-mongo/)                     |
+| Apollo Federation | [graphene-federation](https://github.com/graphql-python/graphene-federation/)           |
+| Django            | [graphene-django](https://github.com/graphql-python/graphene-django/)                   |
 
 Also, Graphene is fully compatible with the GraphQL spec, working seamlessly with all GraphQL clients, such as [Relay](https://github.com/facebook/relay), [Apollo](https://github.com/apollographql/apollo-client) and [gql](https://github.com/graphql-python/gql).
 
@@ -31,7 +32,7 @@ Also, Graphene is fully compatible with the GraphQL spec, working seamlessly wit
 To install `graphene`, just run this command in your shell
 
 ```bash
-pip install "graphene>=3.0"
+pip install "graphene>=3.1"
 ```
 
 ## Examples
@@ -84,18 +85,24 @@ pip install -e ".[test]"
 Well-written tests and maintaining good test coverage is important to this project. While developing, run new and existing tests with:
 
 ```sh
-py.test graphene/relay/tests/test_node.py # Single file
-py.test graphene/relay # All tests in directory
+pytest graphene/relay/tests/test_node.py # Single file
+pytest graphene/relay # All tests in directory
 ```
 
 Add the `-s` flag if you have introduced breakpoints into the code for debugging.
 Add the `-v` ("verbose") flag to get more detailed test output. For even more detailed output, use `-vv`.
 Check out the [pytest documentation](https://docs.pytest.org/en/latest/) for more options and test running controls.
 
+Regularly ensure your `pre-commit` hooks are up to date and enabled:
+
+```sh
+pre-commit install
+```
+
 You can also run the benchmarks with:
 
 ```sh
-py.test graphene --benchmark-only
+pytest graphene --benchmark-only
 ```
 
 Graphene supports several versions of Python. To make sure that changes do not break compatibility with any of those versions, we use `tox` to create virtualenvs for each Python version and run tests with that version. To run against all Python versions defined in the `tox.ini` config file, just run:
@@ -107,10 +114,10 @@ tox
 If you wish to run against a specific version defined in the `tox.ini` file:
 
 ```sh
-tox -e py36
+tox -e py39
 ```
 
-Tox can only use whatever versions of Python are installed on your system. When you create a pull request, Travis will also be running the same tests and report the results, so there is no need for potential contributors to try to install every single version of Python on their own system ahead of time. We appreciate opening issues and pull requests to make graphene even more stable & useful!
+Tox can only use whatever versions of Python are installed on your system. When you create a pull request, GitHub Actions pipelines will also be running the same tests and report the results, so there is no need for potential contributors to try to install every single version of Python on their own system ahead of time. We appreciate opening issues and pull requests to make graphene even more stable & useful!
 
 ### Building Documentation
 
