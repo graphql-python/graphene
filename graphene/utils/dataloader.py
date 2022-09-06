@@ -44,7 +44,7 @@ class DataLoader(object):
         ), "batch_load_fn must be coroutine. Received: {}".format(self.batch_load_fn)
 
         if not callable(self.batch_load_fn):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 (
                     "DataLoader must be have a batch_load_fn which accepts "
                     "Iterable<key> and returns Future<Iterable<value>>, but got: {}."
@@ -52,13 +52,13 @@ class DataLoader(object):
             )
 
         if batch is not None:
-            self.batch = batch
+            self.batch = batch  # pragma: no cover
 
         if max_batch_size is not None:
             self.max_batch_size = max_batch_size
 
         if cache is not None:
-            self.cache = cache
+            self.cache = cache  # pragma: no cover
 
         self.get_cache_key = get_cache_key or (lambda x: x)
 
@@ -77,7 +77,7 @@ class DataLoader(object):
         Loads a key, returning a `Future` for the value represented by that key.
         """
         if key is None:
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 (
                     "The loader.load() function must be called with a value, "
                     "but got: {}."
@@ -113,7 +113,7 @@ class DataLoader(object):
                 enqueue_post_future_job(self.loop, self)
             else:
                 # Otherwise dispatch the (queue of one) immediately.
-                dispatch_queue(self)
+                dispatch_queue(self)  # pragma: no cover
 
     def load_many(self, keys):
         """
@@ -129,7 +129,7 @@ class DataLoader(object):
         >>> )
         """
         if not isinstance(keys, Iterable):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 (
                     "The loader.load_many() function must be called with Iterable<key> "
                     "but got: {}."
@@ -223,7 +223,7 @@ async def dispatch_queue_batch(loader, queue):
 
     # Assert the expected response from batch_load_fn
     if not batch_future or not iscoroutine(batch_future):
-        return failed_dispatch(
+        return failed_dispatch(  # pragma: no cover
             loader,
             queue,
             TypeError(
@@ -238,7 +238,7 @@ async def dispatch_queue_batch(loader, queue):
     try:
         values = await batch_future
         if not isinstance(values, Iterable):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 (
                     "DataLoader must be constructed with a function which accepts "
                     "Iterable<key> and returns Future<Iterable<value>>, but the function did "
@@ -248,7 +248,7 @@ async def dispatch_queue_batch(loader, queue):
 
         values = list(values)
         if len(values) != len(keys):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 (
                     "DataLoader must be constructed with a function which accepts "
                     "Iterable<key> and returns Future<Iterable<value>>, but the function did "
