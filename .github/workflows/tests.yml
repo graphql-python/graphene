@@ -58,7 +58,7 @@ jobs:
         if: ${{ matrix.python == '3.10' }}
         uses: actions/upload-artifact@v3
         with:
-          name: graphene-sqlalchemy-coverage
+          name: graphene-coverage
           path: coverage.xml
           if-no-files-found: error
       - name: Upload coverage.xml to codecov
