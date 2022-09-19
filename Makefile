@@ -7,6 +7,7 @@ help:
 install-dev:
 	pip install -e ".[dev]"
 
+.PHONY: test ## Run tests
 test:
 	py.test graphene examples
 

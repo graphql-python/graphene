@@ -55,6 +55,7 @@ def test_node_good():
     assert "id" in MyNode._meta.fields
     assert is_node(MyNode)
     assert not is_node(object)
+    assert not is_node("node")
 
 
 def test_node_query():
