@@ -91,6 +91,7 @@ class TypeMap(dict):
         subscription=None,
         types=None,
         auto_camelcase=True,
+        object_type_name_prefix=None,
     ):
         assert_valid_root_type(query)
         assert_valid_root_type(mutation)
@@ -101,8 +102,17 @@ class TypeMap(dict):
             assert is_graphene_type(type_)
 
         self.auto_camelcase = auto_camelcase
+        self.object_type_name_prefix = object_type_name_prefix
 
         create_graphql_type = self.add_type
+
+        self.root_names = []
+        if query:
+            self.root_names.append(query._meta.name)
+        if mutation:
+            self.root_names.append(mutation._meta.name)
+        if subscription:
+            self.root_names.append(subscription._meta.name)
 
         self.query = create_graphql_type(query) if query else None
         self.mutation = create_graphql_type(mutation) if mutation else None
@@ -215,9 +225,15 @@ class TypeMap(dict):
         else:
             is_type_of = graphene_type.is_type_of
 
+        name = (
+            self.object_type_name_prefix.capitalize()
+            if self.object_type_name_prefix
+            else ""
+        ) + graphene_type._meta.name
+
         return GrapheneObjectType(
             graphene_type=graphene_type,
-            name=graphene_type._meta.name,
+            name=name,
             description=graphene_type._meta.description,
             fields=partial(self.create_fields_for_type, graphene_type),
             is_type_of=is_type_of,
@@ -357,7 +373,17 @@ class TypeMap(dict):
                     deprecation_reason=field.deprecation_reason,
                     description=field.description,
                 )
-            field_name = field.name or self.get_name(name)
+            if field.name:
+                field_name = field.name
+            else:
+                if (
+                    self.object_type_name_prefix
+                    and graphene_type._meta.name in self.root_names
+                ):
+                    object_type_name_prefix = self.object_type_name_prefix + "_"
+                    field_name = self.get_name(object_type_name_prefix + name)
+                else:
+                    field_name = self.get_name(name)
             fields[field_name] = _field
         return fields
 
@@ -421,12 +447,18 @@ class Schema:
         types=None,
         directives=None,
         auto_camelcase=True,
+        object_type_name_prefix=None,
     ):
         self.query = query
         self.mutation = mutation
         self.subscription = subscription
         type_map = TypeMap(
-            query, mutation, subscription, types, auto_camelcase=auto_camelcase
+            query,
+            mutation,
+            subscription,
+            types,
+            auto_camelcase=auto_camelcase,
+            object_type_name_prefix=object_type_name_prefix,
         )
         self.graphql_schema = GraphQLSchema(
             type_map.query,

@@ -5,17 +5,41 @@ from pytest import raises
 from graphql.type import GraphQLObjectType, GraphQLSchema
 
 from ..field import Field
+from ..mutation import Mutation
 from ..objecttype import ObjectType
-from ..scalars import String
+from ..scalars import Int, String
 from ..schema import Schema
+
+
+class MyType(ObjectType):
+    field = String()
 
 
 class MyOtherType(ObjectType):
     field = String()
+    my_type = Field(MyType)
 
 
 class Query(ObjectType):
     inner = Field(MyOtherType)
+
+
+class CreateUser(Mutation):
+    class Arguments:
+        name = String()
+
+    name = String()
+
+    def mutate(self, info, name):
+        return CreateUser(name=name)
+
+
+class Mutation(ObjectType):
+    create_user = CreateUser.Field()
+
+
+class Subscription(ObjectType):
+    count_to_ten = Field(Int)
 
 
 def test_schema():
@@ -54,6 +78,11 @@ def test_schema_str():
 
         type MyOtherType {
           field: String
+          myType: MyType
+        }
+
+        type MyType {
+          field: String
         }
         """
         ).strip()
@@ -72,3 +101,97 @@ def test_schema_requires_query_type():
     assert len(result.errors) == 1
     error = result.errors[0]
     assert error.message == "Query root type must be provided."
+
+
+def test_schema_object_type_name_prefix_camelcase():
+    schema = Schema(
+        Query,
+        Mutation,
+        Subscription,
+        auto_camelcase=True,
+        object_type_name_prefix="prefix",
+    )
+    assert (
+        str(schema).strip()
+        == dedent(
+            """
+        schema {
+          query: PrefixQuery
+          mutation: PrefixMutation
+          subscription: PrefixSubscription
+        }
+
+        type PrefixQuery {
+          prefixInner: PrefixMyOtherType
+        }
+
+        type PrefixMyOtherType {
+          field: String
+          myType: PrefixMyType
+        }
+
+        type PrefixMyType {
+          field: String
+        }
+
+        type PrefixMutation {
+          prefixCreateUser(name: String): PrefixCreateUser
+        }
+
+        type PrefixCreateUser {
+          name: String
+        }
+
+        type PrefixSubscription {
+          prefixCountToTen: Int
+        }
+        """
+        ).strip()
+    )
+
+
+def test_schema_object_type_name_prefix_camelcase_disabled():
+    schema = Schema(
+        Query,
+        Mutation,
+        Subscription,
+        auto_camelcase=False,
+        object_type_name_prefix="prefix",
+    )
+    assert (
+        str(schema).strip()
+        == dedent(
+            """
+        schema {
+          query: PrefixQuery
+          mutation: PrefixMutation
+          subscription: PrefixSubscription
+        }
+
+        type PrefixQuery {
+          prefix_inner: PrefixMyOtherType
+        }
+
+        type PrefixMyOtherType {
+          field: String
+          my_type: PrefixMyType
+        }
+
+        type PrefixMyType {
+          field: String
+        }
+
+        type PrefixMutation {
+          prefix_create_user(name: String): PrefixCreateUser
+        }
+
+        type PrefixCreateUser {
+          name: String
+        }
+
+        type PrefixSubscription {
+          prefix_count_to_ten: Int
+        }
+        """
+        ).strip()
+    )
