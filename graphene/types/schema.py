@@ -380,8 +380,9 @@ class TypeMap(dict):
                     self.object_type_name_prefix
                     and graphene_type._meta.name in self.root_names
                 ):
-                    object_type_name_prefix = self.object_type_name_prefix + "_"
-                    field_name = self.get_name(object_type_name_prefix + name)
+                    field_name = self.get_name(
+                        self.object_type_name_prefix + "_" + name
+                    )
                 else:
                     field_name = self.get_name(name)
             fields[field_name] = _field
