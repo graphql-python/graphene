@@ -32,6 +32,7 @@ def test_schema_get_type():
     schema = Schema(Query)
     assert schema.Query == Query
     assert schema.MyOtherType == MyOtherType
+    schema.get_type('MyOtherType')
 
 
 def test_schema_get_type_error():
