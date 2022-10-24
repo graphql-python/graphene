@@ -91,7 +91,7 @@ class TypeMap(dict):
         subscription=None,
         types=None,
         auto_camelcase=True,
-        object_type_name_prefix=None,
+        type_name_prefix=None,
     ):
         assert_valid_root_type(query)
         assert_valid_root_type(mutation)
@@ -102,17 +102,17 @@ class TypeMap(dict):
             assert is_graphene_type(type_)
 
         self.auto_camelcase = auto_camelcase
-        self.object_type_name_prefix = object_type_name_prefix
+        self.type_name_prefix = type_name_prefix
 
         create_graphql_type = self.add_type
 
-        self.root_names = []
+        self.root_type_names = []
         if query:
-            self.root_names.append(query._meta.name)
+            self.root_type_names.append(query._meta.name)
         if mutation:
-            self.root_names.append(mutation._meta.name)
+            self.root_type_names.append(mutation._meta.name)
         if subscription:
-            self.root_names.append(subscription._meta.name)
+            self.root_type_names.append(subscription._meta.name)
 
         self.query = create_graphql_type(query) if query else None
         self.mutation = create_graphql_type(mutation) if mutation else None
@@ -174,8 +174,7 @@ class TypeMap(dict):
             parse_literal=getattr(graphene_type, "parse_literal", None),
         )
 
-    @staticmethod
-    def create_enum(graphene_type):
+    def create_enum(self, graphene_type):
         values = {}
         for name, value in graphene_type._meta.enum.__members__.items():
             description = getattr(value, "description", None)
@@ -203,7 +202,7 @@ class TypeMap(dict):
         return GrapheneEnumType(
             graphene_type=graphene_type,
             values=values,
-            name=graphene_type._meta.name,
+            name=self.add_prefix_to_type_name(graphene_type._meta.name),
             description=type_description,
         )
 
@@ -225,11 +224,10 @@ class TypeMap(dict):
         else:
             is_type_of = graphene_type.is_type_of
 
-        name = (
-            self.object_type_name_prefix.capitalize()
-            if self.object_type_name_prefix
-            else ""
-        ) + graphene_type._meta.name
+        if graphene_type._meta.name in self.root_type_names:
+            name = graphene_type._meta.name
+        else:
+            name = self.add_prefix_to_type_name(graphene_type._meta.name)
 
         return GrapheneObjectType(
             graphene_type=graphene_type,
@@ -259,7 +257,7 @@ class TypeMap(dict):
 
         return GrapheneInterfaceType(
             graphene_type=graphene_type,
-            name=graphene_type._meta.name,
+            name=self.add_prefix_to_type_name(graphene_type._meta.name),
             description=graphene_type._meta.description,
             fields=partial(self.create_fields_for_type, graphene_type),
             interfaces=interfaces,
@@ -269,7 +267,7 @@ class TypeMap(dict):
     def create_inputobjecttype(self, graphene_type):
         return GrapheneInputObjectType(
             graphene_type=graphene_type,
-            name=graphene_type._meta.name,
+            name=self.add_prefix_to_type_name(graphene_type._meta.name),
             description=graphene_type._meta.description,
             out_type=graphene_type._meta.container,
             fields=partial(
@@ -298,7 +296,7 @@ class TypeMap(dict):
 
         return GrapheneUnionType(
             graphene_type=graphene_type,
-            name=graphene_type._meta.name,
+            name=self.add_prefix_to_type_name(graphene_type._meta.name),
             description=graphene_type._meta.description,
             types=types,
             resolve_type=resolve_type,
@@ -376,13 +374,8 @@ class TypeMap(dict):
             if field.name:
                 field_name = field.name
             else:
-                if (
-                    self.object_type_name_prefix
-                    and graphene_type._meta.name in self.root_names
-                ):
-                    field_name = self.get_name(
-                        self.object_type_name_prefix + "_" + name
-                    )
+                if graphene_type._meta.name in self.root_type_names:
+                    field_name = self.add_prefix_to_field_name(name)
                 else:
                     field_name = self.get_name(name)
             fields[field_name] = _field
@@ -418,6 +411,23 @@ class TypeMap(dict):
         return_type = self[type_name]
         return default_type_resolver(root, info, return_type)
 
+    def add_prefix_to_type_name(self, name):
+        if self.type_name_prefix:
+            return self.type_name_prefix[0].upper() + self.type_name_prefix[1:] + name
+        return name
+
+    def add_prefix_to_field_name(self, name):
+        if self.type_name_prefix:
+            if self.auto_camelcase:
+                return self.get_name(
+                    self.type_name_prefix[0].lower()
+                    + self.type_name_prefix[1:]
+                    + "_"
+                    + name
+                )
+            return self.get_name(self.type_name_prefix + name)
+        return self.get_name(name)
+
 
 class Schema:
     """Schema Definition.
@@ -448,7 +458,7 @@ class Schema:
         types=None,
         directives=None,
         auto_camelcase=True,
-        object_type_name_prefix=None,
+        type_name_prefix=None,
     ):
         self.query = query
         self.mutation = mutation
@@ -459,7 +469,7 @@ class Schema:
             subscription,
             types,
             auto_camelcase=auto_camelcase,
-            object_type_name_prefix=object_type_name_prefix,
+            type_name_prefix=type_name_prefix,
         )
         self.graphql_schema = GraphQLSchema(
             type_map.query,

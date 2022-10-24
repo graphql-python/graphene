@@ -5,23 +5,53 @@ from pytest import raises
 from graphql.type import GraphQLObjectType, GraphQLSchema
 
 from ..field import Field
+from ..enum import Enum
+from ..inputobjecttype import InputObjectType
+from ..interface import Interface
 from ..mutation import Mutation
 from ..objecttype import ObjectType
 from ..scalars import Int, String
 from ..schema import Schema
+from ..union import Union
+
+
+class MyInputObjectType(InputObjectType):
+    field = String()
+
+
+class MyEnum(Enum):
+    FOO = "foo"
+    BAR = "bar"
+
+
+class MyInterface(Interface):
+    field = String()
+
+
+class MyBarType(ObjectType):
+    field = String(input=MyInputObjectType())
+    my_interface = Field(MyInterface)
+
+
+class MyFooType(ObjectType):
+    field = String()
+    my_enum = MyEnum()
+
+
+class MyUnion(Union):
+    class Meta:
+        types = (MyBarType, MyFooType)
 
 
 class MyType(ObjectType):
     field = String()
-
-
-class MyOtherType(ObjectType):
-    field = String()
-    my_type = Field(MyType)
+    my_union = MyUnion()
+    my_bar_type = Field(MyBarType)
+    my_foo_type = Field("graphene.types.tests.test_schema.MyFooType")
 
 
 class Query(ObjectType):
-    inner = Field(MyOtherType)
+    inner = Field(MyType)
 
 
 class CreateUser(Mutation):
@@ -55,7 +85,12 @@ def test_schema():
 def test_schema_get_type():
     schema = Schema(Query)
     assert schema.Query == Query
-    assert schema.MyOtherType == MyOtherType
+    assert schema.MyType == MyType
+    assert schema.MyBarType == MyBarType
+    assert schema.MyFooType == MyFooType
+    assert schema.MyInputObjectType == MyInputObjectType
+    assert schema.MyInterface == MyInterface
+    assert schema.MyEnum == MyEnum
 
 
 def test_schema_get_type_error():
@@ -73,16 +108,39 @@ def test_schema_str():
         == dedent(
             """
         type Query {
-          inner: MyOtherType
-        }
-
-        type MyOtherType {
-          field: String
-          myType: MyType
+          inner: MyType
         }
 
         type MyType {
           field: String
+          myUnion: MyUnion
+          myBarType: MyBarType
+          myFooType: MyFooType
+        }
+
+        union MyUnion = MyBarType | MyFooType
+
+        type MyBarType {
+          field(input: MyInputObjectType): String
+          myInterface: MyInterface
+        }
+
+        input MyInputObjectType {
+          field: String
+        }
+
+        interface MyInterface {
+          field: String
+        }
+
+        type MyFooType {
+          field: String
+          myEnum: MyEnum
+        }
+
+        enum MyEnum {
+          FOO
+          BAR
         }
         """
         ).strip()
@@ -103,94 +161,128 @@ def test_schema_requires_query_type():
     assert error.message == "Query root type must be provided."
 
 
-def test_schema_object_type_name_prefix_camelcase():
+def test_schema_type_name_prefix_camelcase():
     schema = Schema(
         Query,
         Mutation,
         Subscription,
         auto_camelcase=True,
-        object_type_name_prefix="prefix",
+        type_name_prefix="MyPrefix",
     )
     assert (
         str(schema).strip()
         == dedent(
             """
-        schema {
-          query: PrefixQuery
-          mutation: PrefixMutation
-          subscription: PrefixSubscription
+        type Query {
+          myPrefixInner: MyPrefixMyType
         }
 
-        type PrefixQuery {
-          prefixInner: PrefixMyOtherType
-        }
-
-        type PrefixMyOtherType {
+        type MyPrefixMyType {
           field: String
-          myType: PrefixMyType
+          myUnion: MyPrefixMyUnion
+          myBarType: MyPrefixMyBarType
+          myFooType: MyPrefixMyFooType
         }
 
-        type PrefixMyType {
+        union MyPrefixMyUnion = MyPrefixMyBarType | MyPrefixMyFooType
+
+        type MyPrefixMyBarType {
+          field(input: MyPrefixMyInputObjectType): String
+          myInterface: MyPrefixMyInterface
+        }
+
+        input MyPrefixMyInputObjectType {
           field: String
         }
 
-        type PrefixMutation {
-          prefixCreateUser(name: String): PrefixCreateUser
+        interface MyPrefixMyInterface {
+          field: String
         }
 
-        type PrefixCreateUser {
+        type MyPrefixMyFooType {
+          field: String
+          myEnum: MyPrefixMyEnum
+        }
+
+        enum MyPrefixMyEnum {
+          FOO
+          BAR
+        }
+
+        type Mutation {
+          myPrefixCreateUser(name: String): MyPrefixCreateUser
+        }
+
+        type MyPrefixCreateUser {
           name: String
         }
 
-        type PrefixSubscription {
-          prefixCountToTen: Int
+        type Subscription {
+          myPrefixCountToTen: Int
         }
         """
         ).strip()
     )
 
 
-def test_schema_object_type_name_prefix_camelcase_disabled():
+def test_schema_type_name_prefix_camelcase_disabled():
     schema = Schema(
         Query,
         Mutation,
         Subscription,
         auto_camelcase=False,
-        object_type_name_prefix="prefix",
+        type_name_prefix="MyPrefix",
     )
     assert (
         str(schema).strip()
         == dedent(
             """
-        schema {
-          query: PrefixQuery
-          mutation: PrefixMutation
-          subscription: PrefixSubscription
+        type Query {
+          MyPrefixinner: MyPrefixMyType
         }
 
-        type PrefixQuery {
-          prefix_inner: PrefixMyOtherType
-        }
-
-        type PrefixMyOtherType {
+        type MyPrefixMyType {
           field: String
-          my_type: PrefixMyType
+          my_union: MyPrefixMyUnion
+          my_bar_type: MyPrefixMyBarType
+          my_foo_type: MyPrefixMyFooType
         }
 
-        type PrefixMyType {
+        union MyPrefixMyUnion = MyPrefixMyBarType | MyPrefixMyFooType
+
+        type MyPrefixMyBarType {
+          field(input: MyPrefixMyInputObjectType): String
+          my_interface: MyPrefixMyInterface
+        }
+
+        input MyPrefixMyInputObjectType {
           field: String
         }
 
-        type PrefixMutation {
-          prefix_create_user(name: String): PrefixCreateUser
+        interface MyPrefixMyInterface {
+          field: String
         }
 
-        type PrefixCreateUser {
+        type MyPrefixMyFooType {
+          field: String
+          my_enum: MyPrefixMyEnum
+        }
+
+        enum MyPrefixMyEnum {
+          FOO
+          BAR
+        }
+
+        type Mutation {
+          MyPrefixcreate_user(name: String): MyPrefixCreateUser
+        }
+
+        type MyPrefixCreateUser {
           name: String
         }
 
-        type PrefixSubscription {
-          prefix_count_to_ten: Int
+        type Subscription {
+          MyPrefixcount_to_ten: Int
         }
         """
         ).strip()

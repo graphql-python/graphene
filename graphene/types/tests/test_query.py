@@ -499,7 +499,7 @@ def test_default_as_kwarg_to_NonNull():
     assert result.data == expected
 
 
-def test_object_type_name_prefix():
+def test_type_name_prefix():
     class Cat(ObjectType):
         name = String()
 
@@ -516,9 +516,9 @@ def test_object_type_name_prefix():
         def resolve_user(self, *args, **kwargs):
             return User(name="foo")
 
-    schema = Schema(query=Query, object_type_name_prefix="prefix")
-    expected = {"prefixUser": {"name": "foo", "cat": {"name": "bar"}}}
-    result = schema.execute("{ prefixUser { name cat { name } } }")
+    schema = Schema(query=Query, type_name_prefix="MyPrefix")
+    expected = {"myPrefixUser": {"name": "foo", "cat": {"name": "bar"}}}
+    result = schema.execute("{ myPrefixUser { name cat { name } } }")
 
     assert not result.errors
     assert result.data == expected
