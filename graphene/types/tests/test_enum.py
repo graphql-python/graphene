@@ -518,3 +518,77 @@ def test_mutation_enum_input_type():
     assert result.data == {"createPaint": {"color": "RED"}}
 
     assert color_input_value == RGB.RED
+
+
+def test_enum_inheritance():
+    class ParentRGB(Enum):
+        RED = 1
+
+    class ChildRGB(Enum):
+        BLUE = 2
+
+        class Meta:
+            enums = (ParentRGB,)
+
+    class Query(ObjectType):
+        color = ChildRGB(required=True)
+
+    schema = Schema(query=Query)
+    assert str(schema) == dedent(
+        '''\
+        type Query {
+          color: ChildRGB!
+        }
+
+        enum ChildRGB {
+          RED
+          BLUE
+        }
+    '''
+    )
+
+
+def test_multiple_enum_inheritance():
+    class Parent1RGB(Enum):
+        RED = 1
+
+    class Parent2RGB(Enum):
+        BLUE = 2
+
+    class ChildRGB(Enum):
+        GREEN = 3
+
+        class Meta:
+            enums = (Parent1RGB, Parent2RGB,)
+
+    class Query(ObjectType):
+        color = ChildRGB(required=True)
+
+    schema = Schema(query=Query)
+    assert str(schema) == dedent(
+        '''\
+        type Query {
+          color: ChildRGB!
+        }
+
+        enum ChildRGB {
+          RED
+          BLUE
+          GREEN
+        }
+    '''
+    )
+
+
+def test_override_enum_inheritance():
+    class ParentRGB(Enum):
+        RED = 1
+        BLUE = 2
+
+    class ChildRGB(Enum):
+        BLUE = 3
+
+        class Meta:
+            enums = (ParentRGB,)
+
+    assert ChildRGB.get(3) != ParentRGB.BLUE

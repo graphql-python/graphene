@@ -1,4 +1,5 @@
 from enum import Enum as PyEnum
+from typing import Iterable, Type, Optional
 
 from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 
@@ -18,11 +19,18 @@ EnumType = type(PyEnum)
 class EnumOptions(BaseOptions):
     enum = None  # type: Enum
     deprecation_reason = None
+    enums = ()  # type: Iterable[Type[Enum]]
 
 
 class EnumMeta(SubclassWithMeta_Meta):
     def __new__(cls, name_, bases, classdict, **options):
-        enum_members = dict(classdict, __eq__=eq_enum)
+        enum_members = dict(__eq__=eq_enum)
+        meta = classdict.get("Meta", None)  # type: Optional[EnumOptions]
+        if meta and hasattr(meta, 'enums'):
+            for enum in meta.enums:
+                enum_members.update(enum.as_dict())
+        enum_members.update(classdict)
+
         # We remove the Meta attribute from the class to not collide
         # with the enum values.
         enum_members.pop("Meta", None)
@@ -109,3 +117,10 @@ class Enum(UnmountedType, BaseType, metaclass=EnumMeta):
         is mounted (as a Field, InputField or Argument)
         """
         return cls
+
+    @classmethod
+    def as_dict(cls):
+        return {
+            enum_meta.name: enum_meta.value
+            for _, enum_meta in cls._meta.enum.__members__.items()
+        }
