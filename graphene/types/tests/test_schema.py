@@ -35,7 +35,6 @@ def test_schema_get_type():
     assert schema.get_type("MyOtherType") == MyOtherType
 
 
-
 def test_schema_get_type_error():
     schema = Schema(Query)
     with raises(AttributeError) as exc_info:
