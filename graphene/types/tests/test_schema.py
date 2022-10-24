@@ -32,7 +32,7 @@ def test_schema_get_type():
     schema = Schema(Query)
     assert schema.Query == Query
     assert schema.MyOtherType == MyOtherType
-    assert schema.get_type('MyOtherType') == MyOtherType
+    assert schema.get_type("MyOtherType") == MyOtherType
 
 
 
