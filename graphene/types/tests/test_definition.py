@@ -316,12 +316,13 @@ def test_does_not_mutate_passed_field_definitions():
 
     assert TestInputObject1._meta.fields == TestInputObject2._meta.fields
 
+
 def test_graphene_graphql_type_can_be_copied():
     class Query(ObjectType):
         field = String()
 
         def resolve_field(self, info):
-            return ''
+            return ""
 
     schema = Schema(query=Query)
     query_type_copy = copy.copy(schema.graphql_schema.query_type)
