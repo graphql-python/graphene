@@ -453,7 +453,7 @@ class Schema:
         return _type
 
     def get_type(self, name):
-        return self.graphql_schema.type_map.get(name).graphene_type
+        return self.graphql_schema.type_map.get(name)
 
     def lazy(self, _type):
         return lambda: self.get_type(_type)

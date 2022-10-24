@@ -32,7 +32,10 @@ def test_schema_get_type():
     schema = Schema(Query)
     assert schema.Query == Query
     assert schema.MyOtherType == MyOtherType
-    assert schema.get_type("MyOtherType") == MyOtherType
+    name = "MyOtherType"
+    assert isinstance(schema.get_type(name), GraphQLObjectType)
+    assert schema.get_type(name).name == name
+    assert schema.get_type(name).graphene_type == MyOtherType
 
 
 def test_schema_get_type_error():
