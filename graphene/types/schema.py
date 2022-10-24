@@ -453,10 +453,6 @@ class Schema:
         return _type
 
     def get_type(self, name):
-        """
-        This will actually return a `GraphQLObjectType` of type `GrapheneObjectType` from graphql-core, not a graphene ObjectType.
-            These two are fundamentally different classes. That's the reason why your test is failing. You'd need to return the Graphene type here.
-        """
         return self.graphql_schema.type_map.get(name).graphene_type
 
     def lazy(self, _type):
