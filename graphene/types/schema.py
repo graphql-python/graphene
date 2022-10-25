@@ -151,8 +151,7 @@ class TypeMap(dict):
         self[name] = graphql_type
         return graphql_type
 
-    @staticmethod
-    def create_scalar(graphene_type):
+    def create_scalar(self, graphene_type):
         # We have a mapping to the original GraphQL types
         # so there are no collisions.
         _scalars = {
@@ -167,7 +166,7 @@ class TypeMap(dict):
 
         return GrapheneScalarType(
             graphene_type=graphene_type,
-            name=graphene_type._meta.name,
+            name=self.add_prefix_to_type_name(graphene_type._meta.name),
             description=graphene_type._meta.description,
             serialize=getattr(graphene_type, "serialize", None),
             parse_value=getattr(graphene_type, "parse_value", None),

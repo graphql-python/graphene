@@ -10,13 +10,17 @@ from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..mutation import Mutation
 from ..objecttype import ObjectType
-from ..scalars import Int, String
+from ..scalars import Int, String, Scalar
 from ..schema import Schema
 from ..union import Union
 
 
 class MyInputObjectType(InputObjectType):
     field = String()
+
+
+class MyScalar(Scalar):
+    ...
 
 
 class MyEnum(Enum):
@@ -35,6 +39,7 @@ class MyBarType(ObjectType):
 
 class MyFooType(ObjectType):
     field = String()
+    my_scalar = MyScalar()
     my_enum = MyEnum()
 
 
@@ -135,8 +140,11 @@ def test_schema_str():
 
         type MyFooType {
           field: String
+          myScalar: MyScalar
           myEnum: MyEnum
         }
+
+        scalar MyScalar
 
         enum MyEnum {
           FOO
@@ -201,8 +209,11 @@ def test_schema_type_name_prefix_camelcase():
 
         type MyPrefixMyFooType {
           field: String
+          myScalar: MyPrefixMyScalar
           myEnum: MyPrefixMyEnum
         }
+
+        scalar MyPrefixMyScalar
 
         enum MyPrefixMyEnum {
           FOO
@@ -265,8 +276,11 @@ def test_schema_type_name_prefix_camelcase_disabled():
 
         type MyPrefixMyFooType {
           field: String
+          my_scalar: MyPrefixMyScalar
           my_enum: MyPrefixMyEnum
         }
+
+        scalar MyPrefixMyScalar
 
         enum MyPrefixMyEnum {
           FOO
