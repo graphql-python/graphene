@@ -239,6 +239,6 @@ You can override the prefix for a specific type by setting the ``type_name_prefi
 
     class MyGraphQlType(ObjectType):
         class Meta:
-            type_name_prefix = 'MyOtherPrefix'
+            type_name_prefix = ''
 
 This is useful when defining external types in a federated schema for example.
