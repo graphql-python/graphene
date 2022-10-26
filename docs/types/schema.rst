@@ -114,11 +114,12 @@ This is useful in a micro-services architecture to prepend the service name to a
 The prefix will be added to the name of:
 
 * Query / Mutation / Subscription
+* Scalar
 * ObjectType
 * InputType
+* Enum
 * Interface
 * Union
-* Enum
 
 While fields and arguments name will be left untouched.
 
@@ -156,6 +157,8 @@ More specifically, the following schema:
         field: String
         myEnum: MyEnum
     }
+
+    scalar MyScalar
 
     enum MyEnum {
         FOO
@@ -209,6 +212,8 @@ Will be transformed to:
         myEnum: MyPrefixMyEnum
     }
 
+    scalar MyPrefixMyScalar
+
     enum MyPrefixMyEnum {
         FOO
         BAR
@@ -225,3 +230,15 @@ Will be transformed to:
     type Subscription {
         myPrefixCountToTen: Int
     }
+
+You can override the prefix for a specific type by setting the ``type_name_prefix`` property on the ``Meta`` class:
+
+.. code:: python
+
+    from graphene import ObjectType
+
+    class MyGraphQlType(ObjectType):
+        class Meta:
+            type_name_prefix = 'MyOtherPrefix'
+
+This is useful when defining external types in a federated schema for example.
