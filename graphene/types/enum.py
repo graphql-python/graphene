@@ -12,6 +12,10 @@ def eq_enum(self, other):
     return self.value is other
 
 
+def hash_enum(self):
+    return hash(self.name)
+
+
 EnumType = type(PyEnum)
 
 
@@ -22,7 +26,7 @@ class EnumOptions(BaseOptions):
 
 class EnumMeta(SubclassWithMeta_Meta):
     def __new__(cls, name_, bases, classdict, **options):
-        enum_members = dict(classdict, __eq__=eq_enum)
+        enum_members = dict(classdict, __eq__=eq_enum, __hash__=hash_enum)
         # We remove the Meta attribute from the class to not collide
         # with the enum values.
         enum_members.pop("Meta", None)

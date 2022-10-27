@@ -518,3 +518,28 @@ def test_mutation_enum_input_type():
     assert result.data == {"createPaint": {"color": "RED"}}
 
     assert color_input_value == RGB.RED
+
+
+def test_hashable_enum():
+    class RGB(Enum):
+        """Available colors"""
+
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    color_map = {RGB.RED: "a", RGB.BLUE: "b", 1: "c"}
+
+    assert color_map[RGB.RED] == "a"
+    assert color_map[RGB.BLUE] == "b"
+    assert color_map[1] == "c"
+
+
+def test_hashable_instance_creation_enum():
+    Episode = Enum("Episode", [("NEWHOPE", 4), ("EMPIRE", 5), ("JEDI", 6)])
+
+    trilogy_map = {Episode.NEWHOPE: "better", Episode.EMPIRE: "best", 5: "foo"}
+
+    assert trilogy_map[Episode.NEWHOPE] == "better"
+    assert trilogy_map[Episode.EMPIRE] == "best"
+    assert trilogy_map[5] == "foo"
