@@ -16,7 +16,7 @@ from ..dynamic import Dynamic
 from ..enum import Enum
 from ..field import Field
 from ..inputfield import InputField
-from ..inputobjecttype import InputObjectType
+from ..inputobjecttype import InputObjectType, set_input_object_type_default_value
 from ..interface import Interface
 from ..objecttype import ObjectType
 from ..scalars import Int, String
@@ -225,6 +225,20 @@ def test_inputobject():
     foo_field = fields["fooBar"]
     assert isinstance(foo_field, GraphQLInputField)
     assert foo_field.description == "Field description"
+
+
+def test_inputobject_undefined():
+    set_input_object_type_default_value(Undefined)
+
+    class OtherObjectType(InputObjectType):
+        optional_field = String()
+
+    type_map = create_type_map([OtherObjectType])
+    assert "OtherObjectType" in type_map
+    graphql_type = type_map["OtherObjectType"]
+
+    container = graphql_type.out_type({})
+    assert container.optional_field is Undefined
 
 
 def test_objecttype_camelcase():
