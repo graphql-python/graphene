@@ -316,6 +316,7 @@ class TypeMap(dict):
                     default_value=field.default_value,
                     out_name=name,
                     description=field.description,
+                    deprecation_reason=field.deprecation_reason,
                 )
             else:
                 args = {}
@@ -327,6 +328,7 @@ class TypeMap(dict):
                         out_name=arg_name,
                         description=arg.description,
                         default_value=arg.default_value,
+                        deprecation_reason=arg.deprecation_reason,
                     )
                 subscribe = field.wrap_subscribe(
                     self.get_function_for_type(
