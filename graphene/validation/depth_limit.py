@@ -53,7 +53,7 @@ IgnoreType = Union[Callable[[str], bool], Pattern, str]
 def depth_limit_validator(
     max_depth: int,
     ignore: Optional[List[IgnoreType]] = None,
-    callback: Callable[[Dict[str, int]], None] = None,
+    callback: Optional[Callable[[Dict[str, int]], None]] = None,
 ):
     class DepthLimitValidator(ValidationRule):
         def __init__(self, validation_context: ValidationContext):

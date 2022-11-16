@@ -14,7 +14,7 @@ class InputObjectTypeOptions(BaseOptions):
     container = None  # type: InputObjectTypeContainer
 
 
-class InputObjectTypeContainer(dict, BaseType):
+class InputObjectTypeContainer(dict, BaseType):  # type: ignore
     class Meta:
         abstract = True
 
