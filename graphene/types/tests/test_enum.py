@@ -543,3 +543,25 @@ def test_hashable_instance_creation_enum():
     assert trilogy_map[Episode.NEWHOPE] == "better"
     assert trilogy_map[Episode.EMPIRE] == "best"
     assert trilogy_map[5] == "foo"
+
+
+def test_enum_iteration():
+    class TestEnum(Enum):
+        FIRST = 1
+        SECOND = 2
+
+    result = []
+    expected_values = ["FIRST", "SECOND"]
+    for c in TestEnum:
+        result.append(c.name)
+    assert result == expected_values
+
+
+def test_iterable_instance_creation_enum():
+    TestEnum = Enum("TestEnum", [("FIRST", 1), ("SECOND", 2)])
+
+    result = []
+    expected_values = ["FIRST", "SECOND"]
+    for c in TestEnum:
+        result.append(c.name)
+    assert result == expected_values
