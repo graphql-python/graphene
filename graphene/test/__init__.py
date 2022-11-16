@@ -1,4 +1,3 @@
-from promise import Promise, is_thenable
 from graphql.error import GraphQLError
 
 from graphene.types.schema import Schema
@@ -31,7 +30,10 @@ class Client:
 
     def execute(self, *args, **kwargs):
         executed = self.schema.execute(*args, **dict(self.execute_options, **kwargs))
-        if is_thenable(executed):
-            return Promise.resolve(executed).then(self.format_result)
+        return self.format_result(executed)
 
+    async def execute_async(self, *args, **kwargs):
+        executed = await self.schema.execute_async(
+            *args, **dict(self.execute_options, **kwargs)
+        )
         return self.format_result(executed)
