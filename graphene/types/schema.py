@@ -1,3 +1,4 @@
+from enum import Enum as PyEnum
 import inspect
 from functools import partial
 
@@ -169,10 +170,16 @@ class TypeMap(dict):
         values = {}
         for name, value in graphene_type._meta.enum.__members__.items():
             description = getattr(value, "description", None)
-            deprecation_reason = getattr(value, "deprecation_reason", None)
+            # if the "description" attribute is an Enum, it is likely an enum member
+            # called description, not a description property
+            if isinstance(description, PyEnum):
+                description = None
             if not description and callable(graphene_type._meta.description):
                 description = graphene_type._meta.description(value)
 
+            deprecation_reason = getattr(value, "deprecation_reason", None)
+            if isinstance(deprecation_reason, PyEnum):
+                deprecation_reason = None
             if not deprecation_reason and callable(
                 graphene_type._meta.deprecation_reason
             ):

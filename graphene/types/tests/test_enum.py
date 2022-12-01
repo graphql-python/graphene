@@ -565,3 +565,36 @@ def test_iterable_instance_creation_enum():
     for c in TestEnum:
         result.append(c.name)
     assert result == expected_values
+
+
+# https://github.com/graphql-python/graphene/issues/1321
+def test_enum_description_member_not_interpreted_as_property():
+    class RGB(Enum):
+        """Description"""
+
+        red = "red"
+        green = "green"
+        blue = "blue"
+        description = "description"
+        deprecation_reason = "deprecation_reason"
+
+    class Query(ObjectType):
+        color = RGB()
+
+        def resolve_color(_, info):
+            return RGB.description
+
+    values = RGB._meta.enum.__members__.values()
+    assert sorted(v.name for v in values) == [
+        "blue",
+        "deprecation_reason",
+        "description",
+        "green",
+        "red",
+    ]
+
+    schema = Schema(query=Query)
+
+    results = schema.execute("query { color }")
+    assert not results.errors
+    assert results.data["color"] == RGB.description.name
