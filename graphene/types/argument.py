@@ -31,18 +31,22 @@ class Argument(MountedType):
         type (class for a graphene.UnmountedType): must be a class (not an instance) of an
             unmounted graphene type (ex. scalar or object) which is used for the type of this
             argument in the GraphQL schema.
-        required (bool): indicates this argument as not null in the graphql schema. Same behavior
+        required (optional, bool): indicates this argument as not null in the graphql schema. Same behavior
             as graphene.NonNull. Default False.
-        name (str): the name of the GraphQL argument. Defaults to parameter name.
-        description (str): the description of the GraphQL argument in the schema.
-        default_value (Any): The value to be provided if the user does not set this argument in
+        name (optional, str): the name of the GraphQL argument. Defaults to parameter name.
+        description (optional, str): the description of the GraphQL argument in the schema.
+        default_value (optional, Any): The value to be provided if the user does not set this argument in
             the operation.
+        deprecation_reason (optional, str): Setting this value indicates that the argument is
+            depreciated and may provide instruction or reason on how for clients to proceed. Cannot be
+            set if the argument is required (see spec).
     """
 
     def __init__(
         self,
         type_,
         default_value=Undefined,
+        deprecation_reason=None,
         description=None,
         name=None,
         required=False,
@@ -51,12 +55,16 @@ class Argument(MountedType):
         super(Argument, self).__init__(_creation_counter=_creation_counter)
 
         if required:
+            assert (
+                deprecation_reason is None
+            ), f"Argument {name} is required, cannot deprecate it."
             type_ = NonNull(type_)
 
         self.name = name
         self._type = type_
         self.default_value = default_value
         self.description = description
+        self.deprecation_reason = deprecation_reason
 
     @property
     def type(self):
@@ -68,6 +76,7 @@ class Argument(MountedType):
             and self.type == other.type
             and self.default_value == other.default_value
             and self.description == other.description
+            and self.deprecation_reason == other.deprecation_reason
         )
 
 
