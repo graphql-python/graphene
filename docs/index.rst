@@ -1,12 +1,6 @@
 Graphene
 ========
 
-------------
-
-The documentation below is for the ``dev`` (prerelease) version of Graphene. To view the documentation for the latest stable Graphene version go to the `v2 docs <https://docs.graphene-python.org/en/stable/>`_.
-
-------------
-
 Contents:
 
 .. toctree::
