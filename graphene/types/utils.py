@@ -48,3 +48,18 @@ def get_underlying_type(_type):
     while hasattr(_type, "of_type"):
         _type = _type.of_type
     return _type
+
+
+def get_type_name(graphene_type, type_name_prefix):
+    type_name_prefix = (
+        graphene_type._meta.type_name_prefix
+        if graphene_type._meta.type_name_prefix is not None
+        else type_name_prefix
+    )
+    if type_name_prefix:
+        return (
+            type_name_prefix[0].upper()
+            + type_name_prefix[1:]
+            + graphene_type._meta.name
+        )
+    return graphene_type._meta.name

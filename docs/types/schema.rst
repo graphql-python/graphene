@@ -92,3 +92,153 @@ To disable this behavior, set the ``auto_camelcase`` to ``False`` upon schema in
         query=MyRootQuery,
         auto_camelcase=False,
     )
+
+.. _SchemaTypeNamePrefix:
+
+Type name prefix
+--------------------------
+
+You can specify a prefix for all type names in the schema by setting the ``type_name_prefix`` argument upon schema instantiation:
+
+.. code:: python
+
+    my_schema = Schema(
+        query=MyRootQuery,
+        mutation=MyRootMutation,
+        subscription=MyRootSubscription
+        type_name_prefix='MyPrefix',
+    )
+
+This is useful in a micro-services architecture to prepend the service name to all types and avoid conflicts for example.
+
+The prefix will be added to the name of:
+
+* Query / Mutation / Subscription
+* Scalar
+* ObjectType
+* InputType
+* Enum
+* Interface
+* Union
+
+While fields and arguments name will be left untouched.
+
+More specifically, the following schema:
+
+.. code::
+
+    type Query {
+        inner: MyType
+    }
+
+    type MyType {
+        field: String
+        myUnion: MyUnion
+        myBarType: MyBarType
+        myFooType: MyFooType
+    }
+
+    union MyUnion = MyBarType | MyFooType
+
+    type MyBarType {
+        field(input: MyInputObjectType): String
+        myInterface: MyInterface
+    }
+
+    input MyInputObjectType {
+        field: String
+    }
+
+    interface MyInterface {
+        field: String
+    }
+
+    type MyFooType {
+        field: String
+        myEnum: MyEnum
+    }
+
+    scalar MyScalar
+
+    enum MyEnum {
+        FOO
+        BAR
+    }
+
+    type Mutation {
+        createUser(name: String): CreateUser
+    }
+
+    type CreateUser {
+        name: String
+    }
+
+    type Subscription {
+        countToTen: Int
+    }
+
+Will be transformed to:
+
+.. code::
+
+    type Query {
+        myPrefixInner: MyPrefixMyType
+    }
+
+    type MyPrefixMyType {
+        field: String
+        myUnion: MyPrefixMyUnion
+        myBarType: MyPrefixMyBarType
+        myFooType: MyPrefixMyFooType
+    }
+
+    union MyPrefixMyUnion = MyPrefixMyBarType | MyPrefixMyFooType
+
+    type MyPrefixMyBarType {
+        field(input: MyPrefixMyInputObjectType): String
+        myInterface: MyPrefixMyInterface
+    }
+
+    input MyPrefixMyInputObjectType {
+        field: String
+    }
+
+    interface MyPrefixMyInterface {
+        field: String
+    }
+
+    type MyPrefixMyFooType {
+        field: String
+        myEnum: MyPrefixMyEnum
+    }
+
+    scalar MyPrefixMyScalar
+
+    enum MyPrefixMyEnum {
+        FOO
+        BAR
+    }
+
+    type Mutation {
+        myPrefixCreateUser(name: String): MyPrefixCreateUser
+    }
+
+    type MyPrefixCreateUser {
+        name: String
+    }
+
+    type Subscription {
+        myPrefixCountToTen: Int
+    }
+
+You can override the prefix for a specific type by setting the ``type_name_prefix`` property on the ``Meta`` class:
+
+.. code:: python
+
+    from graphene import ObjectType
+
+    class MyGraphQlType(ObjectType):
+        class Meta:
+            type_name_prefix = ''
+
+This is useful when defining external types in a federated schema for example.

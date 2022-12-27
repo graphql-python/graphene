@@ -36,13 +36,14 @@ class BaseType(SubclassWithMeta):
 
     @classmethod
     def __init_subclass_with_meta__(
-        cls, name=None, description=None, _meta=None, **_kwargs
+        cls, name=None, description=None, type_name_prefix=None, _meta=None, **_kwargs
     ):
         assert "_meta" not in cls.__dict__, "Can't assign meta directly"
         if not _meta:
             return
         _meta.name = name or cls.__name__
         _meta.description = description or trim_docstring(cls.__doc__)
+        _meta.type_name_prefix = type_name_prefix
         _meta.freeze()
         cls._meta = _meta
         super(BaseType, cls).__init_subclass_with_meta__()

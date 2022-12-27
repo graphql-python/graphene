@@ -5,17 +5,76 @@ from pytest import raises
 from graphql.type import GraphQLObjectType, GraphQLSchema
 
 from ..field import Field
+from ..enum import Enum
+from ..inputobjecttype import InputObjectType
+from ..interface import Interface
+from ..mutation import Mutation
 from ..objecttype import ObjectType
-from ..scalars import String
+from ..scalars import Int, String, Scalar
 from ..schema import Schema
+from ..union import Union
 
 
-class MyOtherType(ObjectType):
+class MyInputObjectType(InputObjectType):
     field = String()
 
 
+class MyScalar(Scalar):
+    ...
+
+
+class MyEnum(Enum):
+    FOO = "foo"
+    BAR = "bar"
+
+
+class MyInterface(Interface):
+    field = String()
+
+
+class MyBarType(ObjectType):
+    field = String(input=MyInputObjectType())
+    my_interface = Field(MyInterface)
+
+
+class MyFooType(ObjectType):
+    field = String()
+    my_scalar = MyScalar()
+    my_enum = MyEnum()
+
+
+class MyUnion(Union):
+    class Meta:
+        types = (MyBarType, MyFooType)
+
+
+class MyType(ObjectType):
+    field = String()
+    my_union = MyUnion()
+    my_bar_type = Field(MyBarType)
+    my_foo_type = Field("graphene.types.tests.test_schema.MyFooType")
+
+
 class Query(ObjectType):
-    inner = Field(MyOtherType)
+    inner = Field(MyType)
+
+
+class CreateUser(Mutation):
+    class Arguments:
+        name = String()
+
+    name = String()
+
+    def mutate(self, info, name):
+        return CreateUser(name=name)
+
+
+class Mutation(ObjectType):
+    create_user = CreateUser.Field()
+
+
+class Subscription(ObjectType):
+    count_to_ten = Field(Int)
 
 
 def test_schema():
@@ -31,7 +90,12 @@ def test_schema():
 def test_schema_get_type():
     schema = Schema(Query)
     assert schema.Query == Query
-    assert schema.MyOtherType == MyOtherType
+    assert schema.MyType == MyType
+    assert schema.MyBarType == MyBarType
+    assert schema.MyFooType == MyFooType
+    assert schema.MyInputObjectType == MyInputObjectType
+    assert schema.MyInterface == MyInterface
+    assert schema.MyEnum == MyEnum
 
 
 def test_schema_get_type_error():
@@ -49,11 +113,42 @@ def test_schema_str():
         == dedent(
             """
         type Query {
-          inner: MyOtherType
+          inner: MyType
         }
 
-        type MyOtherType {
+        type MyType {
           field: String
+          myUnion: MyUnion
+          myBarType: MyBarType
+          myFooType: MyFooType
+        }
+
+        union MyUnion = MyBarType | MyFooType
+
+        type MyBarType {
+          field(input: MyInputObjectType): String
+          myInterface: MyInterface
+        }
+
+        input MyInputObjectType {
+          field: String
+        }
+
+        interface MyInterface {
+          field: String
+        }
+
+        type MyFooType {
+          field: String
+          myScalar: MyScalar
+          myEnum: MyEnum
+        }
+
+        scalar MyScalar
+
+        enum MyEnum {
+          FOO
+          BAR
         }
         """
         ).strip()

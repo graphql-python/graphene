@@ -218,3 +218,48 @@ def test_mutation_as_subclass():
     )
     assert not result.errors
     assert result.data == {"createUserWithPlanet": {"name": "Peter", "planet": "earth"}}
+
+
+def test_type_name_prefix():
+    class BaseCreateUser(Mutation):
+        class Arguments:
+            name = String()
+
+        name = String()
+
+        def mutate(self, info, **args):
+            return args
+
+    class CreateUserWithPlanet(BaseCreateUser):
+        class Arguments(BaseCreateUser.Arguments):
+            planet = String()
+
+        planet = String()
+
+        def mutate(self, info, **args):
+            return CreateUserWithPlanet(**args)
+
+    class MyMutation(ObjectType):
+        create_user_with_planet = CreateUserWithPlanet.Field()
+
+    class Query(ObjectType):
+        a = String()
+
+    schema = Schema(
+        query=Query,
+        mutation=MyMutation,
+        type_name_prefix="MyPrefix",
+    )
+    result = schema.execute(
+        """ mutation mymutation {
+        myPrefixCreateUserWithPlanet(name:"Peter", planet: "earth") {
+            name
+            planet
+        }
+    }
+    """
+    )
+    assert not result.errors
+    assert result.data == {
+        "myPrefixCreateUserWithPlanet": {"name": "Peter", "planet": "earth"}
+    }
