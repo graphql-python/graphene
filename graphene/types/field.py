@@ -51,6 +51,8 @@ class Field(MountedType):
             value object. If not set, the default resolver method for the schema is used.
         source (optional, str): attribute name to resolve for this field from the parent value
             object. Alternative to resolver (cannot set both source and resolver).
+        subscribe (optional, AsyncIterable): Asynchronous iterator to get the value for a Field from the parent
+            value object. If not set, the default resolver method for the schema is used.
         deprecation_reason (optional, str): Setting this value indicates that the field is
             depreciated and may provide instruction or reason on how for clients to proceed.
         required (optional, bool): indicates this field as not null in the graphql schema. Same behavior as
@@ -69,6 +71,7 @@ class Field(MountedType):
         args=None,
         resolver=None,
         source=None,
+        subscribe=None,
         deprecation_reason=None,
         name=None,
         description=None,
@@ -107,6 +110,7 @@ class Field(MountedType):
         if source:
             resolver = partial(source_resolver, source)
         self.resolver = resolver
+        self.subscribe = subscribe
         self.deprecation_reason = deprecation_reason
         self.description = description
         self.default_value = default_value
@@ -131,8 +135,8 @@ class Field(MountedType):
         return self.resolver or parent_resolver
 
     def wrap_subscribe(self, parent_subscribe):
+        """Wraps a function subscribe.
+            - using the ObjectType subscribe_{FIELD_NAME} (parent_subscribe) if the Field definition has no subscribe.
+            - using the Field.subscribe
         """
-        Wraps a function subscribe, using the ObjectType subscribe_{FIELD_NAME}
-        (parent_subscribe) if the Field definition has no subscribe.
-        """
-        return parent_subscribe
+        return parent_subscribe or self.subscribe

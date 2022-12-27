@@ -10,12 +10,20 @@ class Query(ObjectType):
         return "Hello, world!"
 
 
+async def subscribe_count_to_five(root, info):
+    for count in range(1, 6):
+        yield count
+
+
 class Subscription(ObjectType):
+
     count_to_ten = Field(Int)
 
     async def subscribe_count_to_ten(root, info):
         for count in range(1, 11):
             yield count
+
+    count_to_five = Field(Int, subscribe=subscribe_count_to_five)
 
 
 schema = Schema(query=Query, subscription=Subscription)
@@ -29,6 +37,13 @@ async def test_subscription():
     async for item in result:
         count = item.data["countToTen"]
     assert count == 10
+
+    subscription = "subscription { countToFive }"
+    result = await schema.subscribe(subscription)
+    count = 0
+    async for item in result:
+        count = item.data["countToFive"]
+    assert count == 5
 
 
 @mark.asyncio
