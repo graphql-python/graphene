@@ -23,7 +23,7 @@ class Subscription(ObjectType):
         for count in range(1, 11):
             yield count
 
-    count_to_five = Field(Int, subscribe=subscribe_count_to_five)
+    count_to_five = Field(Int, resolver=subscribe_count_to_five)
 
 
 schema = Schema(query=Query, subscription=Subscription)

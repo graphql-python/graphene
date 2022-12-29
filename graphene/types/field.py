@@ -47,12 +47,10 @@ class Field(MountedType):
         args (optional, Dict[str, graphene.Argument]): Arguments that can be input to the field.
             Prefer to use ``**extra_args``, unless you use an argument name that clashes with one
             of the Field arguments presented here (see :ref:`example<ResolverParamGraphQLArguments>`).
-        resolver (optional, Callable): A function to get the value for a Field from the parent
+        resolver (optional, Callable, AsyncIterable): A function to get the value for a Field from the parent
             value object. If not set, the default resolver method for the schema is used.
         source (optional, str): attribute name to resolve for this field from the parent value
             object. Alternative to resolver (cannot set both source and resolver).
-        subscribe (optional, AsyncIterable): Asynchronous iterator to get the value for a Field from the parent
-            value object. If not set, the default resolver method for the schema is used.
         deprecation_reason (optional, str): Setting this value indicates that the field is
             depreciated and may provide instruction or reason on how for clients to proceed.
         required (optional, bool): indicates this field as not null in the graphql schema. Same behavior as
@@ -71,7 +69,6 @@ class Field(MountedType):
         args=None,
         resolver=None,
         source=None,
-        subscribe=None,
         deprecation_reason=None,
         name=None,
         description=None,
@@ -110,7 +107,6 @@ class Field(MountedType):
         if source:
             resolver = partial(source_resolver, source)
         self.resolver = resolver
-        self.subscribe = subscribe
         self.deprecation_reason = deprecation_reason
         self.description = description
         self.default_value = default_value
@@ -125,6 +121,8 @@ class Field(MountedType):
         """
         Wraps a function resolver, using the ObjectType resolve_{FIELD_NAME}
         (parent_resolver) if the Field definition has no resolver.
+
+        The Field resolver cannot be asynchronous generator.
         """
         if self.get_resolver is not None:
             warn_deprecation(
@@ -132,11 +130,13 @@ class Field(MountedType):
             )
             return self.get_resolver(parent_resolver)
 
-        return self.resolver or parent_resolver
+        return not inspect.isasyncgenfunction(self.resolver) and self.resolver or parent_resolver
 
     def wrap_subscribe(self, parent_subscribe):
-        """Wraps a function subscribe.
-            - using the ObjectType subscribe_{FIELD_NAME} (parent_subscribe) if the Field definition has no subscribe.
-            - using the Field.subscribe
         """
-        return parent_subscribe or self.subscribe
+        Wraps a function subscribe, using the ObjectType subscribe_{FIELD_NAME}
+        (parent_subscribe) if the Field definition has no resolver.
+
+        The Subscription resolver must be an asynchronous generator.
+        """
+        return parent_subscribe or inspect.isasyncgenfunction(self.resolver) and self.resolver
