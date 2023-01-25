@@ -18,8 +18,20 @@ def test_argument():
 
 
 def test_argument_comparasion():
-    arg1 = Argument(String, name="Hey", description="Desc", default_value="default")
-    arg2 = Argument(String, name="Hey", description="Desc", default_value="default")
+    arg1 = Argument(
+        String,
+        name="Hey",
+        description="Desc",
+        default_value="default",
+        deprecation_reason="deprecated",
+    )
+    arg2 = Argument(
+        String,
+        name="Hey",
+        description="Desc",
+        default_value="default",
+        deprecation_reason="deprecated",
+    )
 
     assert arg1 == arg2
     assert arg1 != String()
@@ -38,6 +50,30 @@ def test_to_arguments():
         "arg_string": Argument(String),
         "unmounted_arg": Argument(String, required=True),
     }
+
+
+def test_to_arguments_deprecated():
+    args = {"unmounted_arg": String(required=False, deprecation_reason="deprecated")}
+
+    my_args = to_arguments(args)
+    assert my_args == {
+        "unmounted_arg": Argument(
+            String, required=False, deprecation_reason="deprecated"
+        ),
+    }
+
+
+def test_to_arguments_required_deprecated():
+    args = {
+        "unmounted_arg": String(
+            required=True, name="arg", deprecation_reason="deprecated"
+        )
+    }
+
+    with raises(AssertionError) as exc_info:
+        to_arguments(args)
+
+    assert str(exc_info.value) == "Argument arg is required, cannot deprecate it."
 
 
 def test_to_arguments_raises_if_field():
