@@ -75,12 +75,23 @@ class Connection(ObjectType):
         edge_class = getattr(cls, "Edge", None)
         _node = node
 
-        class EdgeBase:
-            node = Field(_node, description="The item at the end of the edge")
-            cursor = String(required=True, description="A cursor for use in pagination")
-
         class EdgeMeta:
             description = f"A Relay edge containing a `{base_name}` and its cursor."
+            required = False
+            node_required = False
+
+        if edge_class and hasattr(edge_class, "Meta"):
+            EdgeMeta = type(
+                f"{base_name}EdgeMeta", (getattr(edge_class, "Meta"), EdgeMeta), {}
+            )
+
+        class EdgeBase:
+            node = Field(
+                _node,
+                required=EdgeMeta.node_required,
+                description="The item at the end of the edge",
+            )
+            cursor = String(required=True, description="A cursor for use in pagination")
 
         edge_name = f"{base_name}Edge"
         if edge_class:
@@ -90,6 +101,7 @@ class Connection(ObjectType):
 
         edge = type(edge_name, edge_bases, {"Meta": EdgeMeta})
         cls.Edge = edge
+        edge_field = NonNull(edge) if EdgeMeta.required else edge
 
         options["name"] = name
         _meta.node = node
@@ -101,7 +113,7 @@ class Connection(ObjectType):
                 description="Pagination data for this connection.",
             ),
             "edges": Field(
-                NonNull(List(edge)),
+                NonNull(List(edge_field)),
                 description="Contains the nodes in this connection.",
             ),
         }
