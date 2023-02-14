@@ -5,7 +5,7 @@ from ...types.enum import Enum
 
 class MyEnum(Enum):
     # is defined outside of test because pickle unable to dump class inside ot pytest function
-    A = 'a'
+    A = "a"
     B = 1
 
 
