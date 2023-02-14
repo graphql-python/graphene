@@ -3,14 +3,14 @@ import pickle
 from ...types.enum import Enum
 
 
-class MyEnum(Enum):
+class PickleEnum(Enum):
     # is defined outside of test because pickle unable to dump class inside ot pytest function
     A = "a"
     B = 1
 
 
 def test_enums_pickling():
-    a = MyEnum.A
+    a = PickleEnum.A
     pickled = pickle.dumps(a)
     restored = pickle.loads(pickled)
     assert type(a) is type(restored)
@@ -18,7 +18,7 @@ def test_enums_pickling():
     assert a.value == restored.value
     assert a.name == restored.name
 
-    b = MyEnum.B
+    b = PickleEnum.B
     pickled = pickle.dumps(b)
     restored = pickle.loads(pickled)
     assert type(a) is type(restored)

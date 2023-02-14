@@ -1,38 +1,9 @@
-import inspect
-import sys
 from enum import Enum as PyEnum
-from typing import Any, Dict
+
 from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
-
-
-class _ModuleItemHelper:
-    _enum_metas: Dict[str, Any] = {}
-
-    def __getattr__(self, name: str) -> Any:
-        try:
-            return globals()[name]
-        except KeyError:
-            if name == "__path__":
-                return None
-            if len(_ModuleItemHelper._enum_metas[name]) == 1:
-                return next(iter(_ModuleItemHelper._enum_metas[name].values()))
-            else:
-                # if there are more than 1 class with the name - take first by stack
-                for fr in inspect.stack():
-                    f_name = inspect.getmodulename(fr.filename)
-                    if f_name in _ModuleItemHelper._enum_metas[name]:
-                        return _ModuleItemHelper._enum_metas[name][f_name]
-            raise
-
-    def __setattr__(self, name: str, value: Any) -> None:
-        cls, path = value
-        if not _ModuleItemHelper._enum_metas.get(name):
-            _ModuleItemHelper._enum_metas[name] = {}
-
-        _ModuleItemHelper._enum_metas[name][path.split(".")[-1]] = cls
 
 
 def eq_enum(self, other):
@@ -63,11 +34,7 @@ class EnumMeta(SubclassWithMeta_Meta):
         obj = SubclassWithMeta_Meta.__new__(
             cls, name_, bases, dict(classdict, __enum__=enum), **options
         )
-        # globals()[name_] = obj.__enum__
-        if enum_members.get("__module__"):
-            setattr(
-                sys.modules[__name__], name_, (obj.__enum__, enum_members["__module__"])
-            )
+        globals()[name_] = obj.__enum__
         return obj
 
     def get(cls, value):
@@ -151,6 +118,3 @@ class Enum(UnmountedType, BaseType, metaclass=EnumMeta):
         is mounted (as a Field, InputField or Argument)
         """
         return cls
-
-
-sys.modules[__name__] = _ModuleItemHelper()  # type: ignore
