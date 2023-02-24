@@ -456,5 +456,4 @@ intersphinx_mapping = {
         "http://docs.graphene-python.org/projects/sqlalchemy/en/latest/",
         None,
     ),
-    "graphene_gae": ("http://docs.graphene-python.org/projects/gae/en/latest/", None),
 }

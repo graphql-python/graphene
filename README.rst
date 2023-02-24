@@ -36,9 +36,6 @@ Graphene has multiple integrations with different frameworks:
 | SQLAlchemy        | `graphene-sqlalchemy <https://git               |
 |                   | hub.com/graphql-python/graphene-sqlalchemy/>`__ |
 +-------------------+-------------------------------------------------+
-| Google App Engine | `graphene-gae <http                             |
-|                   | s://github.com/graphql-python/graphene-gae/>`__ |
-+-------------------+-------------------------------------------------+
 
 Also, Graphene is fully compatible with the GraphQL spec, working
 seamlessly with all GraphQL clients, such as
