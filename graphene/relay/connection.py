@@ -26,11 +26,11 @@ def get_edge_class(
 
     edge_name = f"{base_name}Edge"
     if edge_class:
-        edge_bases = (edge_class, EdgeBase, ObjectType)
+        edge_bases = [edge_class, EdgeBase, ObjectType]
     else:
-        edge_bases = (EdgeBase, ObjectType)
+        edge_bases = [EdgeBase, ObjectType]
 
-    return type(edge_name, edge_bases, {"Meta": EdgeMeta})
+    return type(edge_name, tuple(edge_bases), {"Meta": EdgeMeta})
 
 
 class PageInfo(ObjectType):
