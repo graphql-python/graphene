@@ -61,8 +61,9 @@ class Connection(ObjectType):
         abstract = True
 
     @classmethod
-    def __init_subclass_with_meta__(cls, node=None, name=None, **options):
-        _meta = ConnectionOptions(cls)
+    def __init_subclass_with_meta__(cls, node=None, name=None, _meta=None, **options):
+        if not _meta:
+            _meta = ConnectionOptions(cls)
         assert node, f"You have to provide a node in {cls.__name__}.Meta"
         assert isinstance(node, NonNull) or issubclass(
             node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
@@ -92,19 +93,26 @@ class Connection(ObjectType):
         cls.Edge = edge
 
         options["name"] = name
+
         _meta.node = node
-        _meta.fields = {
-            "page_info": Field(
-                PageInfo,
-                name="pageInfo",
-                required=True,
-                description="Pagination data for this connection.",
-            ),
-            "edges": Field(
-                NonNull(List(edge)),
-                description="Contains the nodes in this connection.",
-            ),
-        }
+
+        if not _meta.fields:
+            _meta.fields = {}
+
+        _meta.fields.update(
+            {
+                "page_info": Field(
+                    PageInfo,
+                    name="pageInfo",
+                    required=True,
+                    description="Pagination data for this connection.",
+                ),
+                "edges": Field(
+                    NonNull(List(edge)),
+                    description="Contains the nodes in this connection.",
+                ),
+            }
+        )
         return super(Connection, cls).__init_subclass_with_meta__(
             _meta=_meta, **options
         )
