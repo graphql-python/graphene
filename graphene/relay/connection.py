@@ -1,6 +1,7 @@
 import re
 from collections.abc import Iterable
 from functools import partial
+from typing import Type
 
 from graphql_relay import connection_from_array
 
@@ -8,7 +9,28 @@ from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
 from ..utils.thenables import maybe_thenable
-from .node import is_node
+from .node import is_node, AbstractNode
+
+
+def get_edge_class(
+    connection_class: Type["Connection"], _node: Type[AbstractNode], base_name: str
+):
+    edge_class = getattr(connection_class, "Edge", None)
+
+    class EdgeBase:
+        node = Field(_node, description="The item at the end of the edge")
+        cursor = String(required=True, description="A cursor for use in pagination")
+
+    class EdgeMeta:
+        description = f"A Relay edge containing a `{base_name}` and its cursor."
+
+    edge_name = f"{base_name}Edge"
+    if edge_class:
+        edge_bases = (edge_class, EdgeBase, ObjectType)
+    else:
+        edge_bases = (EdgeBase, ObjectType)
+
+    return type(edge_name, edge_bases, {"Meta": EdgeMeta})
 
 
 class PageInfo(ObjectType):
@@ -73,25 +95,6 @@ class Connection(ObjectType):
         if not name:
             name = f"{base_name}Connection"
 
-        edge_class = getattr(cls, "Edge", None)
-        _node = node
-
-        class EdgeBase:
-            node = Field(_node, description="The item at the end of the edge")
-            cursor = String(required=True, description="A cursor for use in pagination")
-
-        class EdgeMeta:
-            description = f"A Relay edge containing a `{base_name}` and its cursor."
-
-        edge_name = f"{base_name}Edge"
-        if edge_class:
-            edge_bases = (edge_class, EdgeBase, ObjectType)
-        else:
-            edge_bases = (EdgeBase, ObjectType)
-
-        edge = type(edge_name, edge_bases, {"Meta": EdgeMeta})
-        cls.Edge = edge
-
         options["name"] = name
 
         _meta.node = node
@@ -99,20 +102,22 @@ class Connection(ObjectType):
         if not _meta.fields:
             _meta.fields = {}
 
-        _meta.fields.update(
-            {
-                "page_info": Field(
-                    PageInfo,
-                    name="pageInfo",
-                    required=True,
-                    description="Pagination data for this connection.",
-                ),
-                "edges": Field(
-                    NonNull(List(edge)),
-                    description="Contains the nodes in this connection.",
-                ),
-            }
-        )
+        if "page_info" not in _meta.fields:
+            _meta.fields["page_info"] = Field(
+                PageInfo,
+                name="pageInfo",
+                required=True,
+                description="Pagination data for this connection.",
+            )
+
+        if "edges" not in _meta.fields:
+            edge_class = get_edge_class(cls, node, base_name)  # type: ignore
+            cls.Edge = edge_class
+            _meta.fields["edges"] = Field(
+                NonNull(List(edge_class)),
+                description="Contains the nodes in this connection.",
+            )
+
         return super(Connection, cls).__init_subclass_with_meta__(
             _meta=_meta, **options
         )
