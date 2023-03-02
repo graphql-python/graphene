@@ -92,7 +92,7 @@ Execution Metadata
 
 .. autoclass:: graphene.Context
 
-.. autoclass:: graphql.execution.base.ExecutionResult
+.. autoclass:: graphql.ExecutionResult
 
 .. Relay
 .. -----

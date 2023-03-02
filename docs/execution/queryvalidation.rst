@@ -1,5 +1,5 @@
 Query Validation
-==========
+================
 GraphQL uses query validators to check if Query AST is valid and can be executed. Every GraphQL server implements
 standard query validators. For example, there is an validator that tests if queried field exists on queried type, that
 makes query fail with "Cannot query field on type" error if it doesn't.
@@ -8,7 +8,7 @@ To help with common use cases, graphene provides a few validation rules out of t
 
 
 Depth limit Validator
------------------
+---------------------
 The depth limit validator helps to prevent execution of malicious
 queries. It takes in the following arguments.
 
@@ -17,7 +17,7 @@ queries. It takes in the following arguments.
 - ``callback`` Called each time validation runs. Receives an Object which is a map of the depths for each operation.
 
 Usage
--------
+-----
 
 Here is how you would implement depth-limiting on your schema.
 
@@ -54,7 +54,7 @@ the disable introspection validation rule ensures that your schema cannot be int
 This is a useful security measure in production environments.
 
 Usage
--------
+-----
 
 Here is how you would disable introspection for your schema.
 
