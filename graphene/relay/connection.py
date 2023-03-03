@@ -25,10 +25,10 @@ def get_edge_class(
         description = f"A Relay edge containing a `{base_name}` and its cursor."
 
     edge_name = f"{base_name}Edge"
-    if edge_class:
-        edge_bases = [edge_class, EdgeBase, ObjectType]
-    else:
-        edge_bases = [EdgeBase, ObjectType]
+
+    edge_bases = [edge_class] if edge_class else [EdgeBase]
+    if not isinstance(edge_class, ObjectType):
+        edge_bases = [*edge_bases, ObjectType]
 
     return type(edge_name, tuple(edge_bases), {"Meta": EdgeMeta})
 
