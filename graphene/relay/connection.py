@@ -26,7 +26,7 @@ def get_edge_class(
 
     edge_name = f"{base_name}Edge"
 
-    edge_bases = [edge_class] if edge_class else [EdgeBase]
+    edge_bases = [edge_class, EdgeBase] if edge_class else [EdgeBase]
     if not isinstance(edge_class, ObjectType):
         edge_bases = [*edge_bases, ObjectType]
 
