@@ -7,5 +7,9 @@ Due to this feature, GraphQL APIs are inherently prone to various security risks
 appropriate precautions. Neglecting them can expose the API to vulnerabilities like credential leakage or denial of
 service attacks.
 
-
 In this section, we will discuss the most common security risks and how to mitigate them.
+
+.. toctree::
+   :maxdepth: 2
+
+   queryvalidation
