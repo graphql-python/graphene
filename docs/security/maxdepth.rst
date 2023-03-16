@@ -1,9 +1,9 @@
 Depth limit Validator
 =====================
 
-By default, GraphQL queries can be arbitrarily deep. This can lead to a denial of service attack where a client can send
-a deeply nested query that will take a long time to execute. For that, you must find a cycle in the graph and iterate
-over.
+By default, GraphQL queries can be arbitrarily deep. But a profound query can lead to a denial of service attack where a client can send a deeply nested query that will take a long time to execute.
+
+If you find a cycle in the graph, you can iterate over it to generate big queries to put an extreme load on the backend.
 
 Example
 -------
@@ -27,15 +27,21 @@ For example a simple app that allows you to find your friends and their friends 
       }
     }
 
-This is not a common use case, your dev team will not do that in the first place. But as your endpoint is publicly
-available, you can't be sure that someone will not try to do so.
+This is not a common use case; your dev team will not do that in the first place. However, as your endpoint is publicly
+available, you cannot be sure that someone will not try to do so.
 
 Remediation
 -----------
 
 Graphene provides a depth limit validator that can be used to prevent this kind of attack. It can be configured to limit
-the depth of all the queries or only some specific ones. The only required argument is ``max_depth`` which is the
-maximum allowed depth for any operation in a GraphQL document. The other optional parameters are the following ones :
+the depth of all the queries or only some specific ones.
+
+Arguments
+_________
+
+The only required argument is ``max_depth`` which is the maximum allowed depth for any operation in a GraphQL document.
+
+The other optional parameters are the following ones :
 
 - ``ignore``: A list of patterns that, if matched stops recursive depth checking. It can be one of the following :
     - ``Callable : (dict[str, int]) -> bool``: A function that receives the current operation and returns a boolean.
@@ -55,21 +61,60 @@ Here is an example of how you would implement depth-limiting on your schema.
     from graphene.validation import depth_limit_validator
 
 
-    class MyQuery(ObjectType):
-        name = String(required=True)
+    class Me(ObjectType):
+        id = String()
 
+    schema = Schema(query=Me)
 
-    schema = Schema(query=MyQuery)
+    VALID_QUERY = """
+    query valid {
+        me {
+            # depth is 1
+            id friends {
+                # depth is 2
+                id friends {
+                    # depth is 3
+                    id
+                }
+            }
+        }
+    }
+    """
 
-    # queries which have a depth more than 20
-    # will not be executed.
+    INVALID_QUERY = """
+    query evil {
+        me {
+            # depth is 1
+            id friends {
+                # depth is 2
+                id friends {
+                    # depth is 3
+                    id friends {
+                        # depth is 4
+                        id
+                    }
+                }
+            }
+        }
+    }
+    """
 
-    validation_errors = validate(
+    RULES = (depth_limit_validator(max_depth=3), )
+
+    VALID_RESPONSE = validate(
         schema=schema.graphql_schema,
-        document_ast=parse('THE QUERY'),
-        rules=(
-            depth_limit_validator(
-                max_depth=20
-            ),
-        )
+        document_ast=parse(VALID_QUERY),
+        rules=RULES
     )
+
+    assert len(VALID_RESPONSE) == 0
+
+    INVALID_RESPONSE = validate(
+        schema=schema.graphql_schema,
+        document_ast=parse(INVALID_QUERY),
+        rules=RULES
+    )
+
+
+    assert len(INVALID_RESPONSE) == 1
+    assert INVALID_RESPONSE[0].message == "'evil' exceeds maximum operation depth of 3."

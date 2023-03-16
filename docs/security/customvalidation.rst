@@ -1,20 +1,29 @@
 Implementing custom validators
 ==============================
 
-GraphQL uses query validators to check if Query AST is valid and can be executed. Every GraphQL server implements
-standard query validators. For example, there is an validator that tests if queried field exists on queried type, that
-makes query fail with "Cannot query field on type" error if it doesn't.
+GraphQL uses query validators to check if Query AST is valid and can be executed. Every GraphQL server implements standard query validators.
 
-If you need more complex validation than presented before, you can implement your own query validators. All custom query
-validators should extend the `ValidationRule`_ base class importable from the ``graphql.validation.rules`` module. Query
-validators are visitor classes. They are instantiated at the time of query validation with one required argument
-(context: ASTValidationContext). In order to perform validation, your validator class should define one or more of
-``enter_*`` and ``leave_*`` methods. For possible enter/leave items as well as details on function documentation, please
-see contents of the visitor module. To make validation fail, you should call validator's report_error method with the
-instance of GraphQLError describing failure reason.
+For example, a validator tests if a queried field exists on queried type, making the query fail with a "Cannot query field on type" error if it does not.
+
+If you need more complex validation than presented before, you can implement your own query validators.
 
 Implementing your custom validators
 -----------------------------------
+
+All custom query validators should extend the `ValidationRule`_ base class importable from the ``graphql.validation.rules`` module.
+Query validators are `Visitor`_ classes.
+
+Your custom validator should implement some methods of
+
+In order to perform validation, your validator class should define some one or more of ``enter_*`` or ``leave_*`` methods.
+
+Foreach methods, you will receive a node object to test:
+
+- You can now choose to raise an error by calling ``report_error`` method with an instance of GraphQLError describing the failure reason.
+- Or you can continue the parsing by returning ``None``.
+
+Example
+-------
 
 Here is an example query validator that only allows queries fields with a name of even length.
 
@@ -40,3 +49,4 @@ Here is an example query validator that only allows queries fields with a name o
                 )
 
 .. _ValidationRule: https://github.com/graphql-python/graphql-core/blob/v3.0.5/src/graphql/validation/rules/__init__.py#L37
+.. _Visitor: https://github.com/graphql-python/graphql-core/blob/d90bf9902ca1639365639d5632861d1e18d672a9/src/graphql/language/visitor.py#L111

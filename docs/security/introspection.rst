@@ -4,27 +4,24 @@ Disable Introspection
 What is the introspection ?
 ---------------------------
 
-The introspection query is a query that allows you to ask the server what queries and mutations are supported. If you
-comes from REST, you can view it as a openapi or swagger schema.
+The introspection query is a query that allows you to ask the server what queries and mutations are supported. If you are a REST user, you can view it as an openapi or swagger schema.
 
-Disabling it or not ?
----------------------
+Should I disable my introspection ?
+-----------------------------------
 
-Depending if you are building a private or a public API, you might want to disable introspection or not. If you are
-building a public API, the introspection allows consumers (developers) to know what they can do with your API. If you
-disable it, it will be harder for them to use your API. But if you are building a private API, the only consumers of
-your API will be your own developers. In this case, you might want to keep the introspection open in staging
-environments but close it in production to reduce the attack surface.
+Whether you are building a private or a public API, you might want to disable introspection :
 
-Keep in mind that disabling introspection does not prevent hackers to send queries to your API. It just makes it harder
-to know what they can do with it.
+- If you are building a public API, the introspection allows consumers (developers) to know what they can do with your API. If you disable it, it will be harder for them to use your API.
+- However, if you are building a private API, the only consumers of your API will be your developers. In this case, keep the introspection open in staging environments but close it in production to reduce the attack surface.
+
+Remember that disabling introspection does not prevent hackers from sending queries to your API. It just makes it harder to know what they can do with it.
 
 Implementation
 --------------
 
-Graphene provides a validation rule to disable introspection. It ensures that your schema cannot be introspected. You
-just need to import the ``DisableIntrospection`` class from ``graphene.validation``.
+Graphene provides a validation rule to disable introspection. It ensures that your schema cannot be introspected.
 
+You just need to import the ``DisableIntrospection`` class from ``graphene.validation``.
 
 Here is a code example of how you can disable introspection for your schema.
 
