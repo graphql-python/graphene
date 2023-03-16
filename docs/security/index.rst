@@ -19,7 +19,6 @@ the `Django documentation`_ on how to secure your API.
    maxdepth
    introspection
    customvalidation
-
-We have seen the most efficient way to secure your GraphQL API.
+   dast
 
 .. _Django documentation: https://docs.djangoproject.com/en/4.1/topics/security/
