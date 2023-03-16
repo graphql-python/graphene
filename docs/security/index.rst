@@ -17,7 +17,8 @@ the `Django documentation`_ on how to secure your API.
    :maxdepth: 1
 
    maxdepth
-   queryvalidation
+   introspection
+   customvalidation
 
 We have seen the most efficient way to secure your GraphQL API.
 
