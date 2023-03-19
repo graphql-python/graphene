@@ -14,6 +14,14 @@ class InputObjectTypeOptions(BaseOptions):
     container = None  # type: InputObjectTypeContainer
 
 
+_INPUT_OBJECT_TYPE_DEFAULT_VALUE = None
+
+
+def set_input_object_type_default_value(default_value):
+    global _INPUT_OBJECT_TYPE_DEFAULT_VALUE
+    _INPUT_OBJECT_TYPE_DEFAULT_VALUE = default_value
+
+
 class InputObjectTypeContainer(dict, BaseType):  # type: ignore
     class Meta:
         abstract = True
@@ -21,7 +29,7 @@ class InputObjectTypeContainer(dict, BaseType):  # type: ignore
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
         for key in self._meta.fields:
-            setattr(self, key, self.get(key, None))
+            setattr(self, key, self.get(key, _INPUT_OBJECT_TYPE_DEFAULT_VALUE))
 
     def __init_subclass__(cls, *args, **kwargs):
         pass
