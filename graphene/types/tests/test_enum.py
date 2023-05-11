@@ -64,6 +64,7 @@ def test_enum_from_builtin_enum():
     assert RGB.GREEN
     assert RGB.BLUE
 
+
 def test_enum_custom_description_in_constructor():
     description = "An enumeration, but with a custom description"
     RGB = Enum(
