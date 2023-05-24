@@ -79,6 +79,7 @@ def test_enum_from_python3_enum_uses_default_builtin_doc():
     RGB = Enum("RGB", "RED,GREEN,BLUE")
     assert RGB._meta.description == "An enumeration."
 
+
 def test_enum_from_builtin_enum_accepts_lambda_description():
     def custom_description(value):
         if not value:
