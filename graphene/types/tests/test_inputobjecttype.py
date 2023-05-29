@@ -1,10 +1,9 @@
-import pytest
 from graphql import Undefined
 
 from ..argument import Argument
 from ..field import Field
 from ..inputfield import InputField
-from ..inputobjecttype import InputObjectType, set_input_object_type_default_value
+from ..inputobjecttype import InputObjectType
 from ..objecttype import ObjectType
 from ..scalars import Boolean, String
 from ..schema import Schema
@@ -140,14 +139,6 @@ def test_inputobjecttype_of_input():
 
     assert not result.errors
     assert result.data == {"isChild": True}
-
-
-@pytest.fixture()
-def set_default_input_object_type_to_undefined():
-    """This fixture is used to change the default value of optional inputs in InputObjectTypes for specific tests"""
-    set_input_object_type_default_value(Undefined)
-    yield
-    set_input_object_type_default_value(None)
 
 
 def test_inputobjecttype_default_input_as_undefined(

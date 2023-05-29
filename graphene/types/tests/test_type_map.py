@@ -16,12 +16,12 @@ from ..dynamic import Dynamic
 from ..enum import Enum
 from ..field import Field
 from ..inputfield import InputField
-from ..inputobjecttype import InputObjectType, set_input_object_type_default_value
+from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
 from ..scalars import Int, String
-from ..structures import List, NonNull
 from ..schema import Schema
+from ..structures import List, NonNull
 
 
 def create_type_map(types, auto_camelcase=True):
@@ -227,9 +227,7 @@ def test_inputobject():
     assert foo_field.description == "Field description"
 
 
-def test_inputobject_undefined():
-    set_input_object_type_default_value(Undefined)
-
+def test_inputobject_undefined(set_default_input_object_type_to_undefined):
     class OtherObjectType(InputObjectType):
         optional_field = String()
 
