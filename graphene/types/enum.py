@@ -65,7 +65,7 @@ class EnumMeta(SubclassWithMeta_Meta):
         cls, enum, name=None, description=None, deprecation_reason=None
     ):  # noqa: N805
         name = name or enum.__name__
-        description = description or enum.__doc__
+        description = description or enum.__doc__ or "An enumeration."
         meta_dict = {
             "enum": enum,
             "description": description,
