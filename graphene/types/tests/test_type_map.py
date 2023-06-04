@@ -20,8 +20,8 @@ from ..inputobjecttype import InputObjectType
 from ..interface import Interface
 from ..objecttype import ObjectType
 from ..scalars import Int, String
-from ..structures import List, NonNull
 from ..schema import Schema
+from ..structures import List, NonNull
 
 
 def create_type_map(types, auto_camelcase=True):
@@ -225,6 +225,18 @@ def test_inputobject():
     foo_field = fields["fooBar"]
     assert isinstance(foo_field, GraphQLInputField)
     assert foo_field.description == "Field description"
+
+
+def test_inputobject_undefined(set_default_input_object_type_to_undefined):
+    class OtherObjectType(InputObjectType):
+        optional_field = String()
+
+    type_map = create_type_map([OtherObjectType])
+    assert "OtherObjectType" in type_map
+    graphql_type = type_map["OtherObjectType"]
+
+    container = graphql_type.out_type({})
+    assert container.optional_field is Undefined
 
 
 def test_objecttype_camelcase():
