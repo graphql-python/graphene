@@ -1,11 +1,12 @@
+from typing import TYPE_CHECKING
+
 from .base import BaseOptions, BaseType
 from .inputfield import InputField
 from .unmountedtype import UnmountedType
 from .utils import yank_fields_from_attrs
 
-# For static type checking with Mypy
-MYPY = False
-if MYPY:
+# For static type checking with type checker
+if TYPE_CHECKING:
     from typing import Dict, Callable  # NOQA
 
 
