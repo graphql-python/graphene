@@ -1,4 +1,4 @@
-# ![Graphene Logo](http://graphene-python.org/favicon.png) [Graphene](http://graphene-python.org) [![Build Status](https://travis-ci.org/graphql-python/graphene.svg?branch=master)](https://travis-ci.org/graphql-python/graphene) [![PyPI version](https://badge.fury.io/py/graphene.svg)](https://badge.fury.io/py/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master) [![](https://dcbadge.vercel.app/api/server/T6Gp6NFYHe?style=flat)](https://discord.gg/T6Gp6NFYHe)
+# ![Graphene Logo](http://graphene-python.org/favicon.png) [Graphene](http://graphene-python.org)  [![PyPI version](https://badge.fury.io/py/graphene.svg)](https://badge.fury.io/py/graphene) [![Coverage Status](https://coveralls.io/repos/graphql-python/graphene/badge.svg?branch=master&service=github)](https://coveralls.io/github/graphql-python/graphene?branch=master) [![](https://dcbadge.vercel.app/api/server/T6Gp6NFYHe?style=flat)](https://discord.gg/T6Gp6NFYHe)
 
 [💬 Join the community on Discord](https://discord.gg/T6Gp6NFYHe)
 
