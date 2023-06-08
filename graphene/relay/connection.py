@@ -22,8 +22,8 @@ def get_edge_class(
 
     class EdgeBase:
         node = Field(
-            NonNull(_node) if strict_types else _node, 
-            description="The item at the end of the edge"
+            NonNull(_node) if strict_types else _node,
+            description="The item at the end of the edge",
         )
         cursor = String(required=True, description="A cursor for use in pagination")
 
