@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, dataclass_transform
 
 from .base import BaseOptions, BaseType, BaseTypeMeta
 from .field import Field
@@ -19,6 +19,7 @@ class ObjectTypeOptions(BaseOptions):
     interfaces = ()  # type: Iterable[Type[Interface]]
 
 
+@dataclass_transform()
 class ObjectTypeMeta(BaseTypeMeta):
     def __new__(cls, name_, bases, namespace, **options):
         # Note: it's safe to pass options as keyword arguments as they are still type-checked by ObjectTypeOptions.
