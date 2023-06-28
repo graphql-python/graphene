@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, dataclass_transform
+from typing import TYPE_CHECKING
+from typing_extensions import dataclass_transform
 
 from .base import BaseOptions, BaseType, BaseTypeMeta
 from .field import Field
