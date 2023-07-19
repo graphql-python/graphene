@@ -31,9 +31,11 @@ class EnumMeta(SubclassWithMeta_Meta):
         # with the enum values.
         enum_members.pop("Meta", None)
         enum = PyEnum(cls.__name__, enum_members)
-        return SubclassWithMeta_Meta.__new__(
+        obj = SubclassWithMeta_Meta.__new__(
             cls, name_, bases, dict(classdict, __enum__=enum), **options
         )
+        globals()[name_] = obj.__enum__
+        return obj
 
     def get(cls, value):
         return cls._meta.enum(value)
@@ -63,7 +65,7 @@ class EnumMeta(SubclassWithMeta_Meta):
         cls, enum, name=None, description=None, deprecation_reason=None
     ):  # noqa: N805
         name = name or enum.__name__
-        description = description or enum.__doc__
+        description = description or enum.__doc__ or "An enumeration."
         meta_dict = {
             "enum": enum,
             "description": description,

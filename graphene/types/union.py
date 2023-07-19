@@ -1,9 +1,10 @@
+from typing import TYPE_CHECKING
+
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
 
-# For static type checking with Mypy
-MYPY = False
-if MYPY:
+# For static type checking with type checker
+if TYPE_CHECKING:
     from .objecttype import ObjectType  # NOQA
     from typing import Iterable, Type  # NOQA
 
