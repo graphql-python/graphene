@@ -35,7 +35,7 @@ class Mutations(graphene.ObjectType):
     set_datetime = SetDatetime.Field()
 
 
-def test_print_schema():
+def test_schema_printable_with_default_datetime_value():
     schema = graphene.Schema(query=Query, mutation=Mutations)
     schema_str = print_schema(schema.graphql_schema)
-    assert schema_str, "non-empty schema printed"
+    assert schema_str, "empty schema printed"
