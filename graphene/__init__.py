@@ -1,11 +1,15 @@
 from .pyutils.version import get_version
 from .relay import (
+    BaseGlobalIDType,
     ClientIDMutation,
     Connection,
     ConnectionField,
+    DefaultGlobalIDType,
     GlobalID,
     Node,
     PageInfo,
+    SimpleGlobalIDType,
+    UUIDGlobalIDType,
     is_node,
 )
 from .types import (
@@ -13,6 +17,7 @@ from .types import (
     UUID,
     Argument,
     Base64,
+    BigInt,
     Boolean,
     Context,
     Date,
@@ -41,7 +46,7 @@ from .types import (
 from .utils.module_loading import lazy_import
 from .utils.resolve_only_args import resolve_only_args
 
-VERSION = (3, 1, 0, "final", 0)
+VERSION = (3, 2, 2, "final", 0)
 
 
 __version__ = get_version(VERSION)
@@ -50,6 +55,8 @@ __all__ = [
     "__version__",
     "Argument",
     "Base64",
+    "BigInt",
+    "BaseGlobalIDType",
     "Boolean",
     "ClientIDMutation",
     "Connection",
@@ -58,6 +65,7 @@ __all__ = [
     "Date",
     "DateTime",
     "Decimal",
+    "DefaultGlobalIDType",
     "Dynamic",
     "Enum",
     "Field",
@@ -78,10 +86,12 @@ __all__ = [
     "ResolveInfo",
     "Scalar",
     "Schema",
+    "SimpleGlobalIDType",
     "String",
     "Time",
-    "UUID",
     "Union",
+    "UUID",
+    "UUIDGlobalIDType",
     "is_node",
     "lazy_import",
     "resolve_only_args",

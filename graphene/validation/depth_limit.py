@@ -30,7 +30,7 @@ try:
 except ImportError:
     # backwards compatibility for v3.6
     from typing import Pattern
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union, Tuple
 
 from graphql import GraphQLError
 from graphql.validation import ValidationContext, ValidationRule
@@ -53,7 +53,7 @@ IgnoreType = Union[Callable[[str], bool], Pattern, str]
 def depth_limit_validator(
     max_depth: int,
     ignore: Optional[List[IgnoreType]] = None,
-    callback: Callable[[Dict[str, int]], None] = None,
+    callback: Optional[Callable[[Dict[str, int]], None]] = None,
 ):
     class DepthLimitValidator(ValidationRule):
         def __init__(self, validation_context: ValidationContext):
@@ -82,7 +82,7 @@ def depth_limit_validator(
 
 
 def get_fragments(
-    definitions: List[DefinitionNode],
+    definitions: Tuple[DefinitionNode, ...],
 ) -> Dict[str, FragmentDefinitionNode]:
     fragments = {}
     for definition in definitions:
@@ -94,7 +94,7 @@ def get_fragments(
 # This will actually get both queries and mutations.
 # We can basically treat those the same
 def get_queries_and_mutations(
-    definitions: List[DefinitionNode],
+    definitions: Tuple[DefinitionNode, ...],
 ) -> Dict[str, OperationDefinitionNode]:
     operations = {}
 

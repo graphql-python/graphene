@@ -1,7 +1,15 @@
+import re
+
 from pytest import raises
 
 from ...types import Argument, Field, Int, List, NonNull, ObjectType, Schema, String
-from ..connection import Connection, ConnectionField, PageInfo
+from ..connection import (
+    Connection,
+    ConnectionField,
+    PageInfo,
+    ConnectionOptions,
+    get_edge_class,
+)
 from ..node import Node
 
 
@@ -49,6 +57,111 @@ def test_connection_inherit_abstracttype():
     assert MyObjectConnection._meta.name == "MyObjectConnection"
     fields = MyObjectConnection._meta.fields
     assert list(fields) == ["page_info", "edges", "extra"]
+
+
+def test_connection_extra_abstract_fields():
+    class ConnectionWithNodes(Connection):
+        class Meta:
+            abstract = True
+
+        @classmethod
+        def __init_subclass_with_meta__(cls, node=None, name=None, **options):
+            _meta = ConnectionOptions(cls)
+
+            _meta.fields = {
+                "nodes": Field(
+                    NonNull(List(node)),
+                    description="Contains all the nodes in this connection.",
+                ),
+            }
+
+            return super(ConnectionWithNodes, cls).__init_subclass_with_meta__(
+                node=node, name=name, _meta=_meta, **options
+            )
+
+    class MyObjectConnection(ConnectionWithNodes):
+        class Meta:
+            node = MyObject
+
+        class Edge:
+            other = String()
+
+    assert MyObjectConnection._meta.name == "MyObjectConnection"
+    fields = MyObjectConnection._meta.fields
+    assert list(fields) == ["nodes", "page_info", "edges"]
+    edge_field = fields["edges"]
+    pageinfo_field = fields["page_info"]
+    nodes_field = fields["nodes"]
+
+    assert isinstance(edge_field, Field)
+    assert isinstance(edge_field.type, NonNull)
+    assert isinstance(edge_field.type.of_type, List)
+    assert edge_field.type.of_type.of_type == MyObjectConnection.Edge
+
+    assert isinstance(pageinfo_field, Field)
+    assert isinstance(pageinfo_field.type, NonNull)
+    assert pageinfo_field.type.of_type == PageInfo
+
+    assert isinstance(nodes_field, Field)
+    assert isinstance(nodes_field.type, NonNull)
+    assert isinstance(nodes_field.type.of_type, List)
+    assert nodes_field.type.of_type.of_type == MyObject
+
+
+def test_connection_override_fields():
+    class ConnectionWithNodes(Connection):
+        class Meta:
+            abstract = True
+
+        @classmethod
+        def __init_subclass_with_meta__(cls, node=None, name=None, **options):
+            _meta = ConnectionOptions(cls)
+            base_name = (
+                re.sub("Connection$", "", name or cls.__name__) or node._meta.name
+            )
+
+            edge_class = get_edge_class(cls, node, base_name)
+
+            _meta.fields = {
+                "page_info": Field(
+                    NonNull(
+                        PageInfo,
+                        name="pageInfo",
+                        required=True,
+                        description="Pagination data for this connection.",
+                    )
+                ),
+                "edges": Field(
+                    NonNull(List(NonNull(edge_class))),
+                    description="Contains the nodes in this connection.",
+                ),
+            }
+
+            return super(ConnectionWithNodes, cls).__init_subclass_with_meta__(
+                node=node, name=name, _meta=_meta, **options
+            )
+
+    class MyObjectConnection(ConnectionWithNodes):
+        class Meta:
+            node = MyObject
+
+    assert MyObjectConnection._meta.name == "MyObjectConnection"
+    fields = MyObjectConnection._meta.fields
+    assert list(fields) == ["page_info", "edges"]
+    edge_field = fields["edges"]
+    pageinfo_field = fields["page_info"]
+
+    assert isinstance(edge_field, Field)
+    assert isinstance(edge_field.type, NonNull)
+    assert isinstance(edge_field.type.of_type, List)
+    assert isinstance(edge_field.type.of_type.of_type, NonNull)
+
+    assert edge_field.type.of_type.of_type.of_type.__name__ == "MyObjectEdge"
+
+    # This page info is NonNull
+    assert isinstance(pageinfo_field, Field)
+    assert isinstance(edge_field.type, NonNull)
+    assert pageinfo_field.type.of_type == PageInfo
 
 
 def test_connection_name():

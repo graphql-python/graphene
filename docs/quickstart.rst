@@ -28,7 +28,7 @@ Compare Graphene's *code-first* approach to building a GraphQL API with *schema-
 
 .. _Apollo Server: https://www.apollographql.com/docs/apollo-server/
 
-.. _Ariadne: https://ariadne.readthedocs.io
+.. _Ariadne: https://ariadnegraphql.org/
 
 Graphene is fully featured with integrations for the most popular web frameworks and ORMs. Graphene produces schemas that are fully compliant with the GraphQL spec and provides tools and patterns for building a Relay-Compliant API as well.
 
@@ -37,12 +37,12 @@ An example in Graphene
 
 Let’s build a basic GraphQL schema to say "hello" and "goodbye" in Graphene.
 
-When we send a **Query** requesting only one **Field**, ``hello``, and specify a value for the ``name`` **Argument**...
+When we send a **Query** requesting only one **Field**, ``hello``, and specify a value for the ``firstName`` **Argument**...
 
 .. code::
 
     {
-      hello(name: "friend")
+      hello(firstName: "friend")
     }
 
 ...we would expect the following Response containing only the data requested (the ``goodbye`` field is not resolved).
@@ -59,7 +59,7 @@ When we send a **Query** requesting only one **Field**, ``hello``, and specify a
 Requirements
 ~~~~~~~~~~~~
 
--  Python (2.7, 3.4, 3.5, 3.6, pypy)
+-  Python (3.6, 3.7, 3.8, 3.9, 3.10, pypy)
 -  Graphene (3.0)
 
 Project setup
@@ -79,14 +79,15 @@ In Graphene, we can define a simple schema using the following code:
     from graphene import ObjectType, String, Schema
 
     class Query(ObjectType):
-        # this defines a Field `hello` in our Schema with a single Argument `name`
-        hello = String(name=String(default_value="stranger"))
+        # this defines a Field `hello` in our Schema with a single Argument `first_name`
+        # By default, the argument name will automatically be camel-based into firstName in the generated schema
+        hello = String(first_name=String(default_value="stranger"))
         goodbye = String()
 
         # our Resolver method takes the GraphQL context (root, info) as well as
-        # Argument (name) for the Field and returns data for the query Response
-        def resolve_hello(root, info, name):
-            return f'Hello {name}!'
+        # Argument (first_name) for the Field and returns data for the query Response
+        def resolve_hello(root, info, first_name):
+            return f'Hello {first_name}!'
 
         def resolve_goodbye(root, info):
             return 'See ya!'
@@ -110,7 +111,7 @@ In the `GraphQL Schema Definition Language`_, we could describe the fields defin
 .. code::
 
     type Query {
-      hello(name: String = "stranger"): String
+      hello(firstName: String = "stranger"): String
       goodbye: String
     }
 
@@ -130,7 +131,7 @@ Then we can start querying our **Schema** by passing a GraphQL query string to `
     # "Hello stranger!"
 
     # or passing the argument in the query
-    query_with_argument = '{ hello(name: "GraphQL") }'
+    query_with_argument = '{ hello(firstName: "GraphQL") }'
     result = schema.execute(query_with_argument)
     print(result.data['hello'])
     # "Hello GraphQL!"

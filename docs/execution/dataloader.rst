@@ -36,10 +36,10 @@ and then call your batch function with all requested keys.
     user_loader = UserLoader()
 
     user1 = await user_loader.load(1)
-    user1_best_friend = await user_loader.load(user1.best_friend_id))
+    user1_best_friend = await user_loader.load(user1.best_friend_id)
 
     user2 = await user_loader.load(2)
-    user2_best_friend = await user_loader.load(user2.best_friend_id))
+    user2_best_friend = await user_loader.load(user2.best_friend_id)
 
 
 A naive application may have issued *four* round-trips to a backend for the

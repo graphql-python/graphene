@@ -65,6 +65,21 @@ def test_enum_from_builtin_enum():
     assert RGB.BLUE
 
 
+def test_enum_custom_description_in_constructor():
+    description = "An enumeration, but with a custom description"
+    RGB = Enum(
+        "RGB",
+        "RED,GREEN,BLUE",
+        description=description,
+    )
+    assert RGB._meta.description == description
+
+
+def test_enum_from_python3_enum_uses_default_builtin_doc():
+    RGB = Enum("RGB", "RED,GREEN,BLUE")
+    assert RGB._meta.description == "An enumeration."
+
+
 def test_enum_from_builtin_enum_accepts_lambda_description():
     def custom_description(value):
         if not value:
@@ -518,3 +533,83 @@ def test_mutation_enum_input_type():
     assert result.data == {"createPaint": {"color": "RED"}}
 
     assert color_input_value == RGB.RED
+
+
+def test_hashable_enum():
+    class RGB(Enum):
+        """Available colors"""
+
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    color_map = {RGB.RED: "a", RGB.BLUE: "b", 1: "c"}
+
+    assert color_map[RGB.RED] == "a"
+    assert color_map[RGB.BLUE] == "b"
+    assert color_map[1] == "c"
+
+
+def test_hashable_instance_creation_enum():
+    Episode = Enum("Episode", [("NEWHOPE", 4), ("EMPIRE", 5), ("JEDI", 6)])
+
+    trilogy_map = {Episode.NEWHOPE: "better", Episode.EMPIRE: "best", 5: "foo"}
+
+    assert trilogy_map[Episode.NEWHOPE] == "better"
+    assert trilogy_map[Episode.EMPIRE] == "best"
+    assert trilogy_map[5] == "foo"
+
+
+def test_enum_iteration():
+    class TestEnum(Enum):
+        FIRST = 1
+        SECOND = 2
+
+    result = []
+    expected_values = ["FIRST", "SECOND"]
+    for c in TestEnum:
+        result.append(c.name)
+    assert result == expected_values
+
+
+def test_iterable_instance_creation_enum():
+    TestEnum = Enum("TestEnum", [("FIRST", 1), ("SECOND", 2)])
+
+    result = []
+    expected_values = ["FIRST", "SECOND"]
+    for c in TestEnum:
+        result.append(c.name)
+    assert result == expected_values
+
+
+# https://github.com/graphql-python/graphene/issues/1321
+def test_enum_description_member_not_interpreted_as_property():
+    class RGB(Enum):
+        """Description"""
+
+        red = "red"
+        green = "green"
+        blue = "blue"
+        description = "description"
+        deprecation_reason = "deprecation_reason"
+
+    class Query(ObjectType):
+        color = RGB()
+
+        def resolve_color(_, info):
+            return RGB.description
+
+    values = RGB._meta.enum.__members__.values()
+    assert sorted(v.name for v in values) == [
+        "blue",
+        "deprecation_reason",
+        "description",
+        "green",
+        "red",
+    ]
+
+    schema = Schema(query=Query)
+
+    results = schema.execute("query { color }")
+    assert not results.errors
+    assert results.data["color"] == RGB.description.name

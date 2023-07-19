@@ -3,6 +3,7 @@ from pytest import mark
 from graphene.types import ID, Field, ObjectType, Schema
 from graphene.types.scalars import String
 from graphene.relay.mutation import ClientIDMutation
+from graphene.test import Client
 
 
 class SharedFields(object):
@@ -61,24 +62,27 @@ class Mutation(ObjectType):
 
 
 schema = Schema(query=RootQuery, mutation=Mutation)
+client = Client(schema)
 
 
 @mark.asyncio
 async def test_node_query_promise():
-    executed = await schema.execute_async(
+    executed = await client.execute_async(
         'mutation a { sayPromise(input: {what:"hello", clientMutationId:"1"}) { phrase } }'
     )
-    assert not executed.errors
-    assert executed.data == {"sayPromise": {"phrase": "hello"}}
+    assert isinstance(executed, dict)
+    assert "errors" not in executed
+    assert executed["data"] == {"sayPromise": {"phrase": "hello"}}
 
 
 @mark.asyncio
 async def test_edge_query():
-    executed = await schema.execute_async(
+    executed = await client.execute_async(
         'mutation a { other(input: {clientMutationId:"1"}) { clientMutationId, myNodeEdge { cursor node { name }} } }'
     )
-    assert not executed.errors
-    assert dict(executed.data) == {
+    assert isinstance(executed, dict)
+    assert "errors" not in executed
+    assert executed["data"] == {
         "other": {
             "clientMutationId": "1",
             "myNodeEdge": {"cursor": "1", "node": {"name": "name"}},
