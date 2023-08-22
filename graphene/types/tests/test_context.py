@@ -18,7 +18,6 @@ test_schema = Schema(query=Query)
 
 
 def test_context_with_kwargs():
-
     class Request:
         pass
 
@@ -30,7 +29,6 @@ def test_context_with_kwargs():
 
 
 def text_context_with_dict():
-
     class Request:
         pass
 
