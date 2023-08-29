@@ -1,8 +1,6 @@
 from ..utils.subclass_with_meta import SubclassWithMeta
 from ..utils.trim_docstring import trim_docstring
 
-from typing import Type
-
 
 class BaseOptions:
     name = None  # type: str
