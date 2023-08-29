@@ -3,7 +3,7 @@ from collections import OrderedDict
 try:
     from collections.abc import Mapping
 except ImportError:
-    from collections import Mapping
+    from collections.abc import Mapping
 
 
 def deflate(node, index=None, path=None):

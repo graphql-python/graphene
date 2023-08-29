@@ -48,7 +48,7 @@ class Argument(MountedType):
         required=False,
         _creation_counter=None,
     ):
-        super(Argument, self).__init__(_creation_counter=_creation_counter)
+        super().__init__(_creation_counter=_creation_counter)
 
         if required:
             type = NonNull(type)

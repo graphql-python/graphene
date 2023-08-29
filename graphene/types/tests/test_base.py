@@ -9,7 +9,7 @@ class CustomType(BaseType):
     @classmethod
     def __init_subclass_with_meta__(cls, **options):
         _meta = CustomOptions(cls)
-        super(CustomType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
 
 def test_basetype():

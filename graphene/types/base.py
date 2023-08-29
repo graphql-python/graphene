@@ -4,7 +4,7 @@ from ..utils.trim_docstring import trim_docstring
 from typing import Type
 
 
-class BaseOptions(object):
+class BaseOptions:
     name = None  # type: str
     description = None  # type: str
 
@@ -18,7 +18,7 @@ class BaseOptions(object):
 
     def __setattr__(self, name, value):
         if not self._frozen:
-            super(BaseOptions, self).__setattr__(name, value)
+            super().__setattr__(name, value)
         else:
             raise Exception("Can't modify frozen Options {}".format(self))
 
@@ -42,4 +42,4 @@ class BaseType(SubclassWithMeta):
         _meta.description = description or trim_docstring(cls.__doc__)
         _meta.freeze()
         cls._meta = _meta
-        super(BaseType, cls).__init_subclass_with_meta__()
+        super().__init_subclass_with_meta__()

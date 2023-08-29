@@ -3,7 +3,6 @@
 Back port of Python 3.3's function signature tools from the inspect module,
 modified to be compatible with Python 2.7 and 3.2+.
 """
-from __future__ import absolute_import, division, print_function
 
 import functools
 import itertools
@@ -177,11 +176,11 @@ def signature(obj):
     raise ValueError("callable {!r} is not supported by signature".format(obj))
 
 
-class _void(object):
+class _void:
     """A private marker - used in Parameter & Signature"""
 
 
-class _empty(object):
+class _empty:
     pass
 
 
@@ -205,7 +204,7 @@ _KEYWORD_ONLY = _ParameterKind(3, name="KEYWORD_ONLY")
 _VAR_KEYWORD = _ParameterKind(4, name="VAR_KEYWORD")
 
 
-class Parameter(object):
+class Parameter:
     """Represents a parameter in a function signature.
     Has the following public attributes:
     * name : str
@@ -236,7 +235,6 @@ class Parameter(object):
     def __init__(
         self, name, kind, default=_empty, annotation=_empty, _partial_kwarg=False
     ):
-
         if kind not in (
             _POSITIONAL_ONLY,
             _POSITIONAL_OR_KEYWORD,
@@ -361,7 +359,7 @@ class Parameter(object):
         return not self.__eq__(other)
 
 
-class BoundArguments(object):
+class BoundArguments:
     """Result of `Signature.bind` call.  Holds the mapping of arguments
     to the function's parameters.
     Has the following public attributes:
@@ -456,7 +454,7 @@ class BoundArguments(object):
         return not self.__eq__(other)
 
 
-class Signature(object):
+class Signature:
     """A Signature object represents the overall signature of a function.
     It stores a Parameter object for each parameter accepted by the
     function, as well as information specific to the function itself.
@@ -517,7 +515,7 @@ class Signature(object):
                         raise ValueError(msg)
                     params[name] = param
             else:
-                params = OrderedDict(((param.name, param) for param in parameters))
+                params = OrderedDict((param.name, param) for param in parameters)
 
         self._parameters = params
         self._return_annotation = return_annotation

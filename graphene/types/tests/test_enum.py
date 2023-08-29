@@ -113,7 +113,6 @@ def test_enum_from_builtin_enum_accepts_lambda_description():
 
 
 def test_enum_from_python3_enum_uses_enum_doc():
-
     from enum import Enum as PyEnum
 
     class Color(PyEnum):

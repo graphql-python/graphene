@@ -39,7 +39,7 @@ def test_connection():
 
 
 def test_connection_inherit_abstracttype():
-    class BaseConnection(object):
+    class BaseConnection:
         extra = String()
 
     class MyObjectConnection(BaseConnection, Connection):
@@ -54,7 +54,7 @@ def test_connection_inherit_abstracttype():
 def test_connection_name():
     custom_name = "MyObjectCustomNameConnection"
 
-    class BaseConnection(object):
+    class BaseConnection:
         extra = String()
 
     class MyObjectConnection(BaseConnection, Connection):
@@ -86,7 +86,7 @@ def test_edge():
 
 
 def test_edge_with_bases():
-    class BaseEdge(object):
+    class BaseEdge:
         extra = String()
 
     class MyObjectConnection(Connection):

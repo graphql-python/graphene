@@ -14,9 +14,7 @@ class MyInputClass(graphene.InputObjectType):
         if _meta is None:
             _meta = graphene.types.inputobjecttype.InputObjectTypeOptions(cls)
         _meta.fields = fields
-        super(MyInputClass, cls).__init_subclass_with_meta__(
-            container=container, _meta=_meta, **options
-        )
+        super().__init_subclass_with_meta__(container=container, _meta=_meta, **options)
 
 
 class MyInput(MyInputClass):

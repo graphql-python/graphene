@@ -28,7 +28,7 @@ def is_node(objecttype):
 
 class GlobalID(Field):
     def __init__(self, node=None, parent_type=None, required=True, *args, **kwargs):
-        super(GlobalID, self).__init__(ID, required=required, *args, **kwargs)
+        super().__init__(ID, required=required, *args, **kwargs)
         self.node = node or Node
         self.parent_type_name = parent_type._meta.name if parent_type else None
 
@@ -53,7 +53,7 @@ class NodeField(Field):
         self.node_type = node
         self.field_type = type
 
-        super(NodeField, self).__init__(
+        super().__init__(
             # If we don's specify a type, the field type will be the node
             # interface
             type or node,
@@ -75,7 +75,7 @@ class AbstractNode(Interface):
         _meta.fields = OrderedDict(
             id=GlobalID(cls, description="The ID of the object.")
         )
-        super(AbstractNode, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
 
 class Node(AbstractNode):

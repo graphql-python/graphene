@@ -60,7 +60,7 @@ class Interface(BaseType):
         else:
             _meta.fields = fields
 
-        super(Interface, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def resolve_type(cls, instance, info):

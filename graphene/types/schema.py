@@ -93,7 +93,7 @@ class Schema(GraphQLSchema):
 
         Example: using schema.Query for accessing the "Query" type in the Schema
         """
-        _type = super(Schema, self).get_type(type_name)
+        _type = super().get_type(type_name)
         if _type is None:
             raise AttributeError('Type "{}" not found in the Schema'.format(type_name))
         if isinstance(_type, GrapheneGraphQLType):

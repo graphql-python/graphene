@@ -129,7 +129,7 @@ class Mutation(ObjectType):
         _meta.resolver = resolver
         _meta.arguments = arguments
 
-        super(Mutation, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def Field(

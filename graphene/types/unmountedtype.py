@@ -40,7 +40,7 @@ class UnmountedType(OrderedType):
     """
 
     def __init__(self, *args, **kwargs):
-        super(UnmountedType, self).__init__()
+        super().__init__()
         self.args = args
         self.kwargs = kwargs
 

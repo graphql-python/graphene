@@ -28,7 +28,7 @@ def test_query():
 
 
 def test_query_source():
-    class Root(object):
+    class Root:
         _hello = "World"
 
         def hello(self):
@@ -45,10 +45,10 @@ def test_query_source():
 
 
 def test_query_union():
-    class one_object(object):
+    class one_object:
         pass
 
-    class two_object(object):
+    class two_object:
         pass
 
     class One(ObjectType):
@@ -83,10 +83,10 @@ def test_query_union():
 
 
 def test_query_interface():
-    class one_object(object):
+    class one_object:
         pass
 
-    class two_object(object):
+    class two_object:
         pass
 
     class MyInterface(Interface):

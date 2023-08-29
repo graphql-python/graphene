@@ -126,7 +126,7 @@ class ObjectType(BaseType):
         _meta.possible_types = possible_types
         _meta.default_resolver = default_resolver
 
-        super(ObjectType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
     is_type_of = None
 
