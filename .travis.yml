@@ -2,10 +2,11 @@ language: python
 dist: xenial
 
 python:
-  - "2.7"
-  - "3.5"
-  - "3.6"
-  - "3.7"
+  - "3.8"
+  - "3.9"
+  - "3.10"
+  - "3.11"
+  - "3.12"
 
 install:
   - pip install tox tox-travis
@@ -27,11 +28,11 @@ jobs:
   fast_finish: true
   include:
     - env: TOXENV=pre-commit
-      python: 3.7
+      python: 3.11
     - env: TOXENV=mypy
-      python: 3.7
+      python: 3.11
     - stage: deploy
-      python: 3.7
+      python: 3.11
       after_success: true
       deploy:
         provider: pypi
