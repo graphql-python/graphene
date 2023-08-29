@@ -1,5 +1,4 @@
 from promise import Promise, is_thenable
-import six
 from graphql.error import format_error as format_graphql_error
 from graphql.error import GraphQLError
 
@@ -9,8 +8,7 @@ from graphene.types.schema import Schema
 def default_format_error(error):
     if isinstance(error, GraphQLError):
         return format_graphql_error(error)
-
-    return {"message": six.text_type(error)}
+    return {"message": str(error)}
 
 
 def format_execution_result(execution_result, format_error):
