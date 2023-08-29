@@ -11,12 +11,12 @@ if MYPY:
     from typing import Dict, Callable  # NOQA
 
 
-class InputObjectTypeOptions(BaseOptions):
+class InputObjectTypeOptions(BaseOptions):  # type: ignore
     fields = None  # type: Dict[str, InputField]
     container = None  # type: InputObjectTypeContainer
 
 
-class InputObjectTypeContainer(dict, BaseType):
+class InputObjectTypeContainer(dict, BaseType):  # type: ignore
     class Meta:
         abstract = True
 
