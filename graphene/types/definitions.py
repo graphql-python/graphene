@@ -8,7 +8,7 @@ from graphql import (
 )
 
 
-class GrapheneGraphQLType(object):
+class GrapheneGraphQLType:
     """
     A class for extending the base GraphQLType with the related
     graphene_type
@@ -16,7 +16,7 @@ class GrapheneGraphQLType(object):
 
     def __init__(self, *args, **kwargs):
         self.graphene_type = kwargs.pop("graphene_type")
-        super(GrapheneGraphQLType, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class GrapheneInterfaceType(GrapheneGraphQLType, GraphQLInterfaceType):

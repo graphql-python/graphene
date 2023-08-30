@@ -9,7 +9,7 @@ class Structure(UnmountedType):
     """
 
     def __init__(self, of_type, *args, **kwargs):
-        super(Structure, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if not isinstance(of_type, Structure) and isinstance(of_type, UnmountedType):
             cls_name = type(self).__name__
             of_type_name = type(of_type).__name__
@@ -84,7 +84,7 @@ class NonNull(Structure):
     """
 
     def __init__(self, *args, **kwargs):
-        super(NonNull, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         assert not isinstance(self._of_type, NonNull), (
             "Can only create NonNull of a Nullable GraphQLType but got: {}."
         ).format(self._of_type)

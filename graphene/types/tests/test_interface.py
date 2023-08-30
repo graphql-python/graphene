@@ -3,7 +3,7 @@ from ..interface import Interface
 from ..unmountedtype import UnmountedType
 
 
-class MyType(object):
+class MyType:
     pass
 
 
@@ -57,7 +57,7 @@ def test_generate_interface_unmountedtype():
 
 
 def test_generate_interface_inherit_abstracttype():
-    class MyAbstractType(object):
+    class MyAbstractType:
         field1 = MyScalar()
 
     class MyInterface(Interface, MyAbstractType):
@@ -80,7 +80,7 @@ def test_generate_interface_inherit_interface():
 
 
 def test_generate_interface_inherit_abstracttype_reversed():
-    class MyAbstractType(object):
+    class MyAbstractType:
         field1 = MyScalar()
 
     class MyInterface(MyAbstractType, Interface):

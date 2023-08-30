@@ -11,12 +11,12 @@ if MYPY:
     from typing import Dict, Callable  # NOQA
 
 
-class InputObjectTypeOptions(BaseOptions):
+class InputObjectTypeOptions(BaseOptions):  # type: ignore
     fields = None  # type: Dict[str, InputField]
     container = None  # type: InputObjectTypeContainer
 
 
-class InputObjectTypeContainer(dict, BaseType):
+class InputObjectTypeContainer(dict, BaseType):  # type: ignore
     class Meta:
         abstract = True
 
@@ -81,7 +81,7 @@ class InputObjectType(UnmountedType, BaseType):
         if container is None:
             container = type(cls.__name__, (InputObjectTypeContainer, cls), {})
         _meta.container = container
-        super(InputObjectType, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def get_type(cls):

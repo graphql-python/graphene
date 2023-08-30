@@ -45,20 +45,18 @@ class PyTest(TestCommand):
 
 
 tests_require = [
-    "pytest",
-    "pytest-benchmark",
-    "pytest-cov",
-    "pytest-mock",
+    "pytest>=7,<8",
+    "pytest-benchmark>=4,<5",
+    "pytest-cov>=4,<5",
+    "pytest-mock>=3,<4",
     # pinning fastdiff dep (required by snapshottest) because later versions
     # require wasmer 1.0.0 which is not compatible with Python 2.7
     "fastdiff==0.2.0",
-    "snapshottest",
-    "coveralls",
+    "snapshottest>=0.6,<1",
+    "coveralls>=3.3,<4",
     "promise",
-    "six",
-    "mock",
-    "pytz",
-    "iso8601",
+    "mock>=5,<6",
+    "iso8601>=2,<3",
 ]
 
 setup(
@@ -76,18 +74,16 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
     keywords="api graphql protocol rest relay graphene",
     packages=find_packages(exclude=["tests", "tests.*", "examples"]),
     install_requires=[
-        "six>=1.10.0,<2",
         "graphql-core>=2.1,<3",
         "graphql-relay>=2,<3",
         "aniso8601>=3,<=7",

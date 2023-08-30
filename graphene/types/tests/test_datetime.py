@@ -1,6 +1,5 @@
 import datetime
 
-import pytz
 from graphql import GraphQLError
 import pytest
 
@@ -29,7 +28,7 @@ schema = Schema(query=Query)
 
 @pytest.fixture
 def sample_datetime():
-    utc_datetime = datetime.datetime(2019, 5, 25, 5, 30, 15, 10, pytz.utc)
+    utc_datetime = datetime.datetime(2019, 5, 25, 5, 30, 15, 10, datetime.timezone.utc)
     return utc_datetime
 
 
@@ -111,7 +110,7 @@ def test_datetime_query_variable(sample_datetime):
     # test datetime variable provided as Python datetime
     result = schema.execute(
         """query Test($date: DateTime){ datetime(in: $date) }""",
-        variables={"date": sample_datetime},
+        variable_values={"date": sample_datetime},
     )
     assert not result.errors
     assert result.data == {"datetime": isoformat}
@@ -119,7 +118,7 @@ def test_datetime_query_variable(sample_datetime):
     # test datetime variable in string representation
     result = schema.execute(
         """query Test($date: DateTime){ datetime(in: $date) }""",
-        variables={"date": isoformat},
+        variable_values={"date": isoformat},
     )
     assert not result.errors
     assert result.data == {"datetime": isoformat}
@@ -131,14 +130,15 @@ def test_date_query_variable(sample_date):
     # test date variable provided as Python date
     result = schema.execute(
         """query Test($date: Date){ date(in: $date) }""",
-        variables={"date": sample_date},
+        variable_values={"date": sample_date},
     )
     assert not result.errors
     assert result.data == {"date": isoformat}
 
     # test date variable in string representation
     result = schema.execute(
-        """query Test($date: Date){ date(in: $date) }""", variables={"date": isoformat}
+        """query Test($date: Date){ date(in: $date) }""",
+        variable_values={"date": isoformat},
     )
     assert not result.errors
     assert result.data == {"date": isoformat}
@@ -150,14 +150,15 @@ def test_time_query_variable(sample_time):
     # test time variable provided as Python time
     result = schema.execute(
         """query Test($time: Time){ time(at: $time) }""",
-        variables={"time": sample_time},
+        variable_values={"time": sample_time},
     )
     assert not result.errors
     assert result.data == {"time": isoformat}
 
     # test time variable in string representation
     result = schema.execute(
-        """query Test($time: Time){ time(at: $time) }""", variables={"time": isoformat}
+        """query Test($time: Time){ time(at: $time) }""",
+        variable_values={"time": isoformat},
     )
     assert not result.errors
     assert result.data == {"time": isoformat}
@@ -172,7 +173,7 @@ def test_bad_variables(sample_date, sample_datetime, sample_time):
             """query Test($input: {}){{ {}(in: $input) }}""".format(
                 type_, type_.lower()
             ),
-            variables={"input": input_},
+            variable_values={"input": input_},
         )
         assert len(result.errors) == 1
         # when `input` is not JSON serializable formatting the error message in

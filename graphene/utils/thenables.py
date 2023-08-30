@@ -9,7 +9,7 @@ try:
     from promise import Promise, is_thenable  # type: ignore
 except ImportError:
 
-    class Promise(object):  # type: ignore
+    class Promise:  # type: ignore
         pass
 
     def is_thenable(obj):  # type: ignore

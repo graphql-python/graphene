@@ -4,7 +4,7 @@ from collections import OrderedDict
 try:
     from collections.abc import Iterable
 except ImportError:
-    from collections import Iterable
+    from collections.abc import Iterable
 
 from functools import partial
 
@@ -72,7 +72,7 @@ class Connection(ObjectType):
         edge_class = getattr(cls, "Edge", None)
         _node = node
 
-        class EdgeBase(object):
+        class EdgeBase:
             node = Field(_node, description="The item at the end of the edge")
             cursor = String(required=True, description="A cursor for use in pagination")
 
@@ -112,9 +112,7 @@ class Connection(ObjectType):
                 ),
             ]
         )
-        return super(Connection, cls).__init_subclass_with_meta__(
-            _meta=_meta, **options
-        )
+        return super().__init_subclass_with_meta__(_meta=_meta, **options)
 
 
 class IterableConnectionField(Field):
@@ -123,11 +121,11 @@ class IterableConnectionField(Field):
         kwargs.setdefault("after", String())
         kwargs.setdefault("first", Int())
         kwargs.setdefault("last", Int())
-        super(IterableConnectionField, self).__init__(type, *args, **kwargs)
+        super().__init__(type, *args, **kwargs)
 
     @property
     def type(self):
-        type = super(IterableConnectionField, self).type
+        type = super().type
         connection_type = type
         if isinstance(type, NonNull):
             connection_type = type.of_type
@@ -173,7 +171,7 @@ class IterableConnectionField(Field):
         return maybe_thenable(resolved, on_resolve)
 
     def get_resolver(self, parent_resolver):
-        resolver = super(IterableConnectionField, self).get_resolver(parent_resolver)
+        resolver = super().get_resolver(parent_resolver)
         return partial(self.connection_resolver, resolver, self.type)
 
 

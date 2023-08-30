@@ -6,8 +6,7 @@ from ...types import ObjectType, Schema, String
 from ..node import Node, is_node
 
 
-class SharedNodeFields(object):
-
+class SharedNodeFields:
     shared = String()
     something_else = String()
 

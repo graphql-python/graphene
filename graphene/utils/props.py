@@ -2,7 +2,7 @@ class _OldClass:
     pass
 
 
-class _NewClass(object):
+class _NewClass:
     pass
 
 

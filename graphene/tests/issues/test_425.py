@@ -16,9 +16,7 @@ class SpecialObjectType(ObjectType):
     def __init_subclass_with_meta__(cls, other_attr="default", **options):
         _meta = SpecialOptions(cls)
         _meta.other_attr = other_attr
-        super(SpecialObjectType, cls).__init_subclass_with_meta__(
-            _meta=_meta, **options
-        )
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
 
 def test_special_objecttype_could_be_subclassed():
@@ -55,9 +53,7 @@ class SpecialInputObjectType(InputObjectType):
     def __init_subclass_with_meta__(cls, other_attr="default", **options):
         _meta = SpecialInputObjectTypeOptions(cls)
         _meta.other_attr = other_attr
-        super(SpecialInputObjectType, cls).__init_subclass_with_meta__(
-            _meta=_meta, **options
-        )
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
 
 def test_special_inputobjecttype_could_be_subclassed():
@@ -92,7 +88,7 @@ class SpecialEnum(Enum):
     def __init_subclass_with_meta__(cls, other_attr="default", **options):
         _meta = SpecialEnumOptions(cls)
         _meta.other_attr = other_attr
-        super(SpecialEnum, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
 
 def test_special_enum_could_be_subclassed():

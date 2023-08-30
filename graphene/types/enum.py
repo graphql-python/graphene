@@ -1,7 +1,5 @@
 from collections import OrderedDict
 
-import six
-
 from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
 
 from ..pyutils.compat import Enum as PyEnum
@@ -52,7 +50,7 @@ class EnumMeta(SubclassWithMeta_Meta):
                 description=description,
                 deprecation_reason=deprecation_reason,
             )
-        return super(EnumMeta, cls).__call__(*args, **kwargs)
+        return super().__call__(*args, **kwargs)
         # return cls._meta.enum(*args, **kwargs)
 
     def from_enum(cls, enum, description=None, deprecation_reason=None):  # noqa: N805
@@ -66,7 +64,7 @@ class EnumMeta(SubclassWithMeta_Meta):
         return type(meta_class.enum.__name__, (Enum,), {"Meta": meta_class})
 
 
-class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
+class Enum(UnmountedType, BaseType, metaclass=EnumMeta):
     """
     Enum type definition
 
@@ -100,7 +98,7 @@ class Enum(six.with_metaclass(EnumMeta, UnmountedType, BaseType)):
         for key, value in _meta.enum.__members__.items():
             setattr(cls, key, value)
 
-        super(Enum, cls).__init_subclass_with_meta__(_meta=_meta, **options)
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def get_type(cls):

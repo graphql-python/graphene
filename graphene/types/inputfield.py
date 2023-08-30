@@ -55,7 +55,7 @@ class InputField(MountedType):
         _creation_counter=None,
         **extra_args
     ):
-        super(InputField, self).__init__(_creation_counter=_creation_counter)
+        super().__init__(_creation_counter=_creation_counter)
         self.name = name
         if required:
             type = NonNull(type)

@@ -38,7 +38,7 @@ def test_serializes_output_string():
     assert String.serialize(-1.1) == "-1.1"
     assert String.serialize(True) == "true"
     assert String.serialize(False) == "false"
-    assert String.serialize(u"\U0001F601") == u"\U0001F601"
+    assert String.serialize("\U0001F601") == "\U0001F601"
 
 
 def test_serializes_output_boolean():

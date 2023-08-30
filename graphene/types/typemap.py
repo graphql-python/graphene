@@ -77,7 +77,7 @@ class TypeMap(GraphQLTypeMap):
     def __init__(self, types, auto_camelcase=True, schema=None):
         self.auto_camelcase = auto_camelcase
         self.schema = schema
-        super(TypeMap, self).__init__(types)
+        super().__init__(types)
 
     def reducer(self, map, type):
         if not type:

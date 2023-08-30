@@ -39,7 +39,7 @@ def test_generic_query_variable():
     ]:
         result = schema.execute(
             """query Test($generic: GenericScalar){ generic(input: $generic) }""",
-            variables={"generic": generic_value},
+            variable_values={"generic": generic_value},
         )
         assert not result.errors
         assert result.data == {"generic": generic_value}

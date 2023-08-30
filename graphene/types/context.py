@@ -1,4 +1,4 @@
-class Context(object):
+class Context:
     """
     Context can be used to make a convenient container for attributes to provide
     for execution for resolvers of a GraphQL operation like a query.
