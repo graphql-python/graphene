@@ -45,18 +45,18 @@ class PyTest(TestCommand):
 
 
 tests_require = [
-    "pytest",
-    "pytest-benchmark",
-    "pytest-cov",
-    "pytest-mock",
+    "pytest>=7,<8",
+    "pytest-benchmark>=4,<5",
+    "pytest-cov>=4,<5",
+    "pytest-mock>=3,<4",
     # pinning fastdiff dep (required by snapshottest) because later versions
     # require wasmer 1.0.0 which is not compatible with Python 2.7
     "fastdiff==0.2.0",
-    "snapshottest",
-    "coveralls",
+    "snapshottest>=0.6,<1",
+    "coveralls>=3.3,<4",
     "promise",
-    "mock",
-    "iso8601",
+    "mock>=5,<6",
+    "iso8601>=2,<3",
 ]
 
 setup(
