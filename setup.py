@@ -45,16 +45,16 @@ class PyTest(TestCommand):
 
 
 tests_require = [
-    "pytest>=6,<7",
-    "pytest-benchmark>=3.4,<4",
-    "pytest-cov>=3,<4",
+    "pytest>=7,<8",
+    "pytest-benchmark>=4,<5",
+    "pytest-cov>=4,<5",
     "pytest-mock>=3,<4",
     "pytest-asyncio>=0.16,<2",
     "snapshottest>=0.6,<1",
     "coveralls>=3.3,<4",
-    "mock>=4,<5",
+    "mock>=5,<6",
     "pytz==2022.1",
-    "iso8601>=1,<2",
+    "iso8601>=2,<3",
 ]
 
 dev_requires = ["black==22.3.0", "flake8>=4,<5"] + tests_require
