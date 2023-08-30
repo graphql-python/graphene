@@ -28,7 +28,7 @@ def test_decimal_string_query_variable():
 
     result = schema.execute(
         """query Test($decimal: Decimal){ decimal(input: $decimal) }""",
-        variables={"decimal": decimal_value},
+        variable_values={"decimal": decimal_value},
     )
     assert not result.errors
     assert result.data == {"decimal": str(decimal_value)}

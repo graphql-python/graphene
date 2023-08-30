@@ -24,7 +24,7 @@ def test_abstract_objecttype_warn_deprecation(mocker):
 
 
 def test_generate_objecttype_inherit_abstracttype():
-    class MyAbstractType(AbstractType):
+    class MyAbstractType:
         field1 = MyScalar()
 
     class MyObjectType(ObjectType, MyAbstractType):

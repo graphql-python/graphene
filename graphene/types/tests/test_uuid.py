@@ -25,7 +25,7 @@ def test_uuidstring_query_variable():
 
     result = schema.execute(
         """query Test($uuid: UUID){ uuid(input: $uuid) }""",
-        variables={"uuid": uuid_value},
+        variable_values={"uuid": uuid_value},
     )
     assert not result.errors
     assert result.data == {"uuid": uuid_value}
