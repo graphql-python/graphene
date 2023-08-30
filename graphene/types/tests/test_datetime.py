@@ -1,6 +1,5 @@
 import datetime
 
-import pytz
 from graphql import GraphQLError
 import pytest
 
@@ -29,7 +28,7 @@ schema = Schema(query=Query)
 
 @pytest.fixture
 def sample_datetime():
-    utc_datetime = datetime.datetime(2019, 5, 25, 5, 30, 15, 10, pytz.utc)
+    utc_datetime = datetime.datetime(2019, 5, 25, 5, 30, 15, 10, datetime.timezone.utc)
     return utc_datetime
 
 

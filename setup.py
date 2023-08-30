@@ -56,7 +56,6 @@ tests_require = [
     "coveralls",
     "promise",
     "mock",
-    "pytz",
     "iso8601",
 ]
 
