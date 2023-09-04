@@ -53,7 +53,6 @@ tests_require = [
     "snapshottest>=0.6,<1",
     "coveralls>=3.3,<4",
     "mock>=5,<6",
-    "pytz==2022.1",
     "iso8601>=2,<3",
 ]
 
