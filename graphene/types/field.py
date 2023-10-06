@@ -43,7 +43,8 @@ class Field(MountedType):
     args:
         type (class for a graphene.UnmountedType): Must be a class (not an instance) of an
             unmounted graphene type (ex. scalar or object) which is used for the type of this
-            field in the GraphQL schema.
+            field in the GraphQL schema. You can provide a dotted module import path (string)
+            to the class instead of the class itself (e.g. to avoid circular import issues).
         args (optional, Dict[str, graphene.Argument]): Arguments that can be input to the field.
             Prefer to use ``**extra_args``, unless you use an argument name that clashes with one
             of the Field arguments presented here (see :ref:`example<ResolverParamGraphQLArguments>`).
