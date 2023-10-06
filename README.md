@@ -114,7 +114,7 @@ tox
 If you wish to run against a specific version defined in the `tox.ini` file:
 
 ```sh
-tox -e py39
+tox -e py311
 ```
 
 Tox can only use whatever versions of Python are installed on your system. When you create a pull request, GitHub Actions pipelines will also be running the same tests and report the results, so there is no need for potential contributors to try to install every single version of Python on their own system ahead of time. We appreciate opening issues and pull requests to make graphene even more stable & useful!
