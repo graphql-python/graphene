@@ -9,7 +9,7 @@ from ...types import Int, ObjectType, Schema, String
 
 
 class TestUUIDGlobalID:
-    def setup(self):
+    def setup_method(self):
         self.user_list = [
             {"id": uuid4(), "name": "First"},
             {"id": uuid4(), "name": "Second"},
@@ -77,7 +77,7 @@ class TestUUIDGlobalID:
 
 
 class TestSimpleGlobalID:
-    def setup(self):
+    def setup_method(self):
         self.user_list = [
             {"id": "my global primary key in clear 1", "name": "First"},
             {"id": "my global primary key in clear 2", "name": "Second"},
@@ -140,7 +140,7 @@ class TestSimpleGlobalID:
 
 
 class TestCustomGlobalID:
-    def setup(self):
+    def setup_method(self):
         self.user_list = [
             {"id": 1, "name": "First"},
             {"id": 2, "name": "Second"},
@@ -219,7 +219,7 @@ class TestCustomGlobalID:
 
 
 class TestIncompleteCustomGlobalID:
-    def setup(self):
+    def setup_method(self):
         self.user_list = [
             {"id": 1, "name": "First"},
             {"id": 2, "name": "Second"},
