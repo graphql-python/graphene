@@ -141,7 +141,7 @@ file:
 
 .. code:: sh
 
-   tox -e py36
+   tox -e py311
 
 Tox can only use whatever versions of Python are installed on your
 system. When you create a pull request, Travis will also be running the

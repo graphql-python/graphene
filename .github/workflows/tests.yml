@@ -29,7 +29,6 @@ jobs:
           - {name: '3.10', python: '3.10', os: ubuntu-latest, tox: py310}
           - {name: '3.9', python: '3.9', os: ubuntu-latest, tox: py39}
           - {name: '3.8', python: '3.8', os: ubuntu-latest, tox: py38}
-          - {name: '3.7', python: '3.7', os: ubuntu-latest, tox: py37}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -54,12 +53,12 @@ jobs:
       - run: pip install tox
       - run: tox -e ${{ matrix.tox }}
       - name: Upload coverage.xml
-        if: ${{ matrix.python == '3.10' }}
+        if: ${{ matrix.python == '3.11' }}
         uses: actions/upload-artifact@v3
         with:
           name: graphene-coverage
           path: coverage.xml
           if-no-files-found: error
       - name: Upload coverage.xml to codecov
-        if: ${{ matrix.python == '3.10' }}
+        if: ${{ matrix.python == '3.11' }}
         uses: codecov/codecov-action@v3
