@@ -40,7 +40,13 @@ class SubclassWithMeta(metaclass=SubclassWithMeta_Meta):
                 "Abstract types can only contain the abstract attribute. "
                 f"Received: abstract, {', '.join(options)}"
             )
+
         else:
+            if options.get("exclude_fields", None):
+                options["exclude"] = options.pop("exclude_fields")
+            elif not (options.get("fields", None) or options.get("exclude", None)):
+                options["fields"] = "__all__"
+
             super_class = super(cls, cls)
             if hasattr(super_class, "__init_subclass_with_meta__"):
                 super_class.__init_subclass_with_meta__(**options)
