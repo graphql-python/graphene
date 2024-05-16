@@ -59,7 +59,7 @@ When we send a **Query** requesting only one **Field**, ``hello``, and specify a
 Requirements
 ~~~~~~~~~~~~
 
--  Python (3.6, 3.7, 3.8, 3.9, 3.10, pypy)
+-  Python (3.8, 3.9, 3.10, 3.11, pypy)
 -  Graphene (3.0)
 
 Project setup
