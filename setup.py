@@ -45,7 +45,7 @@ class PyTest(TestCommand):
 
 
 tests_require = [
-    "pytest>=7,<8",
+    "pytest>=8,<9",
     "pytest-benchmark>=4,<5",
     "pytest-cov>=4,<5",
     "pytest-mock>=3,<4",
