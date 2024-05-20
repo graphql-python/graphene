@@ -42,14 +42,12 @@ jobs:
 
       - name: get pip cache dir
         id: pip-cache
-        run: echo "::set-output name=dir::$(pip cache dir)"
-
+        run: echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
       - name: cache pip dependencies
         uses: actions/cache@v3
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: pip|${{ runner.os }}|${{ matrix.python }}|${{ hashFiles('setup.py') }}
-
       - run: pip install tox
       - run: tox -e ${{ matrix.tox }}
       - name: Upload coverage.xml
