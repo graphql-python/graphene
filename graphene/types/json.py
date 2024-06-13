@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import json
 
 from graphql import Undefined

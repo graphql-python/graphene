@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from decimal import Decimal as _Decimal
 
 from graphql import Undefined
