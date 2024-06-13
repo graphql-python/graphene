@@ -45,15 +45,13 @@ class PyTest(TestCommand):
 
 
 tests_require = [
-    "pytest>=6,<7",
-    "pytest-benchmark>=3.4,<4",
-    "pytest-cov>=3,<4",
+    "pytest>=7,<8",
+    "pytest-benchmark>=4,<5",
+    "pytest-cov>=4,<5",
     "pytest-mock>=3,<4",
     "pytest-asyncio>=0.16,<2",
     "snapshottest>=0.6,<1",
     "coveralls>=3.3,<4",
-    "mock>=4,<5",
-    "iso8601>=1,<2",
 ]
 
 dev_requires = ["black==22.3.0", "flake8>=4,<5"] + tests_require
@@ -73,18 +71,17 @@ setup(
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     keywords="api graphql protocol rest relay graphene",
     packages=find_packages(exclude=["examples*"]),
     install_requires=[
         "graphql-core>=3.1,<3.3",
         "graphql-relay>=3.1,<3.3",
-        "aniso8601>=8,<10",
     ],
     tests_require=tests_require,
     extras_require={"test": tests_require, "dev": dev_requires},
