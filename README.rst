@@ -141,7 +141,11 @@ file:
 
 .. code:: sh
 
+<<<<<<< support-3.12
    tox -e py311
+=======
+   tox -e py10
+>>>>>>> master
 
 Tox can only use whatever versions of Python are installed on your
 system. When you create a pull request, Travis will also be running the
