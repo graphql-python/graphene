@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from graphql.language.ast import (
     BooleanValueNode,
     FloatValueNode,
