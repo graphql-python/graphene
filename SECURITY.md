@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Support for security issues is currently provided for Graphene 3.0 and above. Support on earlier versions cannot be guaranteed by the maintainers of this library, but community PRs may be accepted in critical cases. 
+Support for security issues is currently provided for Graphene 3.0 and above. Support on earlier versions cannot be guaranteed by the maintainers of this library, but community PRs may be accepted in critical cases.
 The preferred mitigation strategy is via an upgrade to Graphene 3.
 
 | Version | Supported          |
