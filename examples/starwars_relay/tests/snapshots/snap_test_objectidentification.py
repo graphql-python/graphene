@@ -27,9 +27,7 @@ snapshots["test_correctly_refetches_xwing 1"] = {
     "data": {"node": {"id": "U2hpcDox", "name": "X-Wing"}}
 }
 
-snapshots[
-    "test_str_schema 1"
-] = '''type Query {
+snapshots["test_str_schema 1"] = '''type Query {
   rebels: Faction
   empire: Faction
   node(

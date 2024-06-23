@@ -61,9 +61,7 @@ class EnumMeta(SubclassWithMeta_Meta):
     def __iter__(cls):
         return cls._meta.enum.__iter__()
 
-    def from_enum(
-        cls, enum, name=None, description=None, deprecation_reason=None
-    ):  # noqa: N805
+    def from_enum(cls, enum, name=None, description=None, deprecation_reason=None):  # noqa: N805
         name = name or enum.__name__
         description = description or enum.__doc__ or "An enumeration."
         meta_dict = {
