@@ -54,7 +54,7 @@ tests_require = [
     "coveralls>=3.3,<4",
 ]
 
-dev_requires = ["black==22.3.0", "flake8>=4,<5"] + tests_require
+dev_requires = ["ruff==0.4.10", "flake8>=4,<5"] + tests_require
 
 setup(
     name="graphene",

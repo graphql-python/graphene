@@ -20,10 +20,11 @@ repos:
     rev: v2.37.3
     hooks:
     -   id: pyupgrade
--   repo: https://github.com/psf/black
-    rev: 22.6.0
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.4.10
     hooks:
-    -   id: black
+        - id: ruff-format
 -   repo: https://github.com/PyCQA/flake8
     rev: 5.0.4
     hooks:
