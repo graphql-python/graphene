@@ -61,8 +61,9 @@ setup(
     version=version,
     description="GraphQL Framework for Python",
     long_description=codecs.open(
-        "README.rst", "r", encoding="ascii", errors="replace"
+        "README.md", "r", encoding="ascii", errors="replace"
     ).read(),
+    long_description_content_type="text/markdown",
     url="https://github.com/graphql-python/graphene",
     author="Syrus Akbary",
     author_email="me@syrusakbary.com",
