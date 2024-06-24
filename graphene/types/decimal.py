@@ -28,6 +28,8 @@ class Decimal(Scalar):
 
     @staticmethod
     def parse_value(value):
+        if value == "":
+            return None
         try:
             return _Decimal(value)
         except Exception:
