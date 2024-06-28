@@ -1,4 +1,3 @@
-# flake8: noqa
 from graphql import GraphQLResolveInfo as ResolveInfo
 
 from .argument import Argument
