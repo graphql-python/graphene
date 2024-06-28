@@ -51,7 +51,7 @@ tests_require = [
     "pytest-mock>=3,<4",
     "pytest-asyncio>=0.16,<2",
     "snapshottest>=0.6,<1",
-    "coveralls>=4,<5",
+    "coveralls>=3.3,<5",
 ]
 
 dev_requires = ["ruff==0.4.10", "flake8>=4,<5"] + tests_require
