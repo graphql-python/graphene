@@ -62,7 +62,7 @@ class DataLoader(object):
         self.get_cache_key = get_cache_key or (lambda x: x)
 
         self._cache = cache_map if cache_map is not None else {}
-        self._queue = []  # type: List[Loader]
+        self._queue: List[Loader] = []
 
     @property
     def loop(self):
