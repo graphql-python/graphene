@@ -90,3 +90,4 @@ venv/
 *.sqlite3
 .vscode
 .mypy_cache
+.ruff_cache

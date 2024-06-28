@@ -33,7 +33,6 @@ class DataLoader(object):
         cache_map=None,
         loop=None,
     ):
-
         self._loop = loop
 
         if batch_load_fn is not None:

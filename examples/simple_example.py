@@ -8,7 +8,6 @@ class Patron(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-
     patron = graphene.Field(Patron)
 
     def resolve_patron(root, info):

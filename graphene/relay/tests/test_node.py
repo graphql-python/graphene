@@ -8,7 +8,6 @@ from ..node import Node, is_node
 
 
 class SharedNodeFields:
-
     shared = String()
     something_else = String()
 
