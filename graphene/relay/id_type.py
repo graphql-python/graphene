@@ -11,7 +11,7 @@ class BaseGlobalIDType:
     Base class that define the required attributes/method for a type.
     """
 
-    graphene_type = ID  # type: Type[BaseType]
+    graphene_type: Type[BaseType] = ID
 
     @classmethod
     def resolve_global_id(cls, info, global_id):
