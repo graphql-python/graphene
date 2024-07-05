@@ -37,6 +37,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: 'poetry'
+      - run: pip install poetry
       - run: poetry install --with test
       - run: poetry run tox -e ${{ matrix.tox }}
       - name: Upload coverage.xml
