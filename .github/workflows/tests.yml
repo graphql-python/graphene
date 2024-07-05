@@ -54,11 +54,11 @@ jobs:
       - run: tox -e ${{ matrix.tox }}
       - name: Upload coverage.xml
         if: ${{ matrix.python == '3.10' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: graphene-coverage
           path: coverage.xml
           if-no-files-found: error
       - name: Upload coverage.xml to codecov
         if: ${{ matrix.python == '3.10' }}
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
