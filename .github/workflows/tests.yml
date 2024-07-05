@@ -33,11 +33,12 @@ jobs:
           - {name: '3.8', python: '3.8', os: ubuntu-latest, tox: py38}
     steps:
       - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
           cache: 'poetry'
-      - run: pip install poetry
       - run: poetry install --with test
       - run: poetry run tox -e ${{ matrix.tox }}
       - name: Upload coverage.xml
