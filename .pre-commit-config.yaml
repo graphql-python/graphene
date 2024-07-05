@@ -26,3 +26,4 @@ repos:
     hooks:
         - id: ruff
         - id: ruff-format
+          args: [ --check ]

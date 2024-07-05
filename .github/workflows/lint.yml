@@ -16,8 +16,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install ruff tox
-    - name: Format check using Ruff
-      run:  ruff format --check
     - name: Run lint
       run: tox
       env:
