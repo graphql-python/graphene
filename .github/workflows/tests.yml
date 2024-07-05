@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: 'poetry'
-      - run: poetry install --with test
+      - run: poetry install
       - run: poetry run tox -e ${{ matrix.tox }}
       - name: Upload coverage.xml
         if: ${{ matrix.python == '3.10' }}
