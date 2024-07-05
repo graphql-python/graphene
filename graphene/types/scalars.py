@@ -121,8 +121,7 @@ class Float(Scalar):
     """
 
     @staticmethod
-    def coerce_float(value):
-        # type: (Any) -> float
+    def coerce_float(value: Any) -> float:
         try:
             return float(value)
         except ValueError:
