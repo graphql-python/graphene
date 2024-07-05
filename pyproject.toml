@@ -29,8 +29,6 @@ python = "^3.8"
 graphql-core = ">=3.1,<3.3"
 graphql-relay = ">=3.1,<3.3"
 
-# [tool.poetry.group.lint.dependencies]
-
 [tool.poetry.group.test.dependencies]
 tox = "*"
 pytest = ">=8,<9"
@@ -40,10 +38,3 @@ pytest-mock = ">=3,<4"
 pytest-asyncio = ">=0.16,<2"
 snapshottest = ">=0.6,<1"
 coveralls = ">=3.3,<5"
-
-# pytest = "^6.0.0"
-# pytest-mock = "*"
-# dev = ["ruff==0.5.0", "graphene[test]"]
-# test = [
-
-# ]
