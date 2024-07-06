@@ -24,12 +24,13 @@ def deprecated(reason):
         #    @deprecated("please, use another function")
         #    def old_function(x, y):
         #      pass
+        reason = reason.decode() if isinstance(reason, bytes) else reason
 
         def decorator(func1):
             if inspect.isclass(func1):
-                fmt1 = f"Call to deprecated class {func1.__name__} ({reason.decode()})."
+                fmt1 = f"Call to deprecated class {func1.__name__} ({reason})."
             else:
-                fmt1 = f"Call to deprecated function {func1.__name__} ({reason.decode()})."
+                fmt1 = f"Call to deprecated function {func1.__name__} ({reason})."
 
             @functools.wraps(func1)
             def new_func1(*args, **kwargs):
