@@ -46,7 +46,6 @@ from .utils.module_loading import lazy_import
 from .utils.resolve_only_args import resolve_only_args
 
 __all__ = [
-    "__version__",
     "Argument",
     "Base64",
     "BigInt",
