@@ -24,6 +24,7 @@ def deprecated(reason):
         #    @deprecated("please, use another function")
         #    def old_function(x, y):
         #      pass
+        reason = reason.decode() if isinstance(reason, bytes) else reason
 
         def decorator(func1):
             if inspect.isclass(func1):
