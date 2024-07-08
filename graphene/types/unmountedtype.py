@@ -1,5 +1,5 @@
 from ..utils.orderedtype import OrderedType
-
+from ..utils.trim_docstring import trim_docstring
 
 class UnmountedType(OrderedType):
     """
@@ -43,7 +43,9 @@ class UnmountedType(OrderedType):
         super(UnmountedType, self).__init__()
         self.args = args
         self.kwargs = kwargs
-
+        if 'description' in self.kwargs:
+            self.kwargs['description'] = trim_docstring(self.kwargs['description'])
+            
     def get_type(self):
         """
         This function is called when the UnmountedType instance
