@@ -50,7 +50,6 @@ tests_require = [
     "pytest-cov>=5,<6",
     "pytest-mock>=3,<4",
     "pytest-asyncio>=0.16,<2",
-    "snapshottest>=0.6,<1",
     "coveralls>=3.3,<5",
 ]
 

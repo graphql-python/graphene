@@ -8,26 +8,46 @@ setup()
 client = Client(schema)
 
 
-def test_correct_fetch_first_ship_rebels(snapshot):
-    query = """
-    query RebelsShipsQuery {
-      rebels {
-        name,
-        ships(first: 1) {
-          pageInfo {
-            startCursor
-            endCursor
-            hasNextPage
-            hasPreviousPage
-          }
-          edges {
-            cursor
-            node {
-              name
+def test_correct_fetch_first_ship_rebels():
+    result = client.execute("""
+        query RebelsShipsQuery {
+          rebels {
+            name,
+            ships(first: 1) {
+              pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
+              }
+              edges {
+                cursor
+                node {
+                  name
+                }
+              }
             }
           }
         }
-      }
+    """)
+    assert result == {
+        "data": {
+            "rebels": {
+                "name": "Alliance to Restore the Republic",
+                "ships": {
+                    "pageInfo": {
+                        "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+                        "endCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+                        "hasNextPage": True,
+                        "hasPreviousPage": False,
+                    },
+                    "edges": [
+                        {
+                            "cursor": "YXJyYXljb25uZWN0aW9uOjA=",
+                            "node": {"name": "X-Wing"},
+                        }
+                    ],
+                },
+            }
+        }
     }
-    """
-    snapshot.assert_match(client.execute(query))

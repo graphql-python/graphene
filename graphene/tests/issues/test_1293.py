@@ -1,6 +1,6 @@
 # https://github.com/graphql-python/graphene/issues/1293
 
-import datetime
+from datetime import datetime, timezone
 
 import graphene
 from graphql.utilities import print_schema
@@ -9,11 +9,11 @@ from graphql.utilities import print_schema
 class Filters(graphene.InputObjectType):
     datetime_after = graphene.DateTime(
         required=False,
-        default_value=datetime.datetime.utcfromtimestamp(1434549820776 / 1000),
+        default_value=datetime.fromtimestamp(1434549820.776, timezone.utc),
     )
     datetime_before = graphene.DateTime(
         required=False,
-        default_value=datetime.datetime.utcfromtimestamp(1444549820776 / 1000),
+        default_value=datetime.fromtimestamp(1444549820.776, timezone.utc),
     )
 
 
