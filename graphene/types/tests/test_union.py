@@ -4,14 +4,16 @@ from ..field import Field
 from ..objecttype import ObjectType
 from ..union import Union
 from ..unmountedtype import UnmountedType
+from ..schema import Schema
+from ..scalars import String
 
 
 class MyObjectType1(ObjectType):
-    pass
+    name = Field(String)
 
 
 class MyObjectType2(ObjectType):
-    pass
+    not_name = Field(String)
 
 
 def test_generate_union():
@@ -56,3 +58,38 @@ def test_union_can_be_mounted():
     my_union_field = my_union_instance.mount_as(Field)
     assert isinstance(my_union_field, Field)
     assert my_union_field.type == MyUnion
+
+
+def test_resolve_type_custom():
+    class MyUnion(Union):
+        class Meta:
+            types = (MyObjectType1, MyObjectType2)
+
+        @classmethod
+        def resolve_type(cls, instance, info):
+            if 'name' in instance:
+                return MyObjectType1
+            else:
+                return MyObjectType2
+
+    class Query(ObjectType):
+        test = Field(MyUnion)
+
+        def resolve_test(_, info):
+            return {'name': 'Type 1'}
+
+    schema = Schema(query=Query)
+    result = schema.execute(
+        """
+        query {
+            test {
+                __typename
+                ...on MyObjectType1 {
+                    name
+                }
+            }
+        }
+        """
+    )
+    assert not result.errors
+    assert result.data == {"test": {"__typename": "MyObjectType1", "name": "Type 1"}}
