@@ -1,11 +1,10 @@
-name: 💅 Lint
+name: 📦 Build
 
 on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.10
@@ -15,12 +14,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install tox
-    - name: Run lint
-      run: tox
-      env:
-        TOXENV: pre-commit
-    - name: Run mypy
-      run: tox
-      env:
-        TOXENV: mypy
+        pip install build twine
+    - name: Building package
+      run: python3 -m build
+    - name: Check package with Twine
+      run: twine check dist/*
