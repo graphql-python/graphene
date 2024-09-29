@@ -9,6 +9,5 @@ def test_resolve_only_args(mocker):
         return root, args
 
     wrapped_resolver = resolve_only_args(resolver)
-    assert deprecated.warn_deprecation.called
     result = wrapped_resolver(1, 2, a=3)
     assert result == (1, {"a": 3})

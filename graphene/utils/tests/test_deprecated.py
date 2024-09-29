@@ -3,9 +3,9 @@ from ..deprecated import warn_deprecation
 
 
 def test_warn_deprecation(mocker):
-    mocker.patch.object(deprecated.warnings, "warn")
+    mocker.patch.object(deprecated, "warn")
 
     warn_deprecation("OH!")
-    deprecated.warnings.warn.assert_called_with(
+    deprecated.warn.assert_called_with(
         "OH!", stacklevel=2, category=DeprecationWarning
     )
