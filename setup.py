@@ -50,7 +50,6 @@ tests_require = [
     "pytest-cov>=5,<6",
     "pytest-mock>=3,<4",
     "pytest-asyncio>=0.16,<2",
-    "snapshottest>=0.6,<1",
     "coveralls>=3.3,<5",
 ]
 
@@ -84,6 +83,7 @@ setup(
     install_requires=[
         "graphql-core>=3.1,<3.3",
         "graphql-relay>=3.1,<3.3",
+        "typing-extensions>=4.7.1,<5",
     ],
     tests_require=tests_require,
     extras_require={"test": tests_require, "dev": dev_requires},

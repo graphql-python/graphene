@@ -1,6 +1,5 @@
 from functools import wraps
-
-from .deprecated import deprecated
+from typing_extensions import deprecated
 
 
 @deprecated("This function is deprecated")
