@@ -230,6 +230,25 @@ def test_enum_to_enum_comparison_should_differ():
     assert RGB1.BLUE != RGB2.BLUE
 
 
+def test_enum_to_value_comparison():
+    class RGB(Enum):
+        RED = "red"
+        GREEN = "green"
+        BLUE = "blue"
+
+    assert "red" == RGB.RED
+    assert "red" != RGB.GREEN
+    assert "red" != RGB.BLUE
+
+    assert "green" != RGB.RED
+    assert "green" == RGB.GREEN
+    assert "green" != RGB.BLUE
+
+    assert "blue" != RGB.RED
+    assert "blue" != RGB.GREEN
+    assert "blue" == RGB.BLUE
+
+
 def test_enum_skip_meta_from_members():
     class RGB1(Enum):
         class Meta:
