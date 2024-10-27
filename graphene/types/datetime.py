@@ -1,5 +1,7 @@
 import datetime
 
+from dateutil.parser import isoparse
+
 from graphql.error import GraphQLError
 from graphql.language import StringValueNode, print_ast
 
@@ -71,7 +73,7 @@ class DateTime(Scalar):
                 f"DateTime cannot represent non-string value: {repr(value)}"
             )
         try:
-            return datetime.datetime.fromisoformat(value)
+            return isoparse(value)
         except ValueError:
             raise GraphQLError(f"DateTime cannot represent value: {repr(value)}")
 

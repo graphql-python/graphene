@@ -53,7 +53,11 @@ tests_require = [
     "coveralls>=3.3,<5",
 ]
 
-dev_requires = ["ruff==0.5.0"] + tests_require
+dev_requires = [
+    "ruff==0.5.0",
+    "types-python-dateutil>=2.8.1,<3",
+    "mypy>=1.10,<2",
+] + tests_require
 
 setup(
     name="graphene",
@@ -83,6 +87,7 @@ setup(
     install_requires=[
         "graphql-core>=3.1,<3.3",
         "graphql-relay>=3.1,<3.3",
+        "python-dateutil>=2.7.0,<3",
         "typing-extensions>=4.7.1,<5",
     ],
     tests_require=tests_require,
