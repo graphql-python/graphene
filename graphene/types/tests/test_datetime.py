@@ -226,6 +226,7 @@ def test_time_query_variable(sample_time):
     assert not result.errors
     assert result.data == {"time": isoformat}
 
+
 def test_support_isoformat():
     isoformat = 20111104
 
@@ -243,6 +244,7 @@ def test_support_isoformat():
     )
     assert not result.errors
     assert result.data == {"time": isoformat}
+
 
 def test_bad_variables(sample_date, sample_datetime, sample_time):
     def _test_bad_variables(type_, input_):

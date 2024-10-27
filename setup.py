@@ -83,8 +83,8 @@ setup(
     install_requires=[
         "graphql-core>=3.1,<3.3",
         "graphql-relay>=3.1,<3.3",
+        "python-dateutil>=2.7.0,<3",
         "typing-extensions>=4.7.1,<5",
-        "python-dateutil>=2.7.0,<3"
     ],
     tests_require=tests_require,
     extras_require={"test": tests_require, "dev": dev_requires},
