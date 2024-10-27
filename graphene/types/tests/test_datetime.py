@@ -228,22 +228,15 @@ def test_time_query_variable(sample_time):
 
 
 def test_support_isoformat():
-    isoformat = 20111104
+    isoformat = "2011-11-04T00:05:23Z"
 
     # test time variable provided as Python time
     result = schema.execute(
-        """query Test($time: Time){ time(at: $time) }""",
-        variables={"time": sample_time},
+        """query DateTime($time: DateTime){ datetime(in: $time) }""",
+        variables={"time": isoformat},
     )
     assert not result.errors
-    assert result.data == {"time": isoformat}
-
-    # test time variable in string representation
-    result = schema.execute(
-        """query Test($time: Time){ time(at: $time) }""", variables={"time": isoformat}
-    )
-    assert not result.errors
-    assert result.data == {"time": isoformat}
+    assert result.data == {"datetime": "2011-11-04T00:05:23+00:00"}
 
 
 def test_bad_variables(sample_date, sample_datetime, sample_time):
