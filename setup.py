@@ -53,7 +53,11 @@ tests_require = [
     "coveralls>=3.3,<5",
 ]
 
-dev_requires = ["ruff==0.5.0", "types-python-dateutil>=2.8.1,<3", "mypy>=1.10,<2"] + tests_require
+dev_requires = [
+    "ruff==0.5.0",
+    "types-python-dateutil>=2.8.1,<3",
+    "mypy>=1.10,<2",
+] + tests_require
 
 setup(
     name="graphene",
