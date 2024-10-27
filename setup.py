@@ -51,10 +51,9 @@ tests_require = [
     "pytest-mock>=3,<4",
     "pytest-asyncio>=0.16,<2",
     "coveralls>=3.3,<5",
-    "types-python-dateutil>=2.8.1,<3",
 ]
 
-dev_requires = ["ruff==0.5.0"] + tests_require
+dev_requires = ["ruff==0.5.0", "types-python-dateutil>=2.8.1,<3"] + tests_require
 
 setup(
     name="graphene",
