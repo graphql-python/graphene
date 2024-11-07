@@ -36,6 +36,21 @@ def test_uuidstring_query_variable():
     assert result.data == {"uuid": uuid_value}
 
 
+def test_uuidstring_invalid_argument():
+    uuid_value = {"not": "a string"}
+
+    result = schema.execute(
+        """query Test($uuid: UUID){ uuid(input: $uuid) }""",
+        variables={"uuid": uuid_value},
+    )
+    assert result.errors
+    assert len(result.errors) == 1
+    assert (
+        result.errors[0].message
+        == "Variable '$uuid' got invalid value {'not': 'a string'}; UUID must be a string"
+    )
+
+
 def test_uuidstring_optional_uuid_input():
     """
     Test that we can provide a null value to an optional input
