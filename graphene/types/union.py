@@ -56,7 +56,7 @@ class Union(UnmountedType, BaseType):
             isinstance(types, (list, tuple)) and len(types) > 0
         ), f"Must provide types for Union {cls.__name__}."
 
-        _meta = UnionOptions(cls)
+        _meta = options.pop("_meta", UnionOptions(cls))
         _meta.types = types
         super(Union, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
