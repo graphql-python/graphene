@@ -29,6 +29,9 @@ class UUID(Scalar):
 
     @staticmethod
     def parse_value(value):
-        if not isinstance(value, (str, _UUID)):
-            raise GraphQLError("UUID must be a string")
-        return _UUID(value)
+        if isinstance(value, _UUID):
+            return value
+        try:
+            return _UUID(value)
+        except (ValueError, AttributeError):
+            raise GraphQLError(f"UUID cannot represent value: {repr(value)}")

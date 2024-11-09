@@ -47,7 +47,7 @@ def test_uuidstring_invalid_argument():
     assert len(result.errors) == 1
     assert (
         result.errors[0].message
-        == "Variable '$uuid' got invalid value {'not': 'a string'}; UUID must be a string"
+        == "Variable '$uuid' got invalid value {'not': 'a string'}; UUID cannot represent value: {'not': 'a string'}"
     )
 
 
