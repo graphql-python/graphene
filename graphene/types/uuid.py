@@ -1,5 +1,6 @@
 from uuid import UUID as _UUID
 
+from graphql.error import GraphQLError
 from graphql.language.ast import StringValueNode
 from graphql import Undefined
 
@@ -28,4 +29,9 @@ class UUID(Scalar):
 
     @staticmethod
     def parse_value(value):
-        return _UUID(value)
+        if isinstance(value, _UUID):
+            return value
+        try:
+            return _UUID(value)
+        except (ValueError, AttributeError):
+            raise GraphQLError(f"UUID cannot represent value: {repr(value)}")
