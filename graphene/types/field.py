@@ -9,6 +9,7 @@ from .structures import NonNull
 from .unmountedtype import UnmountedType
 from .utils import get_type
 from ..utils.deprecated import warn_deprecation
+from ..utils.trim_docstring import trim_docstring
 
 base_type = type
 
@@ -109,7 +110,7 @@ class Field(MountedType):
             resolver = partial(source_resolver, source)
         self.resolver = resolver
         self.deprecation_reason = deprecation_reason
-        self.description = description
+        self.description = trim_docstring(description)
         self.default_value = default_value
 
     @property
