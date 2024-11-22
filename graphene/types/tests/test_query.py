@@ -65,11 +65,9 @@ def test_query_union():
             return isinstance(root, one_object)
 
     class Two(ObjectType):
+        class Meta:
+            possible_types = (two_object,)
         two = String()
-
-        @classmethod
-        def is_type_of(cls, root, info):
-            return isinstance(root, two_object)
 
     class MyUnion(Union):
         class Meta:
@@ -111,12 +109,9 @@ def test_query_interface():
     class Two(ObjectType):
         class Meta:
             interfaces = (MyInterface,)
+            possible_types = (two_object,)
 
         two = String()
-
-        @classmethod
-        def is_type_of(cls, root, info):
-            return isinstance(root, two_object)
 
     class Query(ObjectType):
         interfaces = List(MyInterface)
