@@ -10,4 +10,3 @@ Execution
    dataloader
    fileuploading
    subscriptions
-   queryvalidation

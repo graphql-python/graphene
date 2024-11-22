@@ -10,6 +10,7 @@ Contents:
    types/index
    execution/index
    relay/index
+   security/index
    testing/index
    api/index
 
