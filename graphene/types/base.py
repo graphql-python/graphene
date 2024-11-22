@@ -43,6 +43,7 @@ class BaseType(SubclassWithMeta):
             return
         _meta.name = name or cls.__name__
         _meta.description = description or trim_docstring(cls.__doc__)
+        _meta.extra = _kwargs
         _meta.freeze()
         cls._meta = _meta
         super(BaseType, cls).__init_subclass_with_meta__()
