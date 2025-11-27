@@ -1,9 +1,10 @@
 from graphql import Undefined
+import pytest
 
 from ..argument import Argument
 from ..field import Field
 from ..inputfield import InputField
-from ..inputobjecttype import InputObjectType
+from ..inputobjecttype import InputObjectType, InputObjectTypeContainer
 from ..objecttype import ObjectType
 from ..scalars import Boolean, String
 from ..schema import Schema
@@ -167,3 +168,16 @@ def test_inputobjecttype_default_input_as_undefined(
 
     assert not result.errors
     assert result.data == {"undefinedOptionalsWork": True}
+
+
+def test_inputobjecttype_explicit_container():
+    class MyInputObjectType(InputObjectType):
+        class Meta:
+            container = InputObjectTypeContainer
+
+        first_name = String()
+        last_name = String()
+
+    container = MyInputObjectType._meta.container(first_name="John")
+    assert container.first_name == "John"
+    assert container.last_name is None
