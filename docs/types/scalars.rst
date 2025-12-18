@@ -249,6 +249,32 @@ Graphene also provides custom scalars for common values:
     assert results.data == {"incrementEncodedId": "NQ=="}
 
 
+``graphene.BigInt``
+^^^^^^^^^^^^^^^^^^^^
+
+    Represents a non-fractional signed whole numeric value not constrained
+    to 32-bits like the `Int` type.
+
+.. code:: python
+
+    from graphene import Schema, ObjectType, BigInt
+
+    class Query(ObjectType):
+        add_one_to = BigInt(required=True, big_int_input=BigInt(required=True))
+
+        def resolve_add_one_to(root, info, big_int_input):
+            assert big_int_input == 2**31
+            return big_int_input + 1
+
+    schema = Schema(query=Query)
+
+    results = schema.execute("""
+        query {
+            addOneTo(bigIntInput: "2147483648")
+        }
+    """)
+
+    assert results.data == {"addOneTo": 2**31 + 1}
 
 Custom scalars
 --------------
