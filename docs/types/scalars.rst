@@ -253,7 +253,7 @@ Graphene also provides custom scalars for common values:
 ^^^^^^^^^^^^^^^^^^^^
 
     Represents a non-fractional signed whole numeric value not constrained
-        to 32-bits like the `Int` type.
+    to 32-bits like the `Int` type.
 
 .. code:: python
 
