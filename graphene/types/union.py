@@ -2,15 +2,20 @@ from typing import TYPE_CHECKING
 
 from .base import BaseOptions, BaseType
 from .unmountedtype import UnmountedType
+from .utils import get_type
 
 # For static type checking with type checker
 if TYPE_CHECKING:
     from .objecttype import ObjectType  # NOQA
-    from typing import Iterable, Type  # NOQA
+    from typing import Callable, Iterable, Tuple, Type  # NOQA
 
 
 class UnionOptions(BaseOptions):
-    types = ()  # type: Iterable[Type[ObjectType]]
+    _types = ()  # type: Iterable[Type[ObjectType] | str | Callable[[], Type[ObjectType]]]
+
+    @property
+    def types(self) -> Tuple[Type["ObjectType"], ...]:
+        return tuple(get_type(type_) for type_ in self._types)
 
 
 class Union(UnmountedType, BaseType):
@@ -28,6 +33,9 @@ class Union(UnmountedType, BaseType):
     attribute or ``is_type_of`` method. Or by implementing ``resolve_type`` class method on the
     Union.
 
+    To avoid circular import issues, `Meta.types` can also contain string references or functions
+    instead of direct type references.
+
     .. code:: python
 
         from graphene import Union, ObjectType, List
@@ -42,8 +50,9 @@ class Union(UnmountedType, BaseType):
             )
 
     Meta:
-        types (Iterable[graphene.ObjectType]): Required. Collection of types that may be returned
-            by this Union for the graphQL schema.
+        types (Iterable[type[graphene.ObjectType] | str | Callable[[], type[graphene.ObjectType]]]): Required.
+            Collection of types that may be returned by this Union for the graphQL schema. Can also be string
+            references or functions for lazy resolution.
         name (optional, str): the name of the GraphQL type (must be unique in schema). Defaults to class
             name.
         description (optional, str): the description of the GraphQL type in the schema. Defaults to class
@@ -59,7 +68,7 @@ class Union(UnmountedType, BaseType):
         if not _meta:
             _meta = UnionOptions(cls)
 
-        _meta.types = types
+        _meta._types = types
         super(Union, cls).__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
