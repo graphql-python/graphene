@@ -244,6 +244,19 @@ def test_should_ignore_field():
     assert result == expected
 
 
+def test_undefined_fragment_does_not_crash():
+    query = """
+    query read1 {
+      user {
+        name
+        ...undefinedFragment
+      }
+    }
+    """
+    errors, result = run_query(query, 10)
+    assert result == {"read1": 1}
+
+
 def test_should_raise_invalid_ignore():
     query = """
     query read1 {
