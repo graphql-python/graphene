@@ -144,8 +144,11 @@ def determine_depth(
             )
         )
     elif isinstance(node, FragmentSpreadNode):
+        fragment = fragments.get(node.name.value)
+        if fragment is None:
+            return 0
         return determine_depth(
-            node=fragments[node.name.value],
+            node=fragment,
             fragments=fragments,
             depth_so_far=depth_so_far,
             max_depth=max_depth,
