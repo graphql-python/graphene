@@ -613,3 +613,15 @@ def test_enum_description_member_not_interpreted_as_property():
     results = schema.execute("query { color }")
     assert not results.errors
     assert results.data["color"] == RGB.description.name
+
+
+def test_enum_value_equality():
+    class Kind(Enum):
+        FAVORABLE = "favorable"
+        UNFAVORABLE = "unfavorable"
+
+    # non-interned string to avoid identity matching
+    val = "".join(["favor", "able"])
+    assert Kind.FAVORABLE == val
+    assert Kind.FAVORABLE == "favorable"
+    assert Kind.FAVORABLE != "unfavorable"
