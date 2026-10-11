@@ -450,3 +450,65 @@ async def test_dataloader_clear_with_missing_key_works():
 
     a_loader, a_load_calls = id_loader(resolve=do_resolve)
     assert a_loader.clear("A1") == a_loader
+
+
+@mark.asyncio
+@mark.parametrize("failed", [False, True])
+@mark.parametrize("cancelled_index", [0, 1, 2])
+async def test_cancelled_load_does_not_interrupt_batch(
+    failed, cancelled_index, monkeypatch
+):
+    from asyncio import gather
+    from graphene.utils.dataloader import dispatch_queue_batch, Loader
+
+    error = RuntimeError("batch failure")
+
+    async def resolve(keys):
+        if failed:
+            raise error
+        return keys
+
+    loader = DataLoader(resolve)
+    # Dispatch explicitly so the regression deterministically exposes an
+    # invalid-state exception instead of waiting for an unresolved future.
+    monkeypatch.setattr(
+        loader,
+        "do_resolve_reject",
+        lambda key, future: loader._queue.append(Loader(key, future)),
+    )
+    futures = [loader.load(key) for key in range(3)]
+    futures[cancelled_index].cancel()
+    await dispatch_queue_batch(loader, loader._queue)
+    for index, future in enumerate(futures):
+        if index == cancelled_index:
+            assert future.cancelled()
+        elif failed:
+            assert future.exception() is error
+        else:
+            assert future.result() == index
+    if failed:
+        assert not loader._cache
+    await gather(*futures, return_exceptions=True)
+
+
+@mark.asyncio
+async def test_cancelled_load_allows_scheduled_batch_to_finish():
+    from asyncio import Event, wait_for
+
+    started = Event()
+    release = Event()
+
+    async def resolve(keys):
+        started.set()
+        await release.wait()
+        return keys
+
+    loader = DataLoader(resolve)
+    cancelled = loader.load("cancelled")
+    surviving = loader.load("surviving")
+    await wait_for(started.wait(), 1)
+    cancelled.cancel()
+    release.set()
+    assert await wait_for(surviving, 1) == "surviving"
+    assert cancelled.cancelled()
+    assert await loader.load("surviving") == "surviving"

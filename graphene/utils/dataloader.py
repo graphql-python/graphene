@@ -261,6 +261,8 @@ async def dispatch_queue_batch(loader, queue):
         # Step through the values, resolving or rejecting each Future in the
         # loaded queue.
         for loaded, value in zip(queue, values):
+            if loaded.future.done():
+                continue
             if isinstance(value, Exception):
                 loaded.future.set_exception(value)
             else:
@@ -277,4 +279,5 @@ def failed_dispatch(loader, queue, error):
     """
     for loaded in queue:
         loader.clear(loaded.key)
-        loaded.future.set_exception(error)
+        if not loaded.future.done():
+            loaded.future.set_exception(error)
