@@ -5,9 +5,12 @@ from typing import Type
 
 from graphql_relay import connection_from_array
 
+import inspect
+
 from ..types import Boolean, Enum, Int, Interface, List, NonNull, Scalar, String, Union
 from ..types.field import Field
 from ..types.objecttype import ObjectType, ObjectTypeOptions
+from ..types.utils import get_type
 from ..utils.thenables import maybe_thenable
 from .node import is_node, AbstractNode
 
@@ -81,7 +84,15 @@ def page_info_adapter(startCursor, endCursor, hasPreviousPage, hasNextPage):
 
 
 class ConnectionOptions(ObjectTypeOptions):
-    node = None
+    _node = None
+
+    @property
+    def node(self):
+        return get_type(self._node)
+
+    @node.setter
+    def node(self, value):
+        self._node = value
 
 
 class Connection(ObjectType):
@@ -95,11 +106,27 @@ class Connection(ObjectType):
         if not _meta:
             _meta = ConnectionOptions(cls)
         assert node, f"You have to provide a node in {cls.__name__}.Meta"
-        assert isinstance(node, NonNull) or issubclass(
-            node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
+        assert (
+            isinstance(node, (str, NonNull))
+            or inspect.isfunction(node)
+            or isinstance(node, partial)
+            or (
+                inspect.isclass(node)
+                and issubclass(
+                    node, (Scalar, Enum, ObjectType, Interface, Union, NonNull)
+                )
+            )
         ), f'Received incompatible node "{node}" for Connection {cls.__name__}.'
 
-        base_name = re.sub("Connection$", "", name or cls.__name__) or node._meta.name
+        base_name = re.sub("Connection$", "", name or cls.__name__) or (
+            node._meta.name
+            if hasattr(node, "_meta")
+            else (
+                node.split(".")[-1]
+                if isinstance(node, str)
+                else get_type(node)._meta.name
+            )
+        )
         if not name:
             name = f"{base_name}Connection"
 

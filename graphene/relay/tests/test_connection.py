@@ -316,3 +316,34 @@ def test_connectionfield_strict_types():
 
     node_field = edges_list_element_type.of_type._meta.fields["node"]
     assert isinstance(node_field.type, NonNull)
+
+
+def test_connection_with_lazy_string_node():
+    class MyLazyStringConnection(Connection):
+        class Meta:
+            node = "graphene.relay.tests.test_connection.MyObject"
+
+    assert MyLazyStringConnection._meta.name == "MyLazyStringConnection"
+    assert MyLazyStringConnection._meta.node == MyObject
+    edge_fields = MyLazyStringConnection.Edge._meta.fields
+    assert edge_fields["node"].type == MyObject
+
+
+def test_connection_with_lazy_callable_node():
+    class MyLazyCallableConnection(Connection):
+        class Meta:
+            node = lambda: MyObject  # noqa: E731
+
+    assert MyLazyCallableConnection._meta.name == "MyLazyCallableConnection"
+    assert MyLazyCallableConnection._meta.node == MyObject
+    edge_fields = MyLazyCallableConnection.Edge._meta.fields
+    assert edge_fields["node"].type == MyObject
+
+
+def test_connection_named_connection_with_lazy_string_node():
+    class Connection(globals()["Connection"]):
+        class Meta:
+            node = "graphene.relay.tests.test_connection.MyObject"
+
+    assert Connection._meta.name == "MyObjectConnection"
+    assert Connection._meta.node == MyObject
