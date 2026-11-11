@@ -70,7 +70,7 @@ def get_git_changeset():
             universal_newlines=True,
         )
         timestamp = git_log.communicate()[0]
-        timestamp = datetime.datetime.utcfromtimestamp(int(timestamp))
+        timestamp = datetime.datetime.fromtimestamp(int(timestamp), datetime.timezone.utc)
     except Exception:
         return None
     return timestamp.strftime("%Y%m%d%H%M%S")
