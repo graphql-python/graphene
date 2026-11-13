@@ -1,3 +1,4 @@
+import builtins
 from enum import Enum as PyEnum
 
 from graphene.utils.subclass_with_meta import SubclassWithMeta_Meta
@@ -69,8 +70,8 @@ class EnumMeta(SubclassWithMeta_Meta):
             "description": description,
             "deprecation_reason": deprecation_reason,
         }
-        meta_class = type("Meta", (object,), meta_dict)
-        return type(name, (Enum,), {"Meta": meta_class})
+        meta_class = builtins.type("Meta", (object,), meta_dict)
+        return builtins.type(name, (Enum,), {"Meta": meta_class})
 
 
 class Enum(UnmountedType, BaseType, metaclass=EnumMeta):
