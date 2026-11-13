@@ -1,4 +1,9 @@
+import builtins
 from textwrap import dedent
+
+import pytest
+
+from .. import enum as enum_module
 
 from ..argument import Argument
 from ..enum import Enum, PyEnum
@@ -613,3 +618,28 @@ def test_enum_description_member_not_interpreted_as_property():
     results = schema.execute("query { color }")
     assert not results.errors
     assert results.data["color"] == RGB.description.name
+
+
+@pytest.mark.parametrize("construction", ["class", "functional", "from_enum"])
+def test_enum_named_type_does_not_shadow_builtin_type(monkeypatch, construction):
+    # EnumMeta registers enum classes in this module to support pickling.
+    # Restore that module-level name so this test cannot affect other tests.
+    monkeypatch.setattr(enum_module, "type", builtins.type, raising=False)
+
+    if construction == "class":
+
+        class type(Enum):
+            FIRST = 1
+
+        enum = type
+    elif construction == "functional":
+        enum = Enum("type", [("FIRST", 1)])
+    else:
+        enum = Enum.from_enum(PyEnum("type", [("FIRST", 1)]))
+
+    assert enum._meta.name == "type"
+    assert enum.FIRST.value == 1
+
+    # Constructing another enum must still work after registering "type".
+    other = Enum("AfterType", [("SECOND", 2)])
+    assert other.SECOND.value == 2
