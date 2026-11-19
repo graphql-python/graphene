@@ -37,6 +37,8 @@ def test_uuidstring_query_variable():
 
 
 def test_uuidstring_invalid_argument():
+    from graphql import version_info as graphql_version_info
+
     uuid_value = {"not": "a string"}
 
     result = schema.execute(
@@ -45,10 +47,12 @@ def test_uuidstring_invalid_argument():
     )
     assert result.errors
     assert len(result.errors) == 1
-    assert (
-        result.errors[0].message
-        == "Variable '$uuid' got invalid value {'not': 'a string'}; UUID cannot represent value: {'not': 'a string'}"
+    expected = (
+        "Variable '$uuid' has invalid value: UUID cannot represent value: {'not': 'a string'}"
+        if graphql_version_info >= (3, 3)
+        else "Variable '$uuid' got invalid value {'not': 'a string'}; UUID cannot represent value: {'not': 'a string'}"
     )
+    assert result.errors[0].message == expected
 
 
 def test_uuidstring_optional_uuid_input():
@@ -64,20 +68,33 @@ def test_uuidstring_invalid_query():
     """
     Test that if an invalid type is provided we get an error
     """
+    from graphql import version_info as graphql_version_info
+
+    is_v33 = graphql_version_info >= (3, 3)
+    sep = "found:" if is_v33 else "found"
+
     result = schema.execute("{ uuid(input: 1) }")
     assert result.errors
     assert len(result.errors) == 1
-    assert result.errors[0].message == "Expected value of type 'UUID', found 1."
+    assert result.errors[0].message == f"Expected value of type 'UUID', {sep} 1."
 
     result = schema.execute('{ uuid(input: "a") }')
     assert result.errors
     assert len(result.errors) == 1
-    assert (
-        result.errors[0].message
-        == "Expected value of type 'UUID', found \"a\"; badly formed hexadecimal UUID string"
+    expected_bad_uuid = (
+        "Expected value of type 'UUID', but encountered error "
+        "'badly formed hexadecimal UUID string'; found: \"a\"."
+        if is_v33
+        else "Expected value of type 'UUID', found \"a\"; badly formed hexadecimal UUID string"
     )
+    assert result.errors[0].message == expected_bad_uuid
 
     result = schema.execute("{ requiredUuid(input: null) }")
     assert result.errors
     assert len(result.errors) == 1
-    assert result.errors[0].message == "Expected value of type 'UUID!', found null."
+    expected_null_msg = (
+        "Expected value of non-null type 'UUID!' not to be None."
+        if is_v33
+        else "Expected value of type 'UUID!', found null."
+    )
+    assert result.errors[0].message == expected_null_msg
