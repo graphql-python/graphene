@@ -120,25 +120,32 @@ class TestBigInt:
         """
         Test that if an invalid type is provided we get an error
         """
+        from graphql import version_info as graphql_version_info
+
+        sep = "found:" if graphql_version_info >= (3, 3) else "found"
+
         result = schema.execute('{ optional { bigInt(input: "20") } }')
         assert result.errors
         assert len(result.errors) == 1
         assert (
-            result.errors[0].message == "Expected value of type 'BigInt', found \"20\"."
+            result.errors[0].message
+            == f"Expected value of type 'BigInt', {sep} \"20\"."
         )
 
         result = schema.execute('{ optional { bigInt(input: "a") } }')
         assert result.errors
         assert len(result.errors) == 1
         assert (
-            result.errors[0].message == "Expected value of type 'BigInt', found \"a\"."
+            result.errors[0].message
+            == f"Expected value of type 'BigInt', {sep} \"a\"."
         )
 
         result = schema.execute("{ optional { bigInt(input: true) } }")
         assert result.errors
         assert len(result.errors) == 1
         assert (
-            result.errors[0].message == "Expected value of type 'BigInt', found true."
+            result.errors[0].message
+            == f"Expected value of type 'BigInt', {sep} true."
         )
 
 

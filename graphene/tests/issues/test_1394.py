@@ -1,3 +1,5 @@
+from graphql import version_info as graphql_version_info
+
 from ...types import ObjectType, Schema, String, NonNull
 
 
@@ -30,7 +32,9 @@ def test_required_input_missing():
     result = schema.execute("{ hello }")
     assert result.errors
     assert len(result.errors) == 1
-    assert (
-        result.errors[0].message
-        == "Field 'hello' argument 'input' of type 'String!' is required, but it was not provided."
+    expected_message = (
+        "Argument 'Query.hello(input:)' of type 'String!' is required, but it was not provided."
+        if graphql_version_info >= (3, 3)
+        else "Field 'hello' argument 'input' of type 'String!' is required, but it was not provided."
     )
+    assert result.errors[0].message == expected_message

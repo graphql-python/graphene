@@ -36,6 +36,9 @@ def test_decimal_string_query_variable():
 
 
 def test_bad_decimal_query():
+    from graphql import version_info as graphql_version_info
+
+    sep = "found:" if graphql_version_info >= (3, 3) else "found"
     not_a_decimal = "Nobody expects the Spanish Inquisition!"
 
     result = schema.execute("""{ decimal(input: "%s") }""" % not_a_decimal)
@@ -44,20 +47,24 @@ def test_bad_decimal_query():
     assert result.data is None
     assert (
         result.errors[0].message
-        == "Expected value of type 'Decimal', found \"Nobody expects the Spanish Inquisition!\"."
+        == f"Expected value of type 'Decimal', {sep} \"Nobody expects the Spanish Inquisition!\"."
     )
 
     result = schema.execute("{ decimal(input: true) }")
     assert result.errors
     assert len(result.errors) == 1
     assert result.data is None
-    assert result.errors[0].message == "Expected value of type 'Decimal', found true."
+    assert (
+        result.errors[0].message == f"Expected value of type 'Decimal', {sep} true."
+    )
 
     result = schema.execute("{ decimal(input: 1.2) }")
     assert result.errors
     assert len(result.errors) == 1
     assert result.data is None
-    assert result.errors[0].message == "Expected value of type 'Decimal', found 1.2."
+    assert (
+        result.errors[0].message == f"Expected value of type 'Decimal', {sep} 1.2."
+    )
 
 
 def test_decimal_string_query_integer():

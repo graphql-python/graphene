@@ -513,7 +513,10 @@ class Schema:
 
         # Execute the query
         kwargs = normalize_execute_kwargs(kwargs)
-        return await subscribe(self.graphql_schema, document, *args, **kwargs)
+        result = subscribe(self.graphql_schema, document, *args, **kwargs)
+        if inspect.isawaitable(result):
+            return await result
+        return result
 
     def introspect(self):
         introspection = self.execute(introspection_query)
